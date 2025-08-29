@@ -1,5 +1,5 @@
 import { initTRPC, TRPCError } from '@trpc/server'
-import { type CreateNextContextOptions } from '@trpc/server/adapters/next'
+import { type FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch'
 import { type Session } from 'next-auth'
 import { getServerSession } from 'next-auth/next'
 import superjson from 'superjson'
@@ -19,11 +19,8 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   }
 }
 
-export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-  const { req, res } = opts
-
-  // Get the session from the server using the unstable_getServerSession wrapper function
-  const session = await getServerSession(req, res, authOptions)
+export const createTRPCContext = async (_opts: FetchCreateContextFnOptions) => {
+  const session = await getServerSession(authOptions)
 
   return createInnerTRPCContext({
     session,

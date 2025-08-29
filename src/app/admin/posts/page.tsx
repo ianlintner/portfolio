@@ -8,6 +8,7 @@ export default function PostsManagement() {
   const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all')
   
   const { data: posts, isLoading, refetch } = trpc.post.getAll.useQuery()
+  console.log("Fetched posts from tRPC:", posts)
   const deleteMutation = trpc.post.delete.useMutation({
     onSuccess: () => {
       refetch()

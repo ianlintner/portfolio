@@ -34,25 +34,47 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
+          console.log("Authorize: missing credentials");
           return null
         }
 
-        const user = await db.user.findUnique({
-          where: {
-            email: credentials.email,
-          },
-        })
+        try {
+          const user = await db.user.findUnique({
+            where: {
+              email: credentials.email,
+            },
+          })
+          console.info("[Auth] Lookup by email:", credentials.email, "found:", !!user)
 
-        if (!user) {
-          return null
-        }
+          if (!user) {
+            console.warn("[Auth] No user found for:", credentials.email)
+            return null
+          }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.passwordHash
-        )
+          if (!user.passwordHash) {
+            console.error("[Auth] User record has no passwordHash field:", user)
+            return null
+          }
 
-        if (!isPasswordValid) {
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            user.passwordHash
+          )
+          console.info("[Auth] Password validity for user", user.email, ":", isPasswordValid)
+
+          if (!isPasswordValid) {
+            console.warn("[Auth] Invalid password attempt for:", user.email)
+            return null
+          }
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          }
+        } catch (err) {
+          console.error("[Auth] Exception during authorize:", err)
           return null
         }
 

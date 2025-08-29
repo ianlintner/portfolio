@@ -568,7 +568,7 @@ export default function BlogPostPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground transition-colors">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Navigation */}
@@ -638,7 +638,7 @@ export default function BlogPostPage({ params }: Props) {
           </header>
 
           {/* Article Content */}
-          <article className="prose prose-lg prose-gray max-w-none dark:prose-invert">
+          <article className="prose prose-lg max-w-none dark:prose-invert transition-colors">
             <div
               dangerouslySetInnerHTML={{
                 __html: post.content

@@ -80,9 +80,9 @@ export default function BlogPage() {
   const tags = mockTags
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground transition-colors dark:bg-gray-950 dark:text-gray-100">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-background to-accent/30 py-16 border-b">
+      <section className="bg-gradient-to-r from-background to-accent/30 dark:from-gray-900 dark:to-primary/20 py-16 border-b transition-colors">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
@@ -144,7 +144,7 @@ export default function BlogPage() {
                         </div>
 
                         <div>
-                          <h2 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
+                          <h2 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors text-gray-900 dark:text-gray-100">
                             <Link href={`/blog/${post.slug}`}>
                               {post.title}
                             </Link>
@@ -158,8 +158,8 @@ export default function BlogPage() {
                           <div className="flex flex-wrap gap-2">
                             {post.tags.map((tagRelation) => (
                               <span
-                                key={tagRelation.tag.id}
-                                className="inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium"
+                                    key={tagRelation.tag.id}
+                                    className="inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-primary/10 dark:bg-primary/20 text-primary text-sm font-medium"
                               >
                                 <Tag className="h-3 w-3" />
                                 <span>{tagRelation.tag.name}</span>

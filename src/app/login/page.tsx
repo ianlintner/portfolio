@@ -1,11 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { signIn, getSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 
-export default function AdminLogin() {
+export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -20,7 +19,6 @@ export default function AdminLogin() {
     })
   }, [router])
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -32,13 +30,13 @@ export default function AdminLogin() {
         password,
         redirect: false,
       })
-      console.log("signIn result:", result);
+      console.log("signIn result:", result)
 
       if (result?.error) {
-        console.error("Login failed:", result.error);
+        console.error("Login failed:", result.error)
         setError('Invalid credentials')
       } else {
-        console.log("Login success, redirecting to /admin");
+        console.log("Login success, redirecting to /admin")
         router.push('/admin')
       }
     } catch (err) {
