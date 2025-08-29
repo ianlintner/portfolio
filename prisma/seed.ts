@@ -47,57 +47,105 @@ async function main() {
 
   console.log('✅ Created sample tags')
 
-  // Create sample blog post
-  const samplePost = await prisma.post.upsert({
-    where: { slug: 'welcome-to-my-portfolio' },
+  // Create initial blog post: Architecture
+  const architecturePost = await prisma.post.upsert({
+    where: { slug: 'building-portfolio-architecture' },
     update: {},
     create: {
-      title: 'Welcome to My Portfolio',
-      slug: 'welcome-to-my-portfolio',
-      excerpt: 'This is my first blog post on my new portfolio website built with Next.js and TypeScript.',
+      title: 'Building This Blog Portfolio Architecture',
+      slug: 'building-portfolio-architecture',
+      excerpt: 'A breakdown of how this portfolio blog is architected with Next.js App Router, Prisma, tRPC, NextAuth, and Tailwind.',
       content: `
-# Welcome to My Portfolio
+# Building This Blog Portfolio Architecture
 
-This is my first blog post on my new portfolio website. I've built this site using modern web technologies including:
+This post explains how this very portfolio/blog platform was put together.
 
-- **Next.js 14** with App Router
-- **TypeScript** for type safety
-- **Prisma** with PostgreSQL for data management
+## Technology Stack
+- **Next.js 14 App Router** for server components
+- **TypeScript** for type safety and maintainability
+- **Prisma with PostgreSQL** for data modeling
+- **tRPC** for end-to-end type safe APIs
+- **NextAuth.js** for authentication
 - **Tailwind CSS** for styling
-- **tRPC** for type-safe APIs
 
 ## Features
+- Content Management System via custom admin panel
+- Blog with SEO friendly slugs and metadata
+- Component demo gallery
+- Authentication with role-based access
 
-This portfolio includes:
-
-1. A custom CMS for managing content
-2. Blog functionality with rich text editing
-3. Component demonstrations
-4. SEO optimization
-5. Responsive design
-
-I'm excited to share more content and showcase my projects here!
+Building this took several iterations of database schema design, routing structure, and integrating AI agents for assistance.
       `,
       published: true,
       publishedAt: new Date(),
-      seoTitle: 'Welcome to My Portfolio - Full Stack Developer',
-      seoDescription: 'Welcome to my portfolio website built with Next.js, TypeScript, and modern web technologies.',
-      seoKeywords: ['portfolio', 'web development', 'Next.js', 'TypeScript'],
+      seoTitle: 'Building This Portfolio Blog Architecture',
+      seoDescription: 'Learn the architecture behind this portfolio blog: Next.js, Prisma, tRPC, NextAuth, Tailwind.',
+      seoKeywords: ['portfolio', 'blog', 'Next.js', 'Prisma', 'tRPC', 'architecture'],
       authorId: adminUser.id,
     },
   })
 
-  // Connect tags to the post
+  // Create second blog post: AI Agents
+  const aiAgentsPost = await prisma.post.upsert({
+    where: { slug: 'ai-agents-cline-roo' },
+    update: {},
+    create: {
+      title: 'Using AI Agent Tools (Cline & Roo) in Development',
+      slug: 'ai-agents-cline-roo',
+      excerpt: 'An article on how AI-driven tools like Cline and Roo accelerated the development of this site.',
+      content: `
+# Using AI Agent Tools (Cline & Roo) in Development
+
+During the development of this portfolio blog, I used AI agents such as **Roo** and **Cline** to speed up the process.
+
+## Roo
+Roo acted as a system-level developer, able to make structured edits, manage migrations, and coordinate tasks.
+
+## Cline
+Cline helped orchestrate multi-step workflows and provided higher-level guidance on development.
+
+## Benefits
+- Reduced repetitive coding
+- Automated boilerplate scaffolding
+- Error checking and guided debugging
+
+## Outcomes
+The combination of AI tools allowed me to move faster, focus more on architecture decisions, and get an initial version deployed quickly.
+      `,
+      published: true,
+      publishedAt: new Date(),
+      seoTitle: 'Using AI Agent Tools in Development (Cline, Roo)',
+      seoDescription: 'Exploring how AI agents like Cline and Roo accelerated building this portfolio blog.',
+      seoKeywords: ['AI agents', 'Cline', 'Roo', 'development tools'],
+      authorId: adminUser.id,
+    },
+  })
+
+  // Connect tags to the Architecture post
   await prisma.postTag.upsert({
     where: {
       postId_tagId: {
-        postId: samplePost.id,
+        postId: architecturePost.id,
+        tagId: reactTag.id,
+      },
+    },
+    update: {},
+    create: {
+      postId: architecturePost.id,
+      tagId: reactTag.id,
+    },
+  })
+
+  await prisma.postTag.upsert({
+    where: {
+      postId_tagId: {
+        postId: architecturePost.id,
         tagId: nextjsTag.id,
       },
     },
     update: {},
     create: {
-      postId: samplePost.id,
+      postId: architecturePost.id,
       tagId: nextjsTag.id,
     },
   })
@@ -105,24 +153,22 @@ I'm excited to share more content and showcase my projects here!
   await prisma.postTag.upsert({
     where: {
       postId_tagId: {
-        postId: samplePost.id,
+        postId: architecturePost.id,
         tagId: typescriptTag.id,
       },
     },
     update: {},
     create: {
-      postId: samplePost.id,
+      postId: architecturePost.id,
       tagId: typescriptTag.id,
     },
   })
 
-  console.log('✅ Created sample blog post')
+  console.log('✅ Created blog posts with tags')
 
   // Create sample component demo
-  const sampleDemo = await prisma.componentDemo.upsert({
-    where: { name: 'Interactive Button' },
-    update: {},
-    create: {
+  const sampleDemo = await prisma.componentDemo.create({
+    data: {
       name: 'Interactive Button',
       description: 'A reusable button component with hover effects and multiple variants.',
       code: `
@@ -169,7 +215,8 @@ export function Button({
     },
   })
 
-  console.log('✅ Created sample component demo')
+  console.log('✅ Created component demo')
+
 
   console.log('🎉 Database seeding completed!')
 }

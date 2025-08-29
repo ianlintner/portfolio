@@ -51,7 +51,8 @@
     "react-syntax-highlighter": "^15.0.0",
     "@types/react-syntax-highlighter": "^15.0.0",
     "@google-cloud/storage": "^7.0.0",
-    "@google-cloud/secret-manager": "^5.0.0"
+    "@google-cloud/secret-manager": "^5.0.0",
+    "lucide-react": "^0.294.0"
   },
   "devDependencies": {
     "eslint": "^8.0.0",
@@ -73,7 +74,7 @@
     "@playwright/test": "^1.40.0",
     "jest-environment-jsdom": "^29.0.0",
     "@types/jest": "^29.0.0",
-    "lighthouse-ci": "^0.12.0",
+    "@lhci/cli": "^0.12.0",
     "axe-core": "^4.8.0",
     "@axe-core/playwright": "^4.8.0",
     "tsx": "^4.0.0"
