@@ -336,8 +336,8 @@ export default function DemosPage() {
                 Interested in Working Together?
               </h2>
               <p className="text-xl text-muted-foreground mb-8">
-                I'm always excited to work on new projects and collaborate with
-                talented teams. Let's build something amazing together!
+                I&apos;m always excited to work on new projects and collaborate with
+                talented teams. Let&apos;s build something amazing together!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link

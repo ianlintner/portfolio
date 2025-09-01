@@ -163,7 +163,7 @@ export default function HomePage() {
                 </h2>
                 <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
                   <p>
-                    I'm a passionate full stack developer with a deep focus on
+                    I&apos;m a passionate full stack developer with a deep focus on
                     building scalable, high-performance web applications. My
                     expertise spans the entire development lifecycle, from
                     designing intuitive user interfaces to architecting robust
@@ -176,7 +176,7 @@ export default function HomePage() {
                     business growth.
                   </p>
                   <p>
-                    When I'm not coding, I enjoy sharing knowledge through
+                    When I&apos;m not coding, I enjoy sharing knowledge through
                     technical writing, contributing to open source projects, and
                     mentoring fellow developers.
                   </p>
@@ -238,10 +238,10 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-              Let's Build Something Amazing
+              Let&apos;s Build Something Amazing
             </h2>
             <p className="text-xl text-muted-foreground mb-8">
-              Ready to bring your next project to life? Let's discuss how we can
+              Ready to bring your next project to life? Let&apos;s discuss how we can
               work together to create exceptional web experiences.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

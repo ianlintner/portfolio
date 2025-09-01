@@ -88,7 +88,7 @@ export default function EditPost() {
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold">Post not found</h2>
         <p className="text-muted-foreground mt-2">
-          The post you're looking for doesn't exist.
+          The post you&apos;re looking for doesn&apos;t exist.
         </p>
         <button
           onClick={() => router.push("/admin/posts")}
