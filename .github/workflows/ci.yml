@@ -58,11 +58,11 @@ jobs:
         with:
           version: 5.4.3
 
-      - name: Setup kubeval
+      - name: Setup kubeconform
         run: |
-          wget https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz
-          tar xf kubeval-linux-amd64.tar.gz
-          sudo cp kubeval /usr/local/bin
+          wget https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz
+          tar xf kubeconform-linux-amd64.tar.gz
+          sudo cp kubeconform /usr/local/bin
 
       - name: Setup kube-score
         run: |
@@ -114,17 +114,21 @@ jobs:
 
       - name: Validate Kubernetes Schema
         run: |
-          echo "📋 Validating Kubernetes schema compliance..."
-          # Filter out Config Connector CRDs as they're not in public schema repository
-          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/base-output.yaml > /tmp/base-k8s-only.yaml || true
-          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/dev-output.yaml > /tmp/dev-k8s-only.yaml || true
-          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/staging-output.yaml > /tmp/staging-k8s-only.yaml || true
-          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/prod-output.yaml > /tmp/prod-k8s-only.yaml || true
+          echo "📋 Validating Kubernetes schema compliance with kubeconform..."
+          # Filter out Config Connector CRDs and other resources that aren't standard K8s
+          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/base-output.yaml | \
+            grep -v -E "kind: (IAM|SQL)" > /tmp/base-k8s-only.yaml || true
+          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/dev-output.yaml | \
+            grep -v -E "kind: (IAM|SQL)" > /tmp/dev-k8s-only.yaml || true
+          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/staging-output.yaml | \
+            grep -v -E "kind: (IAM|SQL)" > /tmp/staging-k8s-only.yaml || true
+          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/prod-output.yaml | \
+            grep -v -E "kind: (IAM|SQL)" > /tmp/prod-k8s-only.yaml || true
 
-          kubeval /tmp/base-k8s-only.yaml || exit 1
-          kubeval /tmp/dev-k8s-only.yaml || exit 1
-          kubeval /tmp/staging-k8s-only.yaml || exit 1
-          kubeval /tmp/prod-k8s-only.yaml || exit 1
+          kubeconform -summary -verbose /tmp/base-k8s-only.yaml || exit 1
+          kubeconform -summary -verbose /tmp/dev-k8s-only.yaml || exit 1
+          kubeconform -summary -verbose /tmp/staging-k8s-only.yaml || exit 1
+          kubeconform -summary -verbose /tmp/prod-k8s-only.yaml || exit 1
           echo "✅ Standard Kubernetes resources are schema compliant"
 
       - name: Security and Best Practice Check
