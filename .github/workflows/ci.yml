@@ -115,20 +115,15 @@ jobs:
       - name: Validate Kubernetes Schema
         run: |
           echo "📋 Validating Kubernetes schema compliance with kubeconform..."
-          # Filter out Config Connector CRDs and other resources that aren't standard K8s
-          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/base-output.yaml | \
-            grep -v -E "kind: (IAM|SQL)" > /tmp/base-k8s-only.yaml || true
-          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/dev-output.yaml | \
-            grep -v -E "kind: (IAM|SQL)" > /tmp/dev-k8s-only.yaml || true
-          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/staging-output.yaml | \
-            grep -v -E "kind: (IAM|SQL)" > /tmp/staging-k8s-only.yaml || true
-          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/prod-output.yaml | \
-            grep -v -E "kind: (IAM|SQL)" > /tmp/prod-k8s-only.yaml || true
-
-          kubeconform -summary -verbose /tmp/base-k8s-only.yaml || exit 1
-          kubeconform -summary -verbose /tmp/dev-k8s-only.yaml || exit 1
-          kubeconform -summary -verbose /tmp/staging-k8s-only.yaml || exit 1
-          kubeconform -summary -verbose /tmp/prod-k8s-only.yaml || exit 1
+          # Use kubeconform's built-in skip patterns to ignore Config Connector CRDs
+          echo "Validating base manifests..."
+          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey' /tmp/base-output.yaml || exit 1
+          echo "Validating dev manifests..."
+          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey' /tmp/dev-output.yaml || exit 1
+          echo "Validating staging manifests..."
+          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey' /tmp/staging-output.yaml || exit 1
+          echo "Validating prod manifests..."
+          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey' /tmp/prod-output.yaml || exit 1
           echo "✅ Standard Kubernetes resources are schema compliant"
 
       - name: Security and Best Practice Check
