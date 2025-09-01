@@ -46,3 +46,115 @@ jobs:
           version: latest
           run_install: true
       - run: pnpm build
+
+  k8s-validate:
+    runs-on: ubuntu-latest
+    name: Validate Kubernetes Manifests
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Kustomize
+        uses: multani/action-setup-kustomize@v1
+        with:
+          version: 5.4.3
+          
+      - name: Setup kubeval
+        run: |
+          wget https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz
+          tar xf kubeval-linux-amd64.tar.gz
+          sudo cp kubeval /usr/local/bin
+          
+      - name: Setup kube-score
+        run: |
+          wget https://github.com/zegl/kube-score/releases/download/v1.17.0/kube-score_1.17.0_linux_amd64.tar.gz
+          tar -xzf kube-score_1.17.0_linux_amd64.tar.gz
+          sudo mv kube-score /usr/local/bin/
+          
+      - name: Setup yq
+        run: |
+          wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Validate YAML Syntax
+        run: |
+          echo "🔍 Validating YAML syntax..."
+          find k8s -name "*.yaml" -o -name "*.yml" | while read file; do
+            echo "Checking $file"
+            yq eval . "$file" > /dev/null || exit 1
+          done
+          echo "✅ All YAML files are valid"
+
+      - name: Validate Kustomize Build - Base
+        run: |
+          echo "🔧 Validating base kustomization..."
+          cd k8s/apps/portfolio/base
+          kustomize build . > /tmp/base-output.yaml
+          echo "✅ Base kustomization builds successfully"
+
+      - name: Validate Kustomize Build - Dev
+        run: |
+          echo "🔧 Validating dev overlay..."
+          cd k8s/apps/portfolio/overlays/dev
+          kustomize build . > /tmp/dev-output.yaml
+          echo "✅ Dev overlay builds successfully"
+
+      - name: Validate Kustomize Build - Staging
+        run: |
+          echo "🔧 Validating staging overlay..."
+          cd k8s/apps/portfolio/overlays/staging
+          kustomize build . > /tmp/staging-output.yaml
+          echo "✅ Staging overlay builds successfully"
+
+      - name: Validate Kustomize Build - Prod
+        run: |
+          echo "🔧 Validating production overlay..."
+          cd k8s/apps/portfolio/overlays/prod
+          kustomize build . > /tmp/prod-output.yaml
+          echo "✅ Production overlay builds successfully"
+
+      - name: Validate Kubernetes Schema
+        run: |
+          echo "📋 Validating Kubernetes schema compliance..."
+          kubeval /tmp/base-output.yaml || exit 1
+          kubeval /tmp/dev-output.yaml || exit 1
+          kubeval /tmp/staging-output.yaml || exit 1
+          kubeval /tmp/prod-output.yaml || exit 1
+          echo "✅ All manifests are schema compliant"
+
+      - name: Security and Best Practice Check
+        run: |
+          echo "🔒 Running security and best practice checks..."
+          kube-score score /tmp/base-output.yaml --ignore-test pod-networkpolicy --ignore-test container-image-pull-policy
+          kube-score score /tmp/dev-output.yaml --ignore-test pod-networkpolicy --ignore-test container-image-pull-policy
+          kube-score score /tmp/staging-output.yaml --ignore-test pod-networkpolicy --ignore-test container-image-pull-policy
+          kube-score score /tmp/prod-output.yaml --ignore-test pod-networkpolicy --ignore-test container-image-pull-policy
+          echo "✅ Security and best practice checks completed"
+
+      - name: Validate Config Connector CRDs
+        run: |
+          echo "☁️  Validating Config Connector CRDs..."
+          # Check for required fields in SQLInstance CRDs
+          yq eval '.spec.databaseVersion' k8s/apps/portfolio/base/cloudsql-instance.yaml | grep -q "POSTGRES_15" || exit 1
+          yq eval '.spec.region' k8s/apps/portfolio/base/cloudsql-instance.yaml | grep -q "us-central1" || exit 1
+          yq eval '.spec.settings.tier' k8s/apps/portfolio/base/cloudsql-instance.yaml | grep -q "db-f1-micro" || exit 1
+          echo "✅ Config Connector CRDs are valid"
+
+      - name: Check for Placeholder Values
+        run: |
+          echo "🔍 Checking for placeholder values that need replacement..."
+          if grep -r "PROJECT_ID\|your-project-id\|change-me" k8s/ --exclude-dir=".git" --include="*.yaml" --include="*.yml"; then
+            echo "❌ Found placeholder values that need to be replaced before deployment"
+            echo "Please replace PROJECT_ID, your-project-id, and change-me values with actual values"
+            exit 1
+          else
+            echo "✅ No placeholder values found"
+          fi
+
+      - name: Upload Validation Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k8s-validation-outputs
+          path: |
+            /tmp/*-output.yaml
+          retention-days: 7
