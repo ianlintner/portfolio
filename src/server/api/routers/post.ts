@@ -1,5 +1,9 @@
-import { z } from 'zod'
-import { createTRPCRouter, publicProcedure, protectedProcedure } from '@/server/api/trpc'
+import { z } from "zod";
+import {
+  createTRPCRouter,
+  publicProcedure,
+  protectedProcedure,
+} from "@/server/api/trpc";
 
 const createPostSchema = z.object({
   title: z.string().min(1),
@@ -11,11 +15,11 @@ const createPostSchema = z.object({
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),
   seoKeywords: z.array(z.string()).default([]),
-})
+});
 
 const updatePostSchema = createPostSchema.partial().extend({
   id: z.string(),
-})
+});
 
 export const postRouter = createTRPCRouter({
   // Public procedures
@@ -24,12 +28,12 @@ export const postRouter = createTRPCRouter({
       z.object({
         limit: z.number().min(1).max(100).default(10),
         cursor: z.string().nullish(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const posts = await ctx.db.post.findMany({
         where: { published: true },
-        orderBy: { publishedAt: 'desc' },
+        orderBy: { publishedAt: "desc" },
         take: input.limit + 1,
         cursor: input.cursor ? { id: input.cursor } : undefined,
         include: {
@@ -42,48 +46,23 @@ export const postRouter = createTRPCRouter({
             },
           },
         },
-      })
+      });
 
-      let nextCursor: typeof input.cursor | undefined = undefined
+      let nextCursor: typeof input.cursor | undefined = undefined;
       if (posts.length > input.limit) {
-        const nextItem = posts.pop()
-        nextCursor = nextItem!.id
+        const nextItem = posts.pop();
+        nextCursor = nextItem!.id;
       }
 
       return {
         posts,
         nextCursor,
-      }
+      };
     }),
 
-  getBySlug: publicProcedure
-    .input(z.string())
-    .query(async ({ ctx, input }) => {
-      const post = await ctx.db.post.findUnique({
-        where: { slug: input },
-        include: {
-          author: {
-            select: { name: true, email: true },
-          },
-          tags: {
-            include: {
-              tag: true,
-            },
-          },
-        },
-      })
-
-      if (!post || !post.published) {
-        throw new Error('Post not found')
-      }
-
-      return post
-    }),
-
-  // Protected procedures (admin only)
-  getAll: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.db.post.findMany({
-      orderBy: { createdAt: 'desc' },
+  getBySlug: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    const post = await ctx.db.post.findUnique({
+      where: { slug: input },
       include: {
         author: {
           select: { name: true, email: true },
@@ -94,7 +73,30 @@ export const postRouter = createTRPCRouter({
           },
         },
       },
-    })
+    });
+
+    if (!post || !post.published) {
+      throw new Error("Post not found");
+    }
+
+    return post;
+  }),
+
+  // Protected procedures (admin only)
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.db.post.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        author: {
+          select: { name: true, email: true },
+        },
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
+      },
+    });
   }),
 
   getById: protectedProcedure
@@ -109,19 +111,19 @@ export const postRouter = createTRPCRouter({
             },
           },
         },
-      })
+      });
     }),
 
   create: protectedProcedure
     .input(createPostSchema)
     .mutation(async ({ ctx, input }) => {
-      const { tags, ...postData } = input
-      
+      const { tags, ...postData } = input;
+
       // Generate slug from title
       const slug = postData.title
         .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '')
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
 
       const post = await ctx.db.post.create({
         data: {
@@ -130,7 +132,7 @@ export const postRouter = createTRPCRouter({
           publishedAt: postData.published ? new Date() : null,
           authorId: ctx.session.user.id,
         },
-      })
+      });
 
       // Handle tags
       if (tags.length > 0) {
@@ -140,25 +142,25 @@ export const postRouter = createTRPCRouter({
               where: { name: tagName },
               update: {},
               create: { name: tagName },
-            })
-          })
-        )
+            });
+          }),
+        );
 
         await ctx.db.postTag.createMany({
           data: tagRecords.map((tag) => ({
             postId: post.id,
             tagId: tag.id,
           })),
-        })
+        });
       }
 
-      return post
+      return post;
     }),
 
   update: protectedProcedure
     .input(updatePostSchema)
     .mutation(async ({ ctx, input }) => {
-      const { id, tags, ...postData } = input
+      const { id, tags, ...postData } = input;
 
       const post = await ctx.db.post.update({
         where: { id },
@@ -171,14 +173,14 @@ export const postRouter = createTRPCRouter({
                 : null
               : undefined,
         },
-      })
+      });
 
       // Handle tags if provided
       if (tags !== undefined) {
         // Remove existing tags
         await ctx.db.postTag.deleteMany({
           where: { postId: id },
-        })
+        });
 
         // Add new tags
         if (tags.length > 0) {
@@ -188,20 +190,20 @@ export const postRouter = createTRPCRouter({
                 where: { name: tagName },
                 update: {},
                 create: { name: tagName },
-              })
-            })
-          )
+              });
+            }),
+          );
 
           await ctx.db.postTag.createMany({
             data: tagRecords.map((tag) => ({
               postId: id,
               tagId: tag.id,
             })),
-          })
+          });
         }
       }
 
-      return post
+      return post;
     }),
 
   delete: protectedProcedure
@@ -209,6 +211,6 @@ export const postRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       await ctx.db.post.delete({
         where: { id: input },
-      })
+      });
     }),
-})
+});

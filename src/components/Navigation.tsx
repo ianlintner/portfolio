@@ -1,12 +1,12 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function Navigation() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
-  const isActive = (path: string) => pathname === path
+  const isActive = (path: string) => pathname === path;
 
   return (
     <nav className="border-b bg-background/90 dark:bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-colors">
@@ -20,7 +20,7 @@ export function Navigation() {
               <Link
                 href="/"
                 className={`transition-colors hover:text-foreground/80 ${
-                  isActive('/') ? 'text-foreground' : 'text-foreground/60'
+                  isActive("/") ? "text-foreground" : "text-foreground/60"
                 }`}
               >
                 Home
@@ -28,7 +28,9 @@ export function Navigation() {
               <Link
                 href="/blog"
                 className={`transition-colors hover:text-foreground/80 ${
-                  pathname?.startsWith('/blog') ? 'text-foreground' : 'text-foreground/60'
+                  pathname?.startsWith("/blog")
+                    ? "text-foreground"
+                    : "text-foreground/60"
                 }`}
               >
                 Blog
@@ -36,7 +38,9 @@ export function Navigation() {
               <Link
                 href="/demos"
                 className={`transition-colors hover:text-foreground/80 ${
-                  pathname?.startsWith('/demos') ? 'text-foreground' : 'text-foreground/60'
+                  pathname?.startsWith("/demos")
+                    ? "text-foreground"
+                    : "text-foreground/60"
                 }`}
               >
                 Demos
@@ -54,5 +58,5 @@ export function Navigation() {
         </div>
       </div>
     </nav>
-  )
+  );
 }

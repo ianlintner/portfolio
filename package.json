@@ -6,6 +6,7 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
+    "format": "prettier --check .",
     "start": "next start",
     "type-check": "tsc --noEmit",
     "db:push": "prisma db push",

@@ -4,12 +4,12 @@ const nextConfig = {
     appDir: true,
   },
   images: {
-    domains: ['storage.googleapis.com'],
+    domains: ["storage.googleapis.com"],
   },
   env: {
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

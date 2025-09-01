@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { ArrowRight, Github, Linkedin, Mail } from 'lucide-react'
+import Link from "next/link";
+import { ArrowRight, Github, Linkedin, Mail } from "lucide-react";
 
 export default function HomePage() {
   return (
@@ -20,11 +20,12 @@ export default function HomePage() {
                 Full Stack Developer & Cloud Architect
               </p>
               <p className="text-lg text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-                Building modern, scalable web applications with React, Next.js, TypeScript, and cloud technologies. 
-                Passionate about creating exceptional user experiences and robust backend systems.
+                Building modern, scalable web applications with React, Next.js,
+                TypeScript, and cloud technologies. Passionate about creating
+                exceptional user experiences and robust backend systems.
               </p>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
               <Link
                 href="/blog"
@@ -75,12 +76,15 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">Technologies & Expertise</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                Technologies & Expertise
+              </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Specialized in modern web development with a focus on performance, scalability, and user experience
+                Specialized in modern web development with a focus on
+                performance, scalability, and user experience
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="group p-6 rounded-xl bg-background border border-border hover:border-primary hover:shadow-lg transition-all duration-300">
                 <div className="mb-4">
@@ -96,7 +100,7 @@ export default function HomePage() {
                   <li>Framer Motion</li>
                 </ul>
               </div>
-              
+
               <div className="group p-6 rounded-xl bg-background border border-border hover:border-primary hover:shadow-lg transition-all duration-300">
                 <div className="mb-4">
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
@@ -111,7 +115,7 @@ export default function HomePage() {
                   <li>NextAuth.js</li>
                 </ul>
               </div>
-              
+
               <div className="group p-6 rounded-xl bg-background border border-border hover:border-primary hover:shadow-lg transition-all duration-300">
                 <div className="mb-4">
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
@@ -126,13 +130,15 @@ export default function HomePage() {
                   <li>GitHub Actions</li>
                 </ul>
               </div>
-              
+
               <div className="group p-6 rounded-xl bg-background border border-border hover:border-primary hover:shadow-lg transition-all duration-300">
                 <div className="mb-4">
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <span className="text-2xl">🔧</span>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Tools & Workflow</h3>
+                  <h3 className="text-xl font-semibold mb-2">
+                    Tools & Workflow
+                  </h3>
                 </div>
                 <ul className="space-y-1 text-muted-foreground">
                   <li>Git & GitHub</li>
@@ -152,21 +158,27 @@ export default function HomePage() {
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl sm:text-4xl font-bold mb-6">About Me</h2>
+                <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+                  About Me
+                </h2>
                 <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
                   <p>
-                    I'm a passionate full stack developer with a deep focus on building scalable, 
-                    high-performance web applications. My expertise spans the entire development lifecycle, 
-                    from designing intuitive user interfaces to architecting robust backend systems.
+                    I'm a passionate full stack developer with a deep focus on
+                    building scalable, high-performance web applications. My
+                    expertise spans the entire development lifecycle, from
+                    designing intuitive user interfaces to architecting robust
+                    backend systems.
                   </p>
                   <p>
-                    With extensive experience in modern JavaScript frameworks, cloud technologies, 
-                    and DevOps practices, I help teams deliver exceptional digital experiences 
-                    that scale with business growth.
+                    With extensive experience in modern JavaScript frameworks,
+                    cloud technologies, and DevOps practices, I help teams
+                    deliver exceptional digital experiences that scale with
+                    business growth.
                   </p>
                   <p>
-                    When I'm not coding, I enjoy sharing knowledge through technical writing, 
-                    contributing to open source projects, and mentoring fellow developers.
+                    When I'm not coding, I enjoy sharing knowledge through
+                    technical writing, contributing to open source projects, and
+                    mentoring fellow developers.
                   </p>
                 </div>
                 <div className="mt-8">
@@ -179,24 +191,40 @@ export default function HomePage() {
                   </Link>
                 </div>
               </div>
-              
+
               <div className="lg:pl-12">
                 <div className="grid grid-cols-2 gap-6">
                   <div className="text-center p-6 rounded-xl bg-primary/5 border border-primary/20">
-                    <div className="text-3xl font-bold text-primary mb-2">5+</div>
-                    <div className="text-sm text-muted-foreground">Years Experience</div>
+                    <div className="text-3xl font-bold text-primary mb-2">
+                      5+
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Years Experience
+                    </div>
                   </div>
                   <div className="text-center p-6 rounded-xl bg-primary/5 border border-primary/20">
-                    <div className="text-3xl font-bold text-primary mb-2">50+</div>
-                    <div className="text-sm text-muted-foreground">Projects Completed</div>
+                    <div className="text-3xl font-bold text-primary mb-2">
+                      50+
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Projects Completed
+                    </div>
                   </div>
                   <div className="text-center p-6 rounded-xl bg-primary/5 border border-primary/20">
-                    <div className="text-3xl font-bold text-primary mb-2">20+</div>
-                    <div className="text-sm text-muted-foreground">Blog Posts</div>
+                    <div className="text-3xl font-bold text-primary mb-2">
+                      20+
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Blog Posts
+                    </div>
                   </div>
                   <div className="text-center p-6 rounded-xl bg-primary/5 border border-primary/20">
-                    <div className="text-3xl font-bold text-primary mb-2">100%</div>
-                    <div className="text-sm text-muted-foreground">Client Satisfaction</div>
+                    <div className="text-3xl font-bold text-primary mb-2">
+                      100%
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Client Satisfaction
+                    </div>
                   </div>
                 </div>
               </div>
@@ -209,10 +237,12 @@ export default function HomePage() {
       <section className="py-24 bg-primary/5 border-t">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-6">Let's Build Something Amazing</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+              Let's Build Something Amazing
+            </h2>
             <p className="text-xl text-muted-foreground mb-8">
-              Ready to bring your next project to life? Let's discuss how we can work together 
-              to create exceptional web experiences.
+              Ready to bring your next project to life? Let's discuss how we can
+              work together to create exceptional web experiences.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -232,5 +262,5 @@ export default function HomePage() {
         </div>
       </section>
     </div>
-  )
+  );
 }

@@ -1,15 +1,23 @@
-import { Metadata } from 'next'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { ArrowLeft, Calendar, Clock, Tag, Share2, BookOpen } from 'lucide-react'
+import { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  Tag,
+  Share2,
+  BookOpen,
+} from "lucide-react";
 
 // Mock data for individual posts
 const mockPostContent = {
-  'modern-nextjs-portfolio-typescript-trpc': {
-    id: '1',
-    title: 'Building a Modern Next.js Portfolio with TypeScript and tRPC',
-    slug: 'modern-nextjs-portfolio-typescript-trpc',
-    excerpt: 'Learn how to build a full-stack portfolio website using Next.js 14, TypeScript, tRPC, and Prisma. This comprehensive guide covers everything from setup to deployment.',
+  "modern-nextjs-portfolio-typescript-trpc": {
+    id: "1",
+    title: "Building a Modern Next.js Portfolio with TypeScript and tRPC",
+    slug: "modern-nextjs-portfolio-typescript-trpc",
+    excerpt:
+      "Learn how to build a full-stack portfolio website using Next.js 14, TypeScript, tRPC, and Prisma. This comprehensive guide covers everything from setup to deployment.",
     content: `
 # Building a Modern Next.js Portfolio with TypeScript and tRPC
 
@@ -331,19 +339,20 @@ The combination of Next.js, TypeScript, tRPC, and Prisma creates a powerful foun
 
 Happy coding! 🚀
     `,
-    publishedAt: new Date('2024-01-15'),
-    author: { name: 'Ian Lintner' },
+    publishedAt: new Date("2024-01-15"),
+    author: { name: "Ian Lintner" },
     tags: [
-      { tag: { id: '1', name: 'Next.js' } },
-      { tag: { id: '2', name: 'TypeScript' } },
-      { tag: { id: '3', name: 'tRPC' } }
-    ]
+      { tag: { id: "1", name: "Next.js" } },
+      { tag: { id: "2", name: "TypeScript" } },
+      { tag: { id: "3", name: "tRPC" } },
+    ],
   },
-  'deploying-gke-gitops-argocd': {
-    id: '2',
-    title: 'Deploying to Google Kubernetes Engine with GitOps and ArgoCD',
-    slug: 'deploying-gke-gitops-argocd',
-    excerpt: 'A complete guide to setting up a production-ready Kubernetes deployment pipeline using Google Cloud Platform, GitOps principles, and ArgoCD for automated deployments.',
+  "deploying-gke-gitops-argocd": {
+    id: "2",
+    title: "Deploying to Google Kubernetes Engine with GitOps and ArgoCD",
+    slug: "deploying-gke-gitops-argocd",
+    excerpt:
+      "A complete guide to setting up a production-ready Kubernetes deployment pipeline using Google Cloud Platform, GitOps principles, and ArgoCD for automated deployments.",
     content: `
 # Deploying to Google Kubernetes Engine with GitOps and ArgoCD
 
@@ -415,19 +424,20 @@ spec:
 
 This guide covers the complete setup process for a production-ready deployment pipeline.
     `,
-    publishedAt: new Date('2024-01-10'),
-    author: { name: 'Ian Lintner' },
+    publishedAt: new Date("2024-01-10"),
+    author: { name: "Ian Lintner" },
     tags: [
-      { tag: { id: '4', name: 'Kubernetes' } },
-      { tag: { id: '5', name: 'Google Cloud' } },
-      { tag: { id: '6', name: 'DevOps' } }
-    ]
+      { tag: { id: "4", name: "Kubernetes" } },
+      { tag: { id: "5", name: "Google Cloud" } },
+      { tag: { id: "6", name: "DevOps" } },
+    ],
   },
-  'advanced-react-patterns-hooks-context': {
-    id: '3',
-    title: 'Advanced React Patterns: Custom Hooks and Context Management',
-    slug: 'advanced-react-patterns-hooks-context',
-    excerpt: 'Dive deep into advanced React patterns including custom hooks, context optimization, and state management strategies for large-scale applications.',
+  "advanced-react-patterns-hooks-context": {
+    id: "3",
+    title: "Advanced React Patterns: Custom Hooks and Context Management",
+    slug: "advanced-react-patterns-hooks-context",
+    excerpt:
+      "Dive deep into advanced React patterns including custom hooks, context optimization, and state management strategies for large-scale applications.",
     content: `
 # Advanced React Patterns: Custom Hooks and Context Management
 
@@ -515,56 +525,56 @@ Modal.Footer = function ModalFooter({ children }) {
 
 These patterns will help you build more maintainable and reusable React components.
     `,
-    publishedAt: new Date('2024-01-05'),
-    author: { name: 'Ian Lintner' },
+    publishedAt: new Date("2024-01-05"),
+    author: { name: "Ian Lintner" },
     tags: [
-      { tag: { id: '7', name: 'React' } },
-      { tag: { id: '8', name: 'JavaScript' } },
-      { tag: { id: '9', name: 'State Management' } }
-    ]
-  }
-}
+      { tag: { id: "7", name: "React" } },
+      { tag: { id: "8", name: "JavaScript" } },
+      { tag: { id: "9", name: "State Management" } },
+    ],
+  },
+};
 
 interface Props {
   params: {
-    slug: string
-  }
+    slug: string;
+  };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = mockPostContent[params.slug as keyof typeof mockPostContent]
-  
+  const post = mockPostContent[params.slug as keyof typeof mockPostContent];
+
   if (!post) {
     return {
-      title: 'Post Not Found | Ian Lintner',
-    }
+      title: "Post Not Found | Ian Lintner",
+    };
   }
 
   return {
     title: `${post.title} | Ian Lintner`,
     description: post.excerpt,
-    keywords: post.tags.map(tag => tag.tag.name),
+    keywords: post.tags.map((tag) => tag.tag.name),
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      type: 'article',
+      type: "article",
       publishedTime: post.publishedAt.toISOString(),
       authors: [post.author.name],
-      tags: post.tags.map(tag => tag.tag.name),
+      tags: post.tags.map((tag) => tag.tag.name),
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: post.title,
       description: post.excerpt,
     },
-  }
+  };
 }
 
 export default function BlogPostPage({ params }: Props) {
-  const post = mockPostContent[params.slug as keyof typeof mockPostContent]
+  const post = mockPostContent[params.slug as keyof typeof mockPostContent];
 
   if (!post) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -588,10 +598,10 @@ export default function BlogPostPage({ params }: Props) {
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
                 <span>
-                  {post.publishedAt.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
+                  {post.publishedAt.toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
                   })}
                 </span>
               </div>
@@ -629,7 +639,9 @@ export default function BlogPostPage({ params }: Props) {
 
             {/* Share Button */}
             <div className="flex items-center gap-4 pt-6 border-t border-border">
-              <span className="text-sm text-muted-foreground">Share this article:</span>
+              <span className="text-sm text-muted-foreground">
+                Share this article:
+              </span>
               <button className="inline-flex items-center gap-1 px-3 py-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
                 <Share2 className="h-4 w-4" />
                 Share
@@ -642,33 +654,38 @@ export default function BlogPostPage({ params }: Props) {
             <div
               dangerouslySetInnerHTML={{
                 __html: post.content
-                  .split('\n')
-                  .map(line => {
-                    if (line.startsWith('# ')) {
-                      return `<h1 class="text-3xl font-bold mt-12 mb-6">${line.slice(2)}</h1>`
+                  .split("\n")
+                  .map((line) => {
+                    if (line.startsWith("# ")) {
+                      return `<h1 class="text-3xl font-bold mt-12 mb-6">${line.slice(2)}</h1>`;
                     }
-                    if (line.startsWith('## ')) {
-                      return `<h2 class="text-2xl font-semibold mt-10 mb-4">${line.slice(3)}</h2>`
+                    if (line.startsWith("## ")) {
+                      return `<h2 class="text-2xl font-semibold mt-10 mb-4">${line.slice(3)}</h2>`;
                     }
-                    if (line.startsWith('### ')) {
-                      return `<h3 class="text-xl font-semibold mt-8 mb-3">${line.slice(4)}</h3>`
+                    if (line.startsWith("### ")) {
+                      return `<h3 class="text-xl font-semibold mt-8 mb-3">${line.slice(4)}</h3>`;
                     }
-                    if (line.startsWith('```')) {
-                      return line.includes('```bash') ? '<pre class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto"><code>' :
-                             line.includes('```tsx') || line.includes('```typescript') ? '<pre class="bg-blue-900 text-blue-100 p-4 rounded-lg overflow-x-auto"><code>' :
-                             line.includes('```yaml') ? '<pre class="bg-purple-900 text-purple-100 p-4 rounded-lg overflow-x-auto"><code>' :
-                             line === '```' ? '</code></pre>' :
-                             '<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto"><code>'
+                    if (line.startsWith("```")) {
+                      return line.includes("```bash")
+                        ? '<pre class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto"><code>'
+                        : line.includes("```tsx") ||
+                            line.includes("```typescript")
+                          ? '<pre class="bg-blue-900 text-blue-100 p-4 rounded-lg overflow-x-auto"><code>'
+                          : line.includes("```yaml")
+                            ? '<pre class="bg-purple-900 text-purple-100 p-4 rounded-lg overflow-x-auto"><code>'
+                            : line === "```"
+                              ? "</code></pre>"
+                              : '<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto"><code>';
                     }
-                    if (line.startsWith('- ')) {
-                      return `<li class="ml-4">${line.slice(2)}</li>`
+                    if (line.startsWith("- ")) {
+                      return `<li class="ml-4">${line.slice(2)}</li>`;
                     }
-                    if (line.trim() === '') {
-                      return '<br>'
+                    if (line.trim() === "") {
+                      return "<br>";
                     }
-                    return `<p class="mb-4 leading-relaxed">${line}</p>`
+                    return `<p class="mb-4 leading-relaxed">${line}</p>`;
                   })
-                  .join('')
+                  .join(""),
               }}
             />
           </article>
@@ -684,17 +701,19 @@ export default function BlogPostPage({ params }: Props) {
                 </div>
                 <div>
                   <h3 className="font-semibold">{post.author.name}</h3>
-                  <p className="text-sm text-muted-foreground">Full Stack Developer</p>
+                  <p className="text-sm text-muted-foreground">
+                    Full Stack Developer
+                  </p>
                 </div>
               </div>
-              
+
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Published on</p>
                 <p className="font-medium">
-                  {post.publishedAt.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
+                  {post.publishedAt.toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
                   })}
                 </p>
               </div>
@@ -703,5 +722,5 @@ export default function BlogPostPage({ params }: Props) {
         </div>
       </div>
     </div>
-  )
+  );
 }

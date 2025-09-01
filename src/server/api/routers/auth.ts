@@ -1,18 +1,21 @@
-import { z } from 'zod'
-import bcrypt from 'bcryptjs'
-import { createTRPCRouter, publicProcedure, protectedProcedure } from '@/server/api/trpc'
+import { z } from "zod";
+import bcrypt from "bcryptjs";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+} from "@/server/api/trpc";
 
 const createUserSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1),
   password: z.string().min(6),
-  role: z.enum(['ADMIN', 'EDITOR']).default('EDITOR'),
-})
+  role: z.enum(["ADMIN", "EDITOR"]).default("EDITOR"),
+});
 
 export const authRouter = createTRPCRouter({
   // Get current user session
   getSession: protectedProcedure.query(({ ctx }) => {
-    return ctx.session
+    return ctx.session;
   }),
 
   // Create new user (admin only)
@@ -20,21 +23,21 @@ export const authRouter = createTRPCRouter({
     .input(createUserSchema)
     .mutation(async ({ ctx, input }) => {
       // Only admins can create users
-      if (ctx.session.user.role !== 'ADMIN') {
-        throw new Error('Unauthorized')
+      if (ctx.session.user.role !== "ADMIN") {
+        throw new Error("Unauthorized");
       }
 
       // Check if user already exists
       const existingUser = await ctx.db.user.findUnique({
         where: { email: input.email },
-      })
+      });
 
       if (existingUser) {
-        throw new Error('User already exists')
+        throw new Error("User already exists");
       }
 
       // Hash password
-      const passwordHash = await bcrypt.hash(input.password, 12)
+      const passwordHash = await bcrypt.hash(input.password, 12);
 
       // Create user
       const user = await ctx.db.user.create({
@@ -51,15 +54,15 @@ export const authRouter = createTRPCRouter({
           role: true,
           createdAt: true,
         },
-      })
+      });
 
-      return user
+      return user;
     }),
 
   // Get all users (admin only)
   getUsers: protectedProcedure.query(async ({ ctx }) => {
-    if (ctx.session.user.role !== 'ADMIN') {
-      throw new Error('Unauthorized')
+    if (ctx.session.user.role !== "ADMIN") {
+      throw new Error("Unauthorized");
     }
 
     return ctx.db.user.findMany({
@@ -70,8 +73,8 @@ export const authRouter = createTRPCRouter({
         role: true,
         createdAt: true,
       },
-      orderBy: { createdAt: 'desc' },
-    })
+      orderBy: { createdAt: "desc" },
+    });
   }),
 
   // Update user (admin only or self)
@@ -81,15 +84,15 @@ export const authRouter = createTRPCRouter({
         id: z.string(),
         name: z.string().min(1).optional(),
         email: z.string().email().optional(),
-        role: z.enum(['ADMIN', 'EDITOR']).optional(),
-      })
+        role: z.enum(["ADMIN", "EDITOR"]).optional(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { id, ...updateData } = input
+      const { id, ...updateData } = input;
 
       // Users can update themselves, admins can update anyone
-      if (ctx.session.user.role !== 'ADMIN' && ctx.session.user.id !== id) {
-        throw new Error('Unauthorized')
+      if (ctx.session.user.role !== "ADMIN" && ctx.session.user.id !== id) {
+        throw new Error("Unauthorized");
       }
 
       return ctx.db.user.update({
@@ -102,7 +105,7 @@ export const authRouter = createTRPCRouter({
           role: true,
           updatedAt: true,
         },
-      })
+      });
     }),
 
   // Change password
@@ -111,32 +114,35 @@ export const authRouter = createTRPCRouter({
       z.object({
         currentPassword: z.string(),
         newPassword: z.string().min(6),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.db.user.findUnique({
         where: { id: ctx.session.user.id },
-      })
+      });
 
       if (!user) {
-        throw new Error('User not found')
+        throw new Error("User not found");
       }
 
       // Verify current password
-      const isValidPassword = await bcrypt.compare(input.currentPassword, user.passwordHash)
+      const isValidPassword = await bcrypt.compare(
+        input.currentPassword,
+        user.passwordHash,
+      );
       if (!isValidPassword) {
-        throw new Error('Invalid current password')
+        throw new Error("Invalid current password");
       }
 
       // Hash new password
-      const newPasswordHash = await bcrypt.hash(input.newPassword, 12)
+      const newPasswordHash = await bcrypt.hash(input.newPassword, 12);
 
       // Update password
       await ctx.db.user.update({
         where: { id: ctx.session.user.id },
         data: { passwordHash: newPasswordHash },
-      })
+      });
 
-      return { success: true }
+      return { success: true };
     }),
-})
+});
