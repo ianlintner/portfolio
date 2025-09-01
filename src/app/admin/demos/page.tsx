@@ -16,6 +16,16 @@ const categoryLabels = {
 
 type DemoCategory = keyof typeof categoryLabels;
 
+interface Demo {
+  id: string;
+  name: string;
+  description: string;
+  category: DemoCategory;
+  published: boolean;
+  technologies: string[];
+  createdAt: string;
+}
+
 export default function DemosManagement() {
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
 
@@ -27,7 +37,7 @@ export default function DemosManagement() {
   });
 
   const filteredDemos =
-    demos?.filter((demo) => {
+    demos?.filter((demo: Demo) => {
       if (filter === "published") return demo.published;
       if (filter === "draft") return !demo.published;
       return true;
@@ -121,7 +131,7 @@ export default function DemosManagement() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-            {filteredDemos.map((demo) => (
+            {filteredDemos.map((demo: Demo) => (
               <div
                 key={demo.id}
                 className="rounded-lg border p-4 hover:bg-muted/50 transition-colors"
@@ -153,7 +163,7 @@ export default function DemosManagement() {
 
                 <div className="mb-3">
                   <div className="flex flex-wrap gap-1">
-                    {demo.technologies.slice(0, 3).map((tech, index) => (
+                    {demo.technologies.slice(0, 3).map((tech: string, index: number) => (
                       <span
                         key={index}
                         className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground"

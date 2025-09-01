@@ -2,15 +2,28 @@
 
 import { trpc } from "@/utils/trpc";
 
+interface Post {
+  id: string;
+  published: boolean;
+  title: string;
+  createdAt: string;
+}
+
+interface Demo {
+  id: string;
+  published: boolean;
+  title: string;
+}
+
 export default function AdminDashboard() {
   const { data: posts, isLoading: postsLoading } = trpc.post.getAll.useQuery();
   const { data: demos, isLoading: demosLoading } = trpc.demo.getAll.useQuery();
   const { data: session } = trpc.auth.getSession.useQuery();
 
-  const publishedPosts = posts?.filter((post) => post.published) || [];
-  const draftPosts = posts?.filter((post) => !post.published) || [];
-  const publishedDemos = demos?.filter((demo) => demo.published) || [];
-  const draftDemos = demos?.filter((demo) => !demo.published) || [];
+  const publishedPosts = posts?.filter((post: Post) => post.published) || [];
+  const draftPosts = posts?.filter((post: Post) => !post.published) || [];
+  const publishedDemos = demos?.filter((demo: Demo) => demo.published) || [];
+  const draftDemos = demos?.filter((demo: Demo) => !demo.published) || [];
 
   return (
     <div className="space-y-8">
@@ -149,7 +162,7 @@ export default function AdminDashboard() {
             </div>
           ) : (
             <div className="divide-y">
-              {posts?.slice(0, 5).map((post) => (
+              {posts?.slice(0, 5).map((post: Post) => (
                 <div
                   key={post.id}
                   className="p-4 flex items-center justify-between"

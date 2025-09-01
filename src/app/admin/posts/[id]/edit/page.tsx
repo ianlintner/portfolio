@@ -4,6 +4,12 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 
+interface PostTag {
+  tag: {
+    name: string;
+  };
+}
+
 export default function EditPost() {
   const router = useRouter();
   const params = useParams();
@@ -33,7 +39,7 @@ export default function EditPost() {
       setTitle(post.title);
       setExcerpt(post.excerpt || "");
       setContent(post.content);
-      setTags(post.tags.map((pt) => pt.tag.name).join(", "));
+      setTags(post.tags.map((pt: PostTag) => pt.tag.name).join(", "));
       setPublished(post.published);
       setSeoTitle(post.seoTitle || "");
       setSeoDescription(post.seoDescription || "");
