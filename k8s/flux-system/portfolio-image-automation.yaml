@@ -1,0 +1,87 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: portfolio
+  namespace: flux-system
+spec:
+  image: gcr.io/your-project-id/portfolio
+  interval: 5m
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: portfolio-dev
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: portfolio
+  policy:
+    semver:
+      range: ">=1.0.0-dev"
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: portfolio-staging
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: portfolio
+  policy:
+    semver:
+      range: ">=1.0.0-rc"
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: portfolio-prod
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: portfolio
+  policy:
+    semver:
+      range: ">=1.0.0"
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageUpdateAutomation
+metadata:
+  name: portfolio
+  namespace: flux-system
+spec:
+  interval: 30m
+  sourceRef:
+    kind: GitRepository
+    name: portfolio-repo
+  git:
+    checkout:
+      ref:
+        branch: main
+    commit:
+      author:
+        email: flux@portfolio.com
+        name: flux
+      messageTemplate: |
+        Automated image update
+
+        Automation name: {{ .AutomationObject }}
+
+        Files:
+        {{ range $filename, $_ := .Updated.Files -}}
+        - {{ $filename }}
+        {{ end -}}
+
+        Objects:
+        {{ range $resource, $_ := .Updated.Objects -}}
+        - {{ $resource.Kind }} {{ $resource.Name }}
+        {{ end -}}
+
+        Images:
+        {{ range .Updated.Images -}}
+        - {{.}}
+        {{ end -}}
+    push:
+      branch: main
+  update:
+    path: "./k8s/apps/portfolio"
+    strategy: Setters
