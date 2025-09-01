@@ -16,7 +16,7 @@ spec:
       startTime: "03:00"
       retainedBackups: 7
     maintenanceWindow:
-      day: 7  # Sunday
+      day: 7 # Sunday
       hour: 2
     ipConfiguration:
       requireSsl: true

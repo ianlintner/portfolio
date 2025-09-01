@@ -17,7 +17,7 @@ spec:
     name: portfolio
   policy:
     semver:
-      range: '>=1.0.0-dev'
+      range: ">=1.0.0-dev"
 ---
 apiVersion: image.toolkit.fluxcd.io/v1beta2
 kind: ImagePolicy
@@ -29,7 +29,7 @@ spec:
     name: portfolio
   policy:
     semver:
-      range: '>=1.0.0-rc'
+      range: ">=1.0.0-rc"
 ---
 apiVersion: image.toolkit.fluxcd.io/v1beta2
 kind: ImagePolicy
@@ -41,7 +41,7 @@ spec:
     name: portfolio
   policy:
     semver:
-      range: '>=1.0.0'
+      range: ">=1.0.0"
 ---
 apiVersion: image.toolkit.fluxcd.io/v1beta1
 kind: ImageUpdateAutomation

@@ -109,15 +109,16 @@ Update the `DATABASE_URL` secrets in each overlay with the actual database passw
 ```yaml
 # Example for dev overlay
 secretGenerator:
-- name: db-secret
-  behavior: merge
-  literals:
-  - DATABASE_URL=postgresql://portfolio-dev:ACTUAL_DEV_PASSWORD@localhost:5432/portfolio_dev
+  - name: db-secret
+    behavior: merge
+    literals:
+      - DATABASE_URL=postgresql://portfolio-dev:ACTUAL_DEV_PASSWORD@localhost:5432/portfolio_dev
 ```
 
 ## Instance Tiers and Costs
 
 ### db-f1-micro (Smallest/Cheapest)
+
 - **CPU**: 1 shared vCPU
 - **RAM**: 0.6 GB
 - **Storage**: 10-3,062 GB
@@ -125,6 +126,7 @@ secretGenerator:
 - **Use case**: Development, staging, small applications
 
 ### db-g1-small (Recommended for Production)
+
 - **CPU**: 1 shared vCPU
 - **RAM**: 1.7 GB
 - **Storage**: 10-3,062 GB

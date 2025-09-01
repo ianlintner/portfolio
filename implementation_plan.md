@@ -17,6 +17,7 @@ This implementation will create Docker containers, Kubernetes manifests using Ku
 Define Kubernetes resource types and application configuration structures.
 
 **Kubernetes Resources:**
+
 - Deployment: Main application deployment with Next.js container
 - Service: ClusterIP service exposing the application on port 3000
 - ConfigMap: Environment-specific configuration (DATABASE_URL, NEXTAUTH_URL, etc.)
@@ -26,12 +27,14 @@ Define Kubernetes resource types and application configuration structures.
 - Ingress: External traffic routing with TLS termination
 
 **Database Resources:**
+
 - StatefulSet: PostgreSQL database deployment
 - Service: Database service for internal communication
 - PersistentVolumeClaim: Database persistent storage
 - Secret: Database credentials and connection strings
 
 **Environment Configuration Types:**
+
 - Development: Single replica, minimal resources, debug logging
 - Staging: 2 replicas, moderate resources, structured logging
 - Production: 3+ replicas, full resources, performance optimizations, high availability
@@ -41,6 +44,7 @@ Define Kubernetes resource types and application configuration structures.
 Detailed breakdown of files to create and modify.
 
 **New Files to Create:**
+
 - `Dockerfile` - Multi-stage Docker build for Next.js application
 - `dockerignore` - Docker build context exclusions
 - `k8s/apps/portfolio/base/kustomization.yaml` - Base Kustomize configuration
@@ -58,6 +62,7 @@ Detailed breakdown of files to create and modify.
 - `k8s/flux-system/portfolio-image-automation.yaml` - Automated image updates
 
 **Files to Modify:**
+
 - `next.config.js` - Add production optimizations and output configuration
 - `package.json` - Add Docker and health check scripts
 - `.env.example` - Update with Kubernetes-specific environment variables
@@ -67,12 +72,14 @@ Detailed breakdown of files to create and modify.
 Application health check and configuration functions.
 
 **New Functions:**
+
 - `healthCheck()` - HTTP endpoint function in `src/app/api/health/route.ts`
   - Implements Kubernetes liveness/readiness probes
   - Checks database connectivity and application status
   - Returns 200 OK with health status JSON
 
 **Modified Functions:**
+
 - Database connection handling in `src/server/db.ts`
   - Add connection retry logic for Kubernetes deployments
   - Implement graceful shutdown handling
@@ -83,6 +90,7 @@ Application health check and configuration functions.
 No new classes required, but configuration management enhancements.
 
 **Configuration Management:**
+
 - Environment-specific database configurations
 - Container runtime optimizations
 - Health monitoring integration
@@ -93,16 +101,19 @@ No new classes required, but configuration management enhancements.
 Container runtime and Kubernetes integration dependencies.
 
 **Runtime Dependencies:**
+
 - Node.js 18 Alpine base image for smaller container size
 - PostgreSQL 15 for database deployment
 - Nginx or built-in Next.js server for production serving
 
 **Build Dependencies:**
+
 - Docker multi-stage builds for optimized production images
 - Kubernetes manifests validated against cluster API versions
 - Kustomize for environment-specific configurations
 
 **External Dependencies:**
+
 - Google Container Registry or Artifact Registry for image storage
 - Google Cloud SQL or in-cluster PostgreSQL
 - Flux CD for GitOps deployment automation
@@ -113,17 +124,20 @@ Container runtime and Kubernetes integration dependencies.
 Comprehensive testing strategy for Kubernetes deployment.
 
 **Container Testing:**
+
 - Docker image build and security scanning
 - Container startup and health check validation
 - Resource usage and performance testing
 
 **Kubernetes Testing:**
+
 - Manifest validation with `kubectl --dry-run`
 - Kustomize overlay testing for each environment
 - Network policy validation and connectivity testing
 - Rolling deployment and rollback testing
 
 **Integration Testing:**
+
 - Database connectivity and migration testing
 - Authentication flow testing in containerized environment
 - API endpoint testing with proper service discovery

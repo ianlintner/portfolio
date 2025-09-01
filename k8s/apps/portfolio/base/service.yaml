@@ -6,8 +6,8 @@ spec:
   selector:
     app: portfolio
   ports:
-  - name: http
-    port: 80
-    targetPort: http
-    protocol: TCP
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP
   type: ClusterIP

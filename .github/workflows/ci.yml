@@ -52,24 +52,24 @@ jobs:
     name: Validate Kubernetes Manifests
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Kustomize
         uses: multani/action-setup-kustomize@v1
         with:
           version: 5.4.3
-          
+
       - name: Setup kubeval
         run: |
           wget https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz
           tar xf kubeval-linux-amd64.tar.gz
           sudo cp kubeval /usr/local/bin
-          
+
       - name: Setup kube-score
         run: |
           wget https://github.com/zegl/kube-score/releases/download/v1.17.0/kube-score_1.17.0_linux_amd64.tar.gz
           tar -xzf kube-score_1.17.0_linux_amd64.tar.gz
           sudo mv kube-score /usr/local/bin/
-          
+
       - name: Setup yq
         run: |
           wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
@@ -115,11 +115,17 @@ jobs:
       - name: Validate Kubernetes Schema
         run: |
           echo "📋 Validating Kubernetes schema compliance..."
-          kubeval /tmp/base-output.yaml || exit 1
-          kubeval /tmp/dev-output.yaml || exit 1
-          kubeval /tmp/staging-output.yaml || exit 1
-          kubeval /tmp/prod-output.yaml || exit 1
-          echo "✅ All manifests are schema compliant"
+          # Filter out Config Connector CRDs as they're not in public schema repository
+          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/base-output.yaml > /tmp/base-k8s-only.yaml || true
+          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/dev-output.yaml > /tmp/dev-k8s-only.yaml || true
+          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/staging-output.yaml > /tmp/staging-k8s-only.yaml || true
+          grep -v -E "apiVersion: (iam\.cnrm\.cloud\.google\.com|sql\.cnrm\.cloud\.google\.com)" /tmp/prod-output.yaml > /tmp/prod-k8s-only.yaml || true
+
+          kubeval /tmp/base-k8s-only.yaml || exit 1
+          kubeval /tmp/dev-k8s-only.yaml || exit 1
+          kubeval /tmp/staging-k8s-only.yaml || exit 1
+          kubeval /tmp/prod-k8s-only.yaml || exit 1
+          echo "✅ Standard Kubernetes resources are schema compliant"
 
       - name: Security and Best Practice Check
         run: |

@@ -2,12 +2,12 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- deployment.yaml
-- service.yaml
-- serviceaccount.yaml
-- networkpolicy.yaml
-- cloudsql-instance.yaml
-- cloudsql-serviceaccount.yaml
+  - deployment.yaml
+  - service.yaml
+  - serviceaccount.yaml
+  - networkpolicy.yaml
+  - cloudsql-instance.yaml
+  - cloudsql-serviceaccount.yaml
 
 commonLabels:
   app.kubernetes.io/managed-by: flux
@@ -20,23 +20,23 @@ commonAnnotations:
 namePrefix: portfolio-
 
 configMapGenerator:
-- name: config
-  behavior: create
-  literals:
-  - NODE_ENV=production
-  - NEXTAUTH_URL=https://portfolio.example.com
-  - CLOUD_SQL_CONNECTION_NAME=PROJECT_ID:us-central1:portfolio-db-base
+  - name: config
+    behavior: create
+    literals:
+      - NODE_ENV=production
+      - NEXTAUTH_URL=https://portfolio.example.com
+      - CLOUD_SQL_CONNECTION_NAME=PROJECT_ID:us-central1:portfolio-db-base
 
 secretGenerator:
-- name: secrets
-  behavior: create
-  literals:
-  - NEXTAUTH_SECRET=change-me-in-overlay
-- name: db-secret
-  behavior: create
-  literals:
-  - DATABASE_URL=postgresql://portfolio-db-user:change-me-in-overlay@localhost:5432/portfolio-db-database
-- name: db-password
-  behavior: create
-  literals:
-  - password=change-me-in-overlay
+  - name: secrets
+    behavior: create
+    literals:
+      - NEXTAUTH_SECRET=change-me-in-overlay
+  - name: db-secret
+    behavior: create
+    literals:
+      - DATABASE_URL=postgresql://portfolio-db-user:change-me-in-overlay@localhost:5432/portfolio-db-database
+  - name: db-password
+    behavior: create
+    literals:
+      - password=change-me-in-overlay
