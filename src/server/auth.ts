@@ -90,13 +90,6 @@ export const authOptions: NextAuthOptions = {
           console.error("[Auth] Exception during authorize:", err);
           return null;
         }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        };
       },
     }),
   ],

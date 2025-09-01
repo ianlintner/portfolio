@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import Link from "next/link";
+import type { ComponentDemo, DemoCategory } from "@/types";
 
 const categoryLabels = {
   REACT: "React",
@@ -13,18 +14,6 @@ const categoryLabels = {
   API: "API",
   DATABASE: "Database",
 };
-
-type DemoCategory = keyof typeof categoryLabels;
-
-interface Demo {
-  id: string;
-  name: string;
-  description: string;
-  category: DemoCategory;
-  published: boolean;
-  technologies: string[];
-  createdAt: string;
-}
 
 export default function DemosManagement() {
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
@@ -37,7 +26,7 @@ export default function DemosManagement() {
   });
 
   const filteredDemos =
-    demos?.filter((demo: Demo) => {
+    demos?.filter((demo: ComponentDemo) => {
       if (filter === "published") return demo.published;
       if (filter === "draft") return !demo.published;
       return true;
@@ -131,7 +120,7 @@ export default function DemosManagement() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-            {filteredDemos.map((demo: Demo) => (
+            {filteredDemos.map((demo: ComponentDemo) => (
               <div
                 key={demo.id}
                 className="rounded-lg border p-4 hover:bg-muted/50 transition-colors"
@@ -163,7 +152,7 @@ export default function DemosManagement() {
 
                 <div className="mb-3">
                   <div className="flex flex-wrap gap-1">
-                    {demo.technologies.slice(0, 3).map((tech: string, index: number) => (
+                    {demo.technologies.slice(0, 3).map((tech, index) => (
                       <span
                         key={index}
                         className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground"

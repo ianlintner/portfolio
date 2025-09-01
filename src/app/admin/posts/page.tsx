@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import Link from "next/link";
+import type { Post, PostTag } from "@/types";
 
 export default function PostsManagement() {
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
@@ -16,7 +17,7 @@ export default function PostsManagement() {
   });
 
   const filteredPosts =
-    posts?.filter((post) => {
+    posts?.filter((post: Post) => {
       if (filter === "published") return post.published;
       if (filter === "draft") return !post.published;
       return true;
@@ -108,7 +109,7 @@ export default function PostsManagement() {
           </div>
         ) : (
           <div className="divide-y">
-            {filteredPosts.map((post) => (
+            {filteredPosts.map((post: Post) => (
               <div
                 key={post.id}
                 className="p-4 hover:bg-muted/50 transition-colors"
@@ -135,7 +136,7 @@ export default function PostsManagement() {
                       {post.excerpt || "No excerpt available"}
                     </p>
                     <div className="mt-2 flex items-center space-x-4 text-sm text-muted-foreground">
-                      <span>By {post.author.name}</span>
+                      <span>By {post.author?.name || 'Unknown Author'}</span>
                       <span>•</span>
                       <span>
                         {new Date(post.createdAt).toLocaleDateString()}
@@ -144,7 +145,7 @@ export default function PostsManagement() {
                         <>
                           <span>•</span>
                           <div className="flex items-center space-x-1">
-                            {post.tags.slice(0, 3).map((postTag) => (
+                            {post.tags.slice(0, 3).map((postTag: PostTag) => (
                               <span
                                 key={postTag.tag.id}
                                 className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-secondary text-secondary-foreground"

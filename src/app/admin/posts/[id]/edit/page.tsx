@@ -3,12 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { trpc } from "@/utils/trpc";
-
-interface PostTag {
-  tag: {
-    name: string;
-  };
-}
+import type { PostTag } from "@/types";
 
 export default function EditPost() {
   const router = useRouter();
@@ -201,7 +196,7 @@ export default function EditPost() {
                   {new Date(post.updatedAt).toLocaleString()}
                 </p>
                 <p>
-                  <strong>Author:</strong> {post.author?.name}
+                  <strong>Author ID:</strong> {post.authorId}
                 </p>
                 <p>
                   <strong>Slug:</strong> {post.slug}
