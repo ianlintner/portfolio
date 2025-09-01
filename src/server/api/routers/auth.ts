@@ -1,9 +1,6 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import {
-  createTRPCRouter,
-  protectedProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
 const createUserSchema = z.object({
   email: z.string().email(),

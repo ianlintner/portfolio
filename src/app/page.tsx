@@ -163,8 +163,8 @@ export default function HomePage() {
                 </h2>
                 <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
                   <p>
-                    I&apos;m a passionate full stack developer with a deep focus on
-                    building scalable, high-performance web applications. My
+                    I&apos;m a passionate full stack developer with a deep focus
+                    on building scalable, high-performance web applications. My
                     expertise spans the entire development lifecycle, from
                     designing intuitive user interfaces to architecting robust
                     backend systems.
@@ -241,8 +241,8 @@ export default function HomePage() {
               Let&apos;s Build Something Amazing
             </h2>
             <p className="text-xl text-muted-foreground mb-8">
-              Ready to bring your next project to life? Let&apos;s discuss how we can
-              work together to create exceptional web experiences.
+              Ready to bring your next project to life? Let&apos;s discuss how
+              we can work together to create exceptional web experiences.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
