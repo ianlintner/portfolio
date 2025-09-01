@@ -536,13 +536,14 @@ These patterns will help you build more maintainable and reusable React componen
 };
 
 interface Props {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = mockPostContent[params.slug as keyof typeof mockPostContent];
+  const resolvedParams = await params;
+  const post = mockPostContent[resolvedParams.slug as keyof typeof mockPostContent];
 
   if (!post) {
     return {
@@ -570,8 +571,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function BlogPostPage({ params }: Props) {
-  const post = mockPostContent[params.slug as keyof typeof mockPostContent];
+export default async function BlogPostPage({ params }: Props) {
+  const resolvedParams = await params;
+  const post = mockPostContent[resolvedParams.slug as keyof typeof mockPostContent];
 
   if (!post) {
     notFound();
