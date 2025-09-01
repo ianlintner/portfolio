@@ -543,7 +543,8 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
-  const post = mockPostContent[resolvedParams.slug as keyof typeof mockPostContent];
+  const post =
+    mockPostContent[resolvedParams.slug as keyof typeof mockPostContent];
 
   if (!post) {
     return {
@@ -573,7 +574,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const resolvedParams = await params;
-  const post = mockPostContent[resolvedParams.slug as keyof typeof mockPostContent];
+  const post =
+    mockPostContent[resolvedParams.slug as keyof typeof mockPostContent];
 
   if (!post) {
     notFound();

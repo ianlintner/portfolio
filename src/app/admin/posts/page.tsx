@@ -136,7 +136,7 @@ export default function PostsManagement() {
                       {post.excerpt || "No excerpt available"}
                     </p>
                     <div className="mt-2 flex items-center space-x-4 text-sm text-muted-foreground">
-                      <span>By {post.author?.name || 'Unknown Author'}</span>
+                      <span>By {post.author?.name || "Unknown Author"}</span>
                       <span>•</span>
                       <span>
                         {new Date(post.createdAt).toLocaleDateString()}
