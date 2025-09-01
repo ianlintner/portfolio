@@ -1,0 +1,121 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../base
+
+namespace: prod
+
+commonLabels:
+  env: prod
+
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/replicas
+      value: 3
+    - op: replace
+      path: /spec/template/spec/containers/0/resources/requests/cpu
+      value: 200m
+    - op: replace
+      path: /spec/template/spec/containers/0/resources/requests/memory
+      value: 512Mi
+    - op: replace
+      path: /spec/template/spec/containers/0/resources/limits/cpu
+      value: 1000m
+    - op: replace
+      path: /spec/template/spec/containers/0/resources/limits/memory
+      value: 1Gi
+    - op: add
+      path: /spec/template/spec/topologySpreadConstraints
+      value:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: portfolio
+    - op: add
+      path: /spec/template/spec/affinity
+      value:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: portfolio
+              topologyKey: kubernetes.io/hostname
+  target:
+    kind: Deployment
+    name: portfolio
+- patch: |-
+    - op: replace
+      path: /metadata/name
+      value: portfolio-prod-db
+    - op: replace
+      path: /spec/settings/tier
+      value: db-g1-small
+    - op: replace
+      path: /spec/settings/diskSize
+      value: 50
+    - op: replace
+      path: /spec/settings/diskType
+      value: PD_SSD
+    - op: add
+      path: /spec/settings/availabilityType
+      value: REGIONAL
+  target:
+    kind: SQLInstance
+    name: portfolio-db-base
+- patch: |-
+    - op: replace
+      path: /metadata/name
+      value: portfolio-prod-database
+  target:
+    kind: SQLDatabase
+    name: portfolio-db-database
+- patch: |-
+    - op: replace
+      path: /metadata/name
+      value: portfolio-prod-user
+  target:
+    kind: SQLUser
+    name: portfolio-db-user
+- patch: |-
+    - op: replace
+      path: /spec/resourceRef/external
+      value: projects/PROJECT_ID
+    - op: replace
+      path: /spec/bindings/0/members/0
+      value: serviceAccount:portfolio-cloudsql-sa@PROJECT_ID.iam.gserviceaccount.com
+  target:
+    kind: IAMPolicy
+    name: portfolio-cloudsql-policy
+
+configMapGenerator:
+- name: config
+  behavior: merge
+  literals:
+  - NODE_ENV=production
+  - NEXTAUTH_URL=https://portfolio.example.com
+  - CLOUD_SQL_CONNECTION_NAME=PROJECT_ID:us-central1:portfolio-prod-db
+
+secretGenerator:
+- name: secrets
+  behavior: merge
+  literals:
+  - NEXTAUTH_SECRET=prod-secret-key-change-me
+- name: db-secret
+  behavior: merge
+  literals:
+  - DATABASE_URL=postgresql://portfolio-prod-user:prod-password-change-me@localhost:5432/portfolio-prod-database
+- name: db-password
+  behavior: merge
+  literals:
+  - password=prod-password-change-me
+
+images:
+- name: portfolio
+  newName: portfolio
+  newTag: prod

@@ -1,0 +1,46 @@
+apiVersion: sql.cnrm.cloud.google.com/v1beta1
+kind: SQLInstance
+metadata:
+  name: portfolio-db-base
+  annotations:
+    cnrm.cloud.google.com/deletion-policy: "abandon"
+spec:
+  databaseVersion: POSTGRES_15
+  region: us-central1
+  settings:
+    tier: db-f1-micro
+    diskSize: 10
+    diskType: PD_HDD
+    backupConfiguration:
+      enabled: true
+      startTime: "03:00"
+      retainedBackups: 7
+    maintenanceWindow:
+      day: 7  # Sunday
+      hour: 2
+    ipConfiguration:
+      requireSsl: true
+      authorizedNetworks: []
+---
+apiVersion: sql.cnrm.cloud.google.com/v1beta1
+kind: SQLDatabase
+metadata:
+  name: portfolio-db-database
+spec:
+  charset: UTF8
+  collation: en_US.UTF8
+  instanceRef:
+    name: portfolio-db-base
+---
+apiVersion: sql.cnrm.cloud.google.com/v1beta1
+kind: SQLUser
+metadata:
+  name: portfolio-db-user
+spec:
+  instanceRef:
+    name: portfolio-db-base
+  password:
+    valueFrom:
+      secretKeyRef:
+        name: portfolio-db-password
+        key: password
