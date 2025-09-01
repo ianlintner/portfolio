@@ -1,11 +1,13 @@
 # Implementation Plan
 
 ## [Overview]
+
 Create a comprehensive Next.js TypeScript portfolio website with custom CMS functionality using Prisma and tRPC.
 
 This implementation will build a full-stack portfolio website for a software engineer featuring a custom content management system, blog functionality, and interactive component demonstrations. The architecture leverages Next.js 14 with App Router, Prisma ORM with PostgreSQL, tRPC for type-safe API communication, and a custom-built admin interface for content management. The system will be designed for Kubernetes deployment and include extensible architecture for connecting to other cluster services for demonstrations.
 
 ## [Types]
+
 Define comprehensive TypeScript interfaces and Prisma schema types for content management and API communication.
 
 ```typescript
@@ -78,6 +80,7 @@ interface UpdatePostInput extends Partial<CreatePostInput> {
 ```
 
 Prisma Schema:
+
 ```prisma
 model User {
   id           String   @id @default(cuid())
@@ -120,7 +123,7 @@ model PostTag {
   postId String
   tag    Tag    @relation(fields: [tagId], references: [id])
   tagId  String
-  
+
   @@id([postId, tagId])
 }
 
@@ -154,9 +157,11 @@ enum DemoCategory {
 ```
 
 ## [Files]
+
 Comprehensive file structure for Next.js application with custom CMS functionality.
 
 **New Files to Create:**
+
 - `package.json` - Project dependencies and scripts
 - `tsconfig.json` - TypeScript configuration
 - `tailwind.config.ts` - Tailwind CSS configuration
@@ -213,22 +218,26 @@ Comprehensive file structure for Next.js application with custom CMS functionali
 - `argocd/portfolio-app.yaml` - Portfolio application deployment config
 
 **Configuration Files:**
+
 - `.gitignore` - Git ignore patterns
 - `.eslintrc.json` - ESLint configuration
 - `prettier.config.js` - Prettier configuration
 
 ## [Functions]
+
 Core application functions for CMS functionality, authentication, and content management.
 
 **New Functions:**
 
 **Authentication Functions:**
+
 - `signIn(email: string, password: string)` - `src/lib/auth.ts` - User authentication
 - `signOut()` - `src/lib/auth.ts` - User logout
 - `hashPassword(password: string)` - `src/lib/auth.ts` - Password hashing
 - `verifyPassword(password: string, hash: string)` - `src/lib/auth.ts` - Password verification
 
 **Content Management Functions:**
+
 - `createPost(input: CreatePostInput)` - `src/server/api/routers/post.ts` - Create new blog post
 - `updatePost(input: UpdatePostInput)` - `src/server/api/routers/post.ts` - Update existing post
 - `deletePost(id: string)` - `src/server/api/routers/post.ts` - Delete blog post
@@ -237,27 +246,32 @@ Core application functions for CMS functionality, authentication, and content ma
 - `generateSlug(title: string)` - `src/lib/utils.ts` - Generate URL-friendly slug
 
 **Demo Management Functions:**
+
 - `createDemo(input: CreateDemoInput)` - `src/server/api/routers/demo.ts` - Create component demo
 - `updateDemo(input: UpdateDemoInput)` - `src/server/api/routers/demo.ts` - Update demo
 - `getPublishedDemos()` - `src/server/api/routers/demo.ts` - Get published demos
 - `getDemoBySlug(slug: string)` - `src/server/api/routers/demo.ts` - Get single demo
 
 **Utility Functions:**
+
 - `formatDate(date: Date)` - `src/lib/utils.ts` - Format dates for display
 - `truncateText(text: string, length: number)` - `src/lib/utils.ts` - Truncate text with ellipsis
 - `sanitizeHtml(html: string)` - `src/lib/utils.ts` - Sanitize HTML content
 - `uploadImage(file: File)` - `src/lib/upload.ts` - Handle image uploads
 
 ## [Classes]
+
 React components and service classes for the application architecture.
 
 **New React Components:**
 
 **Layout Components:**
+
 - `RootLayout` - `src/app/layout.tsx` - Main application layout with navigation
 - `AdminLayout` - `src/app/admin/layout.tsx` - Admin-specific layout with sidebar
 
 **Page Components:**
+
 - `HomePage` - `src/app/page.tsx` - Portfolio homepage with hero section
 - `BlogPage` - `src/app/blog/page.tsx` - Blog listing with pagination
 - `BlogPostPage` - `src/app/blog/[slug]/page.tsx` - Individual blog post display
@@ -268,6 +282,7 @@ React components and service classes for the application architecture.
 - `PostEditor` - `src/app/admin/posts/new/page.tsx` - Rich text post editor
 
 **UI Components:**
+
 - `Button` - `src/components/ui/Button.tsx` - Reusable button component
 - `Input` - `src/components/ui/Input.tsx` - Form input component
 - `Modal` - `src/components/ui/Modal.tsx` - Modal dialog component
@@ -275,6 +290,7 @@ React components and service classes for the application architecture.
 - `Badge` - `src/components/ui/Badge.tsx` - Status/tag badges
 
 **Feature Components:**
+
 - `RichTextEditor` - `src/components/editor/RichTextEditor.tsx` - WYSIWYG editor
 - `PostCard` - `src/components/blog/PostCard.tsx` - Blog post preview card
 - `DemoCard` - `src/components/demos/DemoCard.tsx` - Demo preview card
@@ -283,14 +299,17 @@ React components and service classes for the application architecture.
 - `Footer` - `src/components/Footer.tsx` - Site footer
 
 **Service Classes:**
+
 - `DatabaseService` - `src/server/db.ts` - Prisma client wrapper
 - `AuthService` - `src/lib/auth.ts` - Authentication service
 - `EmailService` - `src/lib/email.ts` - Email notifications (future)
 
 ## [Dependencies]
+
 Package dependencies and their integration requirements for the Next.js portfolio application.
 
 **Core Dependencies:**
+
 ```json
 {
   "next": "^14.0.0",
@@ -304,6 +323,7 @@ Package dependencies and their integration requirements for the Next.js portfoli
 ```
 
 **Database & API:**
+
 ```json
 {
   "prisma": "^5.0.0",
@@ -318,6 +338,7 @@ Package dependencies and their integration requirements for the Next.js portfoli
 ```
 
 **Authentication:**
+
 ```json
 {
   "next-auth": "^4.0.0",
@@ -327,6 +348,7 @@ Package dependencies and their integration requirements for the Next.js portfoli
 ```
 
 **Styling & UI:**
+
 ```json
 {
   "tailwindcss": "^3.0.0",
@@ -338,6 +360,7 @@ Package dependencies and their integration requirements for the Next.js portfoli
 ```
 
 **Content & Editor:**
+
 ```json
 {
   "@tiptap/react": "^2.0.0",
@@ -349,6 +372,7 @@ Package dependencies and their integration requirements for the Next.js portfoli
 ```
 
 **Development & CI/CD:**
+
 ```json
 {
   "eslint": "^8.0.0",
@@ -367,6 +391,7 @@ Package dependencies and their integration requirements for the Next.js portfoli
 ```
 
 **Testing & Quality:**
+
 ```json
 {
   "jest": "^29.0.0",
@@ -383,6 +408,7 @@ Package dependencies and their integration requirements for the Next.js portfoli
 ```
 
 **Container & Deployment:**
+
 - Cloud SQL for PostgreSQL (managed database)
 - Google Container Registry or Artifact Registry for images
 - Node.js 18+ runtime environment
@@ -390,6 +416,7 @@ Package dependencies and their integration requirements for the Next.js portfoli
 - Google Secret Manager for environment variables
 
 **Google Cloud Dependencies:**
+
 ```json
 {
   "@google-cloud/storage": "^7.0.0",
@@ -398,15 +425,18 @@ Package dependencies and their integration requirements for the Next.js portfoli
 ```
 
 ## [Testing]
+
 Comprehensive testing strategy covering unit, integration, and end-to-end scenarios.
 
 **Testing Framework Setup:**
+
 - Jest for unit testing
-- React Testing Library for component testing  
+- React Testing Library for component testing
 - Playwright for end-to-end testing
 - Prisma test database setup with Docker
 
 **Test File Structure:**
+
 - `src/__tests__/` - Unit tests directory
 - `src/components/__tests__/` - Component tests
 - `src/server/api/__tests__/` - API route tests
@@ -414,6 +444,7 @@ Comprehensive testing strategy covering unit, integration, and end-to-end scenar
 - `prisma/test-seed.ts` - Test database seeding
 
 **Key Test Scenarios:**
+
 - Authentication flow (login/logout)
 - CRUD operations for posts and demos
 - Content publishing workflow
@@ -423,6 +454,7 @@ Comprehensive testing strategy covering unit, integration, and end-to-end scenar
 - Database migrations and seeding
 
 **Test Commands:**
+
 ```bash
 npm run test          # Unit tests
 npm run test:watch    # Watch mode
@@ -431,51 +463,25 @@ npm run test:coverage # Coverage report
 ```
 
 ## [Implementation Order]
+
 Sequential implementation steps to ensure proper system integration and minimize conflicts.
 
 **Phase 1: Foundation Setup**
+
 1. Initialize Next.js project with TypeScript and essential dependencies
 2. Configure Tailwind CSS and basic styling system
 3. Set up Prisma with PostgreSQL schema and migrations
 4. Create basic project structure and folders
 
-**Phase 2: Database & API Layer**
-5. Implement Prisma models and database seeding
-6. Set up tRPC server with basic router structure
-7. Create authentication system with NextAuth
-8. Build core API routers for posts and demos
+**Phase 2: Database & API Layer** 5. Implement Prisma models and database seeding 6. Set up tRPC server with basic router structure 7. Create authentication system with NextAuth 8. Build core API routers for posts and demos
 
-**Phase 3: Admin Interface**
-9. Create admin layout and dashboard
-10. Build post management interface with CRUD operations
-11. Implement rich text editor for content creation
-12. Add demo management functionality
+**Phase 3: Admin Interface** 9. Create admin layout and dashboard 10. Build post management interface with CRUD operations 11. Implement rich text editor for content creation 12. Add demo management functionality
 
 **Phase 4: Public Interface**  
-13. Develop homepage and main navigation
-14. Build blog listing and individual post pages
-15. Create demos showcase and individual demo pages
-16. Implement SEO optimization and metadata
+13. Develop homepage and main navigation 14. Build blog listing and individual post pages 15. Create demos showcase and individual demo pages 16. Implement SEO optimization and metadata
 
-**Phase 5: Enhancement & Polish**
-17. Add image upload and media management
-18. Implement search and filtering functionality
-19. Create responsive design and mobile optimization
-20. Add performance optimizations and caching
+**Phase 5: Enhancement & Polish** 17. Add image upload and media management 18. Implement search and filtering functionality 19. Create responsive design and mobile optimization 20. Add performance optimizations and caching
 
-**Phase 6: CI/CD & GitOps Deployment**
-21. Create Docker configuration and build process
-22. Set up GitHub Actions CI workflow (testing, linting, security scans, build)
-23. Configure GitHub Actions CD workflow (Docker build/push, semantic versioning)
-24. Set up Google Cloud infrastructure with Terraform (Cloud SQL, GCS, IAM, GKE)
-25. Develop GKE manifests with ingress, HPA, and secrets management
-26. Configure ArgoCD GitOps for automated Kubernetes deployments
-27. Implement Google Cloud Operations monitoring and logging
-28. Set up Skaffold for local development workflow
-29. Configure git hooks, commit linting, and automated PR checks
+**Phase 6: CI/CD & GitOps Deployment** 21. Create Docker configuration and build process 22. Set up GitHub Actions CI workflow (testing, linting, security scans, build) 23. Configure GitHub Actions CD workflow (Docker build/push, semantic versioning) 24. Set up Google Cloud infrastructure with Terraform (Cloud SQL, GCS, IAM, GKE) 25. Develop GKE manifests with ingress, HPA, and secrets management 26. Configure ArgoCD GitOps for automated Kubernetes deployments 27. Implement Google Cloud Operations monitoring and logging 28. Set up Skaffold for local development workflow 29. Configure git hooks, commit linting, and automated PR checks
 
-**Phase 7: Testing & Documentation**
-30. Write comprehensive test suite
-31. Create API documentation
-32. Add user documentation and README
-33. Perform security audit and optimization
+**Phase 7: Testing & Documentation** 30. Write comprehensive test suite 31. Create API documentation 32. Add user documentation and README 33. Perform security audit and optimization

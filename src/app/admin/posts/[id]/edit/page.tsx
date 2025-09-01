@@ -1,56 +1,63 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useRouter, useParams } from 'next/navigation'
-import { trpc } from '@/utils/trpc'
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { trpc } from "@/utils/trpc";
+import type { PostTag } from "@/types";
 
 export default function EditPost() {
-  const router = useRouter()
-  const params = useParams()
-  const postId = params.id as string
+  const router = useRouter();
+  const params = useParams();
+  const postId = params.id as string;
 
-  const [title, setTitle] = useState('')
-  const [excerpt, setExcerpt] = useState('')
-  const [content, setContent] = useState('')
-  const [tags, setTags] = useState('')
-  const [published, setPublished] = useState(false)
-  const [seoTitle, setSeoTitle] = useState('')
-  const [seoDescription, setSeoDescription] = useState('')
-  const [seoKeywords, setSeoKeywords] = useState('')
+  const [title, setTitle] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [content, setContent] = useState("");
+  const [tags, setTags] = useState("");
+  const [published, setPublished] = useState(false);
+  const [seoTitle, setSeoTitle] = useState("");
+  const [seoDescription, setSeoDescription] = useState("");
+  const [seoKeywords, setSeoKeywords] = useState("");
 
-  const { data: post, isLoading } = trpc.post.getById.useQuery(postId)
+  const { data: post, isLoading } = trpc.post.getById.useQuery(postId);
   const updateMutation = trpc.post.update.useMutation({
     onSuccess: () => {
-      router.push('/admin/posts')
+      router.push("/admin/posts");
     },
     onError: (error) => {
-      alert(`Failed to update post: ${error.message}`)
-    }
-  })
+      alert(`Failed to update post: ${error.message}`);
+    },
+  });
 
   useEffect(() => {
     if (post) {
-      setTitle(post.title)
-      setExcerpt(post.excerpt || '')
-      setContent(post.content)
-      setTags(post.tags.map(pt => pt.tag.name).join(', '))
-      setPublished(post.published)
-      setSeoTitle(post.seoTitle || '')
-      setSeoDescription(post.seoDescription || '')
-      setSeoKeywords(post.seoKeywords.join(', '))
+      setTitle(post.title);
+      setExcerpt(post.excerpt || "");
+      setContent(post.content);
+      setTags(post.tags.map((pt: PostTag) => pt.tag.name).join(", "));
+      setPublished(post.published);
+      setSeoTitle(post.seoTitle || "");
+      setSeoDescription(post.seoDescription || "");
+      setSeoKeywords(post.seoKeywords.join(", "));
     }
-  }, [post])
+  }, [post]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!title.trim() || !content.trim()) {
-      alert('Title and content are required')
-      return
+      alert("Title and content are required");
+      return;
     }
 
-    const tagArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
-    const keywordsArray = seoKeywords.split(',').map(kw => kw.trim()).filter(kw => kw.length > 0)
+    const tagArray = tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
+    const keywordsArray = seoKeywords
+      .split(",")
+      .map((kw) => kw.trim())
+      .filter((kw) => kw.length > 0);
 
     try {
       await updateMutation.mutateAsync({
@@ -63,33 +70,35 @@ export default function EditPost() {
         seoTitle: seoTitle.trim() || undefined,
         seoDescription: seoDescription.trim() || undefined,
         seoKeywords: keywordsArray,
-      })
+      });
     } catch (error) {
       // Error handled by onError callback
     }
-  }
+  };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
-    )
+    );
   }
 
   if (!post) {
     return (
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold">Post not found</h2>
-        <p className="text-muted-foreground mt-2">The post you're looking for doesn't exist.</p>
+        <p className="text-muted-foreground mt-2">
+          The post you&apos;re looking for doesn&apos;t exist.
+        </p>
         <button
-          onClick={() => router.push('/admin/posts')}
+          onClick={() => router.push("/admin/posts")}
           className="mt-4 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 py-2 px-4"
         >
           Back to Posts
         </button>
       </div>
-    )
+    );
   }
 
   return (
@@ -97,9 +106,7 @@ export default function EditPost() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Edit Post</h1>
-          <p className="text-muted-foreground">
-            Update your blog post
-          </p>
+          <p className="text-muted-foreground">Update your blog post</p>
         </div>
         <div className="flex space-x-2">
           {post.published && (
@@ -180,10 +187,20 @@ export default function EditPost() {
             <div className="rounded-lg border p-4 space-y-2">
               <h3 className="font-medium">Post Information</h3>
               <div className="text-sm text-muted-foreground space-y-1">
-                <p><strong>Created:</strong> {new Date(post.createdAt).toLocaleString()}</p>
-                <p><strong>Updated:</strong> {new Date(post.updatedAt).toLocaleString()}</p>
-                <p><strong>Author:</strong> {post.author?.name}</p>
-                <p><strong>Slug:</strong> {post.slug}</p>
+                <p>
+                  <strong>Created:</strong>{" "}
+                  {new Date(post.createdAt).toLocaleString()}
+                </p>
+                <p>
+                  <strong>Updated:</strong>{" "}
+                  {new Date(post.updatedAt).toLocaleString()}
+                </p>
+                <p>
+                  <strong>Author ID:</strong> {post.authorId}
+                </p>
+                <p>
+                  <strong>Slug:</strong> {post.slug}
+                </p>
               </div>
             </div>
 
@@ -199,14 +216,13 @@ export default function EditPost() {
                   className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary focus:ring-offset-0"
                 />
                 <label htmlFor="published" className="text-sm font-medium">
-                  {published ? 'Published' : 'Publish this post'}
+                  {published ? "Published" : "Publish this post"}
                 </label>
               </div>
               <p className="text-xs text-muted-foreground">
-                {published 
-                  ? 'This post is currently visible to visitors.'
-                  : 'This post is currently saved as a draft and not visible to visitors.'
-                }
+                {published
+                  ? "This post is currently visible to visitors."
+                  : "This post is currently saved as a draft and not visible to visitors."}
               </p>
             </div>
 
@@ -231,7 +247,7 @@ export default function EditPost() {
             {/* SEO Settings */}
             <div className="rounded-lg border p-4 space-y-4">
               <h3 className="font-medium">SEO Settings</h3>
-              
+
               <div className="space-y-2">
                 <label htmlFor="seoTitle" className="text-sm font-medium">
                   SEO Title
@@ -284,11 +300,11 @@ export default function EditPost() {
               disabled={updateMutation.isLoading}
               className="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 py-2 px-4"
             >
-              {updateMutation.isLoading ? 'Updating...' : 'Update Post'}
+              {updateMutation.isLoading ? "Updating..." : "Update Post"}
             </button>
           </div>
         </div>
       </form>
     </div>
-  )
+  );
 }

@@ -1,47 +1,51 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { trpc } from '@/utils/trpc'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { trpc } from "@/utils/trpc";
 
 const categoryOptions = [
-  { value: 'REACT', label: 'React' },
-  { value: 'NEXTJS', label: 'Next.js' },
-  { value: 'TYPESCRIPT', label: 'TypeScript' },
-  { value: 'CSS', label: 'CSS' },
-  { value: 'ANIMATION', label: 'Animation' },
-  { value: 'API', label: 'API' },
-  { value: 'DATABASE', label: 'Database' },
-] as const
+  { value: "REACT", label: "React" },
+  { value: "NEXTJS", label: "Next.js" },
+  { value: "TYPESCRIPT", label: "TypeScript" },
+  { value: "CSS", label: "CSS" },
+  { value: "ANIMATION", label: "Animation" },
+  { value: "API", label: "API" },
+  { value: "DATABASE", label: "Database" },
+] as const;
 
 export default function NewDemo() {
-  const router = useRouter()
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [code, setCode] = useState('')
-  const [demoUrl, setDemoUrl] = useState('')
-  const [category, setCategory] = useState<typeof categoryOptions[number]['value']>('REACT')
-  const [technologies, setTechnologies] = useState('')
-  const [published, setPublished] = useState(false)
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [code, setCode] = useState("");
+  const [demoUrl, setDemoUrl] = useState("");
+  const [category, setCategory] =
+    useState<(typeof categoryOptions)[number]["value"]>("REACT");
+  const [technologies, setTechnologies] = useState("");
+  const [published, setPublished] = useState(false);
 
   const createMutation = trpc.demo.create.useMutation({
     onSuccess: () => {
-      router.push('/admin/demos')
+      router.push("/admin/demos");
     },
     onError: (error) => {
-      alert(`Failed to create demo: ${error.message}`)
-    }
-  })
+      alert(`Failed to create demo: ${error.message}`);
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!name.trim() || !description.trim() || !code.trim()) {
-      alert('Name, description, and code are required')
-      return
+      alert("Name, description, and code are required");
+      return;
     }
 
-    const techArray = technologies.split(',').map(tech => tech.trim()).filter(tech => tech.length > 0)
+    const techArray = technologies
+      .split(",")
+      .map((tech) => tech.trim())
+      .filter((tech) => tech.length > 0);
 
     try {
       await createMutation.mutateAsync({
@@ -52,11 +56,11 @@ export default function NewDemo() {
         category,
         technologies: techArray,
         published,
-      })
+      });
     } catch (error) {
       // Error handled by onError callback
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -124,7 +128,8 @@ export default function NewDemo() {
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Include the complete component code that visitors can copy and use.
+                Include the complete component code that visitors can copy and
+                use.
               </p>
             </div>
 
@@ -164,10 +169,9 @@ export default function NewDemo() {
                 </label>
               </div>
               <p className="text-xs text-muted-foreground">
-                {published 
-                  ? 'This demo will be visible to visitors immediately after creation.'
-                  : 'This demo will be saved as a draft and not visible to visitors.'
-                }
+                {published
+                  ? "This demo will be visible to visitors immediately after creation."
+                  : "This demo will be saved as a draft and not visible to visitors."}
               </p>
             </div>
 
@@ -178,7 +182,9 @@ export default function NewDemo() {
                 <select
                   id="category"
                   value={category}
-                  onChange={(e) => setCategory(e.target.value as typeof category)}
+                  onChange={(e) =>
+                    setCategory(e.target.value as typeof category)
+                  }
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {categoryOptions.map((option) => (
@@ -217,11 +223,15 @@ export default function NewDemo() {
               disabled={createMutation.isLoading}
               className="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 py-2 px-4"
             >
-              {createMutation.isLoading ? 'Creating...' : published ? 'Create & Publish' : 'Save Draft'}
+              {createMutation.isLoading
+                ? "Creating..."
+                : published
+                  ? "Create & Publish"
+                  : "Save Draft"}
             </button>
           </div>
         </div>
       </form>
     </div>
-  )
+  );
 }

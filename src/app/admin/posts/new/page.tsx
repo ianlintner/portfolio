@@ -1,39 +1,45 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { trpc } from '@/utils/trpc'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { trpc } from "@/utils/trpc";
 
 export default function NewPost() {
-  const router = useRouter()
-  const [title, setTitle] = useState('')
-  const [excerpt, setExcerpt] = useState('')
-  const [content, setContent] = useState('')
-  const [tags, setTags] = useState('')
-  const [published, setPublished] = useState(false)
-  const [seoTitle, setSeoTitle] = useState('')
-  const [seoDescription, setSeoDescription] = useState('')
-  const [seoKeywords, setSeoKeywords] = useState('')
+  const router = useRouter();
+  const [title, setTitle] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [content, setContent] = useState("");
+  const [tags, setTags] = useState("");
+  const [published, setPublished] = useState(false);
+  const [seoTitle, setSeoTitle] = useState("");
+  const [seoDescription, setSeoDescription] = useState("");
+  const [seoKeywords, setSeoKeywords] = useState("");
 
   const createMutation = trpc.post.create.useMutation({
     onSuccess: () => {
-      router.push('/admin/posts')
+      router.push("/admin/posts");
     },
     onError: (error) => {
-      alert(`Failed to create post: ${error.message}`)
-    }
-  })
+      alert(`Failed to create post: ${error.message}`);
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!title.trim() || !content.trim()) {
-      alert('Title and content are required')
-      return
+      alert("Title and content are required");
+      return;
     }
 
-    const tagArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
-    const keywordsArray = seoKeywords.split(',').map(kw => kw.trim()).filter(kw => kw.length > 0)
+    const tagArray = tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
+    const keywordsArray = seoKeywords
+      .split(",")
+      .map((kw) => kw.trim())
+      .filter((kw) => kw.length > 0);
 
     try {
       await createMutation.mutateAsync({
@@ -45,11 +51,11 @@ export default function NewPost() {
         seoTitle: seoTitle.trim() || undefined,
         seoDescription: seoDescription.trim() || undefined,
         seoKeywords: keywordsArray,
-      })
+      });
     } catch (error) {
       // Error handled by onError callback
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -139,10 +145,9 @@ export default function NewPost() {
                 </label>
               </div>
               <p className="text-xs text-muted-foreground">
-                {published 
-                  ? 'This post will be visible to visitors immediately after creation.'
-                  : 'This post will be saved as a draft and not visible to visitors.'
-                }
+                {published
+                  ? "This post will be visible to visitors immediately after creation."
+                  : "This post will be saved as a draft and not visible to visitors."}
               </p>
             </div>
 
@@ -167,7 +172,7 @@ export default function NewPost() {
             {/* SEO Settings */}
             <div className="rounded-lg border p-4 space-y-4">
               <h3 className="font-medium">SEO Settings</h3>
-              
+
               <div className="space-y-2">
                 <label htmlFor="seoTitle" className="text-sm font-medium">
                   SEO Title
@@ -220,11 +225,15 @@ export default function NewPost() {
               disabled={createMutation.isLoading}
               className="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 py-2 px-4"
             >
-              {createMutation.isLoading ? 'Creating...' : published ? 'Create & Publish' : 'Save Draft'}
+              {createMutation.isLoading
+                ? "Creating..."
+                : published
+                  ? "Create & Publish"
+                  : "Save Draft"}
             </button>
           </div>
         </div>
       </form>
     </div>
-  )
+  );
 }

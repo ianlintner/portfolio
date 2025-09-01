@@ -6,8 +6,8 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Portfolio</h3>
             <p className="text-sm text-muted-foreground">
-              Full stack developer passionate about building modern web applications
-              with React, Next.js, and cloud technologies.
+              Full stack developer passionate about building modern web
+              applications with React, Next.js, and cloud technologies.
             </p>
           </div>
           <div>
@@ -19,12 +19,18 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/blog" className="hover:text-foreground transition-colors">
+                <a
+                  href="/blog"
+                  className="hover:text-foreground transition-colors"
+                >
                   Blog
                 </a>
               </li>
               <li>
-                <a href="/demos" className="hover:text-foreground transition-colors">
+                <a
+                  href="/demos"
+                  className="hover:text-foreground transition-colors"
+                >
                   Demos
                 </a>
               </li>
@@ -34,9 +40,9 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Connect</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
-                <a 
-                  href="https://github.com" 
-                  target="_blank" 
+                <a
+                  href="https://github.com"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-foreground transition-colors"
                 >
@@ -44,9 +50,9 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a 
-                  href="https://linkedin.com" 
-                  target="_blank" 
+                <a
+                  href="https://linkedin.com"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-foreground transition-colors"
                 >
@@ -54,7 +60,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a 
+                <a
                   href="mailto:contact@example.com"
                   className="hover:text-foreground transition-colors"
                 >
@@ -65,9 +71,12 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Portfolio. Built with Next.js and TypeScript.</p>
+          <p>
+            &copy; {new Date().getFullYear()} Portfolio. Built with Next.js and
+            TypeScript.
+          </p>
         </div>
       </div>
     </footer>
-  )
+  );
 }

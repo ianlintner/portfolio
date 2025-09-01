@@ -1,46 +1,46 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { trpc } from '@/utils/trpc'
-import Link from 'next/link'
+import { useState } from "react";
+import { trpc } from "@/utils/trpc";
+import Link from "next/link";
+import type { ComponentDemo, DemoCategory } from "@/types";
 
 const categoryLabels = {
-  REACT: 'React',
-  NEXTJS: 'Next.js',
-  TYPESCRIPT: 'TypeScript',
-  CSS: 'CSS',
-  ANIMATION: 'Animation',
-  API: 'API',
-  DATABASE: 'Database',
-}
-
-type DemoCategory = keyof typeof categoryLabels
+  REACT: "React",
+  NEXTJS: "Next.js",
+  TYPESCRIPT: "TypeScript",
+  CSS: "CSS",
+  ANIMATION: "Animation",
+  API: "API",
+  DATABASE: "Database",
+};
 
 export default function DemosManagement() {
-  const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all')
-  
-  const { data: demos, isLoading, refetch } = trpc.demo.getAll.useQuery()
+  const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
+
+  const { data: demos, isLoading, refetch } = trpc.demo.getAll.useQuery();
   const deleteMutation = trpc.demo.delete.useMutation({
     onSuccess: () => {
-      refetch()
-    }
-  })
+      refetch();
+    },
+  });
 
-  const filteredDemos = demos?.filter((demo) => {
-    if (filter === 'published') return demo.published
-    if (filter === 'draft') return !demo.published
-    return true
-  }) || []
+  const filteredDemos =
+    demos?.filter((demo: ComponentDemo) => {
+      if (filter === "published") return demo.published;
+      if (filter === "draft") return !demo.published;
+      return true;
+    }) || [];
 
   const handleDelete = async (id: string, name: string) => {
     if (confirm(`Are you sure you want to delete "${name}"?`)) {
       try {
-        await deleteMutation.mutateAsync(id)
+        await deleteMutation.mutateAsync(id);
       } catch (error) {
-        alert('Failed to delete demo. Please try again.')
+        alert("Failed to delete demo. Please try again.");
       }
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -63,31 +63,31 @@ export default function DemosManagement() {
       {/* Filter Tabs */}
       <div className="flex space-x-1">
         <button
-          onClick={() => setFilter('all')}
+          onClick={() => setFilter("all")}
           className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-            filter === 'all'
-              ? 'bg-primary text-primary-foreground'
-              : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            filter === "all"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted"
           }`}
         >
           All Demos
         </button>
         <button
-          onClick={() => setFilter('published')}
+          onClick={() => setFilter("published")}
           className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-            filter === 'published'
-              ? 'bg-primary text-primary-foreground'
-              : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            filter === "published"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted"
           }`}
         >
           Published
         </button>
         <button
-          onClick={() => setFilter('draft')}
+          onClick={() => setFilter("draft")}
           className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-            filter === 'draft'
-              ? 'bg-primary text-primary-foreground'
-              : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            filter === "draft"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted"
           }`}
         >
           Drafts
@@ -99,16 +99,17 @@ export default function DemosManagement() {
         {isLoading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-2 text-sm text-muted-foreground">Loading demos...</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Loading demos...
+            </p>
           </div>
         ) : filteredDemos.length === 0 ? (
           <div className="p-8 text-center">
             <h3 className="text-lg font-medium">No demos found</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              {filter === 'all' 
-                ? 'You haven\'t created any demos yet.'
-                : `No ${filter} demos found.`
-              }
+              {filter === "all"
+                ? "You haven't created any demos yet."
+                : `No ${filter} demos found.`}
             </p>
             <Link
               href="/admin/demos/new"
@@ -119,8 +120,11 @@ export default function DemosManagement() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-            {filteredDemos.map((demo) => (
-              <div key={demo.id} className="rounded-lg border p-4 hover:bg-muted/50 transition-colors">
+            {filteredDemos.map((demo: ComponentDemo) => (
+              <div
+                key={demo.id}
+                className="rounded-lg border p-4 hover:bg-muted/50 transition-colors"
+              >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1 min-w-0">
                     <h3 className="text-lg font-medium truncate mb-1">
@@ -199,5 +203,5 @@ export default function DemosManagement() {
         )}
       </div>
     </div>
-  )
+  );
 }

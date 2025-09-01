@@ -23,14 +23,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       applyTheme(stored);
     } else {
       // default: follow system
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
       applyTheme(prefersDark ? "dark" : "light");
     }
   }, []);
 
   const applyTheme = (t: Theme) => {
     if (t === "system") {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
       document.documentElement.classList.toggle("dark", prefersDark);
     } else {
       document.documentElement.classList.toggle("dark", t === "dark");

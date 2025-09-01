@@ -1,21 +1,21 @@
-import { PrismaClient } from '@prisma/client'
-import bcrypt from 'bcryptjs'
-import { config } from 'dotenv'
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
+import { config } from "dotenv";
 
 // Load environment variables from .env.local
-config({ path: '.env.local' })
+config({ path: ".env.local" });
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting database seed...')
+  console.log("🌱 Starting database seed...");
 
   // Create admin user
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com'
-  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123'
-  const adminName = process.env.ADMIN_NAME || 'Admin User'
+  const adminEmail = process.env.ADMIN_EMAIL || "admin@example.com";
+  const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+  const adminName = process.env.ADMIN_NAME || "Admin User";
 
-  const hashedPassword = await bcrypt.hash(adminPassword, 12)
+  const hashedPassword = await bcrypt.hash(adminPassword, 12);
 
   const adminUser = await prisma.user.upsert({
     where: { email: adminEmail },
@@ -24,41 +24,42 @@ async function main() {
       email: adminEmail,
       name: adminName,
       passwordHash: hashedPassword,
-      role: 'ADMIN',
+      role: "ADMIN",
     },
-  })
+  });
 
-  console.log(`✅ Created admin user: ${adminUser.email}`)
+  console.log(`✅ Created admin user: ${adminUser.email}`);
 
   // Create sample tags
   const reactTag = await prisma.tag.upsert({
-    where: { name: 'React' },
+    where: { name: "React" },
     update: {},
-    create: { name: 'React' },
-  })
+    create: { name: "React" },
+  });
 
   const nextjsTag = await prisma.tag.upsert({
-    where: { name: 'Next.js' },
+    where: { name: "Next.js" },
     update: {},
-    create: { name: 'Next.js' },
-  })
+    create: { name: "Next.js" },
+  });
 
   const typescriptTag = await prisma.tag.upsert({
-    where: { name: 'TypeScript' },
+    where: { name: "TypeScript" },
     update: {},
-    create: { name: 'TypeScript' },
-  })
+    create: { name: "TypeScript" },
+  });
 
-  console.log('✅ Created sample tags')
+  console.log("✅ Created sample tags");
 
   // Create initial blog post: Architecture
   const architecturePost = await prisma.post.upsert({
-    where: { slug: 'building-portfolio-architecture' },
+    where: { slug: "building-portfolio-architecture" },
     update: {},
     create: {
-      title: 'Building This Blog Portfolio Architecture',
-      slug: 'building-portfolio-architecture',
-      excerpt: 'A breakdown of how this portfolio blog is architected with Next.js App Router, Prisma, tRPC, NextAuth, and Tailwind.',
+      title: "Building This Blog Portfolio Architecture",
+      slug: "building-portfolio-architecture",
+      excerpt:
+        "A breakdown of how this portfolio blog is architected with Next.js App Router, Prisma, tRPC, NextAuth, and Tailwind.",
       content: `
 # Building This Blog Portfolio Architecture
 
@@ -82,21 +83,30 @@ Building this took several iterations of database schema design, routing structu
       `,
       published: true,
       publishedAt: new Date(),
-      seoTitle: 'Building This Portfolio Blog Architecture',
-      seoDescription: 'Learn the architecture behind this portfolio blog: Next.js, Prisma, tRPC, NextAuth, Tailwind.',
-      seoKeywords: ['portfolio', 'blog', 'Next.js', 'Prisma', 'tRPC', 'architecture'],
+      seoTitle: "Building This Portfolio Blog Architecture",
+      seoDescription:
+        "Learn the architecture behind this portfolio blog: Next.js, Prisma, tRPC, NextAuth, Tailwind.",
+      seoKeywords: [
+        "portfolio",
+        "blog",
+        "Next.js",
+        "Prisma",
+        "tRPC",
+        "architecture",
+      ],
       authorId: adminUser.id,
     },
-  })
+  });
 
   // Create second blog post: AI Agents
   const aiAgentsPost = await prisma.post.upsert({
-    where: { slug: 'ai-agents-cline-roo' },
+    where: { slug: "ai-agents-cline-roo" },
     update: {},
     create: {
-      title: 'Using AI Agent Tools (Cline & Roo) in Development',
-      slug: 'ai-agents-cline-roo',
-      excerpt: 'An article on how AI-driven tools like Cline and Roo accelerated the development of this site.',
+      title: "Using AI Agent Tools (Cline & Roo) in Development",
+      slug: "ai-agents-cline-roo",
+      excerpt:
+        "An article on how AI-driven tools like Cline and Roo accelerated the development of this site.",
       content: `
 # Using AI Agent Tools (Cline & Roo) in Development
 
@@ -118,12 +128,13 @@ The combination of AI tools allowed me to move faster, focus more on architectur
       `,
       published: true,
       publishedAt: new Date(),
-      seoTitle: 'Using AI Agent Tools in Development (Cline, Roo)',
-      seoDescription: 'Exploring how AI agents like Cline and Roo accelerated building this portfolio blog.',
-      seoKeywords: ['AI agents', 'Cline', 'Roo', 'development tools'],
+      seoTitle: "Using AI Agent Tools in Development (Cline, Roo)",
+      seoDescription:
+        "Exploring how AI agents like Cline and Roo accelerated building this portfolio blog.",
+      seoKeywords: ["AI agents", "Cline", "Roo", "development tools"],
       authorId: adminUser.id,
     },
-  })
+  });
 
   // Connect tags to the Architecture post
   await prisma.postTag.upsert({
@@ -138,7 +149,7 @@ The combination of AI tools allowed me to move faster, focus more on architectur
       postId: architecturePost.id,
       tagId: reactTag.id,
     },
-  })
+  });
 
   await prisma.postTag.upsert({
     where: {
@@ -152,7 +163,7 @@ The combination of AI tools allowed me to move faster, focus more on architectur
       postId: architecturePost.id,
       tagId: nextjsTag.id,
     },
-  })
+  });
 
   await prisma.postTag.upsert({
     where: {
@@ -166,15 +177,16 @@ The combination of AI tools allowed me to move faster, focus more on architectur
       postId: architecturePost.id,
       tagId: typescriptTag.id,
     },
-  })
+  });
 
-  console.log('✅ Created blog posts with tags')
+  console.log("✅ Created blog posts with tags");
 
   // Create sample component demo
   const sampleDemo = await prisma.componentDemo.create({
     data: {
-      name: 'Interactive Button',
-      description: 'A reusable button component with hover effects and multiple variants.',
+      name: "Interactive Button",
+      description:
+        "A reusable button component with hover effects and multiple variants.",
       code: `
 import React from 'react'
 import { clsx } from 'clsx'
@@ -213,24 +225,23 @@ export function Button({
   )
 }
       `,
-      category: 'REACT',
-      technologies: ['React', 'TypeScript', 'Tailwind CSS'],
+      category: "REACT",
+      technologies: ["React", "TypeScript", "Tailwind CSS"],
       published: true,
     },
-  })
+  });
 
-  console.log('✅ Created component demo')
+  console.log("✅ Created component demo");
 
-
-  console.log('🎉 Database seeding completed!')
+  console.log("🎉 Database seeding completed!");
 }
 
 main()
   .then(async () => {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error('❌ Error during seeding:', e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+    console.error("❌ Error during seeding:", e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

@@ -1,116 +1,146 @@
-import { Metadata } from 'next'
-import Link from 'next/link'
-import { ExternalLink, Github, Code, Layers, Smartphone, Monitor, Filter } from 'lucide-react'
+import { Metadata } from "next";
+import Link from "next/link";
+import {
+  ExternalLink,
+  Github,
+  Code,
+  Layers,
+  Smartphone,
+  Monitor,
+  Filter,
+} from "lucide-react";
 
 export const metadata: Metadata = {
-  title: 'Demos & Projects | Ian Lintner - Full Stack Developer',
-  description: 'Interactive demos and projects showcasing modern web development techniques, React components, and full-stack applications.',
-  keywords: ['web development demos', 'React components', 'Next.js projects', 'TypeScript examples', 'interactive demos'],
+  title: "Demos & Projects | Ian Lintner - Full Stack Developer",
+  description:
+    "Interactive demos and projects showcasing modern web development techniques, React components, and full-stack applications.",
+  keywords: [
+    "web development demos",
+    "React components",
+    "Next.js projects",
+    "TypeScript examples",
+    "interactive demos",
+    "don't break",
+  ],
   openGraph: {
-    title: 'Demos & Projects | Ian Lintner - Full Stack Developer',
-    description: 'Interactive demos and projects showcasing modern web development techniques, React components, and full-stack applications.',
-    type: 'website',
-    url: '/demos',
+    title: "Demos & Projects | Ian Lintner - Full Stack Developer",
+    description:
+      "Interactive demos and projects showcasing modern web development techniques, React components, and full-stack applications.",
+    type: "website",
+    url: "/demos",
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Demos & Projects | Ian Lintner - Full Stack Developer',
-    description: 'Interactive demos and projects showcasing modern web development techniques, React components, and full-stack applications.',
+    card: "summary_large_image",
+    title: "Demos & Projects | Ian Lintner - Full Stack Developer",
+    description:
+      "Interactive demos and projects showcasing modern web development techniques, React components, and full-stack applications.",
   },
-}
+};
 
 // Mock demo data - will be replaced with tRPC calls
 const mockDemos = [
   {
-    id: '1',
-    title: 'Interactive Dashboard Components',
-    slug: 'interactive-dashboard-components',
-    description: 'A collection of reusable dashboard components built with React, TypeScript, and Tailwind CSS. Features responsive charts, data tables, and real-time updates.',
-    category: 'UI_COMPONENTS',
-    technologies: ['React', 'TypeScript', 'Tailwind CSS', 'Chart.js'],
-    githubUrl: 'https://github.com/example/dashboard-components',
-    liveUrl: 'https://dashboard-demo.example.com',
-    imageUrl: '/demos/dashboard-components.jpg',
+    id: "1",
+    title: "Interactive Dashboard Components",
+    slug: "interactive-dashboard-components",
+    description:
+      "A collection of reusable dashboard components built with React, TypeScript, and Tailwind CSS. Features responsive charts, data tables, and real-time updates.",
+    category: "UI_COMPONENTS",
+    technologies: ["React", "TypeScript", "Tailwind CSS", "Chart.js"],
+    githubUrl: "https://github.com/example/dashboard-components",
+    liveUrl: "https://dashboard-demo.example.com",
+    imageUrl: "/demos/dashboard-components.jpg",
     featured: true,
-    createdAt: new Date('2024-01-20')
+    createdAt: new Date("2024-01-20"),
   },
   {
-    id: '2',
-    title: 'Real-time Chat Application',
-    slug: 'realtime-chat-application',
-    description: 'Full-stack chat application with real-time messaging, user authentication, and message history. Built with Next.js, Socket.io, and PostgreSQL.',
-    category: 'FULL_STACK',
-    technologies: ['Next.js', 'Socket.io', 'PostgreSQL', 'Prisma', 'NextAuth.js'],
-    githubUrl: 'https://github.com/example/chat-app',
-    liveUrl: 'https://chat-demo.example.com',
-    imageUrl: '/demos/chat-app.jpg',
+    id: "2",
+    title: "Real-time Chat Application",
+    slug: "realtime-chat-application",
+    description:
+      "Full-stack chat application with real-time messaging, user authentication, and message history. Built with Next.js, Socket.io, and PostgreSQL.",
+    category: "FULL_STACK",
+    technologies: [
+      "Next.js",
+      "Socket.io",
+      "PostgreSQL",
+      "Prisma",
+      "NextAuth.js",
+    ],
+    githubUrl: "https://github.com/example/chat-app",
+    liveUrl: "https://chat-demo.example.com",
+    imageUrl: "/demos/chat-app.jpg",
     featured: true,
-    createdAt: new Date('2024-01-18')
+    createdAt: new Date("2024-01-18"),
   },
   {
-    id: '3',
-    title: 'E-commerce Product Showcase',
-    slug: 'ecommerce-product-showcase',
-    description: 'Modern e-commerce product pages with advanced filtering, search functionality, and shopping cart integration. Optimized for performance and SEO.',
-    category: 'FULL_STACK',
-    technologies: ['Next.js', 'Stripe', 'Tailwind CSS', 'Framer Motion'],
-    githubUrl: 'https://github.com/example/ecommerce-showcase',
-    liveUrl: 'https://shop-demo.example.com',
-    imageUrl: '/demos/ecommerce-showcase.jpg',
+    id: "3",
+    title: "E-commerce Product Showcase",
+    slug: "ecommerce-product-showcase",
+    description:
+      "Modern e-commerce product pages with advanced filtering, search functionality, and shopping cart integration. Optimized for performance and SEO.",
+    category: "FULL_STACK",
+    technologies: ["Next.js", "Stripe", "Tailwind CSS", "Framer Motion"],
+    githubUrl: "https://github.com/example/ecommerce-showcase",
+    liveUrl: "https://shop-demo.example.com",
+    imageUrl: "/demos/ecommerce-showcase.jpg",
     featured: false,
-    createdAt: new Date('2024-01-15')
+    createdAt: new Date("2024-01-15"),
   },
   {
-    id: '4',
-    title: 'Custom React Hooks Library',
-    slug: 'custom-react-hooks-library',
-    description: 'A comprehensive collection of custom React hooks for common use cases including API calls, local storage, debouncing, and more.',
-    category: 'UI_COMPONENTS',
-    technologies: ['React', 'TypeScript', 'Jest', 'Storybook'],
-    githubUrl: 'https://github.com/example/react-hooks-library',
-    liveUrl: 'https://hooks-demo.example.com',
-    imageUrl: '/demos/react-hooks.jpg',
+    id: "4",
+    title: "Custom React Hooks Library",
+    slug: "custom-react-hooks-library",
+    description:
+      "A comprehensive collection of custom React hooks for common use cases including API calls, local storage, debouncing, and more.",
+    category: "UI_COMPONENTS",
+    technologies: ["React", "TypeScript", "Jest", "Storybook"],
+    githubUrl: "https://github.com/example/react-hooks-library",
+    liveUrl: "https://hooks-demo.example.com",
+    imageUrl: "/demos/react-hooks.jpg",
     featured: false,
-    createdAt: new Date('2024-01-12')
+    createdAt: new Date("2024-01-12"),
   },
   {
-    id: '5',
-    title: 'Data Visualization Dashboard',
-    slug: 'data-visualization-dashboard',
-    description: 'Interactive data visualization dashboard with multiple chart types, real-time data updates, and export functionality.',
-    category: 'DATA_VISUALIZATION',
-    technologies: ['React', 'D3.js', 'TypeScript', 'WebSocket'],
-    githubUrl: 'https://github.com/example/data-viz-dashboard',
-    liveUrl: 'https://dataviz-demo.example.com',
-    imageUrl: '/demos/data-viz.jpg',
+    id: "5",
+    title: "Data Visualization Dashboard",
+    slug: "data-visualization-dashboard",
+    description:
+      "Interactive data visualization dashboard with multiple chart types, real-time data updates, and export functionality.",
+    category: "DATA_VISUALIZATION",
+    technologies: ["React", "D3.js", "TypeScript", "WebSocket"],
+    githubUrl: "https://github.com/example/data-viz-dashboard",
+    liveUrl: "https://dataviz-demo.example.com",
+    imageUrl: "/demos/data-viz.jpg",
     featured: false,
-    createdAt: new Date('2024-01-10')
+    createdAt: new Date("2024-01-10"),
   },
   {
-    id: '6',
-    title: 'Progressive Web App Template',
-    slug: 'progressive-web-app-template',
-    description: 'A complete PWA template with offline functionality, push notifications, and app-like experience on mobile devices.',
-    category: 'FULL_STACK',
-    technologies: ['Next.js', 'Service Workers', 'Web Push API', 'IndexedDB'],
-    githubUrl: 'https://github.com/example/pwa-template',
-    liveUrl: 'https://pwa-demo.example.com',
-    imageUrl: '/demos/pwa-template.jpg',
+    id: "6",
+    title: "Progressive Web App Template",
+    slug: "progressive-web-app-template",
+    description:
+      "A complete PWA template with offline functionality, push notifications, and app-like experience on mobile devices.",
+    category: "FULL_STACK",
+    technologies: ["Next.js", "Service Workers", "Web Push API", "IndexedDB"],
+    githubUrl: "https://github.com/example/pwa-template",
+    liveUrl: "https://pwa-demo.example.com",
+    imageUrl: "/demos/pwa-template.jpg",
     featured: false,
-    createdAt: new Date('2024-01-08')
-  }
-]
+    createdAt: new Date("2024-01-08"),
+  },
+];
 
 const categories = [
-  { value: 'all', label: 'All Projects', icon: Layers },
-  { value: 'FULL_STACK', label: 'Full Stack', icon: Code },
-  { value: 'UI_COMPONENTS', label: 'UI Components', icon: Smartphone },
-  { value: 'DATA_VISUALIZATION', label: 'Data Visualization', icon: Monitor }
-]
+  { value: "all", label: "All Projects", icon: Layers },
+  { value: "FULL_STACK", label: "Full Stack", icon: Code },
+  { value: "UI_COMPONENTS", label: "UI Components", icon: Smartphone },
+  { value: "DATA_VISUALIZATION", label: "Data Visualization", icon: Monitor },
+];
 
 export default function DemosPage() {
-  const demos = mockDemos
-  const featuredDemos = demos.filter(demo => demo.featured)
+  const demos = mockDemos;
+  const featuredDemos = demos.filter((demo) => demo.featured);
 
   return (
     <div className="min-h-screen bg-background">
@@ -122,8 +152,8 @@ export default function DemosPage() {
               Projects & Demos
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Interactive demos and projects showcasing modern web development techniques, 
-              React components, and full-stack applications.
+              Interactive demos and projects showcasing modern web development
+              techniques, React components, and full-stack applications.
             </p>
           </div>
         </div>
@@ -146,10 +176,12 @@ export default function DemosPage() {
                         <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
                           <Code className="h-8 w-8 text-primary" />
                         </div>
-                        <p className="text-sm text-muted-foreground">Demo Preview</p>
+                        <p className="text-sm text-muted-foreground">
+                          Demo Preview
+                        </p>
                       </div>
                     </div>
-                    
+
                     <div className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div>
@@ -161,7 +193,7 @@ export default function DemosPage() {
                           </p>
                         </div>
                       </div>
-                      
+
                       <div className="flex flex-wrap gap-2 mb-4">
                         {demo.technologies.slice(0, 4).map((tech) => (
                           <span
@@ -177,7 +209,7 @@ export default function DemosPage() {
                           </span>
                         )}
                       </div>
-                      
+
                       <div className="flex items-center gap-3 pt-4 border-t border-border">
                         <a
                           href={demo.liveUrl}
@@ -213,7 +245,7 @@ export default function DemosPage() {
             </div>
             <div className="flex flex-wrap gap-3">
               {categories.map((category) => {
-                const IconComponent = category.icon
+                const IconComponent = category.icon;
                 return (
                   <button
                     key={category.value}
@@ -222,7 +254,7 @@ export default function DemosPage() {
                     <IconComponent className="h-4 w-4" />
                     <span>{category.label}</span>
                   </button>
-                )
+                );
               })}
             </div>
           </section>
@@ -241,10 +273,12 @@ export default function DemosPage() {
                       <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-primary/20 flex items-center justify-center">
                         <Code className="h-6 w-6 text-primary" />
                       </div>
-                      <p className="text-xs text-muted-foreground">Demo Preview</p>
+                      <p className="text-xs text-muted-foreground">
+                        Demo Preview
+                      </p>
                     </div>
                   </div>
-                  
+
                   <div className="p-5">
                     <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
                       {demo.title}
@@ -252,7 +286,7 @@ export default function DemosPage() {
                     <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-3">
                       {demo.description}
                     </p>
-                    
+
                     <div className="flex flex-wrap gap-1 mb-4">
                       {demo.technologies.slice(0, 3).map((tech) => (
                         <span
@@ -268,7 +302,7 @@ export default function DemosPage() {
                         </span>
                       )}
                     </div>
-                    
+
                     <div className="flex items-center gap-2 pt-3 border-t border-border">
                       <a
                         href={demo.liveUrl}
@@ -298,10 +332,13 @@ export default function DemosPage() {
           {/* Call to Action */}
           <section className="mt-20 text-center">
             <div className="max-w-2xl mx-auto">
-              <h2 className="text-3xl font-bold mb-4">Interested in Working Together?</h2>
+              <h2 className="text-3xl font-bold mb-4">
+                Interested in Working Together?
+              </h2>
               <p className="text-xl text-muted-foreground mb-8">
-                I'm always excited to work on new projects and collaborate with talented teams. 
-                Let's build something amazing together!
+                I&apos;m always excited to work on new projects and collaborate
+                with talented teams. Let&apos;s build something amazing
+                together!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
@@ -322,5 +359,5 @@ export default function DemosPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

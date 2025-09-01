@@ -1,35 +1,37 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { trpc } from '@/utils/trpc'
-import Link from 'next/link'
+import { useState } from "react";
+import { trpc } from "@/utils/trpc";
+import Link from "next/link";
+import type { Post, PostTag } from "@/types";
 
 export default function PostsManagement() {
-  const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all')
-  
-  const { data: posts, isLoading, refetch } = trpc.post.getAll.useQuery()
-  console.log("Fetched posts from tRPC:", posts)
+  const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
+
+  const { data: posts, isLoading, refetch } = trpc.post.getAll.useQuery();
+  console.log("Fetched posts from tRPC:", posts);
   const deleteMutation = trpc.post.delete.useMutation({
     onSuccess: () => {
-      refetch()
-    }
-  })
+      refetch();
+    },
+  });
 
-  const filteredPosts = posts?.filter((post) => {
-    if (filter === 'published') return post.published
-    if (filter === 'draft') return !post.published
-    return true
-  }) || []
+  const filteredPosts =
+    posts?.filter((post: Post) => {
+      if (filter === "published") return post.published;
+      if (filter === "draft") return !post.published;
+      return true;
+    }) || [];
 
   const handleDelete = async (id: string, title: string) => {
     if (confirm(`Are you sure you want to delete "${title}"?`)) {
       try {
-        await deleteMutation.mutateAsync(id)
+        await deleteMutation.mutateAsync(id);
       } catch (error) {
-        alert('Failed to delete post. Please try again.')
+        alert("Failed to delete post. Please try again.");
       }
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -37,9 +39,7 @@ export default function PostsManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Posts</h1>
-          <p className="text-muted-foreground">
-            Manage your blog posts
-          </p>
+          <p className="text-muted-foreground">Manage your blog posts</p>
         </div>
         <Link
           href="/admin/posts/new"
@@ -52,31 +52,31 @@ export default function PostsManagement() {
       {/* Filter Tabs */}
       <div className="flex space-x-1">
         <button
-          onClick={() => setFilter('all')}
+          onClick={() => setFilter("all")}
           className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-            filter === 'all'
-              ? 'bg-primary text-primary-foreground'
-              : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            filter === "all"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted"
           }`}
         >
           All Posts
         </button>
         <button
-          onClick={() => setFilter('published')}
+          onClick={() => setFilter("published")}
           className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-            filter === 'published'
-              ? 'bg-primary text-primary-foreground'
-              : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            filter === "published"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted"
           }`}
         >
           Published
         </button>
         <button
-          onClick={() => setFilter('draft')}
+          onClick={() => setFilter("draft")}
           className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-            filter === 'draft'
-              ? 'bg-primary text-primary-foreground'
-              : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            filter === "draft"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted"
           }`}
         >
           Drafts
@@ -88,16 +88,17 @@ export default function PostsManagement() {
         {isLoading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-2 text-sm text-muted-foreground">Loading posts...</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Loading posts...
+            </p>
           </div>
         ) : filteredPosts.length === 0 ? (
           <div className="p-8 text-center">
             <h3 className="text-lg font-medium">No posts found</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              {filter === 'all' 
-                ? 'You haven\'t created any posts yet.'
-                : `No ${filter} posts found.`
-              }
+              {filter === "all"
+                ? "You haven't created any posts yet."
+                : `No ${filter} posts found.`}
             </p>
             <Link
               href="/admin/posts/new"
@@ -108,8 +109,11 @@ export default function PostsManagement() {
           </div>
         ) : (
           <div className="divide-y">
-            {filteredPosts.map((post) => (
-              <div key={post.id} className="p-4 hover:bg-muted/50 transition-colors">
+            {filteredPosts.map((post: Post) => (
+              <div
+                key={post.id}
+                className="p-4 hover:bg-muted/50 transition-colors"
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-3">
@@ -129,17 +133,19 @@ export default function PostsManagement() {
                       </div>
                     </div>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      {post.excerpt || 'No excerpt available'}
+                      {post.excerpt || "No excerpt available"}
                     </p>
                     <div className="mt-2 flex items-center space-x-4 text-sm text-muted-foreground">
-                      <span>By {post.author.name}</span>
+                      <span>By {post.author?.name || "Unknown Author"}</span>
                       <span>•</span>
-                      <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(post.createdAt).toLocaleDateString()}
+                      </span>
                       {post.tags.length > 0 && (
                         <>
                           <span>•</span>
                           <div className="flex items-center space-x-1">
-                            {post.tags.slice(0, 3).map((postTag) => (
+                            {post.tags.slice(0, 3).map((postTag: PostTag) => (
                               <span
                                 key={postTag.tag.id}
                                 className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-secondary text-secondary-foreground"
@@ -189,5 +195,5 @@ export default function PostsManagement() {
         )}
       </div>
     </div>
-  )
+  );
 }
