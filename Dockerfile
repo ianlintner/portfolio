@@ -1,13 +1,16 @@
 # Multi-stage Docker build for Next.js application
 FROM node:18-alpine AS builder
 WORKDIR /app
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
 RUN npm install -g pnpm
 COPY package.json pnpm-lock.yaml ./
 COPY prisma ./prisma
-RUN pnpm install --frozen-lockfile && npx prisma generate
+RUN rm -rf node_modules && pnpm install --frozen-lockfile
+RUN npx prisma generate
 
 COPY src ./src
-RUN pnpm build
+RUN rm -rf .next && npx next build
 
 FROM node:18-alpine AS runner
 WORKDIR /app
