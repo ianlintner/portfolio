@@ -26,8 +26,18 @@ Install Node.js 18.0 or later:
 
 === "Using Node Version Manager (Recommended)"
     ```bash
-    # Install nvm (if not already installed)
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+    # Download the nvm install script (do NOT execute immediately)
+    curl -o install_nvm.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh
+    
+    # (Optional but recommended) Inspect the script before running:
+    less install_nvm.sh
+    
+    # (Optional) Verify the script's integrity by checking its SHA256 hash:
+    sha256sum install_nvm.sh
+    # Compare the output to the hash published at: https://github.com/nvm-sh/nvm#verify-install-script
+    
+    # Execute the script only after verification
+    bash install_nvm.sh
     
     # Restart your terminal or run:
     source ~/.bashrc
