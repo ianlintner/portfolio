@@ -1,0 +1,132 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: backendconfigs.networking.gke.io
+spec:
+  group: networking.gke.io
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                timeoutSec:
+                  type: integer
+                connectionDraining:
+                  type: object
+                  properties:
+                    drainingTimeoutSec:
+                      type: integer
+                sessionAffinity:
+                  type: object
+                  properties:
+                    affinityType:
+                      type: string
+                    affinityCookieTtlSec:
+                      type: integer
+                cdn:
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+                    cachePolicy:
+                      type: object
+                      properties:
+                        includeHost:
+                          type: boolean
+                        includeProtocol:
+                          type: boolean
+                        includeQueryString:
+                          type: boolean
+                        queryStringWhitelist:
+                          type: array
+                          items:
+                            type: string
+                        queryStringBlacklist:
+                          type: array
+                          items:
+                            type: string
+                iap:
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+                    oauth2ClientId:
+                      type: string
+                    oauth2ClientSecret:
+                      type: string
+                securityPolicy:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+    - name: v1beta1
+      served: true
+      storage: false
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                timeoutSec:
+                  type: integer
+                connectionDraining:
+                  type: object
+                  properties:
+                    drainingTimeoutSec:
+                      type: integer
+                sessionAffinity:
+                  type: object
+                  properties:
+                    affinityType:
+                      type: string
+                    affinityCookieTtlSec:
+                      type: integer
+                cdn:
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+                    cachePolicy:
+                      type: object
+                      properties:
+                        includeHost:
+                          type: boolean
+                        includeProtocol:
+                          type: boolean
+                        includeQueryString:
+                          type: boolean
+                        queryStringWhitelist:
+                          type: array
+                          items:
+                            type: string
+                        queryStringBlacklist:
+                          type: array
+                          items:
+                            type: string
+                iap:
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+                    oauth2ClientId:
+                      type: string
+                    oauth2ClientSecret:
+                      type: string
+                securityPolicy:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+  scope: Namespaced
+  names:
+    plural: backendconfigs
+    singular: backendconfig
+    kind: BackendConfig
