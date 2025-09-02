@@ -181,8 +181,7 @@ API endpoints should have integration tests:
 
 ```typescript
 // Example: server/api/__tests__/user.test.ts
-import { createTRPCMsw } from 'msw-trpc';
-import { appRouter } from '../root';
+import { appRouter } from '@/server/api/root';
 
 const trpcMsw = createTRPCMsw(appRouter);
 
