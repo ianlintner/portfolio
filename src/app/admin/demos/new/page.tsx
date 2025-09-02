@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { trpc } from "@/utils/trpc";
+import { trpc } from "../../../../utils/trpc";
 
 const categoryOptions = [
   { value: "REACT", label: "React" },

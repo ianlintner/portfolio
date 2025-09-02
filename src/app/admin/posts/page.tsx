@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { trpc } from "@/utils/trpc";
+import { trpc } from "../../../utils/trpc";
 import Link from "next/link";
-import type { Post, PostTag } from "@/types";
+import type { Post, PostTag } from "../../../types";
 
 export default function PostsManagement() {
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all");

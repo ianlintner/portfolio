@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { trpc } from "@/utils/trpc";
+import { trpc } from "../../../utils/trpc";
 import Link from "next/link";
-import type { ComponentDemo, DemoCategory } from "@/types";
+import type { ComponentDemo, DemoCategory } from "../../../types";
 
 const categoryLabels = {
   REACT: "React",

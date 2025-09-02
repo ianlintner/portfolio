@@ -1,6 +1,6 @@
 "use client";
 
-import { trpc } from "@/utils/trpc";
+import { trpc } from "../../utils/trpc";
 
 export default function AdminDashboard() {
   const { data: posts, isLoading: postsLoading } = trpc.post.getAll.useQuery();

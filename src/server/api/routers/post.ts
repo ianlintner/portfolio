@@ -3,7 +3,7 @@ import {
   createTRPCRouter,
   publicProcedure,
   protectedProcedure,
-} from "@/server/api/trpc";
+} from "../../api/trpc";
 
 const createPostSchema = z.object({
   title: z.string().min(1),

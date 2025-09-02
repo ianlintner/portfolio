@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { trpc } from "@/utils/trpc";
-import type { PostTag } from "@/types";
+import { trpc } from "../../../../../utils/trpc";
+import type { PostTag } from "../../../../../types";
 
 export default function EditPost() {
   const router = useRouter();

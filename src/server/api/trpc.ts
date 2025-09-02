@@ -4,8 +4,8 @@ import { getServerSession } from "next-auth";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { db } from "@/server/db";
-import { authOptions } from "@/server/auth";
+import { db } from "../db";
+import { authOptions } from "../auth";
 
 interface CreateContextOptions {
   session: Session | null;
