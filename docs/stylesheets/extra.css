@@ -1,0 +1,50 @@
+/* Extra styles for MkDocs Material theme */
+
+/* Custom color scheme */
+:root {
+  --md-primary-fg-color: #1976d2;
+  --md-primary-fg-color--light: #42a5f5;
+  --md-primary-fg-color--dark: #1565c0;
+  --md-accent-fg-color: #2196f3;
+}
+
+/* Code block improvements */
+.highlight {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Admonition styling */
+.md-typeset .admonition {
+  border-left: 4px solid var(--md-accent-fg-color);
+  border-radius: 4px;
+}
+
+/* Table improvements */
+.md-typeset table:not([class]) {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation improvements */
+.md-nav__title {
+  font-weight: 600;
+}
+
+/* Logo and branding */
+.md-header__title {
+  font-weight: 700;
+}
+
+/* Custom content styling */
+.md-content__inner {
+  margin: 0 auto;
+}
+
+/* Responsive improvements */
+@media screen and (max-width: 768px) {
+  .md-grid {
+    margin: 0 1rem;
+  }
+}
