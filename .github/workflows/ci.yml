@@ -117,13 +117,13 @@ jobs:
           echo "📋 Validating Kubernetes schema compliance with kubeconform..."
           # Use kubeconform's built-in skip patterns to ignore Config Connector CRDs
           echo "Validating base manifests..."
-          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey' /tmp/base-output.yaml || exit 1
+          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey,BackendConfig,ManagedCertificate,ComputeGlobalAddress,FrontendConfig' /tmp/base-output.yaml || exit 1
           echo "Validating dev manifests..."
-          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey' /tmp/dev-output.yaml || exit 1
+          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey,BackendConfig,ManagedCertificate,ComputeGlobalAddress,FrontendConfig' /tmp/dev-output.yaml || exit 1
           echo "Validating staging manifests..."
-          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey' /tmp/staging-output.yaml || exit 1
+          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey,BackendConfig,ManagedCertificate,ComputeGlobalAddress,FrontendConfig' /tmp/staging-output.yaml || exit 1
           echo "Validating prod manifests..."
-          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey' /tmp/prod-output.yaml || exit 1
+          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey,BackendConfig,ManagedCertificate,ComputeGlobalAddress,FrontendConfig' /tmp/prod-output.yaml || exit 1
           echo "✅ Standard Kubernetes resources are schema compliant"
 
       - name: Security and Best Practice Check
