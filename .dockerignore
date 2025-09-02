@@ -61,8 +61,4 @@ Dockerfile*
 
 # Misc
 *.log
-.eslintrc.json
 .prettierrc
-tailwind.config.ts
-postcss.config.js
-tsconfig.json

@@ -6,11 +6,17 @@ ENV DATABASE_URL=$DATABASE_URL
 RUN npm install -g pnpm
 COPY package.json pnpm-lock.yaml ./
 COPY prisma ./prisma
-RUN rm -rf node_modules && pnpm install --frozen-lockfile
-RUN npx prisma generate
-
 COPY src ./src
-RUN rm -rf .next && npx next build
+COPY public ./public
+COPY tsconfig.json ./
+COPY next.config.js ./
+COPY tailwind.config.ts ./
+COPY postcss.config.js ./
+COPY .eslintrc.json ./
+RUN rm -rf node_modules && pnpm install --frozen-lockfile
+# Ensure clean Prisma generation after all source files are present
+RUN rm -rf node_modules/.prisma && npx prisma generate
+RUN rm -rf .next && pnpm build
 
 FROM node:18-alpine AS runner
 WORKDIR /app
