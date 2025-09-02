@@ -6,3 +6,4 @@ spec:
   description: "Static IP for portfolio application"
   addressType: EXTERNAL
   ipVersion: IPV4
+  location: global
