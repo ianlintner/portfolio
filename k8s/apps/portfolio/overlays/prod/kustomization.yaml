@@ -98,7 +98,7 @@ configMapGenerator:
     behavior: merge
     literals:
       - NODE_ENV=production
-      - NEXTAUTH_URL=https://portfolio.example.com
+      - NEXTAUTH_URL=https://hugecat.net
       - CLOUD_SQL_CONNECTION_NAME=PROJECT_ID:us-central1:portfolio-prod-db
 
 secretGenerator:

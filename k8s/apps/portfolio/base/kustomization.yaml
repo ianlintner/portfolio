@@ -8,6 +8,10 @@ resources:
   - networkpolicy.yaml
   - cloudsql-instance.yaml
   - cloudsql-serviceaccount.yaml
+  - ingress.yaml
+  - ssl-certificate.yaml
+  - frontend-config.yaml
+  - static-ip.yaml
 
 commonLabels:
   app.kubernetes.io/managed-by: flux
