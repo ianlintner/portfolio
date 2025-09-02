@@ -8,10 +8,15 @@ resources:
   - networkpolicy.yaml
   - cloudsql-instance.yaml
   - cloudsql-serviceaccount.yaml
+  - ingress.yaml
+  - ssl-certificate.yaml
+  - frontend-config.yaml
+  - static-ip.yaml
 
-commonLabels:
-  app.kubernetes.io/managed-by: flux
-  app.kubernetes.io/created-by: hobby-cluster
+labels:
+  - pairs:
+      app.kubernetes.io/managed-by: flux
+      app.kubernetes.io/created-by: hobby-cluster
 
 commonAnnotations:
   policy.kubernetes.io/validate: "true"

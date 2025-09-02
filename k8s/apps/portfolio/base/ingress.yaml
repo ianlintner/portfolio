@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: portfolio-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: portfolio-ip
+    networking.gke.io/managed-certificates: portfolio-ssl-cert
+    kubernetes.io/ingress.class: gce
+    kubernetes.io/ingress.allow-http: "false"
+    networking.gke.io/v1beta1.FrontendConfig: portfolio-frontend-config
+spec:
+  rules:
+    - host: portfolio.hugecat.net
+      http:
+        paths:
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: portfolio-portfolio
+                port:
+                  number: 80
+    - host: hugecat.net
+      http:
+        paths:
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: portfolio-portfolio
+                port:
+                  number: 80
+    - host: www.hugecat.net
+      http:
+        paths:
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: portfolio-portfolio
+                port:
+                  number: 80
