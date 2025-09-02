@@ -19,17 +19,6 @@ spec:
       includeHost: true
       includeProtocol: true
       includeQueryString: false
-    negativeCaching: true
-    negativeCachingPolicy:
-      - code: 404
-        ttl: 300
-      - code: 410
-        ttl: 300
-  healthCheck:
-    checkIntervalSec: 15
-    port: 3000
-    type: HTTP
-    requestPath: /api/health
   timeoutSec: 30
   connectionDraining:
     drainingTimeoutSec: 300
