@@ -12,7 +12,6 @@ resources:
   - serviceaccount.yaml
   - ssl-certificate.yaml
   - static-ip.yaml
-  - backend-config-crd.yaml
 
 labels:
   - pairs:
