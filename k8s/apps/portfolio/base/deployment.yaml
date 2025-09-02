@@ -17,9 +17,11 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       serviceAccountName: portfolio-workload-identity
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: portfolio
-          image: ianlintner068/portfolio:latest # Will be patched by overlay
+          image: docker.io/ianlintner068/portfolio:latest # Will be patched by overlay
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
