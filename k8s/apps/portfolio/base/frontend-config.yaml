@@ -21,10 +21,10 @@ spec:
       includeQueryString: false
     negativeCaching: true
     negativeCachingPolicy:
-    - code: 404
-      ttl: 300
-    - code: 410
-      ttl: 300
+      - code: 404
+        ttl: 300
+      - code: 410
+        ttl: 300
   healthCheck:
     checkIntervalSec: 15
     port: 3000

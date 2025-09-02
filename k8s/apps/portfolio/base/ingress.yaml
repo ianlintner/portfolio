@@ -10,33 +10,33 @@ metadata:
     networking.gke.io/v1beta1.FrontendConfig: portfolio-frontend-config
 spec:
   rules:
-  - host: portfolio.hugecat.net
-    http:
-      paths:
-      - path: /*
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: portfolio-portfolio
-            port:
-              number: 80
-  - host: hugecat.net
-    http:
-      paths:
-      - path: /*
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: portfolio-portfolio
-            port:
-              number: 80
-  - host: www.hugecat.net
-    http:
-      paths:
-      - path: /*
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: portfolio-portfolio
-            port:
-              number: 80
+    - host: portfolio.hugecat.net
+      http:
+        paths:
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: portfolio-portfolio
+                port:
+                  number: 80
+    - host: hugecat.net
+      http:
+        paths:
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: portfolio-portfolio
+                port:
+                  number: 80
+    - host: www.hugecat.net
+      http:
+        paths:
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: portfolio-portfolio
+                port:
+                  number: 80
