@@ -6,8 +6,9 @@ resources:
 
 namespace: staging
 
-commonLabels:
-  env: staging
+labels:
+  - pairs:
+      env: staging
 
 patches:
   - patch: |-

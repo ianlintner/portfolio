@@ -6,8 +6,9 @@ resources:
 
 namespace: dev
 
-commonLabels:
-  env: dev
+labels:
+  - pairs:
+      env: dev
 
 patches:
   - patch: |-

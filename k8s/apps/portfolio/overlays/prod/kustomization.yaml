@@ -6,8 +6,9 @@ resources:
 
 namespace: prod
 
-commonLabels:
-  env: prod
+labels:
+  - pairs:
+      env: prod
 
 patches:
   - patch: |-
