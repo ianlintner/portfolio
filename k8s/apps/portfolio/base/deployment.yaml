@@ -19,7 +19,7 @@ spec:
       serviceAccountName: portfolio-workload-identity
       containers:
         - name: portfolio
-          image: portfolio:latest # Will be patched by overlay
+          image: ianlintner/portfolio:main # Will be patched by overlay
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000

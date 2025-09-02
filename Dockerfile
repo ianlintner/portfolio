@@ -1,7 +1,7 @@
 # Multi-stage Docker build for Next.js application
 FROM node:18-alpine AS dependencies
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
+COPY . .
 RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 FROM node:18-alpine AS builder
