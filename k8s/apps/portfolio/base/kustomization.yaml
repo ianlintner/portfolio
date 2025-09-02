@@ -13,9 +13,10 @@ resources:
   - frontend-config.yaml
   - static-ip.yaml
 
-commonLabels:
-  app.kubernetes.io/managed-by: flux
-  app.kubernetes.io/created-by: hobby-cluster
+labels:
+  - pairs:
+      app.kubernetes.io/managed-by: flux
+      app.kubernetes.io/created-by: hobby-cluster
 
 commonAnnotations:
   policy.kubernetes.io/validate: "true"
