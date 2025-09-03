@@ -116,45 +116,10 @@ secretGenerator:
     literals:
       - password=prod-password-change-me
 
+  - name: portfolio
+    newName: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio
+    newTag: latest
 images:
   - name: portfolio
     newName: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio
     newTag: latest
-
-patchesJson6902:
-  - target:
-      group: ""
-      version: v1
-      kind: Service
-      name: portfolio
-    patch: |-
-      - op: add
-        path: /metadata/annotations/cloud.google.com~1backend-config
-        value: '{"default": "portfolio-backend-config"}'
-  - target:
-      group: networking.k8s.io
-      version: v1
-      kind: Ingress
-      name: portfolio
-    patch: |-
-      - op: add
-        path: /metadata/annotations/networking.gke.io~1managed-certificates
-        value: portfolio-ssl-certificate
-      - op: add
-        path: /spec/rules/0/host
-        value: hugecat.net
-      - op: add
-        path: /spec/rules/0/http/paths/0/backend/service/port/number
-        value: 80
-      - op: add
-        path: /spec/rules/0/http/paths/0/pathType
-        value: ImplementationSpecific
-      - op: add
-        path: /spec/rules/0/http/paths/0/backend/service/name
-        value: portfolio
-      - op: add
-        path: /spec/defaultBackend/service/name
-        value: portfolio
-      - op: add
-        path: /spec/defaultBackend/service/port/number
-        value: 80

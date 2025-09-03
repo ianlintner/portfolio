@@ -6,18 +6,3 @@ spec:
   redirectToHttps:
     enabled: true
     responseCodeName: MOVED_PERMANENTLY_DEFAULT
----
-apiVersion: networking.gke.io/v1beta1
-kind: BackendConfig
-metadata:
-  name: portfolio-backend-config
-spec:
-  cdn:
-    enabled: true
-    cachePolicy:
-      includeHost: true
-      includeProtocol: true
-      includeQueryString: false
-  timeoutSec: 30
-  connectionDraining:
-    drainingTimeoutSec: 300
