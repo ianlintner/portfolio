@@ -93,4 +93,4 @@ secretGenerator:
 images:
   - name: portfolio
     newName: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio
-    newTag: arm64-latest
+    newTag: latest
