@@ -7,5 +7,3 @@ spec:
   addressType: EXTERNAL
   ipVersion: IPV4
   location: global
-  projectRef:
-    external: kame-457417
