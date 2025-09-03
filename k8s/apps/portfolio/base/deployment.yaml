@@ -22,7 +22,7 @@ spec:
       containers:
         - name: portfolio
           image: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:arm64-latest # Will be patched by overlay
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports: 
             - containerPort: 3000
               name: http
