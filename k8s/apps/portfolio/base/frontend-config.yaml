@@ -6,7 +6,6 @@ spec:
   redirectToHttps:
     enabled: true
     responseCodeName: MOVED_PERMANENTLY_DEFAULT
-  sslPolicy: portfolio-ssl-policy
 ---
 apiVersion: networking.gke.io/v1beta1
 kind: BackendConfig
