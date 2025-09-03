@@ -21,6 +21,9 @@ RUN rm -rf .next && pnpm build
 FROM node:18-alpine AS runner
 WORKDIR /app
 
+# Install necessary packages for Prisma and OpenSSL
+RUN apk add --no-cache openssl libstdc++
+
 # Create non-root user for security
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
