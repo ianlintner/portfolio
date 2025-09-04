@@ -73,14 +73,8 @@ patches:
         path: /metadata/annotations/kubernetes.io~1ingress.global-static-ip-name
         value: portfolio-dev-ip
       - op: replace
-        path: /metadata/annotations/networking.gke.io~1managed-certificates
-        value: portfolio-dev-ssl-cert
-      - op: replace
         path: /spec/tls/0/hosts
         value: ["portfolio.dev.hugecat.net"]
-      - op: replace
-        path: /spec/tls/0/secretName
-        value: portfolio-dev-ssl-cert
       - op: replace
         path: /spec/rules
         value:

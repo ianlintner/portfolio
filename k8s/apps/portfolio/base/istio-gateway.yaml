@@ -22,7 +22,7 @@ spec:
       protocol: HTTPS
     tls:
       mode: SIMPLE
-      credentialName: portfolio-prod-ssl-cert
+      credentialName: portfolio-tls-cert
     hosts:
     - portfolio.hugecat.net
     - hugecat.net
