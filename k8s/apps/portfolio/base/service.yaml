@@ -9,7 +9,7 @@ spec:
     app: portfolio
   ports:
     - name: http
-      port: 3000
+      port: 80
       targetPort: http
       protocol: TCP
   type: ClusterIP

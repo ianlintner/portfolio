@@ -17,7 +17,14 @@ spec:
       ports:
         - protocol: TCP
           port: 3000
-    - from: [] # Allow ingress from within the same namespace
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: gke-managed-system
+      ports:
+        - protocol: TCP
+          port: 3000
+    - from: [] # Allow ingress from within the same namespace and GKE load balancer
       ports:
         - protocol: TCP
           port: 3000
