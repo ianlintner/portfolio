@@ -3,6 +3,8 @@ kind: Kustomization
 
 resources:
   - ../../base
+  - ingress.yaml
+  - ssl-certificate.yaml
 
 namespace: dev
 

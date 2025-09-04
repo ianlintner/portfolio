@@ -1,0 +1,7 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: portfolio-dev-ssl-cert
+spec:
+  domains:
+    - portfolio.dev.hugecat.net

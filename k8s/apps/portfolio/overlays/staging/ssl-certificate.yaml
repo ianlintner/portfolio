@@ -1,0 +1,7 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: portfolio-staging-ssl-cert
+spec:
+  domains:
+    - portfolio.staging.hugecat.net
