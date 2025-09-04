@@ -14,13 +14,12 @@ metadata:
     prometheus.io/path: "/api/health"
 spec:
   ingressClassName: "gce-l7-global"
-  # Temporarily disabled TLS to allow load balancer to come online
-  # tls:
-  #   - hosts:
-  #       - portfolio.hugecat.net
-  #       - hugecat.net  
-  #       - www.hugecat.net
-  #     secretName: portfolio-ssl-cert
+  tls:
+    - hosts:
+        - portfolio.hugecat.net
+        - hugecat.net  
+        - www.hugecat.net
+      secretName: portfolio-tls-cert
   rules:
     - host: portfolio.hugecat.net
       http:
