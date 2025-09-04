@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ../../base
   - ssl-certificate.yaml
+  - dns-record.yaml
 
 namespace: staging
 

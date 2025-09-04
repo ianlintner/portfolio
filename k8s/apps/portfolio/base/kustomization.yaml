@@ -7,6 +7,7 @@ resources:
   - cloudsql-instance.yaml
   - cloudsql-serviceaccount.yaml
   - deployment.yaml
+  - dns-zone.yaml
   - frontend-config.yaml
   - ingress.yaml
   - networkpolicy.yaml
