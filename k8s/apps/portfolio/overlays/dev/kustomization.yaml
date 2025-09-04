@@ -69,7 +69,7 @@ patches:
       name: portfolio-cloudsql-policy
 
 configMapGenerator:
-  - name: config
+  - name: portfolio-config
     behavior: merge
     literals:
       - NODE_ENV=development
@@ -77,15 +77,15 @@ configMapGenerator:
       - CLOUD_SQL_CONNECTION_NAME=PROJECT_ID:us-central1:portfolio-dev-db
 
 secretGenerator:
-  - name: secrets
+  - name: portfolio-secrets
     behavior: merge
     literals:
       - NEXTAUTH_SECRET=dev-secret-key-change-me
-  - name: db-secret
+  - name: portfolio-db-secret
     behavior: merge
     literals:
       - DATABASE_URL=postgresql://portfolio-dev-user:dev-password-change-me@localhost:5432/portfolio-dev-database
-  - name: db-password
+  - name: portfolio-db-password
     behavior: merge
     literals:
       - password=dev-password-change-me
