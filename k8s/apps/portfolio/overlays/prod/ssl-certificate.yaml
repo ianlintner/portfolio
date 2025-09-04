@@ -1,9 +1,0 @@
-apiVersion: networking.gke.io/v1
-kind: ManagedCertificate
-metadata:
-  name: portfolio-prod-ssl-cert
-spec:
-  domains:
-    - portfolio.hugecat.net
-    - hugecat.net
-    - www.hugecat.net
