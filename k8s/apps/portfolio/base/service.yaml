@@ -4,6 +4,7 @@ metadata:
   name: portfolio
   annotations:
     cloud.google.com/backend-config: '{"default": "portfolio-backend-config"}'
+    cloud.google.com/neg: '{"ingress": true}'
 spec:
   selector:
     app: portfolio
