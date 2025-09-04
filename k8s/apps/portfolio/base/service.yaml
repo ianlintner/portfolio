@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: portfolio
   annotations:
-    cloud.google.com/backend-config: '{"ports": {"http":"portfolio-backend-config"}}'
+    cloud.google.com/backend-config: '{"default": "portfolio-backend-config"}'
 spec:
   selector:
     app: portfolio
