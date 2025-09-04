@@ -64,27 +64,13 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 3
             failureThreshold: 30
-          env:
-            - name: NODE_ENV
-              valueFrom:
-                configMapKeyRef:
-                  name: portfolio-config
-                  key: NODE_ENV
-            - name: NEXTAUTH_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: portfolio-config
-                  key: NEXTAUTH_URL
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: portfolio-db-secret
-                  key: DATABASE_URL
-            - name: NEXTAUTH_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: portfolio-secrets
-                  key: NEXTAUTH_SECRET
+          envFrom:
+            - configMapRef:
+                name: portfolio-config
+            - secretRef:
+                name: portfolio-secrets
+            - secretRef:
+                name: portfolio-db-secret
         # Cloud SQL Auth Proxy sidecar
         - name: cloudsql-proxy
           image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0

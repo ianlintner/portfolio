@@ -19,10 +19,10 @@ patches:
         value: 1
       - op: replace
         path: /spec/template/spec/containers/0/resources/requests/cpu
-        value: 200m
+        value: 100m
       - op: replace
         path: /spec/template/spec/containers/0/resources/requests/memory
-        value: 512Mi
+        value: 256Mi
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/cpu
         value: 1000m
@@ -124,7 +124,7 @@ patches:
       name: portfolio-cloudsql-policy
 
 configMapGenerator:
-  - name: config
+  - name: portfolio-config
     behavior: merge
     literals:
       - NODE_ENV=production
@@ -132,15 +132,15 @@ configMapGenerator:
       - CLOUD_SQL_CONNECTION_NAME=PROJECT_ID:us-central1:portfolio-prod-db
 
 secretGenerator:
-  - name: secrets
+  - name: portfolio-secrets
     behavior: merge
     literals:
       - NEXTAUTH_SECRET=prod-secret-key-change-me
-  - name: db-secret
+  - name: portfolio-db-secret
     behavior: merge
     literals:
       - DATABASE_URL=postgresql://portfolio-prod-user:prod-password-change-me@localhost:5432/portfolio-prod-database
-  - name: db-password
+  - name: portfolio-db-password
     behavior: merge
     literals:
       - password=prod-password-change-me
