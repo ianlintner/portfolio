@@ -1,0 +1,36 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: portfolio-virtualservice
+  labels:
+    app: portfolio
+spec:
+  hosts:
+  - portfolio.hugecat.net
+  - hugecat.net
+  - www.hugecat.net
+  gateways:
+  - portfolio-gateway
+  http:
+  - match:
+    - headers:
+        host:
+          exact: hugecat.net
+    redirect:
+      authority: portfolio.hugecat.net
+      redirectCode: 301
+  - match:
+    - headers:
+        host:
+          exact: www.hugecat.net
+    redirect:
+      authority: portfolio.hugecat.net
+      redirectCode: 301
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: portfolio
+        port:
+          number: 80

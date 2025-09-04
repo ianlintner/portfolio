@@ -1,0 +1,22 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: portfolio-gateway-override
+  namespace: istio-system
+  labels:
+    app: portfolio
+  annotations:
+    fluxcd.io/automated: "true"
+    policy.kubernetes.io/validate: "true"
+spec:
+  selector:
+    matchLabels:
+      istio: ingressgateway
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+        hosts:
+        - "portfolio.hugecat.net"
+        - "hugecat.net" 
+        - "www.hugecat.net"

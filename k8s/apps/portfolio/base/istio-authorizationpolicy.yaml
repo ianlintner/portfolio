@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: portfolio-allow-all
+  namespace: prod
+  labels:
+    app: portfolio
+    env: prod
+  annotations:
+    fluxcd.io/automated: "true"
+    policy.kubernetes.io/validate: "true"
+spec:
+  selector:
+    matchLabels:
+      app: portfolio
+  action: ALLOW
+  rules:
+  - {}  # Allow all traffic to portfolio service (public access)
