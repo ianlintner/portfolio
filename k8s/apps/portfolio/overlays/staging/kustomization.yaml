@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
   - ../../base
-  - ingress.yaml
   - ssl-certificate.yaml
 
 namespace: staging
@@ -69,6 +68,35 @@ patches:
     target:
       kind: IAMPolicy
       name: portfolio-cloudsql-policy
+  - patch: |-
+      - op: replace
+        path: /metadata/annotations/kubernetes.io~1ingress.global-static-ip-name
+        value: portfolio-staging-ip
+      - op: replace
+        path: /metadata/annotations/networking.gke.io~1managed-certificates
+        value: portfolio-staging-ssl-cert
+      - op: replace
+        path: /spec/tls/0/hosts
+        value: ["portfolio.staging.hugecat.net"]
+      - op: replace
+        path: /spec/tls/0/secretName
+        value: portfolio-staging-ssl-cert
+      - op: replace
+        path: /spec/rules
+        value:
+          - host: portfolio.staging.hugecat.net
+            http:
+              paths:
+                - path: /*
+                  pathType: ImplementationSpecific
+                  backend:
+                    service:
+                      name: portfolio
+                      port:
+                        number: 80
+    target:
+      kind: Ingress
+      name: portfolio-ingress
 
 configMapGenerator:
   - name: portfolio-config
@@ -96,13 +124,3 @@ images:
   - name: portfolio
     newName: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio
     newTag: latest
-
-patchesJson6902:
-  - target:
-      group: networking.k8s.io
-      version: v1
-      kind: Ingress
-      name: portfolio-ingress
-    patch: |-
-      - op: remove
-        path: /metadata/annotations/kubernetes.io~1ingress.global-static-ip-name
