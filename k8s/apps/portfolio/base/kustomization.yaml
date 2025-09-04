@@ -11,6 +11,7 @@ resources:
   - frontend-config.yaml
   - istio-gateway.yaml
   - istio-ingressgateway-service.yaml
+  - istio-static-ip.yaml
   - istio-virtualservice.yaml
   - istio-authorizationpolicy.yaml
   - istio-certificate.yaml
