@@ -16,7 +16,6 @@ resources:
   - networkpolicy.yaml
   - service.yaml
   - serviceaccount.yaml
-  - ssl-certificate.yaml
   - static-ip.yaml
 
 labels:
