@@ -10,6 +10,7 @@ resources:
   - dns-zone.yaml
   - frontend-config.yaml
   - istio-gateway.yaml
+  - istio-ingressgateway-service.yaml
   - istio-virtualservice.yaml
   - istio-authorizationpolicy.yaml
   - istio-certificate.yaml
