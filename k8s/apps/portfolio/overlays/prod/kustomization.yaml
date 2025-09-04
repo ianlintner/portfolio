@@ -12,10 +12,11 @@ labels:
       env: prod
 
 patches:
+  # Scale and harden the Deployment for prod
   - patch: |-
       - op: replace
         path: /spec/replicas
-        value: 2
+        value: 1
       - op: replace
         path: /spec/template/spec/containers/0/resources/requests/cpu
         value: 200m
@@ -51,6 +52,33 @@ patches:
     target:
       kind: Deployment
       name: portfolio
+  # Restrict Ingress hosts to portfolio.hugecat.net in prod
+  - patch: |-
+      - op: replace
+        path: /spec/rules
+        value:
+          - host: portfolio.hugecat.net
+            http:
+              paths:
+                - path: /*
+                  pathType: ImplementationSpecific
+                  backend:
+                    service:
+                      name: portfolio
+                      port:
+                        number: 80
+    target:
+      kind: Ingress
+      name: portfolio-ingress
+  # Limit ManagedCertificate domains to portfolio.hugecat.net in prod
+  - patch: |-
+      - op: replace
+        path: /spec/domains
+        value:
+          - portfolio.hugecat.net
+    target:
+      kind: ManagedCertificate
+      name: portfolio-ssl-cert
   - patch: |-
       - op: replace
         path: /metadata/name

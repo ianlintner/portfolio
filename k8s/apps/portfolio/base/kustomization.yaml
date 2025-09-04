@@ -24,7 +24,6 @@ commonAnnotations:
   policy.kubernetes.io/validate: "true"
   fluxcd.io/automated: "true"
 
-namePrefix: portfolio-
 
 configMapGenerator:
   - name: config
