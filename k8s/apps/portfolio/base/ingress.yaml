@@ -20,7 +20,7 @@ spec:
               service:
                 name: portfolio
                 port:
-                  number: 80
+                  number: 3000
     - host: hugecat.net
       http:
         paths:
@@ -30,7 +30,7 @@ spec:
               service:
                 name: portfolio
                 port:
-                  number: 80
+                  number: 3000
     - host: www.hugecat.net
       http:
         paths:
@@ -40,4 +40,4 @@ spec:
               service:
                 name: portfolio
                 port:
-                  number: 80
+                  number: 3000
