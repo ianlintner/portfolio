@@ -7,19 +7,20 @@ metadata:
     kubernetes.io/ingress.global-static-ip-name: portfolio-ip
     cloud.google.com/backend-config: '{"default": "portfolio-backend-config"}'
     cloud.google.com/load-balancer-type: "External"
-    networking.gke.io/managed-certificates: portfolio-ssl-cert
+    # networking.gke.io/managed-certificates: portfolio-ssl-cert
     # Monitoring annotations
     prometheus.io/scrape: "true"
     prometheus.io/port: "3000"
     prometheus.io/path: "/api/health"
 spec:
   ingressClassName: "gce-l7-global"
-  tls:
-    - hosts:
-        - portfolio.hugecat.net
-        - hugecat.net  
-        - www.hugecat.net
-      secretName: portfolio-ssl-cert
+  # Temporarily disabled TLS to allow load balancer to come online
+  # tls:
+  #   - hosts:
+  #       - portfolio.hugecat.net
+  #       - hugecat.net  
+  #       - www.hugecat.net
+  #     secretName: portfolio-ssl-cert
   rules:
     - host: portfolio.hugecat.net
       http:
