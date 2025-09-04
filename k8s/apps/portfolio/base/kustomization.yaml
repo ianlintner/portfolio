@@ -9,7 +9,10 @@ resources:
   - deployment.yaml
   - dns-zone.yaml
   - frontend-config.yaml
-  - ingress.yaml
+  - istio-gateway.yaml
+  - istio-virtualservice.yaml
+  - istio-authorizationpolicy.yaml
+  - istio-certificate.yaml
   - networkpolicy.yaml
   - service.yaml
   - serviceaccount.yaml
