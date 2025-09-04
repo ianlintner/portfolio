@@ -18,6 +18,7 @@ resources:
   - serviceaccount.yaml
   - static-ip.yaml
 
+
 labels:
   - pairs:
       app.kubernetes.io/managed-by: flux
