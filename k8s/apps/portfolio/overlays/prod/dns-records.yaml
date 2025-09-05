@@ -9,7 +9,7 @@ spec:
   managedZoneRef:
     name: hugecat-net-zone
   rrdatas:
-    - "34.49.35.73"
+    - "34.171.221.4"
 ---
 apiVersion: dns.cnrm.cloud.google.com/v1beta1
 kind: DNSRecordSet
@@ -22,7 +22,7 @@ spec:
   managedZoneRef:
     name: hugecat-net-zone
   rrdatas:
-    - "34.49.35.73"
+    - "34.171.221.4"
 ---
 apiVersion: dns.cnrm.cloud.google.com/v1beta1
 kind: DNSRecordSet
@@ -35,4 +35,4 @@ spec:
   managedZoneRef:
     name: hugecat-net-zone
   rrdatas:
-    - "34.49.35.73"
+    - "34.171.221.4"
