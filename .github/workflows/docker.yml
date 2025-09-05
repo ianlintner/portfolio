@@ -42,14 +42,21 @@ jobs:
         id: tags
         run: |
           TAGS=""
+          TIMESTAMP=$(date +%s)
 
           # Always add commit SHA tag
           COMMIT_SHA=$(git rev-parse --short HEAD)
           TAGS="${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${COMMIT_SHA}"
 
-          # Add branch-based tags
+          # Add branch-based tags with timestamp for Flux CD image automation
           if [[ "${{ github.ref_type }}" == "branch" ]]; then
             BRANCH_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9._-]/-/g')
+            
+            # Flux CD compatible tag format: branch-commit-timestamp
+            FLUX_TAG="${BRANCH_NAME}-${COMMIT_SHA}-${TIMESTAMP}"
+            TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${FLUX_TAG}"
+            
+            # Keep the branch name tag for compatibility
             TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${BRANCH_NAME}"
             
             # Add latest tag for main branch
@@ -144,40 +151,20 @@ jobs:
           # Configure kubectl for the cluster
           gcloud container clusters get-credentials kame-house --region=us-central1 --project=${{ env.PROJECT_ID }}
 
-      - name: Deploy to environments
+      - name: Notify Flux CD
         if: github.event_name != 'pull_request'
         run: |
-          # Determine which environment to deploy to based on branch
-          if [[ "${{ github.ref_name }}" == "main" ]]; then
-            NAMESPACE="prod"
-            ENVIRONMENT="production"
-          elif [[ "${{ github.ref_name }}" == "staging" ]]; then
-            NAMESPACE="staging"
-            ENVIRONMENT="staging"
-          elif [[ "${{ github.ref_name }}" == "develop" ]]; then
-            NAMESPACE="dev"
-            ENVIRONMENT="development"
-          else
-            echo "Branch ${{ github.ref_name }} does not trigger automatic deployment"
-            exit 0
-          fi
-
-          echo "Deploying to ${ENVIRONMENT} environment (namespace: ${NAMESPACE})"
-
-          # Restart the deployment to pull the latest image
-          kubectl rollout restart deployment/portfolio -n ${NAMESPACE}
-
-          # Wait for the rollout to complete
-          kubectl rollout status deployment/portfolio -n ${NAMESPACE} --timeout=300s
-
-          # Verify the deployment
-          kubectl get pods -n ${NAMESPACE} -l app=portfolio
-
-          echo "### 🚀 Deployment Completed" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚀 Image Ready for Flux CD" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Environment:** ${ENVIRONMENT}" >> $GITHUB_STEP_SUMMARY
-          echo "**Namespace:** ${NAMESPACE}" >> $GITHUB_STEP_SUMMARY
-          echo "**Deployment:** Restarted and rolled out successfully" >> $GITHUB_STEP_SUMMARY
+          echo "**Image has been pushed to registry and is ready for Flux CD to deploy**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Flux CD will automatically:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Detect the new image with timestamp-based tag" >> $GITHUB_STEP_SUMMARY
+          echo "2. Update the deployment manifests in Git" >> $GITHUB_STEP_SUMMARY
+          echo "3. Deploy to environments based on branch (dev → staging → prod)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Image scan summary
         if: github.event_name != 'pull_request'

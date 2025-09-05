@@ -21,7 +21,7 @@ spec:
         - name: regcred
       containers:
         - name: portfolio
-          image: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:latest # Will be patched by overlay
+          image: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:latest # {"$imagepolicy": "flux-system:portfolio-image-policy"}
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
