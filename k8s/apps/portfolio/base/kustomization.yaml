@@ -2,13 +2,10 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - backend-config.yaml
-  - backend-config-crd.yaml
   - cloudsql-instance.yaml
   - cloudsql-serviceaccount.yaml
   - deployment.yaml
   - dns-zone.yaml
-  - frontend-config.yaml
   - istio-gateway.yaml
   - istio-ingressgateway-service.yaml
   - istio-static-ip.yaml
@@ -18,7 +15,6 @@ resources:
   - networkpolicy.yaml
   - service.yaml
   - serviceaccount.yaml
-  - static-ip.yaml
 
 
 labels:
