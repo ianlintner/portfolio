@@ -25,29 +25,6 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: portfolio-staging
-  namespace: flux-system
-spec:
-  interval: 5m
-  path: "./k8s/apps/portfolio/overlays/staging"
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: portfolio-source
-  targetNamespace: staging
-  healthChecks:
-    - apiVersion: apps/v1
-      kind: Deployment
-      name: portfolio
-      namespace: staging
-  timeout: 10m
-  wait: true
-  dependsOn:
-    - name: portfolio-dev
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
   name: portfolio-prod
   namespace: flux-system
 spec:
@@ -66,4 +43,4 @@ spec:
   timeout: 15m
   wait: true
   dependsOn:
-    - name: portfolio-staging
+    - name: portfolio-dev
