@@ -46,21 +46,21 @@ export default function HomePage() {
             {/* Social Links */}
             <div className="flex justify-center gap-6">
               <a
-                href="https://github.com"
+                href="https://github.com/ianlintner"
                 className="p-3 rounded-full bg-background border border-border hover:border-primary hover:shadow-md transition-all duration-200 group"
                 aria-label="GitHub"
               >
                 <Github className="h-5 w-5 group-hover:text-primary transition-colors" />
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/ianlintner/"
                 className="p-3 rounded-full bg-background border border-border hover:border-primary hover:shadow-md transition-all duration-200 group"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-5 w-5 group-hover:text-primary transition-colors" />
               </a>
               <a
-                href="mailto:contact@example.com"
+                href="mailto:lintner.ian@gmail.com"
                 className="p-3 rounded-full bg-background border border-border hover:border-primary hover:shadow-md transition-all duration-200 group"
                 aria-label="Email"
               >
