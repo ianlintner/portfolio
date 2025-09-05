@@ -136,7 +136,7 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           # Configure kubectl for the cluster
-          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} --zone=${{ secrets.GKE_CLUSTER_ZONE }} --project=${{ env.PROJECT_ID }}
+          gcloud container clusters get-credentials kame-house --zone=us-central1-a --project=${{ env.PROJECT_ID }}
 
       - name: Deploy to environments
         if: github.event_name != 'pull_request'

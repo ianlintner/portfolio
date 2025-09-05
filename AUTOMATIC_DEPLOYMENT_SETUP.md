@@ -29,28 +29,22 @@ You need to configure these secrets in your GitHub repository settings:
 - `GCP_SERVICE_ACCOUNT_KEY` - Already configured for Docker builds
 - `DATABASE_URL` - Already configured for builds
 
-### New Required Secrets
+### Configuration
 
-- `GKE_CLUSTER_NAME` - Name of your GKE cluster
-- `GKE_CLUSTER_ZONE` - Zone where your GKE cluster is located
+The workflow uses the following hardcoded values for the GKE cluster:
 
-## Setting Up the Secrets
+- **Cluster Name**: `kame-house`
+- **Cluster Zone**: `us-central1-a`
+- **Project**: `kame-457417`
 
-### 1. Find Your Cluster Information
+No additional secrets are required for deployment since cluster details are not sensitive.
 
-```bash
-# List your clusters to find the name and zone
-gcloud container clusters list --project=kame-457417
-```
+## Setup Requirements
 
-### 2. Add Secrets to GitHub
+Only the existing secrets are needed:
 
-Go to your repository → Settings → Secrets and variables → Actions
-
-Add these repository secrets:
-
-- **`GKE_CLUSTER_NAME`**: Your cluster name (e.g., `portfolio-cluster`)
-- **`GKE_CLUSTER_ZONE`**: Your cluster zone (e.g., `us-central1-a`)
+- **`GCP_SERVICE_ACCOUNT_KEY`**: Already configured for Docker builds and deployments
+- **`DATABASE_URL`**: Already configured for builds
 
 ## Service Account Permissions
 
