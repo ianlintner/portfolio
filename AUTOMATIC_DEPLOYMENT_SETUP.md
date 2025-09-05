@@ -34,7 +34,7 @@ You need to configure these secrets in your GitHub repository settings:
 The workflow uses the following hardcoded values for the GKE cluster:
 
 - **Cluster Name**: `kame-house`
-- **Cluster Zone**: `us-central1-a`
+- **Cluster Region**: `us-central1` (regional cluster)
 - **Project**: `kame-457417`
 
 No additional secrets are required for deployment since cluster details are not sensitive.
