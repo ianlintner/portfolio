@@ -36,8 +36,8 @@ Define Kubernetes resource types and application configuration structures.
 **Environment Configuration Types:**
 
 - Development: Single replica, minimal resources, debug logging
-- Staging: 2 replicas, moderate resources, structured logging
-- Production: 3+ replicas, full resources, performance optimizations, high availability
+- Staging: 1 replicas, moderate resources, structured logging
+- Production: 1+ replicas, full resources, performance optimizations, high availability
 
 ## [Files]
 

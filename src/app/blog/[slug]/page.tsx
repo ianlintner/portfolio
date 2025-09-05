@@ -406,7 +406,7 @@ kind: Deployment
 metadata:
   name: portfolio-app
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: portfolio-app
