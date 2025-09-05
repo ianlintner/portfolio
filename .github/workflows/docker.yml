@@ -126,6 +126,53 @@ jobs:
           path: deployment-image-update.yaml
           retention-days: 30
 
+      - name: Set up kubectl
+        if: github.event_name != 'pull_request'
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: "latest"
+
+      - name: Configure kubectl
+        if: github.event_name != 'pull_request'
+        run: |
+          # Configure kubectl for the cluster
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} --zone=${{ secrets.GKE_CLUSTER_ZONE }} --project=${{ env.PROJECT_ID }}
+
+      - name: Deploy to environments
+        if: github.event_name != 'pull_request'
+        run: |
+          # Determine which environment to deploy to based on branch
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            NAMESPACE="prod"
+            ENVIRONMENT="production"
+          elif [[ "${{ github.ref_name }}" == "staging" ]]; then
+            NAMESPACE="staging"
+            ENVIRONMENT="staging"
+          elif [[ "${{ github.ref_name }}" == "develop" ]]; then
+            NAMESPACE="dev"
+            ENVIRONMENT="development"
+          else
+            echo "Branch ${{ github.ref_name }} does not trigger automatic deployment"
+            exit 0
+          fi
+
+          echo "Deploying to ${ENVIRONMENT} environment (namespace: ${NAMESPACE})"
+
+          # Restart the deployment to pull the latest image
+          kubectl rollout restart deployment/portfolio -n ${NAMESPACE}
+
+          # Wait for the rollout to complete
+          kubectl rollout status deployment/portfolio -n ${NAMESPACE} --timeout=300s
+
+          # Verify the deployment
+          kubectl get pods -n ${NAMESPACE} -l app=portfolio
+
+          echo "### 🚀 Deployment Completed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${ENVIRONMENT}" >> $GITHUB_STEP_SUMMARY
+          echo "**Namespace:** ${NAMESPACE}" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment:** Restarted and rolled out successfully" >> $GITHUB_STEP_SUMMARY
+
       - name: Image scan summary
         if: github.event_name != 'pull_request'
         run: |
@@ -139,4 +186,4 @@ jobs:
           echo "**Registry:** \`${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "The image has been pushed to Google Artifact Registry and is ready for deployment." >> $GITHUB_STEP_SUMMARY
+          echo "The image has been pushed to Google Artifact Registry and deployed automatically." >> $GITHUB_STEP_SUMMARY
