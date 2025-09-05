@@ -1,0 +1,142 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: [main, develop, staging]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: us-central1-docker.pkg.dev
+  PROJECT_ID: kame-457417
+  REPOSITORY: kame-house-images
+  IMAGE_NAME: portfolio
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Configure Docker to use gcloud as credential helper
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Generate image tags
+        id: tags
+        run: |
+          TAGS=""
+          
+          # Always add commit SHA tag
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          TAGS="${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${COMMIT_SHA}"
+          
+          # Add branch-based tags
+          if [[ "${{ github.ref_type }}" == "branch" ]]; then
+            BRANCH_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9._-]/-/g')
+            TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${BRANCH_NAME}"
+            
+            # Add latest tag for main branch
+            if [[ "${{ github.ref_name }}" == "main" ]]; then
+              TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest"
+            fi
+          fi
+          
+          # Add version tags for releases
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            TAG_NAME="${{ github.ref_name }}"
+            TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${TAG_NAME}"
+            
+            # Add semver tags if it's a valid semver tag
+            if [[ ${TAG_NAME} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              VERSION=${TAG_NAME#v}
+              MAJOR=$(echo ${VERSION} | cut -d. -f1)
+              MINOR=$(echo ${VERSION} | cut -d. -f1-2)
+              TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${VERSION}"
+              TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${MAJOR}"
+              TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${MINOR}"
+            fi
+          fi
+          
+          echo "tags=${TAGS}" >> $GITHUB_OUTPUT
+          echo "Generated tags: ${TAGS}"
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.tags.outputs.tags }}
+          labels: |
+            org.opencontainers.image.title=${{ env.IMAGE_NAME }}
+            org.opencontainers.image.description=Portfolio application
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.created=${{ github.event.head_commit.timestamp }}
+          build-args: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Generate deployment manifest
+        if: github.ref == 'refs/heads/main'
+        run: |
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          IMAGE_TAG="${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${COMMIT_SHA}"
+          
+          cat > deployment-image-update.yaml << EOF
+          # Generated image tag for deployment
+          # Image: ${IMAGE_TAG}
+          # Commit: ${{ github.sha }}
+          # Build Date: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          # 
+          # Use this image tag in your Kubernetes deployment:
+          # kubectl set image deployment/portfolio-deployment portfolio=${IMAGE_TAG}
+          #
+          # Or update your kustomization.yaml with:
+          images:
+          - name: portfolio
+            newName: ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}
+            newTag: ${COMMIT_SHA}
+          EOF
+
+      - name: Upload deployment info
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-info
+          path: deployment-image-update.yaml
+          retention-days: 30
+
+      - name: Image scan summary
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "### 🐳 Docker Image Built Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Image Tags:**" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.tags.outputs.tags }}" | tr ',' '\n' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Registry:** \`${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The image has been pushed to Google Artifact Registry and is ready for deployment." >> $GITHUB_STEP_SUMMARY
