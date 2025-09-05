@@ -61,13 +61,20 @@ patches:
   - patch: |-
       - op: replace
         path: /spec/resourceRef/external
-        value: projects/PROJECT_ID
+        value: projects/kame-457417
       - op: replace
         path: /spec/bindings/0/members/0
-        value: serviceAccount:portfolio-cloudsql-sa@PROJECT_ID.iam.gserviceaccount.com
+        value: serviceAccount:portfolio-cloudsql-sa@kame-457417.iam.gserviceaccount.com
     target:
       kind: IAMPolicy
       name: portfolio-cloudsql-policy
+  - patch: |-
+      - op: replace
+        path: /metadata/annotations/cnrm.cloud.google.com~1project-id
+        value: kame-457417
+    target:
+      kind: ComputeAddress
+      name: istio-gateway-ip
 
 configMapGenerator:
   - name: portfolio-config
@@ -75,7 +82,7 @@ configMapGenerator:
     literals:
       - NODE_ENV=development
       - NEXTAUTH_URL=https://portfolio-dev.example.com
-      - CLOUD_SQL_CONNECTION_NAME=PROJECT_ID:us-central1:portfolio-dev-db
+      - CLOUD_SQL_CONNECTION_NAME=kame-457417:us-central1:portfolio-dev-db
 
 secretGenerator:
   - name: portfolio-secrets

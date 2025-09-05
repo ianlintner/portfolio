@@ -31,7 +31,7 @@ configMapGenerator:
     literals:
       - NODE_ENV=production
       - NEXTAUTH_URL=https://portfolio.example.com
-      - CLOUD_SQL_CONNECTION_NAME=PROJECT_ID:us-central1:portfolio-db-base
+      - CLOUD_SQL_CONNECTION_NAME=kame-457417:us-central1:portfolio-db-base
 
 secretGenerator:
   - name: portfolio-secrets
