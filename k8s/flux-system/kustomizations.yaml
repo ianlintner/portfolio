@@ -14,7 +14,6 @@ spec:
     kind: GitRepository
     name: portfolio-source
   targetNamespace: dev
-  validation: client
   healthChecks:
     - apiVersion: apps/v1
       kind: Deployment
@@ -36,7 +35,6 @@ spec:
     kind: GitRepository
     name: portfolio-source
   targetNamespace: staging
-  validation: client
   healthChecks:
     - apiVersion: apps/v1
       kind: Deployment
@@ -60,7 +58,6 @@ spec:
     kind: GitRepository
     name: portfolio-source
   targetNamespace: prod
-  validation: client
   healthChecks:
     - apiVersion: apps/v1
       kind: Deployment
