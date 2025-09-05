@@ -7,7 +7,7 @@ kind: Namespace
 metadata:
   name: flux-system
 ---
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
   name: portfolio-source
@@ -43,10 +43,10 @@ spec:
     semver:
       range: "*"
   filterTags:
-    pattern: "^main-[a-f0-9]+-(?P<ts>[0-9]+)$"
-    extract: "$ts"
+    pattern: '^main-[a-f0-9]+-(?P<ts>[0-9]+)$'
+    extract: '$ts'
 ---
-apiVersion: image.toolkit.fluxcd.io/v1beta1
+apiVersion: image.toolkit.fluxcd.io/v1beta2
 kind: ImageUpdateAutomation
 metadata:
   name: portfolio-image-updates
@@ -80,11 +80,3 @@ spec:
         {{ end -}}
 
         Images:
-        {{ range .Updated.Images -}}
-        - {{.}}
-        {{ end -}}
-    push:
-      branch: main
-  update:
-    path: "./k8s"
-    strategy: Setters
