@@ -8,4 +8,4 @@ spec:
   addressType: EXTERNAL
   description: Static IP for Istio ingress gateway
   ipVersion: IPV4
-  location: global
+  location: us-central1
