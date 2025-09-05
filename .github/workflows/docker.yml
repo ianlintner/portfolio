@@ -132,6 +132,12 @@ jobs:
         with:
           version: "latest"
 
+      - name: Install GKE auth plugin
+        if: github.event_name != 'pull_request'
+        run: |
+          # Install the GKE auth plugin for kubectl
+          gcloud components install gke-gcloud-auth-plugin
+
       - name: Configure kubectl
         if: github.event_name != 'pull_request'
         run: |
