@@ -6,31 +6,31 @@ metadata:
     app: portfolio
 spec:
   hosts:
-  - portfolio.hugecat.net
-  - hugecat.net
-  - www.hugecat.net
+    - portfolio.hugecat.net
+    - hugecat.net
+    - www.hugecat.net
   gateways:
-  - portfolio-gateway
+    - portfolio-gateway
   http:
-  - match:
-    - headers:
-        host:
-          exact: hugecat.net
-    redirect:
-      authority: portfolio.hugecat.net
-      redirectCode: 301
-  - match:
-    - headers:
-        host:
-          exact: www.hugecat.net
-    redirect:
-      authority: portfolio.hugecat.net
-      redirectCode: 301
-  - match:
-    - uri:
-        prefix: /
-    route:
-    - destination:
-        host: portfolio.svc.cluster.local
-        port:
-          number: 80
+    - match:
+        - headers:
+            host:
+              exact: hugecat.net
+      redirect:
+        authority: portfolio.hugecat.net
+        redirectCode: 301
+    - match:
+        - headers:
+            host:
+              exact: www.hugecat.net
+      redirect:
+        authority: portfolio.hugecat.net
+        redirectCode: 301
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: portfolio.svc.cluster.local
+            port:
+              number: 80

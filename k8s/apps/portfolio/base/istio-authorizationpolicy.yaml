@@ -15,4 +15,4 @@ spec:
       app: portfolio
   action: ALLOW
   rules:
-  - {}  # Allow all traffic to portfolio service (public access)
+    - {} # Allow all traffic to portfolio service (public access)

@@ -16,7 +16,6 @@ resources:
   - service.yaml
   - serviceaccount.yaml
 
-
 labels:
   - pairs:
       app.kubernetes.io/managed-by: flux
@@ -25,7 +24,6 @@ labels:
 commonAnnotations:
   policy.kubernetes.io/validate: "true"
   fluxcd.io/automated: "true"
-
 
 configMapGenerator:
   - name: portfolio-config

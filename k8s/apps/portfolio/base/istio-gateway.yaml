@@ -8,22 +8,22 @@ spec:
   selector:
     istio: ingressgateway
   servers:
-  - port:
-      number: 80
-      name: http
-      protocol: HTTP
-    hosts:
-    - portfolio.hugecat.net
-    - hugecat.net
-    - www.hugecat.net
-  - port:
-      number: 443
-      name: https
-      protocol: HTTPS
-    tls:
-      mode: SIMPLE
-      credentialName: portfolio-tls-cert
-    hosts:
-    - portfolio.hugecat.net
-    - hugecat.net
-    - www.hugecat.net
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - portfolio.hugecat.net
+        - hugecat.net
+        - www.hugecat.net
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: portfolio-tls-cert
+      hosts:
+        - portfolio.hugecat.net
+        - hugecat.net
+        - www.hugecat.net

@@ -17,6 +17,7 @@ The script will guide you through the entire setup process interactively.
 Before running the script, ensure you have these CLI tools installed:
 
 ### 1. Google Cloud SDK (gcloud)
+
 ```bash
 # macOS
 brew install --cask google-cloud-sdk
@@ -30,6 +31,7 @@ gcloud --version
 ```
 
 ### 2. GitHub CLI (gh)
+
 ```bash
 # macOS
 brew install gh
@@ -42,6 +44,7 @@ gh --version
 ```
 
 ### 3. kubectl
+
 ```bash
 # macOS
 brew install kubectl
@@ -90,6 +93,7 @@ If you prefer to run commands manually instead of using the script:
 <summary>Click to expand manual commands</summary>
 
 ### 1. Create Service Account
+
 ```bash
 gcloud iam service-accounts create github-actions-docker \
   --display-name="GitHub Actions Docker CI" \
@@ -97,6 +101,7 @@ gcloud iam service-accounts create github-actions-docker \
 ```
 
 ### 2. Grant Permissions
+
 ```bash
 gcloud projects add-iam-policy-binding kame-457417 \
   --member="serviceAccount:github-actions-docker@kame-457417.iam.gserviceaccount.com" \
@@ -104,18 +109,21 @@ gcloud projects add-iam-policy-binding kame-457417 \
 ```
 
 ### 3. Create Key
+
 ```bash
 gcloud iam service-accounts keys create github-actions-key.json \
   --iam-account=github-actions-docker@kame-457417.iam.gserviceaccount.com
 ```
 
 ### 4. Set GitHub Secret
+
 ```bash
 cat github-actions-key.json | gh secret set GCP_SERVICE_ACCOUNT_KEY \
   --repo="ianlintner/portfolio"
 ```
 
 ### 5. Clean Up
+
 ```bash
 rm github-actions-key.json
 ```
@@ -127,17 +135,20 @@ rm github-actions-key.json
 After running the script, verify the setup:
 
 ### GitHub Secrets
+
 ```bash
 gh secret list --repo="ianlintner/portfolio"
 ```
 
 ### Google Cloud
+
 ```bash
 gcloud iam service-accounts list --filter="github-actions-docker"
 gcloud artifacts repositories list --location=us-central1
 ```
 
 ### Test Docker Push (Local)
+
 ```bash
 gcloud auth configure-docker us-central1-docker.pkg.dev
 docker tag your-image:latest us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:test
@@ -149,17 +160,20 @@ docker push us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:t
 ### Common Issues
 
 **gcloud not authenticated**
+
 ```bash
 gcloud auth login
 gcloud config set project kame-457417
 ```
 
 **GitHub CLI not authenticated**
+
 ```bash
 gh auth login
 ```
 
 **Permission denied**
+
 ```bash
 # Ensure you have the necessary IAM permissions in the GCP project
 # You need at least:
@@ -169,6 +183,7 @@ gh auth login
 ```
 
 **Script permission error**
+
 ```bash
 chmod +x setup-docker-ci-secrets.sh
 ```

@@ -14,9 +14,9 @@ spec:
       istio: ingressgateway
   action: ALLOW
   rules:
-  - to:
-    - operation:
-        hosts:
-        - "portfolio.hugecat.net"
-        - "hugecat.net" 
-        - "www.hugecat.net"
+    - to:
+        - operation:
+            hosts:
+              - "portfolio.hugecat.net"
+              - "hugecat.net"
+              - "www.hugecat.net"

@@ -10,6 +10,6 @@ spec:
     name: letsencrypt-prod
     kind: ClusterIssuer
   dnsNames:
-  - portfolio.hugecat.net
-  - hugecat.net
-  - www.hugecat.net
+    - portfolio.hugecat.net
+    - hugecat.net
+    - www.hugecat.net

@@ -4,4 +4,3 @@ metadata:
   name: dev
   annotations:
     cnrm.cloud.google.com/project-id: kame-457417
-

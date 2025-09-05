@@ -62,7 +62,7 @@ gcloud artifacts repositories list --location=us-central1
 The Docker workflow will trigger on:
 
 - **Push to main, develop, staging branches**: Builds and pushes images
-- **Push of version tags (v*)**: Creates versioned releases
+- **Push of version tags (v\*)**: Creates versioned releases
 - **Pull requests to main**: Builds images but doesn't push (for testing)
 
 ## Image Tagging Strategy
@@ -70,15 +70,18 @@ The Docker workflow will trigger on:
 The workflow automatically generates multiple tags:
 
 ### Branch-based Images
+
 - `us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:main`
 - `us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:develop`
 - `us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:staging`
 - `us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:latest` (main branch only)
 
 ### Commit-based Images
+
 - `us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:abc1234` (commit SHA)
 
 ### Version-based Images (for tags like v1.2.3)
+
 - `us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:v1.2.3`
 - `us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:1.2.3`
 - `us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:1.2`
@@ -87,24 +90,27 @@ The workflow automatically generates multiple tags:
 ## Using Built Images
 
 ### With kubectl
+
 ```bash
 kubectl set image deployment/portfolio-deployment \
   portfolio=us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:abc1234
 ```
 
 ### With Kustomize
+
 Add to your `kustomization.yaml`:
 
 ```yaml
 images:
-- name: portfolio
-  newName: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio
-  newTag: abc1234
+  - name: portfolio
+    newName: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio
+    newTag: abc1234
 ```
 
 ## Deployment Artifacts
 
 For main branch builds, the workflow generates a `deployment-info` artifact containing:
+
 - The exact image tag built
 - Commit information
 - Sample Kubernetes deployment commands
@@ -122,16 +128,19 @@ Download this artifact from the Actions tab to get the exact image reference for
 ## Troubleshooting
 
 ### Authentication Issues
+
 - Verify the service account key is properly formatted JSON
 - Ensure the service account has `roles/artifactregistry.writer` permission
 - Check that the Artifact Registry API is enabled in your project
 
 ### Build Failures
+
 - Check that all required build args are provided
 - Verify the Dockerfile builds successfully locally
 - Review the workflow logs for specific error messages
 
 ### Permission Errors
+
 - Ensure the repository exists in the correct region (`us-central1`)
 - Verify the service account has access to the specific repository
 - Check project-level IAM permissions
@@ -157,3 +166,4 @@ gcloud auth configure-docker us-central1-docker.pkg.dev
 # Tag and push
 docker tag portfolio:local us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:test
 docker push us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:test
+```

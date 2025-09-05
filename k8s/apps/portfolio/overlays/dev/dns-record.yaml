@@ -9,4 +9,4 @@ spec:
   managedZoneRef:
     name: hugecat-net-zone
   rrdatas:
-    - "0.0.0.0"  # Placeholder - update when dev load balancer gets IP
+    - "0.0.0.0" # Placeholder - update when dev load balancer gets IP
