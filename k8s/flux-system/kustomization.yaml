@@ -4,4 +4,4 @@ kind: Kustomization
 
 resources:
   - gotk-components.yaml
-  - kustomizations.yaml
+
