@@ -1,9 +1,0 @@
-apiVersion: compute.cnrm.cloud.google.com/v1beta1
-kind: ComputeAddress
-metadata:
-  name: portfolio-ip
-spec:
-  description: "Static IP for portfolio application"
-  addressType: EXTERNAL
-  ipVersion: IPV4
-  location: global
