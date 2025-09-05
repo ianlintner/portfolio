@@ -74,6 +74,7 @@ spec:
         # Cloud SQL Auth Proxy sidecar
         - name: cloudsql-proxy
           image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0
+          imagePullPolicy: Always
           args:
             - "--structured-logs"
             - "--port=5432"
