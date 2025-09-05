@@ -41,7 +41,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <a
-                  href="https://github.com"
+                  href="https://github.com/ianlintner"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-foreground transition-colors"
@@ -51,7 +51,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="https://linkedin.com"
+                  href="https://linkedin.com/ianlintner"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-foreground transition-colors"
@@ -61,7 +61,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:contact@example.com"
+                  href="mailto:lintner.ian@gmail.com"
                   className="hover:text-foreground transition-colors"
                 >
                   Email
