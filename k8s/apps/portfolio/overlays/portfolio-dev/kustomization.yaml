@@ -5,7 +5,7 @@ resources:
   - ../../base
   - dns-record.yaml
 
-namespace: dev
+namespace: portfolio
 
 labels:
   - pairs:
@@ -21,13 +21,13 @@ patches:
         value: 50m
       - op: replace
         path: /spec/template/spec/containers/0/resources/requests/memory
-        value: 128Mi
+        value: 96Mi
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/cpu
-        value: 200m
+        value: 150m
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/memory
-        value: 256Mi
+        value: 192Mi
     target:
       kind: Deployment
       name: portfolio

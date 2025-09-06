@@ -6,7 +6,7 @@ resources:
   - namespace.yaml
   - dns-records.yaml
 
-namespace: prod
+namespace: portfolio-prod
 
 labels:
   - pairs:
