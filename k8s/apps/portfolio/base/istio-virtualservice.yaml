@@ -31,6 +31,6 @@ spec:
             prefix: /
       route:
         - destination:
-            host: portfolio.svc.cluster.local
+            host: portfolio
             port:
               number: 80
