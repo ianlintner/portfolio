@@ -26,6 +26,9 @@ commonAnnotations:
   policy.kubernetes.io/validate: "true"
   fluxcd.io/automated: "true"
 
+generatorOptions:
+  disableNameSuffixHash: true
+
 configMapGenerator:
   - name: portfolio-config
     behavior: create
