@@ -36,7 +36,7 @@ configMapGenerator:
   - name: reset-script
     behavior: create
     files:
-      - ../../../../../scripts/reset-admin-password.mjs
+      - scripts/reset-admin-password.mjs
 
 secretGenerator:
   - name: portfolio-secrets
