@@ -43,8 +43,8 @@ spec:
     semver:
       range: "*"
   filterTags:
-    pattern: '^main-[a-f0-9]+-(?P<ts>[0-9]+)$'
-    extract: '$ts'
+    pattern: "^main-[a-f0-9]+-(?P<ts>[0-9]+)$"
+    extract: "$ts"
 ---
 apiVersion: image.toolkit.fluxcd.io/v1beta2
 kind: ImageUpdateAutomation
