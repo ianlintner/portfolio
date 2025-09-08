@@ -56,48 +56,111 @@ async function main() {
 
   console.log("✅ Created sample tags");
 
-  // Create initial blog post: Architecture
+  // Create initial blog post: Architecture + GKE
   const architecturePost = await prisma.post.upsert({
     where: { slug: "building-portfolio-architecture" },
     update: {},
     create: {
-      title: "Building This Blog Portfolio Architecture",
+      title: "The Tech Behind This Portfolio: Next.js + tRPC + Prisma on GKE",
       slug: "building-portfolio-architecture",
       excerpt:
-        "A breakdown of how this portfolio blog is architected with Next.js App Router, Prisma, tRPC, NextAuth, and Tailwind.",
+        "How this site is built: Next.js App Router, tRPC, Prisma, and a GKE stack with Istio, Cloud SQL, and Flux CD.",
       content: `
-# Building This Blog Portfolio Architecture
+# The Tech Behind This Portfolio: Next.js + tRPC + Prisma on GKE
 
-This post explains how this very portfolio/blog platform was put together.
+This article breaks down how this portfolio/blog is built and deployed — from the Next.js application layer to the Google Kubernetes Engine (GKE) infrastructure that runs it.
 
-## Technology Stack
-- **Next.js 14 App Router** for server components
-- **TypeScript** for type safety and maintainability
-- **Prisma with PostgreSQL** for data modeling
-- **tRPC** for end-to-end type safe APIs
-- **NextAuth.js** for authentication
-- **Tailwind CSS** for styling
+## Application Stack
 
-## Features
-- Content Management System via custom admin panel
-- Blog with SEO friendly slugs and metadata
-- Component demo gallery
-- Authentication with role-based access
+- **Next.js (App Router)** for modern React and server components
+- **TypeScript** for end‑to‑end type safety
+- **tRPC** for type‑safe APIs between client and server
+- **Prisma + PostgreSQL** for data modeling and access
+- **NextAuth.js** (Credentials) for authentication
+- **Tailwind CSS** for styling and design tokens
 
-Building this took several iterations of database schema design, routing structure, and integrating AI agents for assistance.
-      `,
+Key directories:
+
+- App Router UI: \
+  \
+  - \\
+  `src/app`
+- API Routers (tRPC): \
+  `src/server/api/routers`
+- Prisma schema: \
+  `prisma/schema.prisma`
+- Prisma client: \
+  `src/server/db.ts`
+
+## Content & Admin
+
+- Posts are stored in PostgreSQL via Prisma models (`Post`, `Tag`, `PostTag`).
+- SEO fields are included (`seoTitle`, `seoDescription`, `seoKeywords`).
+- Admin UI (under `/admin`) manages posts with protected tRPC procedures.
+
+## Kubernetes on Google Cloud
+
+Production runs on **GKE** with the following components (see `k8s/apps/portfolio/base`):
+
+- **Deployment** (`deployment.yaml`)
+  - App container (Next.js) on port 3000
+  - Sidecar **Cloud SQL Auth Proxy** for Postgres connectivity
+  - **Workload Identity** enabled ServiceAccount for GCP access
+- **Service** (`service.yaml`)
+  - ClusterIP service exposing the app to the mesh
+- **Ingress** via **Istio**
+  - `istio-gateway.yaml` + `istio-virtualservice.yaml`
+  - Static IP (`istio-static-ip.yaml`) and Google **ManagedCertificate** (`istio-certificate.yaml`)
+- **Cloud SQL**
+  - Instance and service account manifests included
+- **NetworkPolicy** to restrict pod communications
+
+### Database Connectivity
+
+The app connects to Cloud SQL via the sidecar proxy. Environment variables are sourced from ConfigMaps/Secrets to build the `DATABASE_URL`. Workload Identity maps the pod to an IAM service account without storing long‑lived credentials on the node.
+
+## CI/CD & GitOps
+
+- **Build & Push**: GitHub Actions builds the Docker image and pushes to **Artifact Registry**.
+- **GitOps with Flux CD**: Flux watches the registry, selects the newest tag via `ImagePolicy`, updates manifests with `ImageUpdateAutomation`, and reconciles them into the cluster. This produces a fully declarative, auditable release process.
+
+Relevant docs in the repo:
+
+- `DOCKER_CI_SETUP.md` — image build/push
+- `FLUX_CD_MIGRATION.md` — Flux image automation and reconciliation
+- `AUTOMATIC_DEPLOYMENT_SETUP.md` — branch→environment mapping and rollout checks
+
+## Local Development
+
+- Use **pnpm** for all scripts (`pnpm db:generate`, `pnpm db:push`, `pnpm db:seed`, `pnpm dev`).
+- Environment variables live in `.env.local` (see `.env.example`).
+
+## Why This Stack?
+
+- **Developer velocity** with App Router + tRPC + Prisma
+- **Operational simplicity** with GitOps and managed Postgres
+- **Security** via Workload Identity and least‑privilege IAM
+- **Scalability** with GKE + Istio + GCLB
+
+` ,
       published: true,
       publishedAt: new Date(),
-      seoTitle: "Building This Portfolio Blog Architecture",
+      seoTitle:
+        "The Tech Behind My Portfolio: Next.js + tRPC + Prisma on GKE",
       seoDescription:
-        "Learn the architecture behind this portfolio blog: Next.js, Prisma, tRPC, NextAuth, Tailwind.",
+        "Architecture of this portfolio: Next.js App Router, tRPC, Prisma, on GKE with Istio, Cloud SQL, and Flux CD.",
       seoKeywords: [
+        "Next.js",
+        "tRPC",
+        "Prisma",
+        "Kubernetes",
+        "GKE",
+        "Google Cloud",
+        "Istio",
+        "Flux CD",
+        "Cloud SQL",
         "portfolio",
         "blog",
-        "Next.js",
-        "Prisma",
-        "tRPC",
-        "architecture",
       ],
       authorId: adminUser.id,
     },
