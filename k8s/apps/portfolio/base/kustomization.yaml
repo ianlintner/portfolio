@@ -43,7 +43,7 @@ configMapGenerator:
   - name: prisma-schema
     behavior: create
     files:
-      - schema.prisma=../../../../prisma/schema.prisma
+      - schema.prisma=prisma/schema.prisma
       - scripts/reset-inline.js
 
 secretGenerator:
