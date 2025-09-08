@@ -8,6 +8,7 @@ COPY package.json pnpm-lock.yaml ./
 COPY prisma ./prisma
 COPY src ./src
 COPY public ./public
+COPY scripts ./scripts
 COPY tsconfig.json ./
 COPY next.config.js ./
 COPY tailwind.config.ts ./
