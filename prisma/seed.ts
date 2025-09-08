@@ -100,9 +100,9 @@ Key directories:
 
 ## Content & Admin
 
-- Posts are stored in PostgreSQL via Prisma models (`Post`, `Tag`, `PostTag`).
-- SEO fields are included (`seoTitle`, `seoDescription`, `seoKeywords`).
-- Admin UI (under `/admin`) manages posts with protected tRPC procedures.
+- Posts are stored in PostgreSQL via Prisma models ('Post', 'Tag', 'PostTag').
+- SEO fields are included ('seoTitle', 'seoDescription', 'seoKeywords').
+- Admin UI (under '/admin') manages posts with protected tRPC procedures.
 
 ## Kubernetes on Google Cloud
 
@@ -138,8 +138,8 @@ Relevant docs in the repo:
 
 ## Local Development
 
-- Use **pnpm** for all scripts (`pnpm db:generate`, `pnpm db:push`, `pnpm db:seed`, `pnpm dev`).
-- Environment variables live in `.env.local` (see `.env.example`).
+- Use **pnpm** for all scripts ('pnpm db:generate', 'pnpm db:push', 'pnpm db:seed', 'pnpm dev').
+- Environment variables live in '.env.local' (see '.env.example').
 
 ## Why This Stack?
 
@@ -148,7 +148,7 @@ Relevant docs in the repo:
 - **Security** via Workload Identity and least‑privilege IAM
 - **Scalability** with GKE + Istio + GCLB
 
-`
+      `,
       published: true,
       publishedAt: new Date(),
       seoTitle:
