@@ -40,11 +40,12 @@ configMapGenerator:
     behavior: create
     files:
       - scripts/reset-admin-password.mjs
+      - scripts/reset-inline.js
+      - scripts/wait-for-db.js
   - name: prisma-schema
     behavior: create
     files:
       - schema.prisma=prisma/schema.prisma
-      - scripts/reset-inline.js
 
 secretGenerator:
   - name: portfolio-secrets
