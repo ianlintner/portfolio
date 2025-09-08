@@ -90,10 +90,10 @@ patches:
   - patch: |-
       - op: replace
         path: /spec/resourceRef/external
-        value: projects/PROJECT_ID
+        value: projects/kame-457417
       - op: replace
         path: /spec/bindings/0/members/0
-        value: serviceAccount:portfolio-cloudsql-sa@PROJECT_ID.iam.gserviceaccount.com
+        value: serviceAccount:portfolio-cloudsql-sa@kame-457417.iam.gserviceaccount.com
     target:
       kind: IAMPolicy
       name: portfolio-cloudsql-policy
