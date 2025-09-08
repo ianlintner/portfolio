@@ -19,7 +19,12 @@ async function main() {
 
   const adminUser = await prisma.user.upsert({
     where: { email: adminEmail },
-    update: {},
+    update: {
+      // Keep seed idempotent but allow resetting admin credentials
+      name: adminName,
+      passwordHash: hashedPassword,
+      role: "ADMIN",
+    },
     create: {
       email: adminEmail,
       name: adminName,
