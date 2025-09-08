@@ -19,7 +19,10 @@ export function Mermaid({ chart, className }: MermaidProps) {
 
       try {
         const isDark = document.documentElement.classList.contains("dark");
-        mermaid.initialize({ startOnLoad: false, theme: isDark ? "dark" : "default" });
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: isDark ? "dark" : "default",
+        });
         const { svg } = await mermaid.render(`mermaid-${id}`, chart);
         if (!cancelled && containerRef.current) {
           containerRef.current.innerHTML = svg;
@@ -41,4 +44,3 @@ export function Mermaid({ chart, className }: MermaidProps) {
 
   return <div ref={containerRef} className={className} />;
 }
-

@@ -9,6 +9,7 @@ import {
   Share2,
   BookOpen,
 } from "lucide-react";
+import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 
 // Mock data for individual posts
 const mockPostContent = {
@@ -654,45 +655,9 @@ export default async function BlogPostPage({ params }: Props) {
           </header>
 
           {/* Article Content */}
-          <article className="prose prose-lg max-w-none dark:prose-invert transition-colors">
-            <div
-              dangerouslySetInnerHTML={{
-                __html: post.content
-                  .split("\n")
-                  .map((line) => {
-                    if (line.startsWith("# ")) {
-                      return `<h1 class="text-3xl font-bold mt-12 mb-6">${line.slice(2)}</h1>`;
-                    }
-                    if (line.startsWith("## ")) {
-                      return `<h2 class="text-2xl font-semibold mt-10 mb-4">${line.slice(3)}</h2>`;
-                    }
-                    if (line.startsWith("### ")) {
-                      return `<h3 class="text-xl font-semibold mt-8 mb-3">${line.slice(4)}</h3>`;
-                    }
-                    if (line.startsWith("```")) {
-                      return line.includes("```bash")
-                        ? '<pre class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto"><code>'
-                        : line.includes("```tsx") ||
-                            line.includes("```typescript")
-                          ? '<pre class="bg-blue-900 text-blue-100 p-4 rounded-lg overflow-x-auto"><code>'
-                          : line.includes("```yaml")
-                            ? '<pre class="bg-purple-900 text-purple-100 p-4 rounded-lg overflow-x-auto"><code>'
-                            : line === "```"
-                              ? "</code></pre>"
-                              : '<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto"><code>';
-                    }
-                    if (line.startsWith("- ")) {
-                      return `<li class="ml-4">${line.slice(2)}</li>`;
-                    }
-                    if (line.trim() === "") {
-                      return "<br>";
-                    }
-                    return `<p class="mb-4 leading-relaxed">${line}</p>`;
-                  })
-                  .join(""),
-              }}
-            />
-          </article>
+          <div className="prose prose-lg max-w-none dark:prose-invert transition-colors">
+            <MarkdownRenderer content={post.content} />
+          </div>
 
           {/* Article Footer */}
           <footer className="mt-16 pt-8 border-t border-border">

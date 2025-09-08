@@ -9,7 +9,10 @@ type MarkdownRendererProps = {
   className?: string;
 };
 
-export function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
+export function MarkdownRenderer({
+  content,
+  className,
+}: MarkdownRendererProps) {
   return (
     <div className={className}>
       <ReactMarkdown
@@ -19,14 +22,12 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
         rehypePlugins={[rehypeHighlight]}
         // Custom renderers for special cases
         components={{
-          code({ node, inline, className, children, ...props }) {
+          code({ inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || "");
             const language = match?.[1]?.toLowerCase();
 
             if (!inline && language === "mermaid") {
-              return (
-                <Mermaid chart={String(children).replace(/\n$/, "")} />
-              );
+              return <Mermaid chart={String(children).replace(/\n$/, "")} />;
             }
 
             return (
@@ -43,4 +44,3 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
     </div>
   );
 }
-
