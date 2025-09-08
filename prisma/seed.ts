@@ -93,10 +93,10 @@ This article breaks down how this portfolio/blog is built and deployed — from 
 
 Key directories:
 
-- App Router UI: `src/app`
-- API Routers (tRPC): `src/server/api/routers`
-- Prisma schema: `prisma/schema.prisma`
-- Prisma client: `src/server/db.ts`
+- App Router UI: 'src/app'
+- API Routers (tRPC): 'src/server/api/routers'
+- Prisma schema: 'prisma/schema.prisma'
+- Prisma client: 'src/server/db.ts'
 
 ## Content & Admin
 
@@ -106,35 +106,35 @@ Key directories:
 
 ## Kubernetes on Google Cloud
 
-Production runs on **GKE** with the following components (see `k8s/apps/portfolio/base`):
+Production runs on **GKE** with the following components (see 'k8s/apps/portfolio/base'):
 
-- **Deployment** (`deployment.yaml`)
+- **Deployment** ('deployment.yaml')
   - App container (Next.js) on port 3000
   - Sidecar **Cloud SQL Auth Proxy** for Postgres connectivity
   - **Workload Identity** enabled ServiceAccount for GCP access
-- **Service** (`service.yaml`)
+- **Service** ('service.yaml')
   - ClusterIP service exposing the app to the mesh
 - **Ingress** via **Istio**
-  - `istio-gateway.yaml` + `istio-virtualservice.yaml`
-  - Static IP (`istio-static-ip.yaml`) and Google **ManagedCertificate** (`istio-certificate.yaml`)
+  - 'istio-gateway.yaml' + 'istio-virtualservice.yaml'
+  - Static IP ('istio-static-ip.yaml') and Google **ManagedCertificate** ('istio-certificate.yaml')
 - **Cloud SQL**
   - Instance and service account manifests included
 - **NetworkPolicy** to restrict pod communications
 
 ### Database Connectivity
 
-The app connects to Cloud SQL via the sidecar proxy. Environment variables are sourced from ConfigMaps/Secrets to build the `DATABASE_URL`. Workload Identity maps the pod to an IAM service account without storing long‑lived credentials on the node.
+The app connects to Cloud SQL via the sidecar proxy. Environment variables are sourced from ConfigMaps/Secrets to build the 'DATABASE_URL'. Workload Identity maps the pod to an IAM service account without storing long‑lived credentials on the node.
 
 ## CI/CD & GitOps
 
 - **Build & Push**: GitHub Actions builds the Docker image and pushes to **Artifact Registry**.
-- **GitOps with Flux CD**: Flux watches the registry, selects the newest tag via `ImagePolicy`, updates manifests with `ImageUpdateAutomation`, and reconciles them into the cluster. This produces a fully declarative, auditable release process.
+- **GitOps with Flux CD**: Flux watches the registry, selects the newest tag via 'ImagePolicy', updates manifests with 'ImageUpdateAutomation', and reconciles them into the cluster. This produces a fully declarative, auditable release process.
 
 Relevant docs in the repo:
 
-- `DOCKER_CI_SETUP.md` — image build/push
-- `FLUX_CD_MIGRATION.md` — Flux image automation and reconciliation
-- `AUTOMATIC_DEPLOYMENT_SETUP.md` — branch→environment mapping and rollout checks
+- 'DOCKER_CI_SETUP.md' — image build/push
+- 'FLUX_CD_MIGRATION.md' — Flux image automation and reconciliation
+- 'AUTOMATIC_DEPLOYMENT_SETUP.md' — branch→environment mapping and rollout checks
 
 ## Local Development
 
