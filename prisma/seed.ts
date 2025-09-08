@@ -81,16 +81,10 @@ This article breaks down how this portfolio/blog is built and deployed — from 
 
 Key directories:
 
-- App Router UI: \
-  \
-  - \\
-  `src/app`
-- API Routers (tRPC): \
-  `src/server/api/routers`
-- Prisma schema: \
-  `prisma/schema.prisma`
-- Prisma client: \
-  `src/server/db.ts`
+- App Router UI: `src/app`
+- API Routers (tRPC): `src/server/api/routers`
+- Prisma schema: `prisma/schema.prisma`
+- Prisma client: `src/server/db.ts`
 
 ## Content & Admin
 
@@ -142,7 +136,7 @@ Relevant docs in the repo:
 - **Security** via Workload Identity and least‑privilege IAM
 - **Scalability** with GKE + Istio + GCLB
 
-` ,
+`
       published: true,
       publishedAt: new Date(),
       seoTitle:

@@ -100,4 +100,3 @@ References:
 - App Router code can run on the server — guard any `window` usage.
 - Avoid Node‑only APIs on the request path (fs, net) to stay serverless‑friendly.
 - Large uploads should use GCS and stream; do not buffer in memory.
-
