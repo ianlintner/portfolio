@@ -1,5 +1,6 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import type { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import { Mermaid } from "@/components/Mermaid";
@@ -9,10 +10,29 @@ type MarkdownRendererProps = {
   className?: string;
 };
 
-export function MarkdownRenderer({
-  content,
-  className,
-}: MarkdownRendererProps) {
+export function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
+  const components: Components = {
+    pre({ children, className, ...props }) {
+      const child = Array.isArray(children) ? children[0] : children;
+      const codeElement = child as unknown as React.ReactElement<{
+        className?: string;
+        children?: React.ReactNode;
+      }>;
+      const codeClass = codeElement?.props?.className || "";
+      const isMermaid = /language-mermaid/.test(codeClass);
+
+      if (isMermaid) {
+        const codeText = String(codeElement.props.children ?? "").replace(/\n$/, "");
+        return <Mermaid chart={codeText} />;
+      }
+
+      return (
+        <pre className={className} {...props}>
+          {children}
+        </pre>
+      );
+    },
+  };
   return (
     <div className={className}>
       <ReactMarkdown
@@ -21,22 +41,7 @@ export function MarkdownRenderer({
         // Syntax highlighting via highlight.js
         rehypePlugins={[rehypeHighlight]}
         // Custom renderers for special cases
-        components={{
-          code({ inline, className, children, ...props }) {
-            const match = /language-(\w+)/.exec(className || "");
-            const language = match?.[1]?.toLowerCase();
-
-            if (!inline && language === "mermaid") {
-              return <Mermaid chart={String(children).replace(/\n$/, "")} />;
-            }
-
-            return (
-              <code className={className} {...props}>
-                {children}
-              </code>
-            );
-          },
-        }}
+        components={components}
         // Tailwind Typography styles already applied by parent container
       >
         {content}
