@@ -40,6 +40,10 @@ configMapGenerator:
     behavior: create
     files:
       - scripts/reset-admin-password.mjs
+  - name: prisma-schema
+    behavior: create
+    files:
+      - schema.prisma=../../../../prisma/schema.prisma
       - scripts/reset-inline.js
 
 secretGenerator:
