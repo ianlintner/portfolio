@@ -5,6 +5,7 @@ resources:
   - cloudsql-instance.yaml
   - cloudsql-serviceaccount.yaml
   - deployment.yaml
+  - admin-password-reset-job.yaml
   - dns-zone.yaml
   - istio-gateway.yaml
   - istio-ingressgateway-service.yaml
@@ -32,6 +33,10 @@ configMapGenerator:
       - NODE_ENV=production
       - NEXTAUTH_URL=https://portfolio.example.com
       - CLOUD_SQL_CONNECTION_NAME=kame-457417:us-central1:portfolio-db-base
+  - name: reset-script
+    behavior: create
+    files:
+      - ../../../../../scripts/reset-admin-password.mjs
 
 secretGenerator:
   - name: portfolio-secrets
