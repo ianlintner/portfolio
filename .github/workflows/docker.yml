@@ -1,12 +1,14 @@
-name: Build and Push Docker Image
+name: Build and Push Docker Image depedent on CI github task
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
     branches: [main, develop, staging]
+    types: [completed]
+  # Keep tag builds direct, since CI doesn't run on tags currently
+  push:
     tags:
       - "v*"
-  pull_request:
-    branches: [main]
 
 env:
   REGISTRY: us-central1-docker.pkg.dev
@@ -16,6 +18,8 @@ env:
 
 jobs:
   build-and-push:
+    # Run when CI completes successfully, or when a release tag is pushed
+    if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -23,7 +27,15 @@ jobs:
       packages: write
 
     steps:
+      - name: Checkout repository (from CI run)
+        if: github.event_name == 'workflow_run'
+        uses: actions/checkout@v4
+        with:
+          # Ensure we build the exact commit that passed CI
+          ref: ${{ github.event.workflow_run.head_sha }}
+
       - name: Checkout repository
+        if: github.event_name != 'workflow_run'
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
@@ -40,17 +52,31 @@ jobs:
 
       - name: Generate image tags
         id: tags
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          REF: ${{ github.ref }}
+          REF_NAME: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
         run: |
           TAGS=""
           TIMESTAMP=$(date +%s)
 
+          # Determine commit SHA based on event context
+          if [ "${EVENT_NAME}" = "workflow_run" ] && [ -n "${HEAD_SHA}" ]; then
+            COMMIT_SHA=$(echo "${HEAD_SHA}" | cut -c1-7)
+          else
+            COMMIT_SHA=$(git rev-parse --short HEAD)
+          fi
+
           # Always add commit SHA tag
-          COMMIT_SHA=$(git rev-parse --short HEAD)
           TAGS="${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${COMMIT_SHA}"
 
           # Add branch-based tags with timestamp for Flux CD image automation
-          if [[ "${{ github.ref_type }}" == "branch" ]]; then
-            BRANCH_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9._-]/-/g')
+          # For workflow_run: use head_branch; For tag pushes: skip branch tags
+          if [ "${EVENT_NAME}" = "workflow_run" ]; then
+            BRANCH_NAME=$(echo "${HEAD_BRANCH}" | sed 's/[^a-zA-Z0-9._-]/-/g')
             
             # Flux CD compatible tag format: branch-commit-timestamp
             FLUX_TAG="${BRANCH_NAME}-${COMMIT_SHA}-${TIMESTAMP}"
@@ -60,14 +86,14 @@ jobs:
             TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${BRANCH_NAME}"
             
             # Add latest tag for main branch
-            if [[ "${{ github.ref_name }}" == "main" ]]; then
+            if [[ "${HEAD_BRANCH}" == "main" ]]; then
               TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest"
             fi
           fi
 
           # Add version tags for releases
-          if [[ "${{ github.ref_type }}" == "tag" ]]; then
-            TAG_NAME="${{ github.ref_name }}"
+          if [[ "${EVENT_NAME}" == "push" && "${REF}" == refs/tags/* ]]; then
+            TAG_NAME="${REF_NAME}"
             TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${TAG_NAME}"
             
             # Add semver tags if it's a valid semver tag
@@ -104,7 +130,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Generate deployment manifest
-        if: github.ref == 'refs/heads/main'
+        if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.head_branch == 'main') || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
         run: |
           COMMIT_SHA=$(git rev-parse --short HEAD)
           IMAGE_TAG="${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${COMMIT_SHA}"
@@ -153,6 +179,8 @@ jobs:
 
       - name: Notify Flux CD
         if: github.event_name != 'pull_request'
+        env:
+          BRANCH_NAME: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_branch || github.ref_name }}
         run: |
           echo "### 🚀 Image Ready for Flux CD" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -163,7 +191,7 @@ jobs:
           echo "2. Update the deployment manifests in Git" >> $GITHUB_STEP_SUMMARY
           echo "3. Deploy to environments based on branch (dev → staging → prod)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** \`${BRANCH_NAME}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Image scan summary
