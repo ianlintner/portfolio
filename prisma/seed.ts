@@ -54,6 +54,18 @@ async function main() {
     create: { name: "TypeScript" },
   });
 
+  const kubernetesTag = await prisma.tag.upsert({
+    where: { name: "Kubernetes" },
+    update: {},
+    create: { name: "Kubernetes" },
+  });
+
+  const googleCloudTag = await prisma.tag.upsert({
+    where: { name: "Google Cloud" },
+    update: {},
+    create: { name: "Google Cloud" },
+  });
+
   console.log("✅ Created sample tags");
 
   // Create initial blog post: Architecture + GKE
@@ -238,6 +250,34 @@ The combination of AI tools allowed me to move faster, focus more on architectur
     create: {
       postId: architecturePost.id,
       tagId: typescriptTag.id,
+    },
+  });
+
+  await prisma.postTag.upsert({
+    where: {
+      postId_tagId: {
+        postId: architecturePost.id,
+        tagId: kubernetesTag.id,
+      },
+    },
+    update: {},
+    create: {
+      postId: architecturePost.id,
+      tagId: kubernetesTag.id,
+    },
+  });
+
+  await prisma.postTag.upsert({
+    where: {
+      postId_tagId: {
+        postId: architecturePost.id,
+        tagId: googleCloudTag.id,
+      },
+    },
+    update: {},
+    create: {
+      postId: architecturePost.id,
+      tagId: googleCloudTag.id,
     },
   });
 
