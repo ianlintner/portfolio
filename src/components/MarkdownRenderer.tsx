@@ -10,7 +10,10 @@ type MarkdownRendererProps = {
   className?: string;
 };
 
-export function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
+export function MarkdownRenderer({
+  content,
+  className,
+}: MarkdownRendererProps) {
   const components: Components = {
     pre({ children, className, ...props }) {
       const child = Array.isArray(children) ? children[0] : children;
@@ -22,7 +25,10 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
       const isMermaid = /language-mermaid/.test(codeClass);
 
       if (isMermaid) {
-        const codeText = String(codeElement.props.children ?? "").replace(/\n$/, "");
+        const codeText = String(codeElement.props.children ?? "").replace(
+          /\n$/,
+          "",
+        );
         return <Mermaid chart={codeText} />;
       }
 
