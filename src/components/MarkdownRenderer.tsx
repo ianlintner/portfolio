@@ -29,7 +29,12 @@ export function MarkdownRenderer({
           /\n$/,
           "",
         );
-        return <Mermaid chart={codeText} />;
+        return (
+          <Mermaid
+            chart={codeText}
+            className="not-prose my-6 overflow-x-auto rounded-xl border border-border bg-card p-4 shadow-sm"
+          />
+        );
       }
 
       return (

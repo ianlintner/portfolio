@@ -35,6 +35,55 @@ This project demonstrates how to create a professional portfolio website with:
 - **NextAuth.js** for authentication
 - **Tailwind CSS** for styling
 
+## System Architecture
+
+\`\`\`mermaid
+flowchart LR
+  subgraph Client
+    U[Browser]
+  end
+  subgraph NextJS[Next.js App Router]
+    RC[React Server Components]
+    CC[Client Components]
+    TRPC[tRPC Router]
+    NA[NextAuth]
+  end
+  subgraph Data[Data Layer]
+    Prisma[Prisma Client]
+    DB[(PostgreSQL)]
+    GCS[(Google Cloud Storage)]
+  end
+
+  U -->|HTTP/HTTPS| CC
+  CC --> TRPC
+  RC --> TRPC
+  TRPC --> Prisma
+  Prisma --> DB
+  CC -->|Uploads| GCS
+  NA <--> TRPC
+\`\`\`
+
+## Request Lifecycle (Blog Page)
+
+\`\`\`mermaid
+sequenceDiagram
+  autonumber
+  participant U as User Browser
+  participant APP as Next.js App Router
+  participant RPC as tRPC Router
+  participant PR as Prisma Client
+  participant DB as PostgreSQL
+
+  U->>APP: GET /blog/[slug]
+  APP->>RPC: post.getBySlug(slug)
+  RPC->>PR: findUnique({ slug })
+  PR->>DB: SELECT FROM posts WHERE slug = ?
+  DB-->>PR: Row
+  PR-->>RPC: Post
+  RPC-->>APP: Post DTO
+  APP-->>U: HTML (RSC) + hydrated JSON
+\`\`\`
+
 ## Getting Started
 
 ### Prerequisites
@@ -424,6 +473,36 @@ spec:
 \`\`\`
 
 This guide covers the complete setup process for a production-ready deployment pipeline.
+
+## GitOps Pipeline Overview
+
+\`\`\`mermaid
+flowchart LR
+  Dev[Developer] --> GH[GitHub Repo]
+  GH --> CI[GitHub Actions]
+  CI --> AR[Artifact Registry]
+  CI --> Manifests[Kustomize Manifests]
+  subgraph Cluster[Kubernetes]
+    Flux[Flux CD]
+  end
+  GH -->|poll| Flux
+  AR --> Cluster
+  Manifests --> Cluster
+\`\`\`
+
+## Cluster Traffic Flow
+
+\`\`\`mermaid
+flowchart LR
+  U((User)) --> LB[External Load Balancer]
+  LB --> IGW[Istio IngressGateway]
+  IGW --> GW[Istio Gateway]
+  GW --> VS[VirtualService]
+  VS --> SVC[Service (ClusterIP)]
+  SVC --> POD[Pod: portfolio-app]
+  POD --> SQL[(Cloud SQL Postgres)]
+  POD --> GCS[(GCS Bucket)]
+\`\`\`
     `,
     publishedAt: new Date("2024-01-10"),
     author: { name: "Ian Lintner" },
