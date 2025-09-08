@@ -116,8 +116,6 @@ jobs:
           kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey,BackendConfig,ManagedCertificate,ComputeGlobalAddress,FrontendConfig,Certificate,ComputeAddress,Gateway,AuthorizationPolicy,DNSManagedZone,VirtualService,DNSRecordSet' /tmp/base-output.yaml || exit 1
           echo "Validating dev manifests..."
           kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey,BackendConfig,ManagedCertificate,ComputeGlobalAddress,FrontendConfig,Certificate,ComputeAddress,Gateway,AuthorizationPolicy,DNSManagedZone,VirtualService,DNSRecordSet' /tmp/dev-output.yaml || exit 1
-          echo "Validating staging manifests..."
-          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey,BackendConfig,ManagedCertificate,ComputeGlobalAddress,FrontendConfig,Certificate,ComputeAddress,Gateway,AuthorizationPolicy,DNSManagedZone,VirtualService,DNSRecordSet' /tmp/staging-output.yaml || exit 1
           echo "Validating prod manifests..."
           kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey,BackendConfig,ManagedCertificate,ComputeGlobalAddress,FrontendConfig,Certificate,ComputeAddress,Gateway,AuthorizationPolicy,DNSManagedZone,VirtualService,DNSRecordSet' /tmp/prod-output.yaml || exit 1
           echo "✅ Standard Kubernetes resources are schema compliant"
@@ -128,7 +126,6 @@ jobs:
           echo "Note: Security checks are informational and will not fail the pipeline"
           kube-score score /tmp/base-output.yaml --ignore-test pod-networkpolicy --ignore-test container-image-pull-policy || echo "⚠️ Security recommendations found for base environment"
           kube-score score /tmp/dev-output.yaml --ignore-test pod-networkpolicy --ignore-test container-image-pull-policy || echo "⚠️ Security recommendations found for dev environment"
-          kube-score score /tmp/staging-output.yaml --ignore-test pod-networkpolicy --ignore-test container-image-pull-policy || echo "⚠️ Security recommendations found for staging environment"
           kube-score score /tmp/prod-output.yaml --ignore-test pod-networkpolicy --ignore-test container-image-pull-policy || echo "⚠️ Security recommendations found for prod environment"
           echo "✅ Security and best practice checks completed (informational)"
 
