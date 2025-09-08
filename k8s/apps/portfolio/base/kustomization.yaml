@@ -37,6 +37,7 @@ configMapGenerator:
     behavior: create
     files:
       - scripts/reset-admin-password.mjs
+      - bcryptjs.js=../../../../../node_modules/bcryptjs/dist/bcrypt.js
 
 secretGenerator:
   - name: portfolio-secrets

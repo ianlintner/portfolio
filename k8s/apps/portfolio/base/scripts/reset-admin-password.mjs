@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
+import bcrypt from "./bcryptjs.js";
 
 async function run() {
   const prisma = new PrismaClient();
@@ -35,4 +35,3 @@ async function run() {
 }
 
 run();
-
