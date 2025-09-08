@@ -96,6 +96,17 @@ patches:
     target:
       kind: IAMPolicy
       name: portfolio-cloudsql-policy
+  - patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          iam.gke.io/gcp-service-account: portfolio-cloudsql-sa@kame-457417.iam.gserviceaccount.com
+      - op: replace
+        path: /metadata/annotations/iam.gke.io~1gcp-service-account
+        value: portfolio-cloudsql-sa@kame-457417.iam.gserviceaccount.com
+    target:
+      kind: ServiceAccount
+      name: portfolio-workload-identity
 
 configMapGenerator:
   - name: portfolio-config
@@ -103,7 +114,7 @@ configMapGenerator:
     literals:
       - NODE_ENV=production
       - NEXTAUTH_URL=https://portfolio.hugecat.net
-      - CLOUD_SQL_CONNECTION_NAME=PROJECT_ID:us-central1:portfolio-prod-db
+      - CLOUD_SQL_CONNECTION_NAME=kame-457417:us-central1:portfolio-prod-db
 
 secretGenerator:
   - name: portfolio-secrets
