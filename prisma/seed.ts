@@ -151,8 +151,7 @@ Relevant docs in the repo:
       `,
       published: true,
       publishedAt: new Date(),
-      seoTitle:
-        "The Tech Behind My Portfolio: Next.js + tRPC + Prisma on GKE",
+      seoTitle: "The Tech Behind My Portfolio: Next.js + tRPC + Prisma on GKE",
       seoDescription:
         "Architecture of this portfolio: Next.js App Router, tRPC, Prisma, on GKE with Istio, Cloud SQL, and Flux CD.",
       seoKeywords: [
@@ -168,44 +167,6 @@ Relevant docs in the repo:
         "portfolio",
         "blog",
       ],
-      authorId: adminUser.id,
-    },
-  });
-
-  // Create second blog post: AI Agents
-  const aiAgentsPost = await prisma.post.upsert({
-    where: { slug: "ai-agents-cline-roo" },
-    update: {},
-    create: {
-      title: "Using AI Agent Tools (Cline & Roo) in Development",
-      slug: "ai-agents-cline-roo",
-      excerpt:
-        "An article on how AI-driven tools like Cline and Roo accelerated the development of this site.",
-      content: `
-# Using AI Agent Tools (Cline & Roo) in Development
-
-During the development of this portfolio blog, I used AI agents such as **Roo** and **Cline** to speed up the process.
-
-## Roo
-Roo acted as a system-level developer, able to make structured edits, manage migrations, and coordinate tasks.
-
-## Cline
-Cline helped orchestrate multi-step workflows and provided higher-level guidance on development.
-
-## Benefits
-- Reduced repetitive coding
-- Automated boilerplate scaffolding
-- Error checking and guided debugging
-
-## Outcomes
-The combination of AI tools allowed me to move faster, focus more on architecture decisions, and get an initial version deployed quickly.
-      `,
-      published: true,
-      publishedAt: new Date(),
-      seoTitle: "Using AI Agent Tools in Development (Cline, Roo)",
-      seoDescription:
-        "Exploring how AI agents like Cline and Roo accelerated building this portfolio blog.",
-      seoKeywords: ["AI agents", "Cline", "Roo", "development tools"],
       authorId: adminUser.id,
     },
   });
@@ -282,56 +243,6 @@ The combination of AI tools allowed me to move faster, focus more on architectur
   });
 
   console.log("✅ Created blog posts with tags");
-
-  // Create sample component demo
-  const sampleDemo = await prisma.componentDemo.create({
-    data: {
-      name: "Interactive Button",
-      description:
-        "A reusable button component with hover effects and multiple variants.",
-      code: `
-import React from 'react'
-import { clsx } from 'clsx'
-
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline'
-  size?: 'sm' | 'md' | 'lg'
-  children: React.ReactNode
-}
-
-export function Button({ 
-  variant = 'primary', 
-  size = 'md', 
-  className, 
-  children, 
-  ...props 
-}: ButtonProps) {
-  return (
-    <button
-      className={clsx(
-        'rounded font-medium transition-colors focus:outline-none focus:ring-2',
-        {
-          'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500': variant === 'primary',
-          'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500': variant === 'secondary',
-          'border-2 border-blue-600 text-blue-600 hover:bg-blue-50 focus:ring-blue-500': variant === 'outline',
-          'px-3 py-1.5 text-sm': size === 'sm',
-          'px-4 py-2 text-base': size === 'md',
-          'px-6 py-3 text-lg': size === 'lg',
-        },
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </button>
-  )
-}
-      `,
-      category: "REACT",
-      technologies: ["React", "TypeScript", "Tailwind CSS"],
-      published: true,
-    },
-  });
 
   console.log("✅ Created component demo");
 
