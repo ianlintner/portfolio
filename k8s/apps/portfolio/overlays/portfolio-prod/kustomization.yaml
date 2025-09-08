@@ -5,6 +5,7 @@ resources:
   - ../../base
   - namespace.yaml
   - dns-records.yaml
+  - workload-identity-binding.yaml
 
 namespace: portfolio-prod
 
