@@ -20,33 +20,27 @@ export default function HomePage() {
                 Lead Engineer & Platform Architect
               </p>
               <p className="text-lg text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-                I’m Ian Lintner, a lead engineer and platform architect with
-                over 20 years of experience designing and building secure,
-                cloud-native systems. My career has spanned startups to Fortune
-                500 companies, with a consistent focus on hands-on development,
-                scalable architecture, and mentoring engineering teams.
+                I’m Ian Lintner, a Lead Engineer & Platform Architect with 20+
+                years of experience designing and building secure, cloud-native
+                systems. I’ve worked across startups and Fortune 500 companies,
+                always focused on scalable architecture, hands-on development,
+                and mentoring engineering teams.
                 <br />
-                I specialize in architecting event-driven platforms and
-                integrating AI-augmented workflows that improve developer
-                productivity and system resilience. My technical toolkit
-                includes Scala, Python, Java, JavaScript, TypeScript, and a deep
-                background in cloud infrastructure (AWS, GCP, Kubernetes,
-                Terraform).
+                I specialize in event-driven platforms and AI-augmented
+                workflows that boost developer productivity and system
+                resilience. My toolkit includes Scala, Python, Java, TypeScript,
+                and deep expertise in cloud infrastructure (AWS, GCP,
+                Kubernetes, Terraform).
                 <br />
-                At Carvana, I led the transformation of the backend platform
-                powering customer chat and advocate communications—enabling
-                seamless LLM/agent orchestration and building pipelines that
-                integrated directly with ML and AI-driven workflows. At Workiva,
-                I combined technical leadership with UX-focused planning,
-                ensuring internal tools and customer-facing applications were
-                both robust and intuitive. At Samsung SmartThings, I engineered
-                identity and access management services at global scale,
-                securing high-throughput operations across millions of IoT
-                devices worldwide.
+                Highlights of my career include leading Carvana’s backend
+                transformation for customer chat and AI-driven workflows,
+                driving UX-focused platform improvements at Workiva, and
+                engineering global-scale identity services at Samsung
+                SmartThings.
                 <br />I thrive at the intersection of system design, UX
                 planning, and technical leadership—building platforms that are
-                not only scalable and reliable, but also empower both engineers
-                and end users.
+                scalable, reliable, and empowering for both engineers and end
+                users.
               </p>
             </div>
 
@@ -187,22 +181,22 @@ export default function HomePage() {
                 </h2>
                 <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
                   <p>
-                    I&apos;m a passionate full stack developer with a deep focus
-                    on building scalable, high-performance web applications. My
-                    expertise spans the entire development lifecycle, from
-                    designing intuitive user interfaces to architecting robust
-                    backend systems.
+                    I&apos;m a full stack engineer passionate about building
+                    scalable, high-performance applications that balance
+                    technical excellence with great user experience. My work
+                    spans the full development lifecycle—from intuitive
+                    interfaces to resilient backend systems.
                   </p>
                   <p>
-                    With extensive experience in modern JavaScript frameworks,
-                    cloud technologies, and DevOps practices, I help teams
-                    deliver exceptional digital experiences that scale with
-                    business growth.
+                    With deep experience in modern frameworks, cloud platforms,
+                    and DevOps practices, I help teams deliver digital
+                    experiences that scale with business growth while remaining
+                    secure and maintainable.
                   </p>
                   <p>
-                    When I&apos;m not coding, I enjoy sharing knowledge through
-                    technical writing, contributing to open source projects, and
-                    mentoring fellow developers.
+                    Outside of coding, I share knowledge through writing,
+                    mentoring, and contributing to open source—helping grow the
+                    next generation of developers.
                   </p>
                 </div>
                 <div className="mt-8">
@@ -261,12 +255,12 @@ export default function HomePage() {
       <section className="py-24 bg-primary/5 border-t">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+            <h2 className="text-4xl sm:text-5xl font-bold mb-8 tracking-tight">
               Let&apos;s Build Something Amazing
             </h2>
-            <p className="text-xl text-muted-foreground mb-8">
-              Ready to bring your next project to life? Let&apos;s discuss how
-              we can work together to create exceptional web experiences.
+            <p className="text-lg sm:text-xl text-muted-foreground mb-10 leading-relaxed">
+              Ready to bring your next project to life? Let&apos;s collaborate
+              to create exceptional, human-centered digital experiences.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
