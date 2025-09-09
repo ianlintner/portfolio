@@ -7,3 +7,4 @@ resources:
   - portfolio-gitrepository.yaml
   - portfolio-dev-kustomization.yaml
   - portfolio-prod-kustomization.yaml
+  - flux-system-gitrepository.yaml
