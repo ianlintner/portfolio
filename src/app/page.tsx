@@ -17,12 +17,37 @@ export default function HomePage() {
                 </span>
               </h1>
               <p className="text-xl sm:text-2xl text-muted-foreground mb-4 font-light">
-                Full Stack Developer & Cloud Architect
+                Lead Engineer & Platform Architect
               </p>
               <p className="text-lg text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-                Building modern, scalable web applications with React, Next.js,
-                TypeScript, and cloud technologies. Passionate about creating
-                exceptional user experiences and robust backend systems.
+                Refined Portfolio Intro I’m Ian Lintner, a lead engineer and
+                platform architect with over 20 years of experience designing
+                and building secure, cloud-native systems. My career has spanned
+                startups to Fortune 500 companies, with a consistent focus on
+                hands-on development, scalable architecture, and mentoring
+                engineering teams.
+                <br />
+                I specialize in architecting event-driven platforms and
+                integrating AI-augmented workflows that improve developer
+                productivity and system resilience. My technical toolkit
+                includes Scala, Python, Java, JavaScript, TypeScript, and a deep
+                background in cloud infrastructure (AWS, GCP, Kubernetes,
+                Terraform).
+                <br />
+                At Carvana, I led the transformation of the backend platform
+                powering customer chat and advocate communications—enabling
+                seamless LLM/agent orchestration and building pipelines that
+                integrated directly with ML and AI-driven workflows. At Workiva,
+                I combined technical leadership with UX-focused planning,
+                ensuring internal tools and customer-facing applications were
+                both robust and intuitive. At Samsung SmartThings, I engineered
+                identity and access management services at global scale,
+                securing high-throughput operations across millions of IoT
+                devices worldwide.
+                <br />I thrive at the intersection of system design, UX
+                planning, and technical leadership—building platforms that are
+                not only scalable and reliable, but also empower both engineers
+                and end users.
               </p>
             </div>
 
