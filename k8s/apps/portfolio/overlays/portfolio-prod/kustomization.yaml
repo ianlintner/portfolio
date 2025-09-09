@@ -94,16 +94,6 @@ patches:
       kind: SQLUser
       name: portfolio-db-user
   - patch: |-
-      - op: replace
-        path: /spec/resourceRef/external
-        value: projects/kame-457417
-      - op: replace
-        path: /spec/member
-        value: serviceAccount:portfolio-cloudsql-sa@kame-457417.iam.gserviceaccount.com
-    target:
-      kind: IAMPolicy
-      name: portfolio-cloudsql-policy
-  - patch: |-
       - op: add
         path: /metadata/annotations
         value:

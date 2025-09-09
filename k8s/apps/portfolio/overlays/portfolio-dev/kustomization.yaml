@@ -59,16 +59,7 @@ patches:
     target:
       kind: SQLUser
       name: portfolio-db-user
-  - patch: |-
-      - op: replace
-        path: /spec/resourceRef/external
-        value: projects/kame-457417
-      - op: replace
-        path: /spec/member
-        value: serviceAccount:portfolio-cloudsql-sa@kame-457417.iam.gserviceaccount.com
-    target:
-      kind: IAMPolicyMember
-      name: portfolio-cloudsql-policy
+
 
 configMapGenerator:
   - name: portfolio-config
