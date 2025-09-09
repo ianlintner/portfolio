@@ -20,12 +20,11 @@ export default function HomePage() {
                 Lead Engineer & Platform Architect
               </p>
               <p className="text-lg text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-                Refined Portfolio Intro I’m Ian Lintner, a lead engineer and
-                platform architect with over 20 years of experience designing
-                and building secure, cloud-native systems. My career has spanned
-                startups to Fortune 500 companies, with a consistent focus on
-                hands-on development, scalable architecture, and mentoring
-                engineering teams.
+                I’m Ian Lintner, a lead engineer and platform architect with
+                over 20 years of experience designing and building secure,
+                cloud-native systems. My career has spanned startups to Fortune
+                500 companies, with a consistent focus on hands-on development,
+                scalable architecture, and mentoring engineering teams.
                 <br />
                 I specialize in architecting event-driven platforms and
                 integrating AI-augmented workflows that improve developer
