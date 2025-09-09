@@ -52,7 +52,6 @@ jobs:
       - name: Build Next.js
         run: pnpm build
 
-  docker-build-push:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && !startsWith(github.event.head_commit.message, 'ci:') }}
     needs: [build]
