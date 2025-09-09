@@ -5,26 +5,24 @@ resources:
   - cloudsql-instance.yaml
   - cloudsql-serviceaccount.yaml
   - deployment.yaml
-  - admin-password-reset-job.yaml
   - dns-zone.yaml
   - istio-gateway.yaml
   - istio-ingressgateway-service.yaml
   - istio-static-ip.yaml
   - istio-virtualservice.yaml
-  - istio-authorizationpolicy.yaml
   - istio-certificate.yaml
   - networkpolicy.yaml
   - service.yaml
   - serviceaccount.yaml
 
-labels:
-  - pairs:
-      app.kubernetes.io/managed-by: flux
-      app.kubernetes.io/created-by: hobby-cluster
+# labels:
+#   - pairs:
+#       app.kubernetes.io/managed-by: flux
+#       app.kubernetes.io/created-by: hobby-cluster
 
-commonAnnotations:
-  policy.kubernetes.io/validate: "true"
-  fluxcd.io/automated: "true"
+# commonAnnotations:
+#   policy.kubernetes.io/validate: "true"
+#   fluxcd.io/automated: "true"
 
 generatorOptions:
   disableNameSuffixHash: true
@@ -40,12 +38,11 @@ configMapGenerator:
     behavior: create
     files:
       - scripts/reset-admin-password.mjs
-      - scripts/reset-inline.js
-      - scripts/wait-for-db.js
   - name: prisma-schema
     behavior: create
     files:
-      - schema.prisma=prisma/schema.prisma
+      - prisma/schema.prisma
+      - scripts/reset-inline.js
 
 secretGenerator:
   - name: portfolio-secrets

@@ -64,15 +64,15 @@ patches:
         path: /spec/resourceRef/external
         value: projects/kame-457417
       - op: replace
-        path: /spec/bindings/0/members/0
+        path: /spec/member
         value: serviceAccount:portfolio-cloudsql-sa@kame-457417.iam.gserviceaccount.com
     target:
-      kind: IAMPolicy
+      kind: IAMPolicyMember
       name: portfolio-cloudsql-policy
 
 configMapGenerator:
   - name: portfolio-config
-    behavior: merge
+    behavior: replace
     literals:
       - NODE_ENV=development
       - NEXTAUTH_URL=https://portfolio-dev.example.com
