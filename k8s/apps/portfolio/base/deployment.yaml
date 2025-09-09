@@ -23,7 +23,7 @@ spec:
       automountServiceAccountToken: true
       containers:
         - name: portfolio
-          image: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:latest # {"$imagepolicy": "flux-system:portfolio-image-policy"}
+          image: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:main-f04b86f-1757455819 # {"$imagepolicy": "flux-system:portfolio-image-policy"}
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
