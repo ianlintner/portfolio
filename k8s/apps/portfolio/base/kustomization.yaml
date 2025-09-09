@@ -2,8 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - cloudsql-instance.yaml
-  - cloudsql-serviceaccount.yaml
+  # - cloudsql-instance.yaml
+  # - cloudsql-serviceaccount.yaml
   - deployment.yaml
   # - dns-zone.yaml
   - istio-gateway.yaml
