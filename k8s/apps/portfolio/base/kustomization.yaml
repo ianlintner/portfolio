@@ -5,7 +5,7 @@ resources:
   - cloudsql-instance.yaml
   - cloudsql-serviceaccount.yaml
   - deployment.yaml
-  - dns-zone.yaml
+  # - dns-zone.yaml
   - istio-gateway.yaml
   - istio-ingressgateway-service.yaml
   - istio-static-ip.yaml

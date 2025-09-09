@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - ../../base
-  - dns-records.yaml
+  # - dns-records.yaml
   - workload-identity-binding.yaml
 
 namespace: portfolio-prod
