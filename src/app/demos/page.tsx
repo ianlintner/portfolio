@@ -73,62 +73,7 @@ const mockDemos = [
     featured: true,
     createdAt: new Date("2024-01-18"),
   },
-  {
-    id: "3",
-    title: "E-commerce Product Showcase",
-    slug: "ecommerce-product-showcase",
-    description:
-      "Modern e-commerce product pages with advanced filtering, search functionality, and shopping cart integration. Optimized for performance and SEO.",
-    category: "FULL_STACK",
-    technologies: ["Next.js", "Stripe", "Tailwind CSS", "Framer Motion"],
-    githubUrl: "https://github.com/example/ecommerce-showcase",
-    liveUrl: "https://shop-demo.example.com",
-    imageUrl: "/demos/ecommerce-showcase.jpg",
-    featured: false,
-    createdAt: new Date("2024-01-15"),
-  },
-  {
-    id: "4",
-    title: "Custom React Hooks Library",
-    slug: "custom-react-hooks-library",
-    description:
-      "A comprehensive collection of custom React hooks for common use cases including API calls, local storage, debouncing, and more.",
-    category: "UI_COMPONENTS",
-    technologies: ["React", "TypeScript", "Jest", "Storybook"],
-    githubUrl: "https://github.com/example/react-hooks-library",
-    liveUrl: "https://hooks-demo.example.com",
-    imageUrl: "/demos/react-hooks.jpg",
-    featured: false,
-    createdAt: new Date("2024-01-12"),
-  },
-  {
-    id: "5",
-    title: "Data Visualization Dashboard",
-    slug: "data-visualization-dashboard",
-    description:
-      "Interactive data visualization dashboard with multiple chart types, real-time data updates, and export functionality.",
-    category: "DATA_VISUALIZATION",
-    technologies: ["React", "D3.js", "TypeScript", "WebSocket"],
-    githubUrl: "https://github.com/example/data-viz-dashboard",
-    liveUrl: "https://dataviz-demo.example.com",
-    imageUrl: "/demos/data-viz.jpg",
-    featured: false,
-    createdAt: new Date("2024-01-10"),
-  },
-  {
-    id: "6",
-    title: "Progressive Web App Template",
-    slug: "progressive-web-app-template",
-    description:
-      "A complete PWA template with offline functionality, push notifications, and app-like experience on mobile devices.",
-    category: "FULL_STACK",
-    technologies: ["Next.js", "Service Workers", "Web Push API", "IndexedDB"],
-    githubUrl: "https://github.com/example/pwa-template",
-    liveUrl: "https://pwa-demo.example.com",
-    imageUrl: "/demos/pwa-template.jpg",
-    featured: false,
-    createdAt: new Date("2024-01-08"),
-  },
+=
 ];
 
 const categories = [
