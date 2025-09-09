@@ -13,20 +13,6 @@ spec:
     - portfolio-gateway
   http:
     - match:
-        - headers:
-            host:
-              exact: hugecat.net
-      redirect:
-        authority: portfolio.hugecat.net
-        redirectCode: 301
-    - match:
-        - headers:
-            host:
-              exact: www.hugecat.net
-      redirect:
-        authority: portfolio.hugecat.net
-        redirectCode: 301
-    - match:
         - uri:
             prefix: /
       route:

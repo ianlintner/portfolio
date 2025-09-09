@@ -9,8 +9,10 @@ spec:
   selector:
     app: portfolio
   ports:
-    - name: web
+    - name: http
       port: 80
       targetPort: 3000
-      protocol: TCP
+    - name: web
+      port: 3000
+      targetPort: 3000
   type: ClusterIP

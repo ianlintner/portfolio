@@ -11,12 +11,16 @@ spec:
     metadata:
       labels:
         app: portfolio
+      annotations:
+        sidecar.istio.io/inject: "true"
     spec:
       securityContext:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
       serviceAccountName: portfolio-workload-identity
+      # Enable Istio sidecar injection explicitly
+      automountServiceAccountToken: true
       containers:
         - name: portfolio
           image: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:latest # {"$imagepolicy": "flux-system:portfolio-image-policy"}
@@ -69,7 +73,11 @@ spec:
                 name: portfolio-secrets
             - secretRef:
                 name: portfolio-db-secret
-        # Cloud SQL Auth Proxy sidecar
+          env:
+            - name: HOST
+              value: "0.0.0.0"
+            - name: PORT
+              value: "3000"
         - name: cloudsql-proxy
           image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0
           imagePullPolicy: Always
