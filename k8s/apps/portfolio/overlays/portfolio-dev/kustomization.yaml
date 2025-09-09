@@ -69,13 +69,6 @@ patches:
     target:
       kind: IAMPolicy
       name: portfolio-cloudsql-policy
-  - patch: |-
-      - op: replace
-        path: /metadata/annotations/cnrm.cloud.google.com~1project-id
-        value: kame-457417
-    target:
-      kind: ComputeAddress
-      name: istio-gateway-ip
 
 configMapGenerator:
   - name: portfolio-config
