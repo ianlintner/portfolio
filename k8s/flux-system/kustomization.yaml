@@ -4,3 +4,6 @@ kind: Kustomization
 
 resources:
   - gotk-components.yaml
+  - portfolio-gitrepository.yaml
+  - portfolio-dev-kustomization.yaml
+  - portfolio-prod-kustomization.yaml
