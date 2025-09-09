@@ -15,7 +15,7 @@ COPY tailwind.config.ts ./
 COPY postcss.config.js ./
 COPY .eslintrc.json ./
 # Install OpenSSL runtimes required by Prisma engines during build (Alpine musl)
-RUN apk add --no-cache openssl openssl1.1-compat libstdc++
+RUN apk add --no-cache openssl libstdc++
 
 RUN rm -rf node_modules && pnpm install --frozen-lockfile
 # Ensure clean Prisma generation after all source files are present
@@ -26,7 +26,7 @@ FROM node:18-alpine AS runner
 WORKDIR /app
 
 # Install necessary packages for Prisma and OpenSSL
-RUN apk add --no-cache openssl openssl1.1-compat libstdc++
+RUN apk add --no-cache openssl libstdc++
 
 # Create non-root user for security
 RUN addgroup --system --gid 1001 nodejs

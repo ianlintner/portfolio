@@ -45,34 +45,6 @@ const mockPosts = [
       { tag: { id: "3", name: "tRPC" } },
     ],
   },
-  {
-    id: "2",
-    title: "Deploying to Google Kubernetes Engine with GitOps and ArgoCD",
-    slug: "deploying-gke-gitops-argocd",
-    excerpt:
-      "A complete guide to setting up a production-ready Kubernetes deployment pipeline using Google Cloud Platform, GitOps principles, and ArgoCD for automated deployments.",
-    createdAt: new Date("2024-01-10"),
-    author: { name: "Ian Lintner" },
-    tags: [
-      { tag: { id: "4", name: "Kubernetes" } },
-      { tag: { id: "5", name: "Google Cloud" } },
-      { tag: { id: "6", name: "DevOps" } },
-    ],
-  },
-  {
-    id: "3",
-    title: "Advanced React Patterns: Custom Hooks and Context Management",
-    slug: "advanced-react-patterns-hooks-context",
-    excerpt:
-      "Dive deep into advanced React patterns including custom hooks, context optimization, and state management strategies for large-scale applications.",
-    createdAt: new Date("2024-01-05"),
-    author: { name: "Ian Lintner" },
-    tags: [
-      { tag: { id: "7", name: "React" } },
-      { tag: { id: "8", name: "JavaScript" } },
-      { tag: { id: "9", name: "State Management" } },
-    ],
-  },
 ];
 
 const mockTags = [
