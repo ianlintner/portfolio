@@ -13,9 +13,13 @@ spec:
   wait: true
   timeout: 5m
   force: false
-  targetNamespace: portfolio
+  targetNamespace: portfolio-dev
+  dependsOn: []
   healthChecks:
+    - apiVersion: v1
+      kind: Namespace
+      name: portfolio-dev
     - apiVersion: apps/v1
       kind: Deployment
       name: portfolio
-      namespace: portfolio
+      namespace: portfolio-dev
