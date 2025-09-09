@@ -14,8 +14,6 @@ spec:
   timeout: 5m
   force: false
   targetNamespace: portfolio-prod
-  dependsOn:
-    - name: portfolio-dev
   healthChecks:
     - apiVersion: v1
       kind: Namespace
