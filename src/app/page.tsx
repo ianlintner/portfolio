@@ -19,28 +19,11 @@ export default function HomePage() {
               <p className="text-xl sm:text-2xl text-muted-foreground mb-4 font-light">
                 Lead Engineer & Platform Architect
               </p>
-              <p className="text-lg text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-                I’m Ian Lintner, a Lead Engineer & Platform Architect with 20+
-                years of experience designing and building secure, cloud-native
-                systems. I’ve worked across startups and Fortune 500 companies,
-                always focused on scalable architecture, hands-on development,
-                and mentoring engineering teams.
-                <br />
-                I specialize in event-driven platforms and AI-augmented
-                workflows that boost developer productivity and system
-                resilience. My toolkit includes Scala, Python, Java, TypeScript,
-                and deep expertise in cloud infrastructure (AWS, GCP,
-                Kubernetes, Terraform).
-                <br />
-                Highlights of my career include leading Carvana’s backend
-                transformation for customer chat and AI-driven workflows,
-                driving UX-focused platform improvements at Workiva, and
-                engineering global-scale identity services at Samsung
-                SmartThings.
-                <br />I thrive at the intersection of system design, UX
-                planning, and technical leadership—building platforms that are
-                scalable, reliable, and empowering for both engineers and end
-                users.
+              <p className="text-lg sm:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed font-light">
+                With 20+ years in engineering, I design and build secure,
+                cloud-native systems that scale. I specialize in event-driven
+                platforms, AI-augmented workflows, and resilient cloud
+                infrastructure (AWS, GCP, Kubernetes, Terraform).
               </p>
             </div>
 
