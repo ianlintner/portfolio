@@ -13,7 +13,7 @@ spec:
   ingress:
     - from:
         - namespaceSelector:
-            matchLabels: {}   # placeholder to match istio-system
+            matchLabels: {} # placeholder to match istio-system
       ports:
         - protocol: TCP
           port: 3000

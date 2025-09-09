@@ -60,7 +60,6 @@ patches:
       kind: SQLUser
       name: portfolio-db-user
 
-
 configMapGenerator:
   - name: portfolio-config
     behavior: replace
