@@ -73,7 +73,6 @@ const mockDemos = [
     featured: true,
     createdAt: new Date("2024-01-18"),
   },
-=
 ];
 
 const categories = [
