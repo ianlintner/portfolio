@@ -6,22 +6,14 @@ metadata:
     app: portfolio
 spec:
   hosts:
-    - portfolio.hugecat.net
-    - hugecat.net
-    - www.hugecat.net
-    - chat.hugecat.net
+    - "portfolio.hugecat.net"
+    - "hugecat.net"
+    - "www.hugecat.net"
+    - "chat.hugecat.net"
   gateways:
     - portfolio-gateway
 
   http:
-  - match:
-    - uri:
-        prefix: /.well-known/acme-challenge
-    route:
-    - destination:
-        host: cm-acme-http-solver
-        port:
-          number: 8089
   - match:
     - uri:
         prefix: /
@@ -30,3 +22,5 @@ spec:
         host: portfolio
         port:
           number: 80
+    rewrite:
+      uri: /
