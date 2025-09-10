@@ -6,16 +6,19 @@ metadata:
     app: portfolio
 spec:
   hosts:
-    - "fake.hugecat.net"
+    - "portfolio.hugecat.net"
+    - "hugecat.net"
+    - "www.hugecat.net"
   gateways:
     - portfolio-gateway
 
   http:
     - match:
         - uri:
-            prefix: /
+            prefix: /portfolio
       route:
         - destination:
             host: portfolio
             port:
               number: 80
+
