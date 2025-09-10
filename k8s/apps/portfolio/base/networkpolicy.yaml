@@ -17,6 +17,8 @@ spec:
       ports:
         - protocol: TCP
           port: 3000
+        - protocol: TCP
+          port: 80
 
   egress:
     - to: [] # Allow egress for Cloud SQL connection, DNS, external APIs

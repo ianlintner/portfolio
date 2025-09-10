@@ -9,6 +9,7 @@ spec:
     - portfolio.hugecat.net
     - hugecat.net
     - www.hugecat.net
+    - chat.hugecat.net
   gateways:
     - portfolio-gateway
   http:
@@ -17,7 +18,7 @@ spec:
             prefix: /.well-known/acme-challenge/
       route:
         - destination:
-            host: cm-acme-http-solver
+            host: cm-acme-http-solver.cert-manager.svc.cluster.local
             port:
               number: 8089
     - match:
