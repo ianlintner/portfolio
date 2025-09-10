@@ -6,7 +6,7 @@ metadata:
     app: portfolio
 spec:
   hosts:
-    - "portfolio.hugecat.net"
+    - "aportfolio.hugecat.net"
     - "hugecat.net"
     - "www.hugecat.net"
   gateways:
