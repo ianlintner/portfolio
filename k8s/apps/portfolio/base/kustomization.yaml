@@ -10,7 +10,7 @@ resources:
   - istio-static-ip.yaml
   - istio-virtualservice.yaml
   - istio-certificate.yaml
-  - istio-ingressgateway-service.yaml
+  # - istio-ingressgateway-service.yaml
   - service.yaml
   - serviceaccount.yaml
   - auth.yaml
