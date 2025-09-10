@@ -4,11 +4,11 @@ metadata:
   name: portfolio-policy
   namespace: prod
 spec:
-  selector:
-    matchLabels:
-      app: portfolio
   action: ALLOW
   rules:
-    - to:
+    - from:
+        - source:
+            principals: ["*"]
+      to:
         - operation:
-            methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+            methods: ["*"]
