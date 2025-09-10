@@ -7,7 +7,6 @@ resources:
   - deployment.yaml
   # - dns-zone.yaml
   - istio-gateway.yaml
-  - istio-ingressgateway-service.yaml
   - istio-static-ip.yaml
   - istio-virtualservice.yaml
   - istio-certificate.yaml

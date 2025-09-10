@@ -11,6 +11,7 @@ spec:
     metadata:
       labels:
         app: portfolio
+        istio-injection: enabled
       annotations:
         sidecar.istio.io/inject: "true"
     spec:
