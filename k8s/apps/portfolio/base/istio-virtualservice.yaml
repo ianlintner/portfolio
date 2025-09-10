@@ -7,7 +7,7 @@ metadata:
 spec:
   hosts:
     - "aportfolio.hugecat.net"
-    - "hugecat.net"
+    - "ahugecat.net"
     - "www.hugecat.net"
   gateways:
     - portfolio-gateway
@@ -21,4 +21,3 @@ spec:
             host: portfolio
             port:
               number: 80
-
