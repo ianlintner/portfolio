@@ -1,0 +1,88 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespace.yaml
+  - ../../base
+  # - dns-record.yaml
+
+namespace: dev
+
+labels:
+  - pairs:
+      env: dev
+
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 50m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 96Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 150m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 192Mi
+    target:
+      kind: Deployment
+      name: portfolio
+  - patch: |-
+      - op: replace
+        path: /metadata/name
+        value: portfolio-dev-db
+      - op: replace
+        path: /spec/settings/diskSize
+        value: 10
+      - op: replace
+        path: /spec/settings/diskType
+        value: PD_HDD
+    target:
+      kind: SQLInstance
+      name: portfolio-db-base
+  - patch: |-
+      - op: replace
+        path: /metadata/name
+        value: portfolio-dev-database
+    target:
+      kind: SQLDatabase
+      name: portfolio-db-database
+  - patch: |-
+      - op: replace
+        path: /metadata/name
+        value: portfolio-dev-user
+    target:
+      kind: SQLUser
+      name: portfolio-db-user
+
+configMapGenerator:
+  - name: portfolio-config
+    behavior: replace
+    literals:
+      - NODE_ENV=development
+      - NEXTAUTH_URL=https://portfolio-dev.example.com
+      - CLOUD_SQL_CONNECTION_NAME=kame-457417:us-central1:portfolio-dev-db
+
+secretGenerator:
+  - name: portfolio-secrets
+    behavior: merge
+    literals:
+      - NEXTAUTH_SECRET=dev-secret-key-change-me
+  - name: portfolio-db-secret
+    behavior: merge
+    literals:
+      - DATABASE_URL=postgresql://portfolio-dev-user:dev-password-change-me@localhost:5432/portfolio-dev-database
+  - name: portfolio-db-password
+    behavior: merge
+    literals:
+      - password=dev-password-change-me
+
+images:
+  - name: portfolio
+    newName: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio
+    newTag: latest

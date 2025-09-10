@@ -1,0 +1,11 @@
+# apiVersion: iam.cnrm.cloud.google.com/v1beta1
+# kind: IAMPolicyMember
+# metadata:
+#   name: portfolio-wi-binding
+# spec:
+#   member: serviceAccount:kame-457417.svc.id.goog[portfolio-prod/portfolio-workload-identity]
+#   role: roles/iam.workloadIdentityUser
+#   resourceRef:
+#     apiVersion: iam.cnrm.cloud.google.com/v1beta1
+#     kind: IAMServiceAccount
+#     name: portfolio-cloudsql-sa

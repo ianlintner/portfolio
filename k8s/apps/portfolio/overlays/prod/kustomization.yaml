@@ -1,0 +1,135 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespace.yaml
+  - ../../base
+  # - dns-records.yaml
+  # - workload-identity-binding.yaml
+
+namespace: prod
+
+labels:
+  - pairs:
+      env: prod
+
+patches:
+  # Scale and harden the Deployment for prod
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 100m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 256Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 1000m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 1Gi
+      - op: add
+        path: /spec/template/spec/topologySpreadConstraints
+        value:
+          - maxSkew: 1
+            topologyKey: topology.kubernetes.io/zone
+            whenUnsatisfiable: DoNotSchedule
+            labelSelector:
+              matchLabels:
+                app: portfolio
+      - op: add
+        path: /spec/template/spec/affinity
+        value:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: portfolio
+                topologyKey: kubernetes.io/hostname
+    target:
+      kind: Deployment
+      name: portfolio
+  - patch: |-
+      - op: replace
+        path: /metadata/name
+        value: portfolio-prod-db
+      - op: replace
+        path: /spec/settings/tier
+        value: db-g1-small
+      - op: replace
+        path: /spec/settings/diskSize
+        value: 50
+      - op: replace
+        path: /spec/settings/diskType
+        value: PD_SSD
+      - op: add
+        path: /spec/settings/availabilityType
+        value: REGIONAL
+    target:
+      kind: SQLInstance
+      name: portfolio-db-base
+  - patch: |-
+      - op: replace
+        path: /metadata/name
+        value: portfolio-prod-database
+      - op: replace
+        path: /spec/instanceRef/name
+        value: portfolio-prod-db
+    target:
+      kind: SQLDatabase
+      name: portfolio-db-database
+  - patch: |-
+      - op: replace
+        path: /metadata/name
+        value: portfolio-prod-user
+      - op: replace
+        path: /spec/instanceRef/name
+        value: portfolio-prod-db
+    target:
+      kind: SQLUser
+      name: portfolio-db-user
+  - patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          iam.gke.io/gcp-service-account: portfolio-cloudsql-sa@kame-457417.iam.gserviceaccount.com
+      - op: replace
+        path: /metadata/annotations/iam.gke.io~1gcp-service-account
+        value: portfolio-cloudsql-sa@kame-457417.iam.gserviceaccount.com
+    target:
+      kind: ServiceAccount
+      name: portfolio-workload-identity
+
+configMapGenerator:
+  - name: portfolio-config
+    behavior: merge
+    literals:
+      - NODE_ENV=production
+      - NEXTAUTH_URL=https://portfolio.hugecat.net
+      - CLOUD_SQL_CONNECTION_NAME=kame-457417:us-central1:portfolio-prod-db
+
+secretGenerator:
+  - name: portfolio-secrets
+    behavior: merge
+    literals:
+      - NEXTAUTH_SECRET=ifbsSWKAUBAW6ydiqce1-Sy0rxWk6es9W89L7h46DbI
+      - ADMIN_EMAIL=admin@hugecat.net
+      - ADMIN_PASSWORD=6A71hC5OsUj1CN61
+      - ADMIN_NAME=Portfolio Admin
+  - name: portfolio-db-secret
+    behavior: merge
+    literals:
+      - DATABASE_URL=postgresql://portfolio-prod-user:k9pm8cGFoNLaZdThKv6gZA@localhost:5432/portfolio-prod-database
+  - name: portfolio-db-password
+    behavior: merge
+    literals:
+      - password=k9pm8cGFoNLaZdThKv6gZA
+images:
+  - name: portfolio
+    newName: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio
+    newTag: latest

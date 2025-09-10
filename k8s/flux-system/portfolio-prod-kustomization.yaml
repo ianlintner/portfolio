@@ -8,17 +8,17 @@ spec:
   sourceRef:
     kind: GitRepository
     name: portfolio
-  path: ./k8s/apps/portfolio/overlays/portfolio-prod
+  path: ./k8s/apps/portfolio/overlays/prod
   prune: false
   wait: true
   timeout: 5m
   force: false
-  targetNamespace: portfolio-prod
+  targetNamespace: prod
   healthChecks:
     - apiVersion: v1
       kind: Namespace
-      name: portfolio-prod
+      name: prod
     - apiVersion: apps/v1
       kind: Deployment
       name: portfolio
-      namespace: portfolio-prod
+      namespace: prod
