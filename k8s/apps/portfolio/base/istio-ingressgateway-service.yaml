@@ -8,21 +8,20 @@ metadata:
     istio: ingressgateway
 spec:
   type: LoadBalancer
-  loadBalancerIP: 34.133.54.63
+  loadBalancerIP: 35.188.208.106
   ports:
-    - port: 15021
+    - name: status-port
+      protocol: TCP
+      port: 15021
       targetPort: 15021
+    - name: http2
       protocol: TCP
-    - port: 80
+      port: 80
       targetPort: 80
-      protocol: HTTP
-    - port: 443
-      targetPort: 443
-      protocol: HTTPS
-    - port: 15443
-      targetPort: 15443
+    - name: https
       protocol: TCP
-      name: tls
+      port: 443
+      targetPort: 443
   selector:
     istio: ingressgateway
     app: istio-ingressgateway

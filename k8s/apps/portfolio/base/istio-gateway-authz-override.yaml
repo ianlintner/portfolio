@@ -5,23 +5,23 @@ metadata:
   namespace: prod
 spec:
   hosts:
-  - "*"
+    - "*"
   gateways:
-  - portfolio-gateway
+    - portfolio-gateway
   http:
-  - match:
-    - uri:
-        prefix: /.well-known/acme-challenge/
-    route:
-    - destination:
-        host: cm-acme-http-solver.prod.svc.cluster.local
-        port:
-          number: 8089
-  - match:
-    - uri:
-        prefix: /
-    route:
-    - destination:
-        host: portfolio
-        port:
-          number: 3000
+    - match:
+        - uri:
+            prefix: /.well-known/acme-challenge/
+      route:
+        - destination:
+            host: cm-acme-http-solver.prod.svc.cluster.local
+            port:
+              number: 8089
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: portfolio
+            port:
+              number: 3000
