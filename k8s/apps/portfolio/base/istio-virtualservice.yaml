@@ -19,4 +19,3 @@ spec:
             host: portfolio
             port:
               number: 80
-
