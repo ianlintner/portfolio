@@ -6,8 +6,8 @@ metadata:
     app: portfolio
 spec:
   hosts:
-    - "aportfolio.hugecat.net"
-    - "ahugecat.net"
+    - "portfolio.hugecat.net"
+    - "hugecat.net"
     - "www.hugecat.net"
   gateways:
     - portfolio-gateway
@@ -15,7 +15,7 @@ spec:
   http:
     - match:
         - uri:
-            prefix: /portfolio
+            prefix: /
       route:
         - destination:
             host: portfolio
