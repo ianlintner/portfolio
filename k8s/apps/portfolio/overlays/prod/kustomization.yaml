@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
   - ../../base
-  # - dns-records.yaml
+  - dns-zone.yaml
   - workload-identity-binding.yaml
 
 namespace: prod
