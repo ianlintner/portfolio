@@ -1,0 +1,51 @@
+apiVersion: dns.cnrm.cloud.google.com/v1beta1
+kind: DNSManagedZone
+metadata:
+  name: hugecat-net
+  namespace: config-control
+spec:
+  description: "Primary DNS zone for hugecat.net"
+  dnsName: "hugecat.net."
+  visibility: public
+---
+apiVersion: dns.cnrm.cloud.google.com/v1beta1
+kind: DNSRecordSet
+metadata:
+  name: hugecat-net-apex-a
+  namespace: config-control
+spec:
+  name: "hugecat.net."
+  type: "A"
+  ttl: 300
+  managedZoneRef:
+    name: hugecat-net
+  rrdatas:
+    - "34.31.128.59"
+---
+apiVersion: dns.cnrm.cloud.google.com/v1beta1
+kind: DNSRecordSet
+metadata:
+  name: hugecat-net-www-a
+  namespace: config-control
+spec:
+  name: "www.hugecat.net."
+  type: "A"
+  ttl: 300
+  managedZoneRef:
+    name: hugecat-net
+  rrdatas:
+    - "34.31.128.59"
+---
+apiVersion: dns.cnrm.cloud.google.com/v1beta1
+kind: DNSRecordSet
+metadata:
+  name: hugecat-net-portfolio-a
+  namespace: config-control
+spec:
+  name: "portfolio.hugecat.net."
+  type: "A"
+  ttl: 300
+  managedZoneRef:
+    name: hugecat-net
+  rrdatas:
+    - "34.31.128.59"

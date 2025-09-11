@@ -3,8 +3,6 @@ kind: Gateway
 metadata:
   name: portfolio-gateway
   namespace: prod
-  labels:
-    app: portfolio
 spec:
   selector:
     istio: ingressgateway
@@ -14,6 +12,19 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        - "portfolio.hugecat.net"
         - "hugecat.net"
         - "www.hugecat.net"
+        - "portfolio.hugecat.net"
+      tls:
+        httpsRedirect: true
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      hosts:
+        - "hugecat.net"
+        - "www.hugecat.net"
+        - "portfolio.hugecat.net"
+      tls:
+        mode: SIMPLE
+        credentialName: portfolio-tls-cert
