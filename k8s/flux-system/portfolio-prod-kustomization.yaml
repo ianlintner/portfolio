@@ -9,7 +9,7 @@ spec:
     kind: GitRepository
     name: portfolio
   path: ./k8s/apps/portfolio/overlays/prod
-  prune: true
+  prune: false
   wait: true
   timeout: 5m
   force: true
