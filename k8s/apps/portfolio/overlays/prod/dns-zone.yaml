@@ -3,10 +3,14 @@ kind: DNSManagedZone
 metadata:
   name: hugecat-net
   namespace: config-control
+  annotations:
+    cnrm.cloud.google.com/management-conflict-prevention-policy: none
+    cnrm.cloud.google.com/project-id: kame-457417
+    cnrm.cloud.google.com/state-into-spec: absent
 spec:
   description: "Primary DNS zone for hugecat.net"
   dnsName: "hugecat.net."
-  visibility: public
+  visibility: public 
 ---
 apiVersion: dns.cnrm.cloud.google.com/v1beta1
 kind: DNSRecordSet
