@@ -9,13 +9,7 @@ export function middleware(req: NextRequest) {
 
   const url = new URL(req.url);
 
-  // 1) Enforce HTTPS based on original client protocol
-  //    GCLB sets x-forwarded-proto to the client scheme
-  const xfProto = req.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
-  if (xfProto && xfProto !== "https") {
-    url.protocol = "https:";
-    return NextResponse.redirect(url, 308);
-  }
+  // Removed HTTPS enforcement to allow ACME HTTP-01 challenge
 
   // 2) Enforce canonical host
   if (host === "hugecat.net" || host === "www.hugecat.net") {

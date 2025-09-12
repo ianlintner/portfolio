@@ -5,29 +5,23 @@ metadata:
   namespace: prod
 spec:
   hosts:
-    - "ahugecat.net"
-    - "awww.hugecat.net"
-    - "aportfolio.hugecat.net"
+    - "portfoliohugecat.net"
   gateways:
     - portfolio-gateway
-  tls:
+  http:
     - match:
-        - port: 443
-          sniHosts:
-            - "ahugecat.net"
-            - "awww.hugecat.net"
-            - "aportfolio.hugecat.net"
+        - uri:
+            prefix: /.well-known/acme-challenge/
       route:
         - destination:
-            host: cm-acme-http-solver
+            host: cm-acme-http-solver-jdwgn
             port:
-              number: 80
-  http:
+              number: 8089
     - match:
         - uri:
             prefix: /
       route:
         - destination:
-            host: cm-acme-http-solver
+            host: portfolio
             port:
               number: 80

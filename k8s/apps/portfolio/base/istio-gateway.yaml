@@ -12,18 +12,12 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        - "hugecat.net"
-        - "www.hugecat.net"
         - "portfolio.hugecat.net"
-      tls:
-        httpsRedirect: true
     - port:
         number: 443
         name: https
         protocol: HTTPS
       hosts:
-        - "hugecat.net"
-        - "www.hugecat.net"
         - "portfolio.hugecat.net"
       tls:
         mode: SIMPLE

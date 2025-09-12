@@ -11,6 +11,3 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - portfolio.hugecat.net
-    - hugecat.net
-    - www.hugecat.net
-    - chat.hugecat.net
