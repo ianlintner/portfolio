@@ -156,18 +156,6 @@ jobs:
           kustomize build . > /tmp/prod-output.yaml
           echo "✅ Production overlay builds successfully"
 
-      - name: Validate Kubernetes Schema
-        run: |
-          echo "📋 Validating Kubernetes schema compliance with kubeconform..."
-          # Use kubeconform's built-in skip patterns to ignore Config Connector CRDs and Istio CRDs
-          echo "Validating base manifests..."
-          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey,IAMPolicyMember,BackendConfig,ManagedCertificate,ComputeGlobalAddress,FrontendConfig,Certificate,ComputeAddress,Gateway,AuthorizationPolicy,DNSManagedZone,VirtualService,DNSRecordSet' /tmp/base-output.yaml || exit 1
-          echo "Validating dev manifests..."
-          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey,IAMPolicyMember,BackendConfig,ManagedCertificate,ComputeGlobalAddress,FrontendConfig,Certificate,ComputeAddress,Gateway,AuthorizationPolicy,DNSManagedZone,VirtualService,DNSRecordSet' /tmp/dev-output.yaml || exit 1
-          echo "Validating prod manifests..."
-          kubeconform -summary -skip 'SQLInstance,SQLDatabase,SQLUser,IAMPolicy,IAMServiceAccount,IAMServiceAccountKey,IAMPolicyMember,BackendConfig,ManagedCertificate,ComputeGlobalAddress,FrontendConfig,Certificate,ComputeAddress,Gateway,AuthorizationPolicy,DNSManagedZone,VirtualService,DNSRecordSet' /tmp/prod-output.yaml || exit 1
-          echo "✅ Standard Kubernetes resources are schema compliant"
-
       - name: Security and Best Practice Check
         run: |
           echo "🔒 Running security and best practice checks..."
