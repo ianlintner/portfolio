@@ -13,6 +13,14 @@ spec:
   http:
     - match:
         - uri:
+            prefix: /.well-known/
+      route:
+        - destination:
+            host: cm-acme-http-solver
+            port:
+              number: 80
+    - match:
+        - uri:
             prefix: /
       route:
         - destination:
