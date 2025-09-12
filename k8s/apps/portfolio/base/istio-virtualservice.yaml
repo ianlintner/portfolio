@@ -10,20 +10,20 @@ spec:
     - "portfolio.hugecat.net"
   gateways:
     - portfolio-gateway
-  http:
+  tls:
     - match:
-        - uri:
-            prefix: /.well-known/
+        - port: 443
       route:
         - destination:
             host: cm-acme-http-solver
             port:
               number: 80
+  http:
     - match:
         - uri:
             prefix: /
       route:
         - destination:
-            host: portfolio
+            host: cm-acme-http-solver
             port:
               number: 80
