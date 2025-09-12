@@ -90,14 +90,6 @@ jobs:
           echo "Using image tag: $IMAGE_TAG"
           yq -i ".spec.template.spec.containers[0].image = \"$IMAGE_TAG\"" k8s/apps/portfolio/base/deployment.yaml
 
-      - name: Commit and push updated manifest
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add k8s/apps/portfolio/base/deployment.yaml
-          git commit -m "ci: update deployment manifest with new image $IMAGE_TAG" || echo "No changes to commit"
-          git push
-
   k8s-validate:
     runs-on: ubuntu-latest
     name: Validate Kubernetes Manifests
