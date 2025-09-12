@@ -13,6 +13,10 @@ spec:
   tls:
     - match:
         - port: 443
+          sniHosts:
+            - "hugecat.net"
+            - "www.hugecat.net"
+            - "portfolio.hugecat.net"
       route:
         - destination:
             host: cm-acme-http-solver
