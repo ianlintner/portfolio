@@ -9,15 +9,6 @@ export function middleware(req: NextRequest) {
 
   const url = new URL(req.url);
 
-  // Removed HTTPS enforcement to allow ACME HTTP-01 challenge
-
-  // 2) Enforce canonical host
-  if (host === "hugecat.net" || host === "www.hugecat.net") {
-    url.hostname = "portfolio.hugecat.net";
-    url.protocol = "https:";
-    return NextResponse.redirect(url, 308);
-  }
-
   return NextResponse.next();
 }
 
