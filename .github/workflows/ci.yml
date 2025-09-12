@@ -141,14 +141,14 @@ jobs:
       - name: Validate Kustomize Build - Dev
         run: |
           echo "🔧 Validating dev overlay..."
-          cd k8s/apps/portfolio/overlays/portfolio-dev
+          cd k8s/apps/portfolio/overlays/dev
           kustomize build . > /tmp/dev-output.yaml
           echo "✅ Dev overlay builds successfully"
 
       - name: Validate Kustomize Build - Prod
         run: |
           echo "🔧 Validating production overlay..."
-          cd k8s/apps/portfolio/overlays/portfolio-prod
+          cd k8s/apps/portfolio/overlays/prod
           kustomize build . > /tmp/prod-output.yaml
           echo "✅ Production overlay builds successfully"
 
