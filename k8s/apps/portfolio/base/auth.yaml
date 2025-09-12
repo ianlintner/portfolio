@@ -6,9 +6,6 @@ metadata:
 spec:
   action: ALLOW
   rules:
-    - from:
-        - source:
-            principals: ["*"]
-      to:
+    - to:
         - operation:
             methods: ["*"]
