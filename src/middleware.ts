@@ -7,8 +7,6 @@ export function middleware(req: NextRequest) {
   const host = req.headers.get("host")?.toLowerCase();
   if (!host) return NextResponse.next();
 
-  const url = new URL(req.url);
-
   return NextResponse.next();
 }
 
