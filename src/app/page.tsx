@@ -111,7 +111,7 @@ export default function HomePage() {
                 </div>
                 <ul className="space-y-1 text-muted-foreground">
                   <li>Node.js & tRPC</li>
-                  <li>Prisma ORM</li>
+
                   <li>PostgreSQL</li>
                   <li>NextAuth.js</li>
                 </ul>

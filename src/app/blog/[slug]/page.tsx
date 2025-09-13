@@ -31,7 +31,6 @@ This project demonstrates how to create a professional portfolio website with:
 - **Next.js 14** with App Router for modern React development
 - **TypeScript** for type safety throughout the stack
 - **tRPC** for end-to-end type-safe API calls
-- **Prisma** with PostgreSQL for database management
 - **NextAuth.js** for authentication
 - **Tailwind CSS** for styling
 
@@ -196,7 +195,6 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 }
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
-  transformer: superjson,
   errorFormatter({ shape, error }) {
     return {
       ...shape,

@@ -180,7 +180,9 @@ export default function PostsManagement() {
                       <span>By {post.author?.name || "Unknown Author"}</span>
                       <span>•</span>
                       <span>
-                        {new Date(post.createdAt).toLocaleDateString()}
+                        {new Date(
+                          post.createdAt as unknown as string,
+                        ).toLocaleDateString()}
                       </span>
                       {post.tags.length > 0 && (
                         <>
@@ -223,12 +225,9 @@ export default function PostsManagement() {
                     )}
                     <button
                       onClick={() => handleDelete(String(post.id), post.title)}
-                      disabled={deleteMutation.status === "pending"}
                       className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-destructive text-destructive-foreground hover:bg-destructive/90 h-8 px-3"
                     >
-                      {deleteMutation.status === "pending"
-                        ? "Deleting..."
-                        : "Delete"}
+                      Delete
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     </button>
                   </div>
