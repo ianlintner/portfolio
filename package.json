@@ -53,6 +53,7 @@
     "eslint-config-next": "latest",
     "jest": "latest",
     "typescript": "latest",
-    "prettier": "latest"
+    "prettier": "latest",
+    "jest-environment-jsdom": "latest"
   }
 }
