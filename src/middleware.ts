@@ -4,9 +4,6 @@ import type { NextRequest } from "next/server";
 // Redirect apex and www to the canonical host.
 // Excludes health checks and static asset paths.
 export function middleware(req: NextRequest) {
-  const host = req.headers.get("host")?.toLowerCase();
-  if (!host) return NextResponse.next();
-
   return NextResponse.next();
 }
 
