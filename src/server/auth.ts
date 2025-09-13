@@ -7,6 +7,8 @@ import {
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "../server/db";
+import * as schema from "../server/db/schema";
+import { eq } from "drizzle-orm";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -39,11 +41,13 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          const user = await db.user.findUnique({
-            where: {
-              email: credentials.email,
-            },
-          });
+          const usersFound = await db
+            .select()
+            .from(schema.users)
+            .where(eq(schema.users.email, credentials.email))
+            .limit(1);
+
+          const user = usersFound[0];
           console.info(
             "[Auth] Lookup by email:",
             credentials.email,
@@ -56,17 +60,14 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
-          if (!user.passwordHash) {
-            console.error(
-              "[Auth] User record has no passwordHash field:",
-              user,
-            );
+          if (!user.password) {
+            console.error("[Auth] User record has no password field:", user);
             return null;
           }
 
           const isPasswordValid = await bcrypt.compare(
             credentials.password,
-            user.passwordHash,
+            user.password,
           );
           console.info(
             "[Auth] Password validity for user",
@@ -81,10 +82,10 @@ export const authOptions: NextAuthOptions = {
           }
 
           return {
-            id: user.id,
+            id: String(user.id),
             email: user.email,
             name: user.name,
-            role: user.role,
+            role: "user",
           };
         } catch (err) {
           console.error("[Auth] Exception during authorize:", err);

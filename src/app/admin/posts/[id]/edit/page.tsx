@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { trpc } from "../../../../../utils/trpc";
-import type { PostTag } from "../../../../../types";
 
 export default function EditPost() {
   const router = useRouter();
@@ -19,7 +18,29 @@ export default function EditPost() {
   const [seoDescription, setSeoDescription] = useState("");
   const [seoKeywords, setSeoKeywords] = useState("");
 
-  const { data: post, isLoading } = trpc.post.getById.useQuery(postId);
+  const { data: post, isLoading } = trpc.post.getById.useQuery(postId, {
+    select: (p) => ({
+      id: p.id,
+      title: p.title,
+      excerpt: p.excerpt ?? "",
+      content: p.content ?? "",
+      tags:
+        "tags" in p &&
+        Array.isArray((p as { tags?: { tag: { name: string } }[] }).tags)
+          ? (p as { tags: { tag: { name: string } }[] }).tags.map(
+              (pt) => pt.tag.name,
+            )
+          : [],
+      published: Boolean(p.published),
+      seoTitle: p.seoTitle ?? "",
+      seoDescription: p.seoDescription ?? "",
+      seoKeywords: Array.isArray(p.seoKeywords) ? p.seoKeywords : [],
+      createdAt: p.createdAt,
+      updatedAt: (p as unknown as { updatedAt?: Date }).updatedAt ?? new Date(),
+      authorId: p.authorId,
+      slug: p.slug,
+    }),
+  });
   const updateMutation = trpc.post.update.useMutation({
     onSuccess: () => {
       router.push("/admin/posts");
@@ -33,12 +54,12 @@ export default function EditPost() {
     if (post) {
       setTitle(post.title);
       setExcerpt(post.excerpt || "");
-      setContent(post.content);
-      setTags(post.tags.map((pt: PostTag) => pt.tag.name).join(", "));
+      setContent(post.content || "");
+      setTags((post.tags ?? []).join(", "));
       setPublished(post.published);
       setSeoTitle(post.seoTitle || "");
       setSeoDescription(post.seoDescription || "");
-      setSeoKeywords(post.seoKeywords.join(", "));
+      setSeoKeywords((post.seoKeywords ?? []).join(", "));
     }
   }, [post]);
 

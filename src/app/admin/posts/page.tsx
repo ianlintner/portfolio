@@ -3,12 +3,53 @@
 import { useState } from "react";
 import { trpc } from "../../../utils/trpc";
 import Link from "next/link";
-import type { Post, PostTag } from "../../../types";
+import type { PostTag } from "../../../types";
+
+type PostWithExtras = {
+  id: string;
+  title: string;
+  excerpt: string | null;
+  content: string | null;
+  published: boolean;
+  slug: string;
+  createdAt: Date;
+  author?: { name: string | null };
+  tags: PostTag[];
+};
 
 export default function PostsManagement() {
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
 
-  const { data: posts, isLoading, refetch } = trpc.post.getAll.useQuery();
+  const {
+    data: posts,
+    isLoading,
+    refetch,
+  } = trpc.post.getAll.useQuery(undefined, {
+    select: (all) =>
+      all.map(
+        (p): PostWithExtras => ({
+          id: String(p.id),
+          title: p.title,
+          excerpt: p.excerpt,
+          content: p.content,
+          published: Boolean(p.published),
+          slug: p.slug,
+          createdAt: p.createdAt,
+          author:
+            "author" in p
+              ? {
+                  name:
+                    (p as { author?: { name: string | null } }).author?.name ??
+                    null,
+                }
+              : { name: null },
+          tags:
+            "tags" in p && Array.isArray((p as { tags?: PostTag[] }).tags)
+              ? (p as { tags: PostTag[] }).tags
+              : [],
+        }),
+      ),
+  });
   console.log("Fetched posts from tRPC:", posts);
   const deleteMutation = trpc.post.delete.useMutation({
     onSuccess: () => {
@@ -17,7 +58,7 @@ export default function PostsManagement() {
   });
 
   const filteredPosts =
-    posts?.filter((post: Post) => {
+    (posts as PostWithExtras[] | undefined)?.filter((post) => {
       if (filter === "published") return post.published;
       if (filter === "draft") return !post.published;
       return true;
@@ -109,7 +150,7 @@ export default function PostsManagement() {
           </div>
         ) : (
           <div className="divide-y">
-            {filteredPosts.map((post: Post) => (
+            {filteredPosts.map((post: PostWithExtras) => (
               <div
                 key={post.id}
                 className="p-4 hover:bg-muted/50 transition-colors"
@@ -181,7 +222,7 @@ export default function PostsManagement() {
                       </a>
                     )}
                     <button
-                      onClick={() => handleDelete(post.id, post.title)}
+                      onClick={() => handleDelete(String(post.id), post.title)}
                       disabled={deleteMutation.isLoading}
                       className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-destructive text-destructive-foreground hover:bg-destructive/90 h-8 px-3"
                     >

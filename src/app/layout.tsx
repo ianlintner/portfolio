@@ -1,5 +1,5 @@
 import "./globals.css";
-import "highlight.js/styles/github-dark.css";
+import "../styles/highlight.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Navigation } from "../components/Navigation";

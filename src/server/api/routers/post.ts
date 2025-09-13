@@ -33,7 +33,7 @@ export const postRouter = createTRPCRouter({
         cursor: z.string().nullish(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       const posts = await db
         .select()
         .from(schema.posts)
@@ -41,10 +41,10 @@ export const postRouter = createTRPCRouter({
         .orderBy(desc(schema.posts.publishedAt))
         .limit(input.limit + 1);
 
-      let nextCursor: typeof input.cursor | undefined = undefined;
+      let nextCursor: string | undefined = undefined;
       if (posts.length > input.limit) {
         const nextItem = posts.pop();
-        nextCursor = nextItem!.id;
+        nextCursor = String(nextItem!.id);
       }
 
       return {
@@ -53,7 +53,7 @@ export const postRouter = createTRPCRouter({
       };
     }),
 
-  getBySlug: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
+  getBySlug: publicProcedure.input(z.string()).query(async ({ input }) => {
     const [post] = await db
       .select()
       .from(schema.posts)
@@ -68,7 +68,7 @@ export const postRouter = createTRPCRouter({
   }),
 
   // Protected procedures (admin only)
-  getAll: protectedProcedure.query(async ({ ctx }) => {
+  getAll: protectedProcedure.query(async () => {
     return db.select().from(schema.posts).orderBy(desc(schema.posts.createdAt));
   }),
 
@@ -83,7 +83,7 @@ export const postRouter = createTRPCRouter({
 
   create: protectedProcedure
     .input(createPostSchema)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { tags, ...postData } = input;
 
       // Generate slug from title
@@ -136,7 +136,7 @@ export const postRouter = createTRPCRouter({
 
   update: protectedProcedure
     .input(updatePostSchema)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       const { id, tags, ...postData } = input;
 
       const [post] = await db
@@ -196,9 +196,7 @@ export const postRouter = createTRPCRouter({
       return post;
     }),
 
-  delete: protectedProcedure
-    .input(z.string())
-    .mutation(async ({ ctx, input }) => {
-      await db.delete(schema.posts).where(eq(schema.posts.id, parseInt(input)));
-    }),
+  delete: protectedProcedure.input(z.string()).mutation(async ({ input }) => {
+    await db.delete(schema.posts).where(eq(schema.posts.id, parseInt(input)));
+  }),
 });
