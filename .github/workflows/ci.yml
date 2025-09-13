@@ -51,8 +51,8 @@ jobs:
         with:
           version: latest
           run_install: true
-      - name: Generate Prisma Client
-        run: pnpm db:generate
+      - name: Run Drizzle Migrations
+        run: pnpm drizzle-kit push
       - name: Build Next.js
         run: pnpm build
 
