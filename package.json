@@ -29,7 +29,12 @@
     "rehype-highlight": "latest",
     "highlight.js": "latest",
     "superjson": "latest",
-    "@tailwindcss/typography": "latest"
+    "@tailwindcss/typography": "latest",
+    "@tanstack/react-query": "latest",
+    "@trpc/client": "latest",
+    "@trpc/next": "latest",
+    "@trpc/react-query": "latest",
+    "@trpc/server": "latest"
   },
   "devDependencies": {
     "typescript": "latest",
