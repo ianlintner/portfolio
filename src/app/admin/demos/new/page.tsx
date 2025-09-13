@@ -179,8 +179,12 @@ export default function NewDemo() {
             <div className="rounded-lg border p-4 space-y-4">
               <h3 className="font-medium">Category</h3>
               <div className="space-y-2">
+                <label htmlFor="category" className="sr-only">
+                  Category
+                </label>
                 <select
                   id="category"
+                  title="Category"
                   value={category}
                   onChange={(e) =>
                     setCategory(e.target.value as typeof category)
@@ -220,10 +224,10 @@ export default function NewDemo() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={createMutation.isLoading}
+              disabled={createMutation.isPending}
               className="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 py-2 px-4"
             >
-              {createMutation.isLoading
+              {createMutation.isPending
                 ? "Creating..."
                 : published
                   ? "Create & Publish"
