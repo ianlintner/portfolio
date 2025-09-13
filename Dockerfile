@@ -9,7 +9,7 @@ RUN npm install --omit=dev --legacy-peer-deps --force --ignore-scripts
 
 # ---- build (types, transpile) ----
 FROM node:22-slim AS build
-RUN apt-get update && apt-get install -y libssl1.1 || true
+RUN apt-get update && apt-get install -y libssl1.1 curl wget || true
 WORKDIR /app
 COPY package*.json ./
 # Disable husky prepare script in container to avoid missing git binary
