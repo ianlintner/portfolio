@@ -54,6 +54,9 @@
     "jest": "latest",
     "typescript": "latest",
     "prettier": "latest",
-    "jest-environment-jsdom": "^29.7.0"
+    "jest-environment-jsdom": "^29.7.0",
+    "@testing-library/jest-dom": "latest",
+    "@testing-library/react": "latest",
+    "@testing-library/user-event": "latest"
   }
 }
