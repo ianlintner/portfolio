@@ -54,6 +54,6 @@
     "jest": "latest",
     "typescript": "latest",
     "prettier": "latest",
-    "jest-environment-jsdom": "latest"
+    "jest-environment-jsdom": "^29.7.0"
   }
 }
