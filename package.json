@@ -10,7 +10,8 @@
     "format": "prettier --check .",
     "db:generate": "drizzle-kit generate:pg",
     "db:migrate": "drizzle-kit push:pg",
-    "test:ci": "jest --ci --runInBand"
+    "test:ci": "jest --ci --runInBand",
+    "test": "jest"
   },
   "dependencies": {
     "@tailwindcss/typography": "latest",
