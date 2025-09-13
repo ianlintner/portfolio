@@ -52,6 +52,7 @@
     "eslint": "latest",
     "eslint-config-next": "latest",
     "jest": "latest",
-    "typescript": "latest"
+    "typescript": "latest",
+    "prettier": "latest"
   }
 }
