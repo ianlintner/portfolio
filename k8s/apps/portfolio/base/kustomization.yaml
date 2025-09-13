@@ -38,11 +38,13 @@ configMapGenerator:
     behavior: create
     files:
       - scripts/reset-admin-password.mjs
-  - name: prisma-schema
-    behavior: create
-    files:
-      - prisma/schema.prisma
-      - scripts/reset-inline.js
+  # Removed prisma/schema.prisma and reset-inline.js from configMapGenerator
+  # because they are not valid Kubernetes resources and break CI
+  # - name: prisma-schema
+  #   behavior: create
+  #   files:
+  #     - prisma/schema.prisma
+  #     - scripts/reset-inline.js
 
 secretGenerator:
   - name: portfolio-secrets
