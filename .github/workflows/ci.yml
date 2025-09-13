@@ -17,44 +17,44 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
-          version: latest
-          run_install: true
-      - run: pnpm lint
+          node-version: 20
+      - run: npm ci
+      - run: npm run lint
 
   format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
-          version: latest
-          run_install: true
-      - run: pnpm format
+          node-version: 20
+      - run: npm ci
+      - run: npm run format
 
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
-          version: latest
-          run_install: true
-      - run: pnpm test:ci
+          node-version: 20
+      - run: npm ci
+      - run: npm run test:ci
 
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
-          version: latest
-          run_install: true
+          node-version: 20
+      - run: npm ci
       - name: Run Drizzle Migrations
-        run: pnpm drizzle-kit push
+        run: npx drizzle-kit push
       - name: Build Next.js
-        run: pnpm build
+        run: npm run build
 
   docker:
     runs-on: ubuntu-latest
