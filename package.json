@@ -16,9 +16,20 @@
     "react-dom": "latest",
     "zod": "latest",
     "bcryptjs": "latest",
-    "drizzle-orm": "^0.30.0",
-    "drizzle-kit": "^0.20.0",
-    "@vercel/postgres": "^0.8.0"
+    "drizzle-orm": "^0.44.5",
+    "drizzle-kit": "^0.31.4",
+    "@vercel/postgres": "^0.10.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "lucide-react": "latest",
+    "next-auth": "latest",
+    "react-markdown": "latest",
+    "remark-gfm": "latest",
+    "rehype-highlight": "latest",
+    "highlight.js": "latest",
+    "superjson": "latest",
+    "@tailwindcss/typography": "latest"
   },
   "devDependencies": {
     "typescript": "latest",
@@ -28,6 +39,8 @@
     "@types/jest": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
-    "@types/react-dom": "latest"
+    "@types/react-dom": "latest",
+    "@types/bcryptjs": "latest",
+    "@types/react-syntax-highlighter": "latest"
   }
 }
