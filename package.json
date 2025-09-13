@@ -7,8 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "format": "prettier --check .",
     "db:generate": "drizzle-kit generate:pg",
-    "db:migrate": "drizzle-kit push:pg"
+    "db:migrate": "drizzle-kit push:pg",
+    "test:ci": "jest --ci --runInBand"
   },
   "dependencies": {
     "@tailwindcss/typography": "latest",
