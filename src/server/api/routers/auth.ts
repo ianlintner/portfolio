@@ -1,6 +1,9 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { createTRPCRouter, protectedProcedure } from "../../api/trpc";
+import { db } from "../../db";
+import * as schema from "../../db/schema";
+import { eq, desc } from "drizzle-orm";
 
 const createUserSchema = z.object({
   email: z.string().email(),
@@ -25,9 +28,11 @@ export const authRouter = createTRPCRouter({
       }
 
       // Check if user already exists
-      const existingUser = await ctx.db.user.findUnique({
-        where: { email: input.email },
-      });
+      const [existingUser] = await db
+        .select()
+        .from(schema.users)
+        .where(eq(schema.users.email, input.email))
+        .limit(1);
 
       if (existingUser) {
         throw new Error("User already exists");
@@ -37,23 +42,21 @@ export const authRouter = createTRPCRouter({
       const passwordHash = await bcrypt.hash(input.password, 12);
 
       // Create user
-      const user = await ctx.db.user.create({
-        data: {
+      const [user] = await db
+        .insert(schema.users)
+        .values({
           email: input.email,
           name: input.name,
-          passwordHash,
-          role: input.role,
-        },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          role: true,
-          createdAt: true,
-        },
-      });
+          password: passwordHash,
+        })
+        .returning({
+          id: schema.users.id,
+          email: schema.users.email,
+          name: schema.users.name,
+          createdAt: schema.users.createdAt,
+        });
 
-      return user;
+      return { ...user, role: input.role };
     }),
 
   // Get all users (admin only)
@@ -62,16 +65,15 @@ export const authRouter = createTRPCRouter({
       throw new Error("Unauthorized");
     }
 
-    return ctx.db.user.findMany({
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        createdAt: true,
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    return db
+      .select({
+        id: schema.users.id,
+        email: schema.users.email,
+        name: schema.users.name,
+        createdAt: schema.users.createdAt,
+      })
+      .from(schema.users)
+      .orderBy(desc(schema.users.createdAt));
   }),
 
   // Update user (admin only or self)
@@ -92,17 +94,16 @@ export const authRouter = createTRPCRouter({
         throw new Error("Unauthorized");
       }
 
-      return ctx.db.user.update({
-        where: { id },
-        data: updateData,
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          role: true,
-          updatedAt: true,
-        },
-      });
+      const [user] = await db
+        .update(schema.users)
+        .set(updateData)
+        .where(eq(schema.users.id, parseInt(id)))
+        .returning({
+          id: schema.users.id,
+          email: schema.users.email,
+          name: schema.users.name,
+        });
+      return user;
     }),
 
   // Change password
@@ -114,9 +115,11 @@ export const authRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const user = await ctx.db.user.findUnique({
-        where: { id: ctx.session.user.id },
-      });
+      const [user] = await db
+        .select()
+        .from(schema.users)
+        .where(eq(schema.users.id, parseInt(ctx.session.user.id)))
+        .limit(1);
 
       if (!user) {
         throw new Error("User not found");
@@ -125,7 +128,7 @@ export const authRouter = createTRPCRouter({
       // Verify current password
       const isValidPassword = await bcrypt.compare(
         input.currentPassword,
-        user.passwordHash,
+        user.password!,
       );
       if (!isValidPassword) {
         throw new Error("Invalid current password");
@@ -135,10 +138,10 @@ export const authRouter = createTRPCRouter({
       const newPasswordHash = await bcrypt.hash(input.newPassword, 12);
 
       // Update password
-      await ctx.db.user.update({
-        where: { id: ctx.session.user.id },
-        data: { passwordHash: newPasswordHash },
-      });
+      await db
+        .update(schema.users)
+        .set({ password: newPasswordHash })
+        .where(eq(schema.users.id, parseInt(ctx.session.user.id)));
 
       return { success: true };
     }),

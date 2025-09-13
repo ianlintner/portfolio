@@ -1,49 +1,33 @@
-# Multi-stage Docker build for Next.js application
-FROM node:18-alpine AS builder
+# ---- deps (node_modules for production) ----
+FROM node:20-bookworm-slim AS deps
 WORKDIR /app
-ARG DATABASE_URL
-ENV DATABASE_URL=$DATABASE_URL
-RUN npm install -g pnpm
-COPY package.json pnpm-lock.yaml ./
-COPY prisma ./prisma
-COPY src ./src
-COPY public ./public
-COPY scripts ./scripts
-COPY tsconfig.json ./
-COPY next.config.js ./
-COPY tailwind.config.ts ./
-COPY postcss.config.js ./
-COPY .eslintrc.json ./
-# Install required runtime libraries for Prisma engines during build (Alpine musl)
-RUN apk add --no-cache libstdc++
+COPY package*.json ./
+# Disable husky prepare script in container to avoid missing git binary
+ENV HUSKY=0
+RUN npm install --omit=dev --legacy-peer-deps --force --ignore-scripts
 
-RUN rm -rf node_modules && pnpm install --frozen-lockfile
-# Ensure clean Prisma generation after all source files are present
-RUN rm -rf node_modules/.prisma && pnpm db:generate
-RUN rm -rf .next && pnpm build
-
-FROM node:18-alpine AS runner
+# ---- build (types, transpile) ----
+FROM node:20-bookworm-slim AS build
 WORKDIR /app
+COPY package*.json ./
+# Disable husky prepare script in container to avoid missing git binary
+ENV HUSKY=0
+RUN npm install --legacy-peer-deps --force --ignore-scripts
+COPY . .
+# Build Next.js app
+RUN npm run build
 
-# Install necessary packages for Prisma and curl
-RUN apk add --no-cache libstdc++ curl
-
-# Create non-root user for security
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-# Copy built application
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/scripts ./scripts
-
-# Set permissions
-USER nextjs
-
-EXPOSE 3000
-
+# ---- production runtime ----
+FROM node:20-bookworm-slim AS runner
+ENV NODE_ENV=production
+WORKDIR /app
+# copy built app and prod node_modules
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
+COPY --from=build /app/public ./public
+COPY --from=deps  /app/node_modules ./node_modules
+COPY package*.json ./
 ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-
+EXPOSE 3000
+# Next.js standalone build already includes the correct entrypoint
 CMD ["node", "server.js"]
