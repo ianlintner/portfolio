@@ -8,6 +8,16 @@ spec:
     - "portfolio.hugecat.net"
   gateways:
     - portfolio-gateway
+  tls:
+    - match:
+        - port: 443
+          sniHosts:
+            - "portfolio.hugecat.net"
+      route:
+        - destination:
+            host: portfolio
+            port:
+              number: 80
   http:
     - match:
         - uri:

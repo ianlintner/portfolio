@@ -34,10 +34,6 @@ configMapGenerator:
       - NODE_ENV=production
       - NEXTAUTH_URL=https://portfolio.example.com
       - CLOUD_SQL_CONNECTION_NAME=kame-457417:us-central1:portfolio-db-base
-  - name: reset-script
-    behavior: create
-    files:
-      - scripts/reset-admin-password.mjs
   # Removed prisma/schema.prisma and reset-inline.js from configMapGenerator
   # because they are not valid Kubernetes resources and break CI
   # - name: prisma-schema
