@@ -64,7 +64,7 @@ const mockDemos = [
       "Next.js",
       "Socket.io",
       "PostgreSQL",
-      "Prisma",
+      "Drizzle ORM",
       "NextAuth.js",
     ],
     githubUrl: "https://github.com/example/chat-app",

@@ -36,7 +36,7 @@ const mockPosts = [
     title: "Building a Modern Next.js Portfolio with TypeScript and tRPC",
     slug: "modern-nextjs-portfolio-typescript-trpc",
     excerpt:
-      "Learn how to build a full-stack portfolio website using Next.js 14, TypeScript, tRPC, and Prisma. This comprehensive guide covers everything from setup to deployment.",
+      "Learn how to build a full-stack portfolio website using Next.js 14, TypeScript, tRPC, and Drizzle ORM. This comprehensive guide covers everything from setup to deployment.",
     createdAt: new Date("2024-01-15"),
     author: { name: "Ian Lintner" },
     tags: [
@@ -56,7 +56,7 @@ const mockTags = [
   { id: "6", name: "DevOps" },
   { id: "7", name: "tRPC" },
   { id: "8", name: "JavaScript" },
-  { id: "9", name: "Prisma" },
+  { id: "9", name: "Drizzle ORM" },
   { id: "10", name: "CSS" },
 ];
 

@@ -8,7 +8,7 @@ The implementation will follow the established Kustomize-based pattern from the 
 
 Create a comprehensive Kubernetes deployment setup for the Next.js portfolio application following the hobby cluster's proven patterns.
 
-The portfolio application is a full-stack Next.js application with tRPC API, Prisma ORM, NextAuth authentication, and PostgreSQL database. It includes an admin interface for managing blog posts and component demos. The application needs to be containerized and deployed to Google Kubernetes Engine with proper environment separation, security hardening, and GitOps workflow integration.
+The portfolio application is a full-stack Next.js application with tRPC API, Drizzle ORM, NextAuth authentication, and a PostgreSQL database. It includes an admin interface for managing blog posts and component demos. The application needs to be containerized and deployed to Google Kubernetes Engine with proper environment separation, security hardening, and GitOps workflow integration.
 
 This implementation will create Docker containers, Kubernetes manifests using Kustomize overlays, database deployment configurations, and Flux CD integration for automated deployments. The setup will support three environments (dev/staging/prod) with appropriate resource scaling and configuration management.
 
@@ -169,7 +169,7 @@ Sequential implementation steps to minimize conflicts and ensure successful depl
    - Deploy PostgreSQL StatefulSet with persistent storage
    - Configure database connection secrets and ConfigMaps
    - Test database connectivity and persistence
-   - Run Prisma migrations in containerized environment
+   - Run Drizzle migrations in containerized environment
 
 5. **Flux CD Integration**
    - Create GitOps manifests for automated deployment

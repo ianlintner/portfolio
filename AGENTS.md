@@ -2,14 +2,13 @@
 
 - Use `pnpm` for all installs, builds, and scripts – not `npm` or `yarn`.
 - Always run `pnpm lint` before commits; some lint rules are stricter than defaults.
-- Database schema changes require running `pnpm db:generate` and `pnpm db:push`.
-- Seeding creates an **admin user**; deleting/mutating it breaks local auth flows.
+- Database schema changes require running `pnpm db:generate` and `pnpm db:migrate`.
 - Environment requires `.env` values for NEXTAUTH, DATABASE_URL, and Google Cloud Storage.
 - Next.js `src/app` uses **App Router**; no legacy `pages/` folder.
 - API layer built on **tRPC**; never create ad-hoc REST endpoints.
 - Auth handled by **NextAuth** in `/app/api/auth/[...nextauth]/route.ts`.
 - Use `src/server/api/routers` for all domain logic; register new routers in `root.ts`.
-- DB queries must go through Prisma client in `src/server/db.ts`.
+- DB queries must go through Drizzle ORM via `@/server/db`.
 - Tailwind uses custom config in `tailwind.config.ts`; match design tokens when styling.
 - Shared types should be colocated in `src/types` and re-used across front + back ends.
 - `tsconfig.json` has path aliases (e.g. `@/server/*`); use them instead of relative imports.
@@ -17,6 +16,6 @@
 - Default deployment is serverless-friendly; avoid Node-only APIs (fs, net).
 - Large file uploads must use GCS; backend must stream – never buffer in memory.
 - Review `postcss.config.js` before adding plugins; pipeline already optimized.
-- Prisma migrations auto-generate SQL; do not hand-edit migration files.
+- Drizzle migrations are auto-generated; do not hand-edit migration SQL.
 - Client components must be explicitly marked with `"use client"`.
 - Keep this file under 25 lines – only critical, enforced rules belong here.

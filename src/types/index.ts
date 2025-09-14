@@ -1,4 +1,4 @@
-// Types based on Prisma schema models (matching API responses)
+// Shared types aligned with the DB schema and API responses
 export interface User {
   id: string;
   email: string;

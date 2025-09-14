@@ -7,8 +7,8 @@ import {
   integer,
 } from "drizzle-orm/pg-core";
 
-// Example schema migration from Prisma to Drizzle
-// Adjust based on your prisma/schema.prisma definitions
+// Drizzle ORM schema for the application
+// Adjust as your data model evolves
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),

@@ -12,17 +12,16 @@ This document explains the application architecture, how data flows end‑to‑e
   - Routers in `src/server/api/routers`
   - Aggregated in `src/server/api/root.ts`
   - Client created in `src/app/providers.tsx` via `httpBatchLink` and `superjson`
-- Prisma + PostgreSQL
-  - Schema: `prisma/schema.prisma`
-  - Client: `src/server/db.ts`
-  - Seed: `prisma/seed.ts` (creates an admin user and initial posts)
+- Drizzle ORM + PostgreSQL
+- Schema: `src/server/db/schema.ts`
+- Client: `src/server/db.ts`
 - NextAuth.js (Credentials)
   - Route: `src/app/api/auth/[...nextauth]/route.ts`
   - Options: `src/server/auth.ts` with JWT strategy and role on session
 - Tailwind CSS
   - Config: `tailwind.config.ts`
 
-## Data Model (Prisma)
+## Data Model (Drizzle)
 
 - `User` — id, email, name, role, `passwordHash`
 - `Post` — title, slug, content, excerpt, published, `publishedAt`, `seo*` fields
@@ -33,7 +32,7 @@ This document explains the application architecture, how data flows end‑to‑e
 
 1. UI (Next.js) calls tRPC hooks (client) created in `src/app/providers.tsx`.
 2. Requests hit the Next.js serverless functions (or Node runtime) and invoke tRPC routers.
-3. Routers call Prisma via `src/server/db.ts`.
+3. Routers use Drizzle via `src/server/db.ts`.
 4. Responses go back through superjson to the client.
 
 ## Security & Auth
@@ -91,7 +90,7 @@ References:
 
 - Use `pnpm` only (see AGENTS.md).
 - Commands:
-  - `pnpm db:generate`, `pnpm db:push`, `pnpm db:seed`
+  - `pnpm db:generate`, `pnpm db:migrate`
   - `pnpm dev`
   - `pnpm lint` before commits
 

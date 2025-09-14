@@ -4,7 +4,7 @@ A modern full‑stack portfolio and technical blog powered by:
 
 - Next.js App Router (React 18, TypeScript)
 - tRPC for type‑safe server APIs
-- Prisma + PostgreSQL (Cloud SQL in production)
+- Drizzle ORM + PostgreSQL (Cloud SQL in production)
 - NextAuth.js for authentication
 - Tailwind CSS for styling
 - GKE (Google Kubernetes Engine) with Istio, Cloud SQL Auth Proxy, and GitOps via Flux CD
@@ -12,9 +12,8 @@ A modern full‑stack portfolio and technical blog powered by:
 ## Quick Start
 
 - Install deps: `pnpm install`
-- Generate Prisma client: `pnpm db:generate`
-- Create/update schema: `pnpm db:push`
-- Seed data (admin + first post): `pnpm db:seed`
+- Generate DB migrations (Drizzle): `pnpm db:generate`
+- Apply migrations: `pnpm db:migrate`
 - Run locally: `pnpm dev` (http://localhost:3000)
 
 Environment variables are defined in `.env.example`. For local development set values in `.env.local` (at minimum `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`).
@@ -22,15 +21,15 @@ Environment variables are defined in `.env.example`. For local development set v
 ## Scripts
 
 - Lint: `pnpm lint` (run before commits)
-- Type check: `pnpm type-check`
 - Tests: `pnpm test`
+- DB: `pnpm db:generate`, `pnpm db:migrate`
 
 ## Architecture
 
-- App: `src/app` (App Router), shared server logic under `src/server`, Prisma schema in `prisma/schema.prisma`.
+- App: `src/app` (App Router), shared server logic under `src/server`; DB schema in `src/server/db/schema.ts` (Drizzle ORM).
 - API: tRPC routers in `src/server/api/routers`, composed in `src/server/api/root.ts`.
 - Auth: NextAuth route at `src/app/api/auth/[...nextauth]/route.ts` with Credentials provider.
-- DB: Prisma client `src/server/db.ts`. Seed creates an admin user and the first blog post.
+- DB: Drizzle ORM client in `src/server/db.ts`.
 - Styling: Tailwind with a custom config in `tailwind.config.ts`.
 
 ## Kubernetes (GKE) Overview

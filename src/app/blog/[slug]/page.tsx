@@ -18,11 +18,11 @@ const mockPostContent = {
     title: "Building a Modern Next.js Portfolio with TypeScript and tRPC",
     slug: "modern-nextjs-portfolio-typescript-trpc",
     excerpt:
-      "Learn how to build a full-stack portfolio website using Next.js 14, TypeScript, tRPC, and Prisma. This comprehensive guide covers everything from setup to deployment.",
+      "Learn how to build a full-stack portfolio website using Next.js 14, TypeScript, tRPC, and Drizzle ORM. This comprehensive guide covers everything from setup to deployment.",
     content: `
 # Building a Modern Next.js Portfolio with TypeScript and tRPC
 
-In this comprehensive guide, we'll build a modern, full-stack portfolio website using the latest technologies including Next.js 14, TypeScript, tRPC, and Prisma.
+In this comprehensive guide, we'll build a modern, full-stack portfolio website using the latest technologies including Next.js 14, TypeScript, tRPC, and Drizzle ORM.
 
 ## Overview
 
@@ -33,6 +33,7 @@ This project demonstrates how to create a professional portfolio website with:
 - **tRPC** for end-to-end type-safe API calls
 - **NextAuth.js** for authentication
 - **Tailwind CSS** for styling
+- **Drizzle ORM** for database access
 
 ## System Architecture
 
@@ -48,7 +49,7 @@ flowchart LR
     NA[NextAuth]
   end
   subgraph Data[Data Layer]
-    Prisma[Prisma Client]
+    Drizzle[Drizzle ORM]
     DB[(PostgreSQL)]
     GCS[(Google Cloud Storage)]
   end
@@ -56,8 +57,8 @@ flowchart LR
   U -->|HTTP/HTTPS| CC
   CC --> TRPC
   RC --> TRPC
-  TRPC --> Prisma
-  Prisma --> DB
+  TRPC --> Drizzle
+  Drizzle --> DB
   CC -->|Uploads| GCS
   NA <--> TRPC
 \`\`\`
@@ -70,15 +71,15 @@ sequenceDiagram
   participant U as User Browser
   participant APP as Next.js App Router
   participant RPC as tRPC Router
-  participant PR as Prisma Client
+  participant DR as Drizzle ORM
   participant DB as PostgreSQL
 
   U->>APP: GET /blog/[slug]
   APP->>RPC: post.getBySlug(slug)
-  RPC->>PR: findUnique({ slug })
-  PR->>DB: SELECT FROM posts WHERE slug = ?
-  DB-->>PR: Row
-  PR-->>RPC: Post
+  RPC->>DR: select() where slug = ?
+  DR->>DB: SELECT FROM posts WHERE slug = ?
+  DB-->>DR: Row
+  DR-->>RPC: Post
   RPC-->>APP: Post DTO
   APP-->>U: HTML (RSC) + hydrated JSON
 \`\`\`
@@ -90,74 +91,83 @@ sequenceDiagram
 Before we begin, make sure you have the following installed:
 
 - Node.js 18+ 
-- npm or yarn
+- pnpm
 - PostgreSQL database (local or cloud)
 
 ### Project Setup
 
 \`\`\`bash
 # Create a new Next.js project
-npx create-next-app@latest portfolio --typescript --tailwind --eslint --app
+pnpm create next-app@latest portfolio --ts --tailwind --eslint --app
 
 # Navigate to the project directory
 cd portfolio
 
-# Install additional dependencies
-npm install @trpc/server @trpc/client @trpc/react-query @trpc/next
-npm install @tanstack/react-query zod
-npm install prisma @prisma/client
-npm install next-auth
-npm install bcryptjs @types/bcryptjs
+# Install dependencies
+pnpm add @trpc/server @trpc/client @trpc/react-query @trpc/next
+pnpm add @tanstack/react-query zod
+pnpm add drizzle-orm drizzle-kit pg @vercel/postgres
+pnpm add next-auth bcryptjs
+pnpm add -D @types/bcryptjs
 \`\`\`
 
-## Database Setup with Prisma
+## Database Setup with Drizzle
 
-First, let's set up our database schema:
+First, set up Drizzle and the schema.
 
-\`\`\`prisma
-// prisma/schema.prisma
-generator client {
-  provider = "prisma-client-js"
-}
+\`\`\`ts
+// drizzle.config.ts
+import { defineConfig } from 'drizzle-kit'
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+export default defineConfig({
+  schema: './src/server/db/schema.ts',
+  out: './drizzle',
+  dialect: 'postgresql',
+  dbCredentials: {
+    url: process.env.DATABASE_URL!,
+  },
+})
+\`\`\`
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String
-  role      Role     @default(USER)
-  posts     Post[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+\`\`\`ts
+// src/server/db/schema.ts
+import { pgTable, serial, text, timestamp, varchar, integer } from 'drizzle-orm/pg-core'
 
-  @@map("users")
-}
+export const users = pgTable('users', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  password: text('password'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
 
-model Post {
-  id        String   @id @default(cuid())
-  title     String
-  slug      String   @unique
-  excerpt   String?
-  content   String
-  published Boolean  @default(false)
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  tags      PostTag[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+export const posts = pgTable('posts', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  content: text('content'),
+  excerpt: text('excerpt'),
+  slug: varchar('slug', { length: 255 }).notNull().unique(),
+  published: integer('published').default(0).notNull(),
+  publishedAt: timestamp('published_at'),
+  authorId: integer('author_id').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+\`\`\`
 
-  @@map("posts")
-}
+\`\`\`ts
+// src/server/db.ts
+import { drizzle } from 'drizzle-orm/vercel-postgres'
+import { sql } from '@vercel/postgres'
+import * as schema from './db/schema'
 
-enum Role {
-  USER
-  ADMIN
-}
+export const db = drizzle(sql, { schema })
+\`\`\`
+
+Generate and apply migrations:
+
+\`\`\`bash
+pnpm db:generate
+pnpm db:migrate
 \`\`\`
 
 ## tRPC Setup
@@ -169,8 +179,8 @@ Next, let's configure tRPC for type-safe API calls:
 import { initTRPC, TRPCError } from '@trpc/server'
 import { type CreateNextContextOptions } from '@trpc/server/adapters/next'
 import { type Session } from 'next-auth'
-import { getServerAuthSession } from '~/server/auth'
-import { db } from '~/server/db'
+import { getServerAuthSession } from '@/server/auth'
+import { db } from '@/server/db'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
 
@@ -218,81 +228,51 @@ Let's create our post management routes:
 \`\`\`typescript
 // src/server/api/routers/post.ts
 import { z } from 'zod'
-import { createTRPCRouter, publicProcedure, protectedProcedure } from '~/server/api/trpc'
+import { createTRPCRouter, publicProcedure } from '@/server/api/trpc'
+import { db } from '@/server/db'
+import { posts, users } from '@/server/db/schema'
+import { desc, eq } from 'drizzle-orm'
+import { TRPCError } from '@trpc/server'
 
 export const postRouter = createTRPCRouter({
   getAll: publicProcedure
     .input(z.object({
       limit: z.number().min(1).max(100).nullish(),
-      cursor: z.string().nullish(),
       published: z.boolean().optional().default(true),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       const limit = input.limit ?? 10
-      const { cursor } = input
-      
-      const posts = await ctx.db.post.findMany({
-        take: limit + 1,
-        cursor: cursor ? { id: cursor } : undefined,
-        where: {
-          published: input.published,
-        },
-        include: {
-          author: {
-            select: {
-              name: true,
-            },
-          },
-          tags: {
-            include: {
-              tag: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-      })
+      const rows = await db
+        .select({
+          id: posts.id,
+          title: posts.title,
+          slug: posts.slug,
+          excerpt: posts.excerpt,
+          createdAt: posts.createdAt,
+          authorName: users.name,
+        })
+        .from(posts)
+        .leftJoin(users, eq(posts.authorId, users.id))
+        .where(eq(posts.published, input.published ? 1 : 0))
+        .orderBy(desc(posts.createdAt))
+        .limit(limit)
 
-      let nextCursor: typeof cursor | undefined = undefined
-      if (posts.length > limit) {
-        const nextItem = posts.pop()
-        nextCursor = nextItem!.id
-      }
-
-      return {
-        posts,
-        nextCursor,
-      }
+      return { posts: rows }
     }),
 
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const post = await ctx.db.post.findUnique({
-        where: { slug: input.slug },
-        include: {
-          author: {
-            select: {
-              name: true,
-            },
-          },
-          tags: {
-            include: {
-              tag: true,
-            },
-          },
-        },
-      })
+    .query(async ({ input }) => {
+      const rows = await db
+        .select()
+        .from(posts)
+        .where(eq(posts.slug, input.slug))
+        .limit(1)
 
-      if (!post) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Post not found',
-        })
+      if (rows.length === 0) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Post not found' })
       }
-
-      return post
+      return rows[0]
     }),
 })
 \`\`\`
@@ -305,7 +285,7 @@ Now let's create the blog listing page:
 // src/app/blog/page.tsx
 'use client'
 
-import { api } from '~/utils/trpc'
+import { api } from '@/utils/trpc'
 import Link from 'next/link'
 import { Calendar, Clock, Tag } from 'lucide-react'
 
@@ -375,7 +355,7 @@ For deployment, we recommend using Vercel with a PostgreSQL database:
 
 We've built a modern, full-stack portfolio website with type safety throughout the entire stack. This architecture provides excellent developer experience and maintainability.
 
-The combination of Next.js, TypeScript, tRPC, and Prisma creates a powerful foundation for any web application, not just portfolios.
+The combination of Next.js, TypeScript, tRPC, and Drizzle ORM creates a powerful foundation for any web application, not just portfolios.
 
 ## Next Steps
 
