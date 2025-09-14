@@ -10,13 +10,13 @@ spec:
     - portfolio-gateway
   http:
     # - match:
-      #   - uri:
-      #       prefix: /.well-known/acme-challenge/
-      # route:
-      #   - destination:
-      #       host: cm-acme-http-solver-jdwgn
-      #       port:
-      #         number: 8089
+    #   - uri:
+    #       prefix: /.well-known/acme-challenge/
+    # route:
+    #   - destination:
+    #       host: cm-acme-http-solver-jdwgn
+    #       port:
+    #         number: 8089
     - match:
         - uri:
             prefix: /
