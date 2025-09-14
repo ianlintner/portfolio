@@ -24,7 +24,7 @@ spec:
       automountServiceAccountToken: true
       containers:
         - name: portfolio
-          image: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:latest
+          image: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:test
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

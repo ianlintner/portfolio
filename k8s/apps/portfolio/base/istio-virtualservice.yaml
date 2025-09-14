@@ -5,7 +5,7 @@ metadata:
   namespace: prod
 spec:
   hosts:
-    - "portfoliohugecat.net"
+    - "portfolio.hugecat.net"
   gateways:
     - portfolio-gateway
   http:

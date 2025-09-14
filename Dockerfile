@@ -1,5 +1,5 @@
 # ---- deps (node_modules for production) ----
-FROM --platform=linux/amd64 node:22-slim AS deps
+FROM node:22-slim AS deps
 RUN apt-get update && apt-get install -y curl wget || true
 WORKDIR /app
 COPY package*.json ./
@@ -8,7 +8,7 @@ ENV HUSKY=0
 RUN npm install --omit=dev --legacy-peer-deps --force --ignore-scripts
 
 # ---- build (types, transpile) ----
-FROM --platform=linux/amd64 node:22-slim AS build
+FROM node:22-slim AS build
 RUN apt-get update && apt-get install -y curl wget || true
 WORKDIR /app
 COPY package*.json ./
@@ -20,7 +20,7 @@ COPY . .
 RUN npm run build
 
 # ---- production runtime ----
-FROM --platform=linux/amd64 node:22-slim AS runner
+FROM node:22-slim AS runner
 RUN apt-get update && apt-get install -y curl wget || true
 ENV NODE_ENV=production
 WORKDIR /app
@@ -32,5 +32,5 @@ COPY --from=deps  /app/node_modules ./node_modules
 COPY package*.json ./
 ENV PORT=3000
 EXPOSE 3000
-# Next.js standalone build already includes the correct entrypoint
-CMD ["node", "server.js"]
+# Force Next.js to bind to IPv4 0.0.0.0 on port 3000
+CMD ["node", "server.js", "-H", "0.0.0.0", "-p", "3000"]
