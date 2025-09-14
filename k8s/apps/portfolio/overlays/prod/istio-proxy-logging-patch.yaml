@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portfolio
+  namespace: prod
+spec:
+  template:
+    metadata:
+      annotations:
+        proxy.istio.io/config: |-
+          proxyMetadata:
+            # Enable detailed access logging for inbound and outbound traffic
+            DNS_CAPTURE: "true"
+            ISTIO_META_DNS_CAPTURE: "true"
+            ISTIO_META_ENABLE_DEBUG: "true"
+            LOG_LEVEL: debug
+            PROXY_LOG_LEVEL: debug
+          tracing:
+            sampling: 100
+            custom_tags:
+              request_path:
+                header:
+                  name: ":path"
+          accessLogFile: /dev/stdout
+          accessLogEncoding: JSON
+          accessLogFormat: |
+            {
+              "start_time": "%START_TIME%",
+              "method": "%REQ(:METHOD)%",
+              "path": "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%",
+              "protocol": "%PROTOCOL%",
+              "response_code": "%RESPONSE_CODE%",
+              "response_flags": "%RESPONSE_FLAGS%",
+              "bytes_received": "%BYTES_RECEIVED%",
+              "bytes_sent": "%BYTES_SENT%",
+              "duration": "%DURATION%",
+              "upstream_service_time": "%RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)%",
+              "x_forwarded_for": "%REQ(X-FORWARDED-FOR)%",
+              "user_agent": "%REQ(USER-AGENT)%",
+              "request_id": "%REQ(X-REQUEST-ID)%",
+              "authority": "%REQ(:AUTHORITY)%",
+              "upstream_host": "%UPSTREAM_HOST%"
+            }
