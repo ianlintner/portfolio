@@ -41,15 +41,15 @@ export const metadata: Metadata = {
 const mockDemos = [
   {
     id: "1",
-    title: "Interactive Dashboard Components",
-    slug: "interactive-dashboard-components",
+    title: "Interview Data Structures & Algorithms Study App",
+    slug: "interview-data-structures-algorithms-study-app",
     description:
-      "A collection of reusable dashboard components built with React, TypeScript, and Tailwind CSS. Features responsive charts, data tables, and real-time updates.",
-    category: "UI_COMPONENTS",
-    technologies: ["React", "TypeScript", "Tailwind CSS", "Chart.js"],
-    githubUrl: "https://github.com/example/dashboard-components",
-    liveUrl: "https://dashboard-demo.example.com",
-    imageUrl: "/demos/dashboard-components.jpg",
+      "A comprehensive study app for mastering data structures and algorithms through interactive coding challenges and real-time collaboration.",
+    category: "FULL_STACK",
+    technologies: ["Python", "Flask"],
+    githubUrl: "https://github.com/ianlintner/python_dsa",
+    liveUrl: "https://dsa.hugecat.net",
+    imageUrl: "/demos/interview-data-structures.jpg",
     featured: true,
     createdAt: new Date("2024-01-20"),
   },
@@ -67,8 +67,8 @@ const mockDemos = [
       "Drizzle ORM",
       "NextAuth.js",
     ],
-    githubUrl: "https://github.com/example/chat-app",
-    liveUrl: "https://chat-demo.example.com",
+    githubUrl: "https://github.com/ianlintner/Example-React-AI-Chat-App",
+    liveUrl: "https://chat.hugecat.net",
     imageUrl: "/demos/chat-app.jpg",
     featured: true,
     createdAt: new Date("2024-01-18"),
@@ -78,7 +78,6 @@ const mockDemos = [
 const categories = [
   { value: "all", label: "All Projects", icon: Layers },
   { value: "FULL_STACK", label: "Full Stack", icon: Code },
-  { value: "UI_COMPONENTS", label: "UI Components", icon: Smartphone },
   { value: "DATA_VISUALIZATION", label: "Data Visualization", icon: Monitor },
 ];
 
