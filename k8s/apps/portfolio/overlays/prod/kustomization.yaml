@@ -24,7 +24,6 @@ patches:
         path: /metadata/namespace
         value: default
 namespace: prod
-
 labels:
   - pairs:
       env: prod
