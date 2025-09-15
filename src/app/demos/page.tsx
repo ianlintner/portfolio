@@ -51,7 +51,7 @@ const mockDemos = [
     liveUrl: "https://dsa.hugecat.net",
     imageUrl: "/demos/interview-data-structures.jpg",
     featured: true,
-    createdAt: new Date("2024-01-20"),
+    createdAt: new Date("2025-08-01"),
   },
   {
     id: "2",
@@ -71,7 +71,7 @@ const mockDemos = [
     liveUrl: "https://chat.hugecat.net",
     imageUrl: "/demos/chat-app.jpg",
     featured: true,
-    createdAt: new Date("2024-01-18"),
+    createdAt: new Date("2025-07-18"),
   },
 ];
 
