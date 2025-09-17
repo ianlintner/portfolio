@@ -86,7 +86,7 @@ const mockDemos = [
     imageUrl: "/demos/gcp-autopilot.jpg",
     featured: true,
     createdAt: new Date("2025-06-30"),
-  }
+  },
 ];
 
 const categories = [
