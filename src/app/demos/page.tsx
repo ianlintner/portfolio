@@ -73,6 +73,20 @@ const mockDemos = [
     featured: true,
     createdAt: new Date("2025-07-18"),
   },
+  {
+    id: "3",
+    title: "GCP Autopilot Kubernetes Cluster",
+    slug: "gcp-autopilot-kubernetes-cluster",
+    description:
+      "The cluster is built on **Google Cloud Platform (GCP)** using **Anthos GKE Autopilot**, which provides a managed Kubernetes control plane with automated node provisioning, scaling, and security hardening. Infrastructure provisioning and lifecycle management are handled with **Terraform**, ensuring reproducibility and version-controlled infrastructure-as-code. This cluster hosts all these demos.",
+    category: "FULL_STACK",
+    technologies: ["GCP", "Kubernetes", "Docker"],
+    githubUrl: "https://github.com/ianlintner",
+    liveUrl: "https://flask.hugecat.net",
+    imageUrl: "/demos/gcp-autopilot.jpg",
+    featured: true,
+    createdAt: new Date("2025-06-30"),
+  }
 ];
 
 const categories = [

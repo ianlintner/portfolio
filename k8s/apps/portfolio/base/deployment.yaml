@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: portfolio
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: portfolio
@@ -24,7 +24,7 @@ spec:
       automountServiceAccountToken: true
       containers:
         - name: portfolio
-          image: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:testing
+          image: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

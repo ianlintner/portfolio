@@ -55,7 +55,7 @@ secretGenerator:
 images:
   - name: portfolio
     newName: us-central1-docker.pkg.dev/kame-457417/kame-house-images/portfolio
-    newTag: testing
+    newTag: latest
 
-transformers:
-  - transformers/cert-namespace-patch.yaml
+# transformers:
+#   - transformers/cert-namespace-patch.yaml
