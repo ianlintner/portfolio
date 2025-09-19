@@ -29,12 +29,9 @@
     "highlight.js": "^11.11.1",
     "lucide-react": "latest",
     "mermaid": "^11.11.0",
-    "next": "latest",
     "next-auth": "latest",
     "pg": "^8.16.3",
     "postcss": "^8.4.0",
-    "react": "latest",
-    "react-dom": "latest",
     "react-markdown": "latest",
     "rehype-highlight": "latest",
     "remark-gfm": "latest",
@@ -43,6 +40,9 @@
     "zod": "latest"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "latest",
+    "@testing-library/react": "latest",
+    "@testing-library/user-event": "latest",
     "@types/bcryptjs": "latest",
     "@types/jest": "latest",
     "@types/node": "latest",
@@ -52,11 +52,11 @@
     "eslint": "latest",
     "eslint-config-next": "latest",
     "jest": "latest",
-    "typescript": "latest",
-    "prettier": "latest",
     "jest-environment-jsdom": "^29.7.0",
-    "@testing-library/jest-dom": "latest",
-    "@testing-library/react": "latest",
-    "@testing-library/user-event": "latest"
+    "next": "^15.5.3",
+    "prettier": "latest",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "typescript": "latest"
   }
 }

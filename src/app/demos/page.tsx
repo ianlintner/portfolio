@@ -82,7 +82,7 @@ const mockDemos = [
     category: "FULL_STACK",
     technologies: ["GCP", "Kubernetes", "Docker"],
     githubUrl: "https://github.com/ianlintner",
-    liveUrl: "https://flask.hugecat.net",
+    liveUrl: "http://flask.hugecat.net",
     imageUrl: "/demos/gcp-autopilot.jpg",
     featured: true,
     createdAt: new Date("2025-06-30"),

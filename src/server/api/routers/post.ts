@@ -100,7 +100,8 @@ export const postRouter = createTRPCRouter({
           excerpt: postData.excerpt,
           featuredImage: postData.featuredImage,
           seoTitle: postData.seoTitle,
-          seoDescription: postData.seoDescription,
+          seoDescription: postData.seoDescription ?? null,
+          seoKeywords: JSON.stringify(postData.seoKeywords ?? []),
           slug,
           published: postData.published ? 1 : 0,
           publishedAt: postData.published ? new Date() : null,
@@ -110,7 +111,7 @@ export const postRouter = createTRPCRouter({
 
       if (tags.length > 0) {
         const tagRecords = await Promise.all(
-          tags.map(async (tagName) => {
+          tags.map(async (tagName: string) => {
             const [tag] = await db
               .insert(schema.tags)
               .values({ name: tagName })
@@ -124,7 +125,7 @@ export const postRouter = createTRPCRouter({
         );
 
         await db.insert(schema.postTag).values(
-          tagRecords.map((tag) => ({
+          tagRecords.map((tag: { id: number }) => ({
             postId: post.id,
             tagId: tag.id,
           })),
@@ -147,7 +148,10 @@ export const postRouter = createTRPCRouter({
           excerpt: postData.excerpt,
           featuredImage: postData.featuredImage,
           seoTitle: postData.seoTitle,
-          seoDescription: postData.seoDescription,
+          seoDescription: postData.seoDescription ?? null,
+          seoKeywords: postData.seoKeywords
+            ? JSON.stringify(postData.seoKeywords)
+            : undefined,
           published:
             postData.published !== undefined
               ? postData.published
@@ -171,7 +175,7 @@ export const postRouter = createTRPCRouter({
 
         if (tags.length > 0) {
           const tagRecords = await Promise.all(
-            tags.map(async (tagName) => {
+            tags.map(async (tagName: string) => {
               const [tag] = await db
                 .insert(schema.tags)
                 .values({ name: tagName })
@@ -185,7 +189,7 @@ export const postRouter = createTRPCRouter({
           );
 
           await db.insert(schema.postTag).values(
-            tagRecords.map((tag) => ({
+            tagRecords.map((tag: { id: number }) => ({
               postId: post.id,
               tagId: tag.id,
             })),
