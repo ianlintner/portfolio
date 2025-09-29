@@ -105,7 +105,7 @@ export const postRouter = createTRPCRouter({
           slug,
           published: postData.published ? 1 : 0,
           publishedAt: postData.published ? new Date() : null,
-          authorId: parseInt(ctx.session.user.id),
+          authorId: Number(ctx.session.user.id),
         })
         .returning();
 
