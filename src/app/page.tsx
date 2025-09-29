@@ -192,43 +192,6 @@ export default function HomePage() {
                   </Link>
                 </div>
               </div>
-
-              <div className="lg:pl-12">
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="text-center p-6 rounded-xl bg-primary/5 border border-primary/20">
-                    <div className="text-3xl font-bold text-primary mb-2">
-                      5+
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Years Experience
-                    </div>
-                  </div>
-                  <div className="text-center p-6 rounded-xl bg-primary/5 border border-primary/20">
-                    <div className="text-3xl font-bold text-primary mb-2">
-                      50+
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Projects Completed
-                    </div>
-                  </div>
-                  <div className="text-center p-6 rounded-xl bg-primary/5 border border-primary/20">
-                    <div className="text-3xl font-bold text-primary mb-2">
-                      20+
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Blog Posts
-                    </div>
-                  </div>
-                  <div className="text-center p-6 rounded-xl bg-primary/5 border border-primary/20">
-                    <div className="text-3xl font-bold text-primary mb-2">
-                      100%
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Client Satisfaction
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
