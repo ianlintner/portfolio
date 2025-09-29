@@ -11,8 +11,7 @@ import {
 } from "lucide-react";
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 
-// Mock data for individual posts
-const mockPostContent = {
+import { getPostBySlug } from "@/lib/posts";
   "modern-nextjs-portfolio-typescript-trpc": {
     id: "1",
     title: "Building a Modern Next.js Portfolio with TypeScript and tRPC",
@@ -632,10 +631,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const resolvedParams = await params;
-  const post =
-    mockPostContent[resolvedParams.slug as keyof typeof mockPostContent];
+  const { meta, content } = getPostBySlug(resolvedParams.slug);
 
-  if (!post) {
+  if (!meta) {
     notFound();
   }
 
@@ -660,7 +658,7 @@ export default async function BlogPostPage({ params }: Props) {
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
                 <span>
-                  {post.publishedAt.toLocaleDateString("en-US", {
+                  {new Date(meta.date).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
@@ -678,26 +676,14 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
 
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
-              {post.title}
+              {meta.title}
             </h1>
 
             <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
-              {post.excerpt}
+              {meta.excerpt}
             </p>
 
-            {post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-8">
-                {post.tags.map((tagRelation) => (
-                  <span
-                    key={tagRelation.tag.id}
-                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium"
-                  >
-                    <Tag className="h-3 w-3" />
-                    <span>{tagRelation.tag.name}</span>
-                  </span>
-                ))}
-              </div>
-            )}
+            {/* Tags not yet implemented from MDX frontmatter */}
 
             {/* Share Button */}
             <div className="flex items-center gap-4 pt-6 border-t border-border">
@@ -713,7 +699,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Article Content */}
           <div className="prose prose-lg max-w-none dark:prose-invert transition-colors">
-            <MarkdownRenderer content={post.content} />
+            <MarkdownRenderer content={content} />
           </div>
 
           {/* Article Footer */}
@@ -722,11 +708,11 @@ export default async function BlogPostPage({ params }: Props) {
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
                   <span className="text-lg font-semibold text-primary">
-                    {post.author.name[0]}
+                    {"I"}
                   </span>
                 </div>
                 <div>
-                  <h3 className="font-semibold">{post.author.name}</h3>
+                  <h3 className="font-semibold">{"Ian Lintner"}</h3>
                   <p className="text-sm text-muted-foreground">
                     Full Stack Developer
                   </p>
@@ -736,7 +722,7 @@ export default async function BlogPostPage({ params }: Props) {
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Published on</p>
                 <p className="font-medium">
-                  {post.publishedAt.toLocaleDateString("en-US", {
+                  {new Date(meta.date).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",

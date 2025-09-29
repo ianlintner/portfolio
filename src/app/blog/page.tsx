@@ -29,40 +29,11 @@ export const metadata: Metadata = {
   },
 };
 
-// Mock data for now - will be replaced with tRPC calls
-const mockPosts = [
-  {
-    id: "1",
-    title: "Building a Modern Next.js Portfolio with TypeScript and tRPC",
-    slug: "modern-nextjs-portfolio-typescript-trpc",
-    excerpt:
-      "Learn how to build a full-stack portfolio website using Next.js 14, TypeScript, tRPC, and Drizzle ORM. This comprehensive guide covers everything from setup to deployment.",
-    createdAt: new Date("2024-01-15"),
-    author: { name: "Ian Lintner" },
-    tags: [
-      { tag: { id: "1", name: "Next.js" } },
-      { tag: { id: "2", name: "TypeScript" } },
-      { tag: { id: "3", name: "tRPC" } },
-    ],
-  },
-];
-
-const mockTags = [
-  { id: "1", name: "Next.js" },
-  { id: "2", name: "TypeScript" },
-  { id: "3", name: "React" },
-  { id: "4", name: "Kubernetes" },
-  { id: "5", name: "Google Cloud" },
-  { id: "6", name: "DevOps" },
-  { id: "7", name: "tRPC" },
-  { id: "8", name: "JavaScript" },
-  { id: "9", name: "Drizzle ORM" },
-  { id: "10", name: "CSS" },
-];
+import { getAllPosts } from "@/lib/posts";
 
 export default function BlogPage() {
-  const posts = mockPosts;
-  const tags = mockTags;
+  const posts = getAllPosts();
+  const tags: { id: string; name: string }[] = [];
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors dark:bg-gray-950 dark:text-gray-100">
@@ -117,14 +88,11 @@ export default function BlogPage() {
                           <div className="flex items-center space-x-1">
                             <Calendar className="h-4 w-4" />
                             <span>
-                              {new Date(post.createdAt).toLocaleDateString(
-                                "en-US",
-                                {
-                                  year: "numeric",
-                                  month: "long",
-                                  day: "numeric",
-                                },
-                              )}
+                              {new Date(post.date).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              })}
                             </span>
                           </div>
                           <div className="flex items-center space-x-1">
@@ -144,29 +112,17 @@ export default function BlogPage() {
                           </p>
                         </div>
 
-                        {post.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2">
-                            {post.tags.map((tagRelation) => (
-                              <span
-                                key={tagRelation.tag.id}
-                                className="inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-primary/10 dark:bg-primary/20 text-primary text-sm font-medium"
-                              >
-                                <Tag className="h-3 w-3" />
-                                <span>{tagRelation.tag.name}</span>
-                              </span>
-                            ))}
-                          </div>
-                        )}
+                        {/* Tags not yet implemented from MDX frontmatter */}
 
                         <div className="flex items-center justify-between pt-4 border-t border-border">
                           <div className="flex items-center space-x-3">
                             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
                               <span className="text-sm font-semibold text-primary">
-                                {post.author.name?.[0] || "A"}
+                                {"I"}
                               </span>
                             </div>
                             <span className="text-sm text-muted-foreground">
-                              {post.author.name || "Anonymous"}
+                              {"Ian Lintner"}
                             </span>
                           </div>
 
@@ -240,7 +196,7 @@ export default function BlogPage() {
                         {post.title}
                       </h4>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(post.createdAt).toLocaleDateString()}
+                        {new Date(post.date).toLocaleDateString()}
                       </p>
                     </Link>
                   ))}
