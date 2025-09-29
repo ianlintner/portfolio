@@ -17,6 +17,7 @@ export default function EditPost() {
   const [seoTitle, setSeoTitle] = useState("");
   const [seoDescription, setSeoDescription] = useState("");
   const [seoKeywords, setSeoKeywords] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
 
   const { data: post, isLoading } = trpc.post.getById.useQuery(postId, {
     select: (p) => ({
@@ -199,6 +200,28 @@ export default function EditPost() {
               <p className="text-xs text-muted-foreground">
                 You can use Markdown formatting for your content.
               </p>
+              <button
+                type="button"
+                onClick={async () => {
+                  const res = await fetch("/api/ai/rewrite", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      text: content || title,
+                      mode: content ? "rewrite" : "write",
+                    }),
+                  });
+                  const data = await res.json();
+                  if (data.result) {
+                    setContent(data.result);
+                  } else {
+                    alert("AI request failed");
+                  }
+                }}
+                className="mt-2 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-secondary text-secondary-foreground hover:bg-secondary/90 h-9 px-3"
+              >
+                {content ? "Rewrite with AI" : "Generate with AI"}
+              </button>
             </div>
           </div>
 
@@ -313,6 +336,41 @@ export default function EditPost() {
                   Separate keywords with commas
                 </p>
               </div>
+            </div>
+
+            {/* AI Image Generator */}
+            <div className="rounded-lg border p-4 space-y-4">
+              <h3 className="font-medium">AI Image</h3>
+              <button
+                type="button"
+                onClick={async () => {
+                  const res = await fetch("/api/ai/image", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      prompt: title || content.slice(0, 200),
+                    }),
+                  });
+                  const data = await res.json();
+                  if (data.url) {
+                    setImageUrl(data.url);
+                  } else {
+                    alert("AI image generation failed");
+                  }
+                }}
+                className="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-secondary text-secondary-foreground hover:bg-secondary/90 h-10 py-2 px-4"
+              >
+                Generate AI Image
+              </button>
+              {imageUrl && (
+                <div className="mt-2">
+                  <img
+                    src={imageUrl}
+                    alt="AI generated"
+                    className="rounded-md border"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Submit Button */}
