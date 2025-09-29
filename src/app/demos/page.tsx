@@ -91,14 +91,15 @@ const mockDemos = [
     id: "4",
     title: "Audio Analysis and AI Review Utility in Rust",
     slug: "audio-ai-rust",
-    description: "A command line instrument audio AI guitar teachers",
+    description:
+      "A command-line utility written in Rust for analyzing audio and providing AI-powered feedback for guitar practice sessions.",
     category: "FULL_STACK",
-    technologies: ["Docker"],
+    technologies: ["Rust", "FFmpeg", "AI"],
     githubUrl: "https://github.com/ianlintner/audio-ai",
-    liveUrl: "https://github.com/ianlintner/audio-ai",
-    imageUrl: "/demos/gcp-autopilot.jpg",
+    liveUrl: "https://audio-ai.hugecat.net",
+    imageUrl: "/demos/audio-ai.jpg",
     featured: true,
-    createdAt: new Date("2025-9-29"),
+    createdAt: new Date("2025-09-29"),
   },
 ];
 
