@@ -216,7 +216,7 @@ export default function HomePage() {
                 View My Work
               </Link>
               <a
-                href="mailto:contact@example.com"
+                href="https://linkedin.com/in/ianlintner/"
                 className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-12 px-8"
               >
                 Get In Touch
