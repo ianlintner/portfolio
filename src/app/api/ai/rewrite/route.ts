@@ -5,7 +5,10 @@ export async function POST(req: Request) {
     const { text, mode } = await req.json();
 
     if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json({ error: "Missing OpenAI API key" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Missing OpenAI API key" },
+        { status: 500 },
+      );
     }
 
     const prompt =
