@@ -9,6 +9,9 @@ export interface PostMeta {
   date: string;
   excerpt: string;
   slug: string;
+  id?: string;
+  tags?: string[];
+  author?: string;
 }
 
 export function getAllPosts(): PostMeta[] {
@@ -27,6 +30,9 @@ export function getAllPosts(): PostMeta[] {
       date: data.date,
       excerpt: data.excerpt,
       slug,
+      id: slug,
+      tags: data.tags || [],
+      author: data.author || "Ian Lintner",
     } as PostMeta;
   });
 
@@ -44,6 +50,9 @@ export function getPostBySlug(slug: string) {
       date: data.date,
       excerpt: data.excerpt,
       slug,
+      id: slug,
+      tags: data.tags || [],
+      author: data.author || "Ian Lintner",
     },
     content,
   };

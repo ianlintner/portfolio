@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, GitHubIcon, Linkedin, Mail } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { SiGithub, SiLinkedin, SiGmail } from "react-icons/si";
 
 export default function HomePage() {
   return (
@@ -56,21 +57,21 @@ export default function HomePage() {
                 className="p-3 rounded-full bg-background border border-border hover:border-primary hover:shadow-md transition-all duration-200 group"
                 aria-label="GitHub"
               >
-                <GitHubIcon className="h-5 w-5 group-hover:text-primary transition-colors" />
+                <SiGithub className="h-5 w-5 group-hover:text-primary transition-colors" />
               </a>
               <a
                 href="https://www.linkedin.com/in/ianlintner/"
                 className="p-3 rounded-full bg-background border border-border hover:border-primary hover:shadow-md transition-all duration-200 group"
                 aria-label="LinkedIn"
               >
-                <Linkedin className="h-5 w-5 group-hover:text-primary transition-colors" />
+                <SiLinkedin className="h-5 w-5 group-hover:text-primary transition-colors" />
               </a>
               <a
                 href="mailto:lintner.ian@gmail.com"
                 className="p-3 rounded-full bg-background border border-border hover:border-primary hover:shadow-md transition-all duration-200 group"
                 aria-label="Email"
               >
-                <Mail className="h-5 w-5 group-hover:text-primary transition-colors" />
+                <SiGmail className="h-5 w-5 group-hover:text-primary transition-colors" />
               </a>
             </div>
           </div>

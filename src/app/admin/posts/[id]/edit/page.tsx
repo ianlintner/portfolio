@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
-import { trpc } from "../../../../../utils/trpc";
+import { trpc } from "@/utils/trpc";
 
 export default function EditPost() {
   const router = useRouter();
@@ -364,9 +365,11 @@ export default function EditPost() {
               </button>
               {imageUrl && (
                 <div className="mt-2">
-                  <img
+                  <Image
                     src={imageUrl}
                     alt="AI generated"
+                    width={600}
+                    height={400}
                     className="rounded-md border"
                   />
                 </div>
