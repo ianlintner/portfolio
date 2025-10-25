@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowRight, GitHubIcon, Linkedin, Mail } from "lucide-react";
 
 export default function HomePage() {
   return (
@@ -17,13 +17,15 @@ export default function HomePage() {
                 </span>
               </h1>
               <p className="text-xl sm:text-2xl text-muted-foreground mb-4 font-light">
-                Lead Engineer & Platform Architect
+                Engineering Leader | Platform Architect | AI-Augmented Systems Specialist
               </p>
               <p className="text-lg sm:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed font-light">
-                With 20+ years in engineering, I design and build secure,
-                cloud-native systems that scale. I specialize in event-driven
-                platforms, AI-augmented workflows, and resilient cloud
-                infrastructure (AWS, GCP, Kubernetes, Terraform).
+                Versatile engineering leader and individual contributor with 20+ years of experience 
+                architecting secure, cloud-native platforms and mentoring backend teams. 
+                Proven expertise in designing scalable, event-driven systems and AI-augmented workflows 
+                using modern cloud infrastructure (AWS, GCP, Kubernetes, Terraform). 
+                Recognized for leading Carvana’s AI communications platform transformation and 
+                championing developer productivity through tools like Cline, Roo, and Copilot.
               </p>
             </div>
 
@@ -51,7 +53,7 @@ export default function HomePage() {
                 className="p-3 rounded-full bg-background border border-border hover:border-primary hover:shadow-md transition-all duration-200 group"
                 aria-label="GitHub"
               >
-                <Github className="h-5 w-5 group-hover:text-primary transition-colors" />
+                <GitHubIcon className="h-5 w-5 group-hover:text-primary transition-colors" />
               </a>
               <a
                 href="https://www.linkedin.com/in/ianlintner/"
@@ -92,13 +94,13 @@ export default function HomePage() {
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <span className="text-2xl">⚛️</span>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Frontend</h3>
+                  <h3 className="text-xl font-semibold mb-2">Architecture & Platform</h3>
                 </div>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>React & Next.js</li>
-                  <li>TypeScript</li>
-                  <li>Tailwind CSS</li>
-                  <li>Framer Motion</li>
+                  <li>Event-driven systems & microservices</li>
+                  <li>Secure APIs & LLM agent pipelines</li>
+                  <li>System design & architecture diagrams</li>
+                  <li>Cross-stack collaboration (React, iOS/Android)</li>
                 </ul>
               </div>
 
@@ -107,13 +109,13 @@ export default function HomePage() {
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <span className="text-2xl">🚀</span>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Backend</h3>
+                  <h3 className="text-xl font-semibold mb-2">Backend & Languages</h3>
                 </div>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>Node.js & tRPC</li>
-
-                  <li>PostgreSQL</li>
-                  <li>NextAuth.js</li>
+                  <li>Scala, Java, Python, C#, VB, PHP</li>
+                  <li>JavaScript, TypeScript, SQL</li>
+                  <li>Akka, ZIO, GRPC, Kafka</li>
+                  <li>Functional & event-driven programming</li>
                 </ul>
               </div>
 
@@ -122,13 +124,13 @@ export default function HomePage() {
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <span className="text-2xl">☁️</span>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Cloud & DevOps</h3>
+                  <h3 className="text-xl font-semibold mb-2">Cloud & Infrastructure</h3>
                 </div>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>Google Cloud Platform</li>
-                  <li>Kubernetes & Docker</li>
-                  <li>Terraform</li>
-                  <li>GitHub Actions</li>
+                  <li>AWS & Google Cloud (GCP)</li>
+                  <li>Kubernetes (K8s), Terraform, Serverless</li>
+                  <li>CI/CD, Flux, GitOps</li>
+                  <li>Prometheus, Datadog, Sumo Logic</li>
                 </ul>
               </div>
 
@@ -138,14 +140,14 @@ export default function HomePage() {
                     <span className="text-2xl">🔧</span>
                   </div>
                   <h3 className="text-xl font-semibold mb-2">
-                    Tools & Workflow
+                    AI & Developer Workflow
                   </h3>
                 </div>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>Git & GitHub</li>
-                  <li>VS Code</li>
-                  <li>Jest & Testing</li>
-                  <li>ArgoCD & GitOps</li>
+                  <li>Cline, Roo, GitHub Copilot</li>
+                  <li>Feature Flags & Shadow Deploys</li>
+                  <li>Observability & distributed tracing</li>
+                  <li>Mentorship, design reviews, onboarding</li>
                 </ul>
               </div>
             </div>
@@ -163,23 +165,24 @@ export default function HomePage() {
                   About Me
                 </h2>
                 <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
-                  <p>
-                    I&apos;m a full stack engineer passionate about building
-                    scalable, high-performance applications that balance
-                    technical excellence with great user experience. My work
-                    spans the full development lifecycle—from intuitive
-                    interfaces to resilient backend systems.
+<p>
+                    I’m an engineering leader and platform architect passionate about building 
+                    secure, scalable systems that empower teams and accelerate innovation. 
+                    My career spans over two decades across startups and enterprise environments, 
+                    where I’ve led backend transformations, architected event-driven systems, 
+                    and integrated AI into production workflows.
                   </p>
                   <p>
-                    With deep experience in modern frameworks, cloud platforms,
-                    and DevOps practices, I help teams deliver digital
-                    experiences that scale with business growth while remaining
-                    secure and maintainable.
+                    At Carvana, I spearheaded the backend rewrite of the AI communications platform— 
+                    improving orchestration between LLMs and human agents, and driving adoption of 
+                    AI-assisted engineering tools. My technical foundation includes Scala, Python, 
+                    and cloud-native infrastructure (GCP, AWS, Kubernetes, Terraform).
                   </p>
                   <p>
-                    Outside of coding, I share knowledge through writing,
-                    mentoring, and contributing to open source—helping grow the
-                    next generation of developers.
+                    I’m deeply invested in developer experience, observability, and reliability— 
+                    ensuring systems are not only performant but maintainable and transparent. 
+                    I also mentor engineers and advocate for AI-augmented development practices 
+                    that enhance creativity and productivity.
                   </p>
                 </div>
                 <div className="mt-8">
