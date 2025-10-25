@@ -17,15 +17,18 @@ export default function HomePage() {
                 </span>
               </h1>
               <p className="text-xl sm:text-2xl text-muted-foreground mb-4 font-light">
-                Engineering Leader | Platform Architect | AI-Augmented Systems Specialist
+                Engineering Leader | Platform Architect | AI-Augmented Systems
+                Specialist
               </p>
               <p className="text-lg sm:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed font-light">
-                Versatile engineering leader and individual contributor with 20+ years of experience 
-                architecting secure, cloud-native platforms and mentoring backend teams. 
-                Proven expertise in designing scalable, event-driven systems and AI-augmented workflows 
-                using modern cloud infrastructure (AWS, GCP, Kubernetes, Terraform). 
-                Recognized for leading Carvana’s AI communications platform transformation and 
-                championing developer productivity through tools like Cline, Roo, and Copilot.
+                Versatile engineering leader and individual contributor with 20+
+                years of experience architecting secure, cloud-native platforms
+                and mentoring backend teams. Proven expertise in designing
+                scalable, event-driven systems and AI-augmented workflows using
+                modern cloud infrastructure (AWS, GCP, Kubernetes, Terraform).
+                Recognized for leading Carvana’s AI communications platform
+                transformation and championing developer productivity through
+                tools like Cline, Roo, and Copilot.
               </p>
             </div>
 
@@ -94,7 +97,9 @@ export default function HomePage() {
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <span className="text-2xl">⚛️</span>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Architecture & Platform</h3>
+                  <h3 className="text-xl font-semibold mb-2">
+                    Architecture & Platform
+                  </h3>
                 </div>
                 <ul className="space-y-1 text-muted-foreground">
                   <li>Event-driven systems & microservices</li>
@@ -109,7 +114,9 @@ export default function HomePage() {
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <span className="text-2xl">🚀</span>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Backend & Languages</h3>
+                  <h3 className="text-xl font-semibold mb-2">
+                    Backend & Languages
+                  </h3>
                 </div>
                 <ul className="space-y-1 text-muted-foreground">
                   <li>Scala, Java, Python, C#, VB, PHP</li>
@@ -124,7 +131,9 @@ export default function HomePage() {
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <span className="text-2xl">☁️</span>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Cloud & Infrastructure</h3>
+                  <h3 className="text-xl font-semibold mb-2">
+                    Cloud & Infrastructure
+                  </h3>
                 </div>
                 <ul className="space-y-1 text-muted-foreground">
                   <li>AWS & Google Cloud (GCP)</li>
@@ -165,24 +174,28 @@ export default function HomePage() {
                   About Me
                 </h2>
                 <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
-<p>
-                    I’m an engineering leader and platform architect passionate about building 
-                    secure, scalable systems that empower teams and accelerate innovation. 
-                    My career spans over two decades across startups and enterprise environments, 
-                    where I’ve led backend transformations, architected event-driven systems, 
+                  <p>
+                    I’m an engineering leader and platform architect passionate
+                    about building secure, scalable systems that empower teams
+                    and accelerate innovation. My career spans over two decades
+                    across startups and enterprise environments, where I’ve led
+                    backend transformations, architected event-driven systems,
                     and integrated AI into production workflows.
                   </p>
                   <p>
-                    At Carvana, I spearheaded the backend rewrite of the AI communications platform— 
-                    improving orchestration between LLMs and human agents, and driving adoption of 
-                    AI-assisted engineering tools. My technical foundation includes Scala, Python, 
-                    and cloud-native infrastructure (GCP, AWS, Kubernetes, Terraform).
+                    At Carvana, I spearheaded the backend rewrite of the AI
+                    communications platform— improving orchestration between
+                    LLMs and human agents, and driving adoption of AI-assisted
+                    engineering tools. My technical foundation includes Scala,
+                    Python, and cloud-native infrastructure (GCP, AWS,
+                    Kubernetes, Terraform).
                   </p>
                   <p>
-                    I’m deeply invested in developer experience, observability, and reliability— 
-                    ensuring systems are not only performant but maintainable and transparent. 
-                    I also mentor engineers and advocate for AI-augmented development practices 
-                    that enhance creativity and productivity.
+                    I’m deeply invested in developer experience, observability,
+                    and reliability— ensuring systems are not only performant
+                    but maintainable and transparent. I also mentor engineers
+                    and advocate for AI-augmented development practices that
+                    enhance creativity and productivity.
                   </p>
                 </div>
                 <div className="mt-8">
