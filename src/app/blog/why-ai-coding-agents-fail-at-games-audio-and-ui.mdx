@@ -2,7 +2,15 @@
 title: "Beyond Autocomplete: Why AI Coding Agents Still Can't Build Games, UIs, or Audio Engines"
 date: "2025-10-22"
 excerpt: "A deep dive into why today's AI coding tools excel at CRUD apps but fail at games, real-time audio, and complex UIs — and what the next generation must learn."
-tags: ["AI", "Developer Tools", "Game Development", "Audio Engineering", "UI Engineering", "Real-Time Systems"]
+tags:
+  [
+    "AI",
+    "Developer Tools",
+    "Game Development",
+    "Audio Engineering",
+    "UI Engineering",
+    "Real-Time Systems",
+  ]
 author: "Ian Lintner"
 ---
 
@@ -72,18 +80,19 @@ Game development pushes AI coding agents into unfamiliar territory: **continuous
 **Prompt:** _"Generate a Unity enemy pathfinding system with dynamic obstacle avoidance."_
 
 **What AI Generates:**
+
 ```csharp
 public class EnemyAI : MonoBehaviour
 {
     public Transform target;
     public float speed = 5f;
-    
+
     void Update()
     {
         // Move toward target
         transform.position = Vector3.MoveTowards(
-            transform.position, 
-            target.position, 
+            transform.position,
+            target.position,
             speed * Time.deltaTime
         );
     }
@@ -91,6 +100,7 @@ public class EnemyAI : MonoBehaviour
 ```
 
 **The Problem:**
+
 - ✅ Valid C# syntax
 - ❌ No collision detection
 - ❌ No NavMesh integration
@@ -99,17 +109,18 @@ public class EnemyAI : MonoBehaviour
 - ❌ No path recalculation
 
 **What It Should Be:**
+
 ```csharp
 public class EnemyAI : MonoBehaviour
 {
     private NavMeshAgent agent;
     public Transform target;
-    
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
     }
-    
+
     void Update()
     {
         if (target != null)
@@ -117,7 +128,7 @@ public class EnemyAI : MonoBehaviour
             agent.SetDestination(target.position);
         }
     }
-    
+
     void OnCollisionEnter(Collision collision)
     {
         // Recalculate path on obstacle hit
@@ -140,21 +151,22 @@ graph TD
     A --> D[AI/Logic Update]
     A --> E[Animation]
     A --> F[Rendering]
-    
+
     B --> G{Frame Time}
     C --> G
     D --> G
     E --> G
     F --> G
-    
+
     G -->|deltaTime| H[Next Frame]
     H --> A
-    
+
     style G fill:#ff6b6b
     style A fill:#4ecdc4
 ```
 
 AI agents struggle with this because:
+
 - Each system has **timing dependencies**
 - State mutations cascade across frames
 - Performance constraints require **careful ordering**
@@ -178,10 +190,11 @@ UIs look simple — but live in a soup of asynchronous events and visual state.
 **Prompt:** _"Create a draggable modal in SwiftUI with inertia."_
 
 **What AI Generates:**
+
 ```swift
 struct DraggableModal: View {
     @State private var offset = CGSize.zero
-    
+
     var body: some View {
         Rectangle()
             .fill(Color.blue)
@@ -198,6 +211,7 @@ struct DraggableModal: View {
 ```
 
 **The Problem:**
+
 - ✅ Compiles and runs
 - ❌ No animation easing
 - ❌ Modal snaps back on release (no inertia)
@@ -206,11 +220,12 @@ struct DraggableModal: View {
 - ❌ Poor gesture handling (jittery)
 
 **What It Should Include:**
+
 ```swift
 struct DraggableModal: View {
     @GestureState private var dragOffset = CGSize.zero
     @State private var position = CGSize.zero
-    
+
     var body: some View {
         Rectangle()
             .fill(Color.blue)
@@ -229,13 +244,13 @@ struct DraggableModal: View {
                         )) {
                             position.width += value.translation.width
                             position.height += value.translation.height
-                            
+
                             // Add velocity-based inertia
                             let velocity = CGSize(
                                 width: value.predictedEndTranslation.width - value.translation.width,
                                 height: value.predictedEndTranslation.height - value.translation.height
                             )
-                            
+
                             position.width += velocity.width * 0.1
                             position.height += velocity.height * 0.1
                         }
@@ -254,13 +269,13 @@ stateDiagram-v2
     Dragging --> Animating: Touch End
     Animating --> Idle: Animation Complete
     Dragging --> Dragging: Touch Move
-    
+
     note right of Dragging
         Track velocity
         Update position
         Handle constraints
     end note
-    
+
     note right of Animating
         Spring physics
         Inertia calculation
@@ -286,16 +301,17 @@ Audio processing reveals the largest cognitive gap between text models and real-
 **Prompt:** _"Implement a simple lowpass filter in C++ for audio."_
 
 **What AI Generates:**
+
 ```cpp
 class LowpassFilter {
     float cutoff;
     float output;
-    
+
 public:
     void setCutoff(float freq) {
         cutoff = freq;
     }
-    
+
     float process(float input) {
         output = output * 0.9 + input * 0.1;
         return output;
@@ -304,6 +320,7 @@ public:
 ```
 
 **The Problem:**
+
 - ✅ Compiles
 - ❌ Hardcoded coefficient (0.9) ignores sample rate
 - ❌ No frequency response control
@@ -313,6 +330,7 @@ public:
 - ❌ Will sound wrong at any sample rate
 
 **What It Should Be:**
+
 ```cpp
 #include <atomic>
 #include <cmath>
@@ -322,30 +340,30 @@ class LowpassFilter {
     float output{0.0f};
     float sampleRate{44100.0f};
     float coefficient{0.0f};
-    
+
 public:
     void setSampleRate(float sr) {
         sampleRate = sr;
         updateCoefficient();
     }
-    
+
     void setCutoff(float freq) {
         cutoffFreq.store(freq, std::memory_order_relaxed);
         updateCoefficient();
     }
-    
+
     float process(float input) noexcept {
         // One-pole lowpass: y[n] = y[n-1] + α(x[n] - y[n-1])
         output += coefficient * (input - output);
-        
+
         // Denormal protection
         if (std::abs(output) < 1e-8f) {
             output = 0.0f;
         }
-        
+
         return output;
     }
-    
+
 private:
     void updateCoefficient() {
         // Calculate alpha from cutoff frequency
@@ -365,16 +383,17 @@ graph LR
     C -->|Lock-Free| D[DSP Processing]
     D --> E[Output Buffer]
     E --> F[Audio Output]
-    
+
     G[GUI Thread] -.->|Parameter Changes| H[Atomic Queue]
     H -.->|Lock-Free Read| C
-    
+
     style C fill:#ff6b6b
     style G fill:#4ecdc4
     style H fill:#ffe66d
 ```
 
 **Critical Constraints:**
+
 - **No allocations** in audio thread
 - **No locks** or blocking operations
 - **No system calls** (no `printf`, `malloc`, etc.)
@@ -427,7 +446,7 @@ flowchart TD
     D -->|Underrepresented| B
     C --> E[No Real-Time Simulation]
     E --> F[Runtime Failures]
-    
+
     style B fill:#4ecdc4
     style E fill:#ff6b6b
     style F fill:#ff6b6b
@@ -454,12 +473,12 @@ graph TB
     A -.-> C[Profiler/Tracer]
     A -.-> D[Build System]
     A -.-> E[OS Kernel APIs]
-    
+
     B --> F[Breakpoints & Stack Traces]
     C --> G[Performance Metrics]
     D --> H[Compile & Link]
     E --> I[Threads & Memory]
-    
+
     style A fill:#4ecdc4
     style B fill:#ff6b6b,stroke-dasharray: 5 5
     style C fill:#ff6b6b,stroke-dasharray: 5 5
@@ -479,6 +498,7 @@ Agents must run code, observe errors, and iteratively refine it.
 Real understanding requires feedback loops — not token completion.
 
 **Example Architecture:**
+
 ```mermaid
 graph LR
     A[AI Agent] --> B[Generate Code]
@@ -488,7 +508,7 @@ graph LR
     E -->|No| F[Analyze Failures]
     F --> A
     E -->|Yes| G[Deploy]
-    
+
     style E fill:#ffe66d
     style F fill:#ff6b6b
     style G fill:#95e1d3
