@@ -314,6 +314,9 @@ public:
 
 **What It Should Be:**
 ```cpp
+#include <atomic>
+#include <cmath>
+
 class LowpassFilter {
     std::atomic<float> cutoffFreq{1000.0f};
     float output{0.0f};
