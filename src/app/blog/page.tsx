@@ -163,25 +163,6 @@ export default function BlogPage() {
                 </div>
               )}
 
-              {/* Newsletter Signup */}
-              <div className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-6">
-                <h3 className="text-lg font-semibold mb-3">Stay Updated</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Get notified when I publish new articles about web development
-                  and cloud technologies.
-                </p>
-                <div className="space-y-3">
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="w-full px-3 py-2 rounded-md border border-input bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-sm"
-                  />
-                  <button className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors text-sm font-medium">
-                    Subscribe
-                  </button>
-                </div>
-              </div>
-
               {/* Recent Posts */}
               <div className="bg-card border border-border rounded-xl p-6">
                 <h3 className="text-lg font-semibold mb-4">Recent Articles</h3>
