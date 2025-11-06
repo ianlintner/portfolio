@@ -177,6 +177,33 @@ jobs:
           # Configure kubectl for the cluster
           gcloud container clusters get-credentials kame-house --region=us-central1 --project=${{ env.PROJECT_ID }}
 
+      - name: Deploy to Production
+        if: github.event_name != 'pull_request' && (github.event.workflow_run.head_branch == 'main' || github.ref == 'refs/heads/main')
+        run: |
+          echo "🚀 Deploying to production namespace..."
+
+          # Restart the deployment to pull the latest image
+          kubectl rollout restart deployment/portfolio -n prod
+
+          # Wait for the rollout to complete (timeout after 5 minutes)
+          echo "⏳ Waiting for rollout to complete..."
+          kubectl rollout status deployment/portfolio -n prod --timeout=5m
+
+          # Verify pods are running
+          echo "✅ Deployment successful! Current pod status:"
+          kubectl get pods -n prod -l app=portfolio
+
+          # Add to summary
+          echo "### 🎉 Production Deployment Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Namespace:** \`prod\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment:** \`portfolio\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** Successfully restarted and rolled out" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          kubectl get pods -n prod -l app=portfolio >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
       - name: Notify Flux CD
         if: github.event_name != 'pull_request'
         env:
