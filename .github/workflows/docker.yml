@@ -177,6 +177,47 @@ jobs:
           # Configure kubectl for the cluster
           gcloud container clusters get-credentials kame-house --region=us-central1 --project=${{ env.PROJECT_ID }}
 
+      - name: Deploy to Production
+        if: github.event_name != 'pull_request' && (github.event.workflow_run.head_branch == 'main' || github.ref == 'refs/heads/main')
+        env:
+          NAMESPACE: prod
+          DEPLOYMENT_NAME: ${{ env.IMAGE_NAME }}
+        run: |
+          echo "🚀 Deploying to production namespace..."
+          echo "Deployment: ${DEPLOYMENT_NAME}"
+          echo "Namespace: ${NAMESPACE}"
+
+          # Restart the deployment to pull the latest image
+          if ! kubectl rollout restart deployment/${DEPLOYMENT_NAME} -n ${NAMESPACE}; then
+            echo "❌ Failed to restart deployment ${DEPLOYMENT_NAME} in namespace ${NAMESPACE}"
+            exit 1
+          fi
+
+          # Wait for the rollout to complete (timeout after 5 minutes)
+          echo "⏳ Waiting for rollout to complete..."
+          if ! kubectl rollout status deployment/${DEPLOYMENT_NAME} -n ${NAMESPACE} --timeout=5m; then
+            echo "❌ Deployment rollout failed or timed out after 5 minutes"
+            echo "Getting pod status for debugging..."
+            kubectl get pods -n ${NAMESPACE} -l app=${DEPLOYMENT_NAME}
+            kubectl describe pods -n ${NAMESPACE} -l app=${DEPLOYMENT_NAME} | tail -50
+            exit 1
+          fi
+
+          # Verify pods are running
+          echo "✅ Deployment successful! Current pod status:"
+          kubectl get pods -n ${NAMESPACE} -l app=${DEPLOYMENT_NAME}
+
+          # Add to summary
+          echo "### 🎉 Production Deployment Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Namespace:** \`${NAMESPACE}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment:** \`${DEPLOYMENT_NAME}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** Successfully restarted and rolled out" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          kubectl get pods -n ${NAMESPACE} -l app=${DEPLOYMENT_NAME} >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
       - name: Notify Flux CD
         if: github.event_name != 'pull_request'
         env:
