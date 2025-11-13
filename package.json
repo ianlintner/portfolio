@@ -9,8 +9,8 @@
     "lint": "eslint .",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "db:generate": "drizzle-kit generate:pg",
-    "db:migrate": "drizzle-kit push:pg",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit push",
     "test:ci": "jest --ci --runInBand",
     "test": "jest"
   },
