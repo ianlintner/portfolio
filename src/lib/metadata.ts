@@ -32,7 +32,7 @@ export function getDefaultSocialImage(): string {
  * Falls back to default if no custom image is specified
  */
 export function getBlogPostImage(customImage?: string): string {
-  if (customImage) {
+  if (customImage && customImage.trim()) {
     // If it's already an absolute URL, return as is
     if (
       customImage.startsWith("http://") ||
