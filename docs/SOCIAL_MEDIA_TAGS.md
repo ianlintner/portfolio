@@ -48,6 +48,7 @@ imageAlt: "Descriptive alt text for your image"
 ```
 
 **Image Specifications:**
+
 - **Size**: 1200x630 pixels (recommended for best display)
 - **Format**: PNG, JPG, SVG, or WebP
 - **Location**: Place in `/public/images/` directory
@@ -67,6 +68,7 @@ imageAlt: "Description of the external image"
 For each blog post, the following meta tags are automatically generated:
 
 ### Open Graph Tags
+
 - `og:title` - Post title
 - `og:description` - Post excerpt
 - `og:type` - "article"
@@ -82,6 +84,7 @@ For each blog post, the following meta tags are automatically generated:
 - `article:tag` - Post tags
 
 ### Twitter Card Tags
+
 - `twitter:card` - "summary_large_image"
 - `twitter:title` - Post title
 - `twitter:description` - Post excerpt
@@ -89,6 +92,7 @@ For each blog post, the following meta tags are automatically generated:
 - `twitter:image` - Social preview image
 
 ### SEO Tags
+
 - `<title>` - Post title
 - `<meta name="description">` - Post excerpt
 - `<meta name="keywords">` - Post tags
@@ -104,7 +108,7 @@ SVG images are lightweight and scale perfectly. See `/public/images/social-defau
 ```svg
 <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
   <rect width="1200" height="630" fill="#0f172a"/>
-  <text x="600" y="315" font-family="Arial" font-size="48" 
+  <text x="600" y="315" font-family="Arial" font-size="48"
         fill="#ffffff" text-anchor="middle">Your Title</text>
 </svg>
 ```
@@ -112,6 +116,7 @@ SVG images are lightweight and scale perfectly. See `/public/images/social-defau
 ### Using Design Tools
 
 Popular options for creating social images:
+
 - **Figma** - Design at 1200x630px, export as PNG
 - **Canva** - Use "LinkedIn Post" or "Twitter Post" template
 - **Photoshop** - Create artboard at 1200x630px
@@ -120,6 +125,7 @@ Popular options for creating social images:
 ### Automated Image Generation
 
 For automated social image generation, consider:
+
 - **@vercel/og** - Generate images at the edge
 - **Cloudinary** - Dynamic social images via URL
 - **Puppeteer** - Screenshot HTML templates
@@ -186,7 +192,6 @@ author: "Ian Lintner"
 image: "/images/nextjs-15-guide.png"
 imageAlt: "Next.js 15 logo with React and TypeScript icons"
 ---
-
 # Building Modern Web Apps with Next.js 15
 
 Your content here...

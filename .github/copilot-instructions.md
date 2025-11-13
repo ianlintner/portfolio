@@ -44,9 +44,14 @@ See `.env.example` for complete list.
 
 ### Before Commits
 
-1. **Lint**: Always run `pnpm lint` before commits (stricter than defaults)
-2. **Format**: Run `pnpm format` to check formatting or `pnpm format:fix` to auto-fix
-3. **Tests**: Run `pnpm test` to ensure tests pass
+**CRITICAL**: Always run these CI checks before committing code:
+
+1. **Lint**: Run `pnpm lint` - must pass with no errors (stricter than defaults)
+2. **Format**: Run `pnpm format` - must pass. Use `pnpm format:fix` to auto-fix issues
+3. **Tests**: Run `pnpm test` - all tests must pass
+4. **Build**: Run `pnpm build` - verify production build succeeds (for major changes)
+
+These checks mirror the CI pipeline. Failing to run them will cause CI failures and block merging.
 
 ### Scripts
 

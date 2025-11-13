@@ -34,7 +34,10 @@ export function getDefaultSocialImage(): string {
 export function getBlogPostImage(customImage?: string): string {
   if (customImage) {
     // If it's already an absolute URL, return as is
-    if (customImage.startsWith("http://") || customImage.startsWith("https://")) {
+    if (
+      customImage.startsWith("http://") ||
+      customImage.startsWith("https://")
+    ) {
       return customImage;
     }
     // Otherwise, make it absolute

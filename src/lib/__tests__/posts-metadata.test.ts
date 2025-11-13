@@ -23,14 +23,18 @@ describe("Blog Post Metadata Integration", () => {
     const { meta } = getPostBySlug("ai-coding-agent-tier-list-2025");
     const imageUrl = getBlogPostImage(meta.image);
 
-    expect(imageUrl).toBe("https://example.com/images/ai-coding-agents-social.svg");
+    expect(imageUrl).toBe(
+      "https://example.com/images/ai-coding-agents-social.svg",
+    );
   });
 
   it("should generate correct canonical URL", () => {
     const slug = "ai-coding-agent-tier-list-2025";
     const canonicalUrl = getAbsoluteUrl(`/blog/${slug}`);
 
-    expect(canonicalUrl).toBe("https://example.com/blog/ai-coding-agent-tier-list-2025");
+    expect(canonicalUrl).toBe(
+      "https://example.com/blog/ai-coding-agent-tier-list-2025",
+    );
   });
 
   it("should include all required metadata fields", () => {
