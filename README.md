@@ -2,7 +2,7 @@
 
 A modern full‑stack portfolio and technical blog powered by:
 
-- Next.js App Router (React 18, TypeScript)
+- Next.js App Router (React 19, TypeScript)
 - tRPC for type‑safe server APIs
 - Drizzle ORM + PostgreSQL (Cloud SQL in production)
 - NextAuth.js for authentication

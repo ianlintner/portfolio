@@ -25,9 +25,7 @@ export default function DemosManagement() {
     },
   });
 
-   
   const filteredDemos =
-     
     (demos as any)?.filter((demo: any) => {
       if (filter === "published") return demo.published;
       if (filter === "draft") return !demo.published;
@@ -122,7 +120,7 @@ export default function DemosManagement() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-            { }
+            {}
             {filteredDemos.map((demo: any) => (
               <div
                 key={demo.id}
