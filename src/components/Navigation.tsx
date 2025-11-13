@@ -2,75 +2,185 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SiGithub } from "react-icons/si";
+import { SiGithub, SiLinkedin } from "react-icons/si";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
 
 export function Navigation() {
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => pathname === path;
 
   return (
-    <nav className="border-b bg-background/90 dark:bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-colors">
+    <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75 transition-colors shadow-sm">
       <div className="container mx-auto px-4">
-        <div className="flex h-14 items-center justify-between">
-          <div className="flex items-center space-x-6">
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="font-bold text-xl">Portfolio</span>
+        <div className="flex h-16 items-center justify-between">
+          {/* Logo/Brand */}
+          <div className="flex items-center space-x-8">
+            <Link href="/" className="flex items-center space-x-2 group">
+              <span className="font-bold text-xl bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent group-hover:from-primary/80 group-hover:to-primary transition-all">
+                Ian Lintner
+              </span>
             </Link>
+
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6 text-sm font-medium">
               <Link
                 href="/"
-                className={`transition-colors hover:text-foreground/80 ${
-                  isActive("/") ? "text-foreground" : "text-foreground/60"
+                className={`transition-colors hover:text-primary relative ${
+                  isActive("/")
+                    ? "text-primary font-semibold"
+                    : "text-foreground/70"
                 }`}
+              >
+                Home
+                {isActive("/") && (
+                  <span className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-primary"></span>
+                )}
+              </Link>
+              <Link
+                href="/blog"
+                className={`transition-colors hover:text-primary relative ${
+                  pathname?.startsWith("/blog")
+                    ? "text-primary font-semibold"
+                    : "text-foreground/70"
+                }`}
+              >
+                Blog
+                {pathname?.startsWith("/blog") && (
+                  <span className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-primary"></span>
+                )}
+              </Link>
+              <Link
+                href="/demos"
+                className={`transition-colors hover:text-primary relative ${
+                  pathname?.startsWith("/demos")
+                    ? "text-primary font-semibold"
+                    : "text-foreground/70"
+                }`}
+              >
+                Projects
+                {pathname?.startsWith("/demos") && (
+                  <span className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-primary"></span>
+                )}
+              </Link>
+            </div>
+          </div>
+
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center space-x-4">
+            <a
+              href="https://github.com/ianlintner"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-lg hover:bg-accent transition-colors"
+              aria-label="GitHub"
+            >
+              <SiGithub className="h-5 w-5" />
+            </a>
+            <a
+              href="https://linkedin.com/in/ianlintner/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 hover:scale-105"
+              aria-label="Connect on LinkedIn"
+            >
+              <SiLinkedin className="h-4 w-4" />
+              <span>Connect</span>
+            </a>
+            <Link
+              href="/admin"
+              className="text-sm font-medium text-foreground/60 hover:text-foreground/80 transition-colors px-3"
+            >
+              Admin
+            </Link>
+          </div>
+
+          {/* Mobile menu button */}
+          <button
+            className="md:hidden p-2 rounded-lg hover:bg-accent transition-colors"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
+        </div>
+
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div className="md:hidden py-4 border-t animate-in slide-in-from-top">
+            <div className="flex flex-col space-y-3">
+              <Link
+                href="/"
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  isActive("/")
+                    ? "bg-primary/10 text-primary font-semibold"
+                    : "text-foreground/70 hover:bg-accent"
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
               >
                 Home
               </Link>
               <Link
                 href="/blog"
-                className={`transition-colors hover:text-foreground/80 ${
+                className={`px-4 py-2 rounded-lg transition-colors ${
                   pathname?.startsWith("/blog")
-                    ? "text-foreground"
-                    : "text-foreground/60"
+                    ? "bg-primary/10 text-primary font-semibold"
+                    : "text-foreground/70 hover:bg-accent"
                 }`}
+                onClick={() => setMobileMenuOpen(false)}
               >
                 Blog
               </Link>
               <Link
                 href="/demos"
-                className={`transition-colors hover:text-foreground/80 ${
+                className={`px-4 py-2 rounded-lg transition-colors ${
                   pathname?.startsWith("/demos")
-                    ? "text-foreground"
-                    : "text-foreground/60"
+                    ? "bg-primary/10 text-primary font-semibold"
+                    : "text-foreground/70 hover:bg-accent"
                 }`}
+                onClick={() => setMobileMenuOpen(false)}
               >
-                Demos
+                Projects
               </Link>
+              <div className="pt-3 border-t flex flex-col space-y-3">
+                <a
+                  href="https://linkedin.com/in/ianlintner/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg font-medium text-sm bg-primary text-primary-foreground hover:bg-primary/90"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <SiLinkedin className="h-4 w-4" />
+                  <span>Connect on LinkedIn</span>
+                </a>
+                <div className="flex items-center justify-center gap-4">
+                  <a
+                    href="https://github.com/ianlintner"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-lg hover:bg-accent transition-colors"
+                    aria-label="GitHub"
+                  >
+                    <SiGithub className="h-5 w-5" />
+                  </a>
+                  <Link
+                    href="/admin"
+                    className="text-sm font-medium text-foreground/60 hover:text-foreground/80 transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Admin
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <a
-              href="https://github.com/ianlintner/portfolio"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 bg-gradient-to-r from-primary/90 to-primary hover:from-primary hover:to-primary/80 text-primary-foreground shadow-md hover:shadow-lg hover:shadow-primary/50 hover:scale-105 motion-safe:animate-pulse hover:animate-none"
-              aria-label="View this site's code on GitHub"
-            >
-              <SiGithub className="h-4 w-4 group-hover:rotate-12 transition-transform duration-300" />
-              <span className="hidden sm:inline">View Code</span>
-              <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-foreground opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary-foreground"></span>
-              </span>
-            </a>
-            <Link
-              href="/admin"
-              className="text-sm font-medium text-foreground/60 hover:text-foreground/80 transition-colors"
-            >
-              Admin
-            </Link>
-          </div>
-        </div>
+        )}
       </div>
     </nav>
   );

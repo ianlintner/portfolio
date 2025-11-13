@@ -1,85 +1,178 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles, Zap, Users, Award } from "lucide-react";
 import { SiGithub, SiLinkedin, SiGmail } from "react-icons/si";
 
 export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-primary/5 py-24 sm:py-32">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="animate-fade-in">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-8">
-                <span className="bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text text-transparent">
+      <section className="relative overflow-hidden bg-gradient-to-br from-background via-primary/5 to-background py-20 sm:py-28">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              {/* Trust badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary mb-6 animate-fade-in">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                </span>
+                <span className="text-sm font-medium">
+                  Available for exciting opportunities
+                </span>
+              </div>
+
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6 animate-fade-in">
+                <span className="block mb-2">Hi, I&apos;m</span>
+                <span className="bg-gradient-to-r from-primary via-primary to-primary/70 bg-clip-text text-transparent">
                   Ian Lintner
                 </span>
               </h1>
-              <p className="text-xl sm:text-2xl text-muted-foreground mb-4 font-light">
-                Engineering Leader | Platform Architect | AI-Augmented Systems
-                Specialist
+
+              <p className="text-2xl sm:text-3xl text-foreground mb-6 font-semibold animate-fade-in">
+                Engineering Leader & Platform Architect
               </p>
-              <p className="text-lg sm:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed font-light">
-                Versatile engineering leader and individual contributor with 20+
-                years of experience architecting secure, cloud-native platforms
-                and mentoring backend teams. Proven expertise in designing
-                scalable, event-driven systems and AI-augmented workflows using
-                modern cloud infrastructure (AWS, GCP, Kubernetes, Terraform).
-                Recognized for leading Carvana’s AI communications platform
-                transformation and championing developer productivity through
-                tools like Cline, Roo, and Copilot.
+
+              <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed animate-fade-in">
+                Transforming complex challenges into elegant solutions with 20+
+                years of experience. I architect secure, cloud-native platforms
+                and mentor high-performing teams to deliver scalable,
+                AI-augmented systems that drive real business value.
               </p>
+
+              {/* Key value props */}
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-10 text-sm sm:text-base">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <span className="font-bold text-primary text-xl">20+</span>
+                  <span>Years Experience</span>
+                </div>
+                <div className="hidden sm:block text-border">|</div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <span className="font-bold text-primary text-xl">10+</span>
+                  <span>Cloud Technologies</span>
+                </div>
+                <div className="hidden sm:block text-border">|</div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <span className="font-bold text-primary text-xl">∞</span>
+                  <span>Problems Solved</span>
+                </div>
+              </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+            {/* Primary CTAs */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-10">
+              <a
+                href="https://linkedin.com/in/ianlintner/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center justify-center rounded-lg text-base font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30 hover:scale-105 h-14 px-10 w-full sm:w-auto"
+              >
+                <SiLinkedin className="mr-2 h-5 w-5" />
+                Let&apos;s Connect
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </a>
               <Link
                 href="/blog"
-                className="group inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25 h-12 px-8"
+                className="group inline-flex items-center justify-center rounded-lg text-base font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 border-2 border-primary/20 bg-background/50 backdrop-blur hover:bg-primary/10 hover:border-primary hover:shadow-lg h-14 px-10 w-full sm:w-auto"
               >
-                Read My Blog
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                href="/demos"
-                className="group inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:shadow-md h-12 px-8"
-              >
-                View Demos
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                Explore My Work
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
 
-            {/* Social Links */}
-            <div className="flex justify-center gap-6">
-              <a
-                href="https://github.com/ianlintner"
-                className="p-3 rounded-full bg-background border border-border hover:border-primary hover:shadow-md transition-all duration-200 group"
-                aria-label="GitHub"
-              >
-                <SiGithub className="h-5 w-5 group-hover:text-primary transition-colors" />
-              </a>
-              <a
-                href="https://www.linkedin.com/in/ianlintner/"
-                className="p-3 rounded-full bg-background border border-border hover:border-primary hover:shadow-md transition-all duration-200 group"
-                aria-label="LinkedIn"
-              >
-                <SiLinkedin className="h-5 w-5 group-hover:text-primary transition-colors" />
-              </a>
-              <a
-                href="mailto:lintner.ian@gmail.com"
-                className="p-3 rounded-full bg-background border border-border hover:border-primary hover:shadow-md transition-all duration-200 group"
-                aria-label="Email"
-              >
-                <SiGmail className="h-5 w-5 group-hover:text-primary transition-colors" />
-              </a>
+            {/* Social proof / Contact links */}
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-6 pt-6">
+              <p className="text-sm text-muted-foreground">Connect with me:</p>
+              <div className="flex justify-center gap-4">
+                <a
+                  href="https://github.com/ianlintner"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 rounded-full bg-card border border-border hover:border-primary hover:bg-primary/10 hover:shadow-lg transition-all duration-300 group"
+                  aria-label="GitHub"
+                >
+                  <SiGithub className="h-5 w-5 group-hover:text-primary group-hover:scale-110 transition-all" />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/ianlintner/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 rounded-full bg-card border border-border hover:border-primary hover:bg-primary/10 hover:shadow-lg transition-all duration-300 group"
+                  aria-label="LinkedIn"
+                >
+                  <SiLinkedin className="h-5 w-5 group-hover:text-primary group-hover:scale-110 transition-all" />
+                </a>
+                <a
+                  href="mailto:lintner.ian@gmail.com"
+                  className="p-3 rounded-full bg-card border border-border hover:border-primary hover:bg-primary/10 hover:shadow-lg transition-all duration-300 group"
+                  aria-label="Email"
+                >
+                  <SiGmail className="h-5 w-5 group-hover:text-primary group-hover:scale-110 transition-all" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Signals / Highlights Section */}
+      <section className="py-16 border-y bg-gradient-to-b from-background to-accent/10">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="text-center p-6 rounded-xl bg-card border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300">
+                <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Award className="h-7 w-7 text-primary" />
+                </div>
+                <h3 className="text-3xl font-bold text-primary mb-2">20+</h3>
+                <p className="text-sm text-muted-foreground font-medium">
+                  Years of Experience
+                </p>
+              </div>
+
+              <div className="text-center p-6 rounded-xl bg-card border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300">
+                <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Sparkles className="h-7 w-7 text-primary" />
+                </div>
+                <h3 className="text-3xl font-bold text-primary mb-2">10+</h3>
+                <p className="text-sm text-muted-foreground font-medium">
+                  Technologies Mastered
+                </p>
+              </div>
+
+              <div className="text-center p-6 rounded-xl bg-card border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300">
+                <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Users className="h-7 w-7 text-primary" />
+                </div>
+                <h3 className="text-3xl font-bold text-primary mb-2">50+</h3>
+                <p className="text-sm text-muted-foreground font-medium">
+                  Engineers Mentored
+                </p>
+              </div>
+
+              <div className="text-center p-6 rounded-xl bg-card border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300">
+                <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Zap className="h-7 w-7 text-primary" />
+                </div>
+                <h3 className="text-3xl font-bold text-primary mb-2">100%</h3>
+                <p className="text-sm text-muted-foreground font-medium">
+                  Commitment to Excellence
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Skills & Technologies Section */}
-      <section className="py-24 bg-accent/30">
+      <section className="py-24 bg-accent/20">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
@@ -87,13 +180,13 @@ export default function HomePage() {
                 Technologies & Expertise
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Specialized in modern web development with a focus on
-                performance, scalability, and user experience
+                Specialized in modern development with a focus on performance,
+                scalability, and delivering measurable business impact
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <div className="group p-6 rounded-xl bg-background border border-border hover:border-primary hover:shadow-lg transition-all duration-300">
+              <div className="group p-6 rounded-xl bg-card border border-border hover:border-primary hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <div className="mb-4">
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <span className="text-2xl">⚛️</span>
@@ -103,14 +196,14 @@ export default function HomePage() {
                   </h3>
                 </div>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>Event-driven systems & microservices</li>
-                  <li>Secure APIs & LLM agent pipelines</li>
-                  <li>System design & architecture diagrams</li>
-                  <li>Cross-stack collaboration (React, iOS/Android)</li>
+                  <li>• Event-driven systems & microservices</li>
+                  <li>• Secure APIs & LLM agent pipelines</li>
+                  <li>• System design & architecture diagrams</li>
+                  <li>• Cross-stack collaboration</li>
                 </ul>
               </div>
 
-              <div className="group p-6 rounded-xl bg-background border border-border hover:border-primary hover:shadow-lg transition-all duration-300">
+              <div className="group p-6 rounded-xl bg-card border border-border hover:border-primary hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <div className="mb-4">
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <span className="text-2xl">🚀</span>
@@ -120,14 +213,14 @@ export default function HomePage() {
                   </h3>
                 </div>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>Scala, Java, Python, C#, VB, PHP</li>
-                  <li>JavaScript, TypeScript, SQL</li>
-                  <li>Akka, ZIO, GRPC, Kafka</li>
-                  <li>Functional & event-driven programming</li>
+                  <li>• Scala, Java, Python, C#, PHP</li>
+                  <li>• JavaScript, TypeScript, SQL</li>
+                  <li>• Akka, ZIO, gRPC, Kafka</li>
+                  <li>• Functional programming</li>
                 </ul>
               </div>
 
-              <div className="group p-6 rounded-xl bg-background border border-border hover:border-primary hover:shadow-lg transition-all duration-300">
+              <div className="group p-6 rounded-xl bg-card border border-border hover:border-primary hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <div className="mb-4">
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <span className="text-2xl">☁️</span>
@@ -137,14 +230,14 @@ export default function HomePage() {
                   </h3>
                 </div>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>AWS & Google Cloud (GCP)</li>
-                  <li>Kubernetes (K8s), Terraform, Serverless</li>
-                  <li>CI/CD, Flux, GitOps</li>
-                  <li>Prometheus, Datadog, Sumo Logic</li>
+                  <li>• AWS & Google Cloud (GCP)</li>
+                  <li>• Kubernetes, Terraform, Serverless</li>
+                  <li>• CI/CD, Flux, GitOps</li>
+                  <li>• Prometheus, Datadog, Sumo Logic</li>
                 </ul>
               </div>
 
-              <div className="group p-6 rounded-xl bg-background border border-border hover:border-primary hover:shadow-lg transition-all duration-300">
+              <div className="group p-6 rounded-xl bg-card border border-border hover:border-primary hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <div className="mb-4">
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <span className="text-2xl">🔧</span>
@@ -154,10 +247,10 @@ export default function HomePage() {
                   </h3>
                 </div>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>Cline, Roo, GitHub Copilot</li>
-                  <li>Feature Flags & Shadow Deploys</li>
-                  <li>Observability & distributed tracing</li>
-                  <li>Mentorship, design reviews, onboarding</li>
+                  <li>• Cline, Roo, GitHub Copilot</li>
+                  <li>• Feature Flags & Shadow Deploys</li>
+                  <li>• Observability & distributed tracing</li>
+                  <li>• Mentorship & design reviews</li>
                 </ul>
               </div>
             </div>
@@ -165,79 +258,115 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* About Section */}
+      {/* About Section with better visual hierarchy */}
       <section className="py-24">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-                  About Me
-                </h2>
-                <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
-                  <p>
-                    I’m an engineering leader and platform architect passionate
-                    about building secure, scalable systems that empower teams
-                    and accelerate innovation. My career spans over two decades
-                    across startups and enterprise environments, where I’ve led
-                    backend transformations, architected event-driven systems,
-                    and integrated AI into production workflows.
-                  </p>
-                  <p>
-                    At Carvana, I spearheaded the backend rewrite of the AI
-                    communications platform— improving orchestration between
-                    LLMs and human agents, and driving adoption of AI-assisted
-                    engineering tools. My technical foundation includes Scala,
-                    Python, and cloud-native infrastructure (GCP, AWS,
-                    Kubernetes, Terraform).
-                  </p>
-                  <p>
-                    I’m deeply invested in developer experience, observability,
-                    and reliability— ensuring systems are not only performant
-                    but maintainable and transparent. I also mentor engineers
-                    and advocate for AI-augmented development practices that
-                    enhance creativity and productivity.
-                  </p>
-                </div>
-                <div className="mt-8">
-                  <Link
-                    href="/blog"
-                    className="inline-flex items-center text-primary hover:text-primary/80 font-medium group"
-                  >
-                    Read more about my journey
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">About Me</h2>
+              <div className="w-20 h-1 bg-primary mx-auto rounded-full mb-8"></div>
+            </div>
+
+            <div className="prose prose-lg dark:prose-invert max-w-none">
+              <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
+                <p className="text-xl text-foreground font-medium">
+                  I&apos;m an engineering leader and platform architect
+                  passionate about building secure, scalable systems that
+                  empower teams and accelerate innovation.
+                </p>
+                <p>
+                  My career spans over two decades across startups and
+                  enterprise environments, where I&apos;ve led backend
+                  transformations, architected event-driven systems, and
+                  integrated AI into production workflows. At Carvana, I
+                  spearheaded the backend rewrite of the AI communications
+                  platform—improving orchestration between LLMs and human
+                  agents, and driving adoption of AI-assisted engineering tools.
+                </p>
+                <p>
+                  My technical foundation includes Scala, Python, and
+                  cloud-native infrastructure (GCP, AWS, Kubernetes, Terraform).
+                  I&apos;m deeply invested in developer experience,
+                  observability, and reliability—ensuring systems are not only
+                  performant but maintainable and transparent.
+                </p>
+                <p className="text-foreground font-medium">
+                  I also mentor engineers and advocate for AI-augmented
+                  development practices that enhance creativity and
+                  productivity.
+                </p>
               </div>
+            </div>
+
+            <div className="mt-10 text-center">
+              <Link
+                href="/blog"
+                className="inline-flex items-center text-primary hover:text-primary/80 font-medium text-lg group"
+              >
+                Read more about my journey
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Call to Action Section */}
-      <section className="py-24 bg-primary/5 border-t">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl sm:text-5xl font-bold mb-8 tracking-tight">
-              Let&apos;s Build Something Amazing
+      {/* Call to Action Section - Enhanced */}
+      <section className="py-24 bg-gradient-to-br from-primary/10 via-primary/5 to-background border-t relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+          <div className="absolute top-10 right-10 w-72 h-72 bg-primary rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 left-10 w-72 h-72 bg-primary rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-4xl sm:text-5xl font-bold mb-6 tracking-tight">
+              Ready to Build Something Exceptional?
             </h2>
-            <p className="text-lg sm:text-xl text-muted-foreground mb-10 leading-relaxed">
-              Ready to bring your next project to life? Let&apos;s collaborate
-              to create exceptional, human-centered digital experiences.
+            <p className="text-lg sm:text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl mx-auto">
+              Whether you&apos;re looking to scale your platform, architect a
+              new system, or bring AI into your workflow—let&apos;s collaborate
+              to create impactful solutions.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/blog"
-                className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg h-12 px-8"
-              >
-                View My Work
-              </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
               <a
                 href="https://linkedin.com/in/ianlintner/"
-                className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-12 px-8"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center rounded-lg text-base font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-xl hover:scale-105 h-14 px-10"
               >
-                Get In Touch
+                <SiLinkedin className="mr-2 h-5 w-5" />
+                Get In Touch on LinkedIn
               </a>
+              <Link
+                href="/demos"
+                className="inline-flex items-center justify-center rounded-lg text-base font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 border-2 border-primary/30 bg-background hover:bg-primary/10 hover:border-primary h-14 px-10"
+              >
+                View My Projects
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </div>
+
+            {/* Additional trust signals */}
+            <div className="pt-8 border-t border-border/50 max-w-2xl mx-auto">
+              <p className="text-sm text-muted-foreground mb-4">
+                I&apos;m currently exploring opportunities in:
+              </p>
+              <div className="flex flex-wrap justify-center gap-3">
+                <span className="px-4 py-2 rounded-full bg-background border border-border text-sm">
+                  Platform Architecture
+                </span>
+                <span className="px-4 py-2 rounded-full bg-background border border-border text-sm">
+                  Engineering Leadership
+                </span>
+                <span className="px-4 py-2 rounded-full bg-background border border-border text-sm">
+                  AI Integration
+                </span>
+                <span className="px-4 py-2 rounded-full bg-background border border-border text-sm">
+                  Technical Advisory
+                </span>
+              </div>
             </div>
           </div>
         </div>
