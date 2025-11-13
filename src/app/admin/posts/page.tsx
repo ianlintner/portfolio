@@ -228,7 +228,7 @@ export default function PostsManagement() {
                       className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-destructive text-destructive-foreground hover:bg-destructive/90 h-8 px-3"
                     >
                       Delete
-                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                      { }
                     </button>
                   </div>
                 </div>

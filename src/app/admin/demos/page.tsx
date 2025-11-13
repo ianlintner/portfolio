@@ -25,9 +25,9 @@ export default function DemosManagement() {
     },
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const filteredDemos =
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (demos as any)?.filter((demo: any) => {
       if (filter === "published") return demo.published;
       if (filter === "draft") return !demo.published;
@@ -122,7 +122,7 @@ export default function DemosManagement() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            { }
             {filteredDemos.map((demo: any) => (
               <div
                 key={demo.id}

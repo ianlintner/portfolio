@@ -74,40 +74,6 @@ jobs:
       - name: Build Next.js
         run: pnpm run build
 
-  docker:
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: ${{ github.event_name == 'push' && !startsWith(github.event.head_commit.message, 'ci:') }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Update Kubernetes manifest with new image tag
-        run: |
-          IMAGE_TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n1)
-          echo "Using image tag: $IMAGE_TAG"
-          yq -i ".spec.template.spec.containers[0].image = \"$IMAGE_TAG\"" k8s/apps/portfolio/base/deployment.yaml
-
   k8s-validate:
     runs-on: ubuntu-latest
     name: Validate Kubernetes Manifests
