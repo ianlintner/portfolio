@@ -53,6 +53,19 @@ export function Navigation() {
                 )}
               </Link>
               <Link
+                href="/docs"
+                className={`transition-colors hover:text-primary relative ${
+                  pathname?.startsWith("/docs")
+                    ? "text-primary font-semibold"
+                    : "text-foreground/70"
+                }`}
+              >
+                Docs
+                {pathname?.startsWith("/docs") && (
+                  <span className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-primary"></span>
+                )}
+              </Link>
+              <Link
                 href="/demos"
                 className={`transition-colors hover:text-primary relative ${
                   pathname?.startsWith("/demos")
@@ -136,6 +149,17 @@ export function Navigation() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Blog
+              </Link>
+              <Link
+                href="/docs"
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  pathname?.startsWith("/docs")
+                    ? "bg-primary/10 text-primary font-semibold"
+                    : "text-foreground/70 hover:bg-accent"
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Docs
               </Link>
               <Link
                 href="/demos"

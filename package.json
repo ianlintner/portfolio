@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "pnpm docs:build && next build",
     "start": "next start",
     "lint": "eslint .",
     "format": "prettier --check .",
@@ -12,7 +12,9 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit push",
     "test:ci": "jest --ci --runInBand",
-    "test": "jest"
+    "test": "jest",
+    "docs:build": "python3 -m mkdocs build -d public/docs",
+    "docs:serve": "python3 -m mkdocs serve"
   },
   "dependencies": {
     "@tailwindcss/typography": "latest",
