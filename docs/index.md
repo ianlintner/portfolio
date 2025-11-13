@@ -2,6 +2,9 @@
 
 Welcome to the technical documentation for the portfolio and blog application. This is a modern full-stack web application built with cutting-edge technologies and deployed on Google Kubernetes Engine (GKE).
 
+![Portfolio Homepage](screenshots/homepage.png)
+_Portfolio homepage showcasing engineering leadership and platform architecture expertise_
+
 ## Overview
 
 This portfolio and blog application showcases:
@@ -67,6 +70,12 @@ Visit [http://localhost:3000](http://localhost:3000) to see your application.
 - Automated GitOps workflows
 
 ## Documentation Structure
+
+![Documentation Landing Page](screenshots/docs-page.png)
+_Documentation landing page with quick access to all guides_
+
+![MkDocs Full Documentation](screenshots/mkdocs-full.png)
+_Full MkDocs documentation with Material theme, navigation, and search_
 
 - **[Architecture](ARCHITECTURE.md)**: Deep dive into the application architecture
 - **[Development](getting-started.md)**: Developer onboarding and setup
