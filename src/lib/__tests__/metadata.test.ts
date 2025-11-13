@@ -62,7 +62,7 @@ describe("Metadata Utils", () => {
     it("should return absolute URL for default social image", () => {
       process.env.NEXT_PUBLIC_SITE_URL = "https://example.com";
       expect(getDefaultSocialImage()).toBe(
-        "https://example.com/images/social-default.png",
+        "https://example.com/images/social-default.svg",
       );
     });
   });
@@ -92,13 +92,13 @@ describe("Metadata Utils", () => {
 
     it("should return default image when no custom image provided", () => {
       expect(getBlogPostImage()).toBe(
-        "https://example.com/images/social-default.png",
+        "https://example.com/images/social-default.svg",
       );
     });
 
     it("should return default image when undefined is provided", () => {
       expect(getBlogPostImage(undefined)).toBe(
-        "https://example.com/images/social-default.png",
+        "https://example.com/images/social-default.svg",
       );
     });
   });
