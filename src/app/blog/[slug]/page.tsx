@@ -12,6 +12,7 @@ import {
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 
 import { getPostBySlug } from "@/lib/posts";
+import { getAbsoluteUrl, getBlogPostImage } from "@/lib/metadata";
 
 // Removed stray markdown/blog content accidentally placed in this file
 // Blog post content should live in MDX files under src/app/blog/*.mdx
@@ -32,22 +33,46 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  const postUrl = getAbsoluteUrl(`/blog/${resolvedParams.slug}`);
+  const imageUrl = getBlogPostImage(meta.image);
+  const imageAlt = meta.imageAlt || meta.title;
+  const author = meta.author ?? "Ian Lintner";
+
   return {
     title: `${meta.title} | Ian Lintner`,
     description: meta.excerpt,
     keywords: meta.tags ?? [],
+    authors: [{ name: author }],
+    creator: author,
+    publisher: author,
+    alternates: {
+      canonical: postUrl,
+    },
     openGraph: {
       title: meta.title,
       description: meta.excerpt,
+      url: postUrl,
+      siteName: "Ian Lintner - Full Stack Developer",
+      locale: "en_US",
       type: "article",
       publishedTime: new Date(meta.date).toISOString(),
-      authors: [meta.author ?? "Ian Lintner"],
+      authors: [author],
       tags: meta.tags ?? [],
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: imageAlt,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: meta.title,
       description: meta.excerpt,
+      creator: "@ianlintner",
+      images: [imageUrl],
     },
   };
 }

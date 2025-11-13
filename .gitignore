@@ -109,3 +109,4 @@ kubeval.tar.gz
 istio-1.27.1
 *.backup.*
 .roo/
+.env.local

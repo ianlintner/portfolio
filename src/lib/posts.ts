@@ -12,6 +12,8 @@ export interface PostMeta {
   id?: string;
   tags?: string[];
   author?: string;
+  image?: string;
+  imageAlt?: string;
 }
 
 export function getAllPosts(): PostMeta[] {
@@ -33,6 +35,8 @@ export function getAllPosts(): PostMeta[] {
       id: slug,
       tags: data.tags || [],
       author: data.author || "Ian Lintner",
+      image: data.image,
+      imageAlt: data.imageAlt,
     } as PostMeta;
   });
 
@@ -58,6 +62,8 @@ export function getPostBySlug(slug: string) {
       id: slug,
       tags: data.tags || [],
       author: data.author || "Ian Lintner",
+      image: data.image,
+      imageAlt: data.imageAlt,
     },
     content,
   };
