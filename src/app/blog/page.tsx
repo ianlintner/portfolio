@@ -1,6 +1,10 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Calendar, Clock, Tag, ArrowRight, Search } from "lucide-react";
+import { getAbsoluteUrl, getDefaultSocialImage } from "@/lib/metadata";
+
+const siteUrl = getAbsoluteUrl("/blog");
+const imageUrl = getDefaultSocialImage();
 
 export const metadata: Metadata = {
   title: "Blog | Ian Lintner - Full Stack Developer",
@@ -14,18 +18,33 @@ export const metadata: Metadata = {
     "cloud computing",
     "full stack development",
   ],
+  alternates: {
+    canonical: siteUrl,
+  },
   openGraph: {
     title: "Blog | Ian Lintner - Full Stack Developer",
     description:
       "Technical articles about modern web development, React, Next.js, TypeScript, and cloud technologies.",
     type: "website",
-    url: "/blog",
+    url: siteUrl,
+    siteName: "Ian Lintner - Full Stack Developer",
+    locale: "en_US",
+    images: [
+      {
+        url: imageUrl,
+        width: 1200,
+        height: 630,
+        alt: "Ian Lintner - Full Stack Developer Blog",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Blog | Ian Lintner - Full Stack Developer",
     description:
       "Technical articles about modern web development, React, Next.js, TypeScript, and cloud technologies.",
+    creator: "@ianlintner",
+    images: [imageUrl],
   },
 };
 
