@@ -36,7 +36,12 @@ export function getAllPosts(): PostMeta[] {
     } as PostMeta;
   });
 
-  return posts.sort((a, b) => (a.date < b.date ? 1 : -1));
+  // Sort by date descending (newest first) - properly handle date comparison
+  return posts.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateB.getTime() - dateA.getTime();
+  });
 }
 
 export function getPostBySlug(slug: string) {
