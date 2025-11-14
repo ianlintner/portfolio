@@ -127,10 +127,6 @@ export default async function BlogPostPage({ params }: Props) {
               {meta.title}
             </h1>
 
-            <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
-              {meta.excerpt}
-            </p>
-
             {/* Tags not yet implemented from MDX frontmatter */}
 
             {/* Share Button */}

@@ -2,64 +2,12 @@
 
 import Link from "next/link";
 import { SiGithub, SiLinkedin } from "react-icons/si";
-import { Mail, ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { Mail } from "lucide-react";
 
 export function Footer() {
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement newsletter subscription
-    setSubscribed(true);
-    setTimeout(() => {
-      setEmail("");
-      setSubscribed(false);
-    }, 3000);
-  };
-
   return (
     <footer className="border-t bg-gradient-to-b from-background to-accent/10 transition-colors">
       <div className="container mx-auto px-4 py-12">
-        {/* Newsletter Section */}
-        <div className="max-w-2xl mx-auto text-center mb-12 pb-12 border-b border-border">
-          <h3 className="text-2xl font-bold mb-3">Stay Updated</h3>
-          <p className="text-muted-foreground mb-6">
-            Get insights on software architecture, cloud platforms, and
-            AI-driven development delivered to your inbox.
-          </p>
-          {subscribed ? (
-            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary/10 text-primary border border-primary/20">
-              <span className="font-medium">Thanks for subscribing! 🎉</span>
-            </div>
-          ) : (
-            <form
-              onSubmit={handleSubscribe}
-              className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-            >
-              <div className="flex-1 relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-input bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                />
-              </div>
-              <button
-                type="submit"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg transition-all whitespace-nowrap"
-              >
-                Subscribe
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </form>
-          )}
-        </div>
-
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* About */}

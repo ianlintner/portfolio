@@ -1,10 +1,52 @@
-"use client";
-
 import Link from "next/link";
-import { ArrowRight, Sparkles, Zap, Users, Award } from "lucide-react";
+import {
+  ArrowRight,
+  Sparkles,
+  Zap,
+  Users,
+  Award,
+  Calendar,
+  Clock,
+  Code,
+  ExternalLink,
+} from "lucide-react";
 import { SiGithub, SiLinkedin, SiGmail } from "react-icons/si";
+import { getAllPosts } from "@/lib/posts";
 
 export default function HomePage() {
+  const allPosts = getAllPosts();
+  const latestPosts = allPosts.slice(0, 3);
+
+  // Latest demos data (matching the structure from demos page)
+  const latestDemos = [
+    {
+      id: "4",
+      title: "Audio Analysis and AI Review Utility in Rust",
+      slug: "audio-ai-rust",
+      description:
+        "A command-line utility written in Rust for analyzing audio and providing AI-powered feedback for guitar practice sessions.",
+      technologies: ["Rust", "FFmpeg", "AI"],
+      liveUrl: "https://audio-ai.hugecat.net",
+    },
+    {
+      id: "1",
+      title: "Interview Data Structures & Algorithms Study App",
+      slug: "interview-data-structures-algorithms-study-app",
+      description:
+        "A comprehensive study app for mastering data structures and algorithms through interactive coding challenges.",
+      technologies: ["Python", "Flask"],
+      liveUrl: "https://dsa.hugecat.net",
+    },
+    {
+      id: "2",
+      title: "Real-time Chat Application",
+      slug: "realtime-chat-application",
+      description:
+        "Full-stack chat application with real-time messaging, user authentication, and message history.",
+      technologies: ["Next.js", "Socket.io", "PostgreSQL"],
+      liveUrl: "https://chat.hugecat.net",
+    },
+  ];
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -305,6 +347,153 @@ export default function HomePage() {
               >
                 Read more about my journey
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Latest Blog Posts Section */}
+      {latestPosts.length > 0 && (
+        <section className="py-24 bg-accent/20">
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                  Latest Articles
+                </h2>
+                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                  Recent insights on software architecture, cloud platforms, and
+                  AI-driven development
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                {latestPosts.map((post) => (
+                  <Link
+                    key={post.id}
+                    href={`/blog/${post.slug}`}
+                    className="group bg-card border border-border rounded-xl p-6 hover:shadow-xl hover:border-primary/20 transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground mb-4">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-4 w-4" />
+                        <span>
+                          {new Date(post.date).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-4 w-4" />
+                        <span>5 min</span>
+                      </div>
+                    </div>
+
+                    <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                      {post.title}
+                    </h3>
+
+                    <p className="text-muted-foreground leading-relaxed line-clamp-3 mb-4">
+                      {post.excerpt}
+                    </p>
+
+                    <div className="inline-flex items-center text-primary font-medium text-sm group/link">
+                      Read More
+                      <ArrowRight className="ml-1 h-4 w-4 group-hover/link:translate-x-1 transition-transform" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              <div className="text-center">
+                <Link
+                  href="/blog"
+                  className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold border-2 border-primary/30 bg-background hover:bg-primary/10 hover:border-primary rounded-lg transition-all duration-300"
+                >
+                  View All Articles
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Latest Projects/Demos Section */}
+      <section className="py-24">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                Featured Projects
+              </h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Interactive demos and projects showcasing modern development
+                techniques
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+              {latestDemos.map((demo) => (
+                <div
+                  key={demo.id}
+                  className="group bg-card border border-border rounded-xl overflow-hidden hover:shadow-xl hover:border-primary/20 transition-all duration-300 hover:-translate-y-1"
+                >
+                  <div className="aspect-video bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-primary/20 flex items-center justify-center">
+                        <Code className="h-6 w-6 text-primary" />
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Demo Preview
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-6">
+                    <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                      {demo.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-3">
+                      {demo.description}
+                    </p>
+
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {demo.technologies.slice(0, 3).map((tech) => (
+                        <span
+                          key={tech}
+                          className="px-2 py-1 text-xs font-medium bg-secondary text-secondary-foreground rounded"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+
+                    <a
+                      href={demo.liveUrl}
+                      className="inline-flex items-center gap-1 text-primary hover:text-primary/80 font-medium text-sm group/link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      View Demo
+                      <ArrowRight className="ml-1 h-4 w-4 group-hover/link:translate-x-1 transition-transform" />
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="text-center">
+              <Link
+                href="/demos"
+                className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold border-2 border-primary/30 bg-background hover:bg-primary/10 hover:border-primary rounded-lg transition-all duration-300"
+              >
+                View All Projects
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </div>
           </div>
