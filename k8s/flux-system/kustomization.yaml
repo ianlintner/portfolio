@@ -1,9 +1,0 @@
-# Standard Kustomize file for flux-system directory
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-
-resources:
-  - gotk-components.yaml
-  - portfolio-dev-kustomization.yaml
-  - portfolio-prod-kustomization.yaml
-  - flux-system-gitrepository.yaml

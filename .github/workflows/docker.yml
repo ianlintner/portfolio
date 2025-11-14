@@ -218,27 +218,10 @@ jobs:
           kubectl get pods -n ${NAMESPACE} -l app=${DEPLOYMENT_NAME} >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
-      - name: Notify Flux CD
-        if: github.event_name != 'pull_request'
-        env:
-          BRANCH_NAME: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_branch || github.ref_name }}
-        run: |
-          echo "### 🚀 Image Ready for Flux CD" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Image has been pushed to registry and is ready for Flux CD to deploy**" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Flux CD will automatically:" >> $GITHUB_STEP_SUMMARY
-          echo "1. Detect the new image with timestamp-based tag" >> $GITHUB_STEP_SUMMARY
-          echo "2. Update the deployment manifests in Git" >> $GITHUB_STEP_SUMMARY
-          echo "3. Deploy to environments based on branch (dev → staging → prod)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch:** \`${BRANCH_NAME}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-
-      - name: Image scan summary
+      - name: Image build summary
         if: github.event_name != 'pull_request'
         run: |
-          echo "### 🐳 Docker Image Built Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "### 🐳 Docker Image Built and Deployed Successfully" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Image Tags:**" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
@@ -248,4 +231,4 @@ jobs:
           echo "**Registry:** \`${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "The image has been pushed to Google Artifact Registry and deployed automatically." >> $GITHUB_STEP_SUMMARY
+          echo "The image has been pushed to Google Artifact Registry and deployed to production." >> $GITHUB_STEP_SUMMARY
