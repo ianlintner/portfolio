@@ -18,6 +18,8 @@ export default defineConfig([
       "**/package-lock.json",
       "**/pnpm-lock.yaml",
       "**/yarn.lock",
+      "**/public/docs/**",
+      "**/site/**",
     ],
   },
   ...nextCoreWebVitals,
