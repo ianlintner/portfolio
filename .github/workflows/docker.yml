@@ -160,25 +160,25 @@ jobs:
           retention-days: 30
 
       - name: Set up kubectl
-        if: github.event_name != 'pull_request'
+        if: false # Disabled: Using Flux CD for GitOps deployments
         uses: google-github-actions/setup-gcloud@v2
         with:
           version: "latest"
 
       - name: Install GKE auth plugin
-        if: github.event_name != 'pull_request'
+        if: false # Disabled: Using Flux CD for GitOps deployments
         run: |
           # Install the GKE auth plugin for kubectl
           gcloud components install gke-gcloud-auth-plugin
 
       - name: Configure kubectl
-        if: github.event_name != 'pull_request'
+        if: false # Disabled: Using Flux CD for GitOps deployments
         run: |
           # Configure kubectl for the cluster
           gcloud container clusters get-credentials kame-house --region=us-central1 --project=${{ env.PROJECT_ID }}
 
       - name: Deploy to Production
-        if: github.event_name != 'pull_request' && (github.event.workflow_run.head_branch == 'main' || github.ref == 'refs/heads/main')
+        if: false # Disabled: Using Flux CD for GitOps deployments instead of direct kubectl
         env:
           NAMESPACE: prod
           DEPLOYMENT_NAME: ${{ env.IMAGE_NAME }}
@@ -223,17 +223,31 @@ jobs:
         env:
           BRANCH_NAME: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_branch || github.ref_name }}
         run: |
-          echo "### 🚀 Image Ready for Flux CD" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚀 Image Ready for Flux CD GitOps Deployment" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Image has been pushed to registry and is ready for Flux CD to deploy**" >> $GITHUB_STEP_SUMMARY
+          echo "**Image has been pushed to registry and is ready for Flux CD to deploy automatically**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Flux CD will automatically:" >> $GITHUB_STEP_SUMMARY
-          echo "1. Detect the new image with timestamp-based tag" >> $GITHUB_STEP_SUMMARY
-          echo "2. Update the deployment manifests in Git" >> $GITHUB_STEP_SUMMARY
-          echo "3. Deploy to environments based on branch (dev → staging → prod)" >> $GITHUB_STEP_SUMMARY
+          echo "1. Detect the new image with timestamp-based tag (ImageRepository scans every 1 minute)" >> $GITHUB_STEP_SUMMARY
+          echo "2. Select the image based on numerical timestamp sorting (ImagePolicy)" >> $GITHUB_STEP_SUMMARY
+          echo "3. Update the deployment manifests in Git (ImageUpdateAutomation)" >> $GITHUB_STEP_SUMMARY
+          echo "4. Deploy to environments based on GitRepository sync (Kustomizations)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment Timeline:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Image detection: ~1 minute" >> $GITHUB_STEP_SUMMARY
+          echo "- Git commit: ~1 minute" >> $GITHUB_STEP_SUMMARY
+          echo "- Dev deployment: ~5 minutes after Git update" >> $GITHUB_STEP_SUMMARY
+          echo "- Prod deployment: ~10 minutes after Git update" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Branch:** \`${BRANCH_NAME}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Monitor Flux CD:**" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "# Check Flux CD status" >> $GITHUB_STEP_SUMMARY
+          echo "flux get images all" >> $GITHUB_STEP_SUMMARY
+          echo "flux get kustomizations" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Image scan summary
         if: github.event_name != 'pull_request'

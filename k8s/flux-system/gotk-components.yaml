@@ -40,8 +40,8 @@ spec:
   imageRepositoryRef:
     name: portfolio-image-repo
   policy:
-    semver:
-      range: "*"
+    numerical:
+      order: asc
   filterTags:
     pattern: "^main-[a-f0-9]+-(?P<ts>[0-9]+)$"
     extract: "$ts"
@@ -80,3 +80,11 @@ spec:
         {{ end -}}
 
         Images:
+        {{ range .Updated.Images -}}
+        - {{ . }}
+        {{ end -}}
+    push:
+      branch: main
+  update:
+    path: ./k8s/apps/portfolio/base
+    strategy: Setters
