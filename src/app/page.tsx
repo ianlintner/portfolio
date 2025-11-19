@@ -479,7 +479,7 @@ export default function HomePage() {
                       rel="noopener noreferrer"
                     >
                       <ExternalLink className="h-4 w-4" />
-                      View Demo
+                      View Project
                       <ArrowRight className="ml-1 h-4 w-4 group-hover/link:translate-x-1 transition-transform" />
                     </a>
                   </div>

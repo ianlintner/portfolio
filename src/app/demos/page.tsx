@@ -2,7 +2,6 @@ import { Metadata } from "next";
 import Link from "next/link";
 import {
   ExternalLink,
-  Github,
   Code,
   Layers,
   Smartphone,
@@ -189,16 +188,7 @@ export default function DemosPage() {
                           rel="noopener noreferrer"
                         >
                           <ExternalLink className="h-4 w-4" />
-                          Live Demo
-                        </a>
-                        <a
-                          href={demo.githubUrl}
-                          className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium border border-input bg-background hover:bg-accent transition-colors"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <Github className="h-4 w-4" />
-                          Code
+                          View Project
                         </a>
                       </div>
                     </div>
@@ -282,16 +272,7 @@ export default function DemosPage() {
                         rel="noopener noreferrer"
                       >
                         <ExternalLink className="h-3 w-3" />
-                        Demo
-                      </a>
-                      <a
-                        href={demo.githubUrl}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-input bg-background hover:bg-accent transition-colors"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Github className="h-3 w-3" />
-                        Code
+                        View Project
                       </a>
                     </div>
                   </div>
