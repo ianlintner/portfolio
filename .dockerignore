@@ -46,12 +46,6 @@ Thumbs.db
 .gitignore
 .gitattributes
 
-# Documentation
-README.md
-AGENTS.md
-implementation_plan.md
-docs/
-
 # Kubernetes
 k8s/
 
