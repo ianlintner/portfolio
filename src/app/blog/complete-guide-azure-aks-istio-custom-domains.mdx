@@ -1,0 +1,3710 @@
+---
+title: "Production-Ready AKS with Istio: Architecture Decisions, Trade-offs, and Implementation"
+date: 2025-11-23
+excerpt: "A technical deep-dive into building enterprise-grade Kubernetes infrastructure on Azure. Explore architectural trade-offs, cost implications, security considerations, and operational best practices for staff+ engineers and technical leaders."
+tags: ["Azure", "Kubernetes", "AKS", "Istio", "Architecture", "DevOps", "Platform Engineering", "SRE"]
+author: "Ian Lintner"
+image: "/images/azure-aks-istio-social.svg"
+imageAlt: "Production-Ready AKS with Istio: Architecture Decisions and Trade-offs"
+---
+
+# Production-Ready AKS with Istio: Architecture Decisions, Trade-offs, and Implementation
+
+Building production Kubernetes infrastructure is fundamentally an exercise in architectural trade-offs. While deploying a basic cluster is straightforward, creating a platform that scales from dozens to thousands of services—while maintaining security, observability, and developer velocity—requires careful consideration of competing priorities.
+
+This guide examines the technical and organizational decisions behind building production-grade Azure Kubernetes Service (AKS) infrastructure with Istio service mesh. We'll explore not just *how* to implement these systems, but *why* specific architectural choices matter, their cost implications, and when alternatives might be more appropriate.
+
+## Target Audience
+
+This guide is written for:
+- **Staff+ Engineers** evaluating service mesh adoption and platform architecture
+- **Technical Leads** making build-vs-buy decisions for infrastructure components  
+- **Platform Engineers** implementing multi-tenant Kubernetes platforms
+- **SREs** responsible for production reliability and incident response
+- **Engineering Managers** balancing technical debt against feature velocity
+
+## What You'll Learn
+
+**Technical Implementation:**
+- Production-ready AKS cluster architecture with managed Istio
+- Zero-downtime certificate management and rotation
+- Multi-environment DNS and subdomain routing strategies
+- Observability and debugging patterns for service mesh traffic
+
+**Architectural Decision-Making:**
+- Service mesh trade-offs: Istio vs. alternatives (Linkerd, Consul, Cilium)
+- When to use managed vs. self-hosted Istio
+- Cost analysis: Managed services vs. DIY infrastructure
+- Security considerations: mTLS, network policies, zero-trust architecture
+- Multi-cluster vs. single-cluster strategies
+
+**Operational Maturity:**
+- Failure modes and mitigation strategies
+- Performance implications of sidecar proxies
+- Capacity planning and resource optimization
+- Incident response patterns for mesh-related outages
+
+---
+
+## 🏗️ Architecture Overview and Design Decisions
+
+Before diving into implementation, let's examine the architectural decisions that shape production Kubernetes platforms.
+
+### Why Service Mesh? The Trade-offs
+
+Service mesh adoption represents a significant architectural commitment. Understanding when it adds value—and when it doesn't—is crucial.
+
+**Service Mesh Benefits:**
+- **Traffic Management**: Advanced routing (canary, blue-green), retries, timeouts, circuit breaking
+- **Security**: Automatic mTLS between services, zero-trust networking
+- **Observability**: Distributed tracing, metrics, and traffic visualization without code changes
+- **Policy Enforcement**: Centralized traffic policies, rate limiting, authentication
+
+**Service Mesh Costs:**
+- **Complexity**: Additional operational burden, learning curve, debugging complexity
+- **Performance**: Sidecar proxy overhead (CPU, memory, latency ~2-5ms per hop)
+- **Resource Usage**: ~50-100MB memory per sidecar, CPU overhead for encryption
+- **Blast Radius**: Control plane outages can impact all mesh traffic
+
+**Decision Framework:**
+
+| Use Service Mesh When... | Skip Service Mesh When... |
+|-------------------------|---------------------------|
+| Operating 50+ microservices | Running monolith or <10 services |
+| Need mTLS without app changes | Can enforce security at app layer |
+| Require advanced traffic routing | Simple load balancing suffices |
+| Multiple teams need traffic policies | Single team owns all services |
+| Observability gaps exist | APM tools provide sufficient insight |
+
+### Istio vs. Alternatives: Comparative Analysis
+
+```mermaid
+graph TB
+    subgraph "Service Mesh Landscape"
+        subgraph "Full-Featured"
+            Istio[Istio<br/>✓ Enterprise features<br/>✓ Mature ecosystem<br/>✗ Complex<br/>✗ Resource heavy]
+        end
+        
+        subgraph "Lightweight"
+            Linkerd[Linkerd<br/>✓ Simple, fast<br/>✓ Low overhead<br/>✗ Fewer features<br/>✗ Smaller community]
+        end
+        
+        subgraph "Cloud-Native"
+            Cilium[Cilium Service Mesh<br/>✓ eBPF-based<br/>✓ Best performance<br/>✗ Requires recent kernels<br/>✗ Less mature]
+        end
+        
+        subgraph "HashiCorp"
+            Consul[Consul Connect<br/>✓ Multi-cloud<br/>✓ VM + K8s<br/>✗ HashiCorp ecosystem lock-in<br/>✗ License considerations]
+        end
+    end
+    
+    Decision{Requirements?}
+    Decision -->|Enterprise features<br/>Team has K8s expertise| Istio
+    Decision -->|Simplicity<br/>Low overhead priority| Linkerd
+    Decision -->|Maximum performance<br/>Modern kernels| Cilium
+    Decision -->|Hybrid cloud<br/>VM integration| Consul
+```
+
+**Why We Chose Istio for This Architecture:**
+1. **Azure Managed Add-on**: Reduces operational burden (control plane managed by Microsoft)
+2. **Feature Completeness**: Comprehensive traffic management, security, observability
+3. **Ecosystem Maturity**: Extensive tooling, documentation, community support
+4. **Enterprise Adoption**: Proven at scale (Google, eBay, T-Mobile)
+
+**Cost Comparison (Rough Monthly Estimates for 10-Service Cluster):**
+
+| Component | Managed Istio (AKS) | Self-Hosted Istio | Linkerd | No Mesh |
+|-----------|---------------------|-------------------|---------|---------|
+| Control Plane | $0 (included) | $100-200 | $100-200 | $0 |
+| Sidecar Overhead | ~$50-75 | ~$50-75 | ~$25-40 | $0 |
+| Monitoring | $100-150 | $100-150 | $75-100 | $50-75 |
+| Operations Time | 5-10 hrs/mo | 20-40 hrs/mo | 10-20 hrs/mo | 5 hrs/mo |
+| **Total** | **~$150-235 + ops** | **~$250-425 + ops** | **~$200-340 + ops** | **~$50-75 + ops** |
+
+*Note: Operations time valued at $150-200/hr for staff engineer equivalency*
+
+### Architecture Decision Records (ADRs)
+
+#### ADR-001: Managed Istio vs. Self-Hosted
+
+**Context**: Need service mesh capabilities without dedicated SRE team.
+
+**Decision**: Use Azure-managed Istio add-on for AKS.
+
+**Rationale**:
+- Microsoft manages control plane (istiod) upgrades and patching
+- Reduced operational complexity (no manual version management)
+- SLA backed by Azure support
+- Team can focus on application logic vs. infrastructure
+
+**Consequences**:
+- Limited control over Istio version (follows Azure release cycle)
+- Cannot customize control plane configuration deeply
+- Dependent on Azure for mesh reliability
+- May lag behind upstream Istio releases by 1-2 versions
+
+**Alternatives Considered**:
+- Self-hosted Istio: More control, more operational burden
+- Linkerd: Simpler but fewer features
+- No mesh: Lower complexity but manual mTLS, observability
+
+#### ADR-002: DNS Management in Azure DNS vs. External Provider
+
+**Context**: Need reliable DNS with low operational overhead.
+
+**Decision**: Use Azure DNS for domain management.
+
+**Rationale**:
+- Native integration with AKS and Azure resources
+- 100% SLA with zone redundancy
+- Low latency queries via Azure edge network
+- Cost-effective ($0.50/zone/month + $0.40/million queries)
+- Infrastructure-as-code via Terraform/Bicep
+
+**Consequences**:
+- Vendor lock-in to Azure ecosystem
+- Migration complexity if moving clouds
+- All DNS management requires Azure access
+
+**Cost Analysis**:
+- Azure DNS: ~$1-5/month for typical workload
+- Route 53 (AWS): ~$1-5/month + cross-cloud complexity
+- Cloudflare: Free tier sufficient but adds dependency
+
+### Complete System Architecture
+
+```mermaid
+graph TB
+    subgraph "External Layer"
+        Users[Users/Clients]
+        Registrar[Domain Registrar<br/>GoDaddy/Namecheap]
+        DDoS[Azure DDoS Protection<br/>Optional: $2,944/mo]
+    end
+    
+    subgraph "Azure DNS Zone - cat-herding.net"
+        NS[Name Servers<br/>4x Anycast servers]
+        Records[A Records<br/>@, www, api, blog, *]
+        DNSSEC[DNSSEC<br/>Optional: Key management]
+    end
+    
+    subgraph "AKS Cluster - Production"
+        subgraph "Ingress Layer"
+            LB[Azure Load Balancer<br/>Standard SKU<br/>Static IP<br/>$18.25/mo base]
+            Gateway[Istio Ingress Gateway<br/>2 replicas<br/>~$30/mo compute]
+        end
+        
+        subgraph "Control Plane - Managed by Azure"
+            CP[AKS Control Plane<br/>Free tier or $73/mo SLA]
+            Istiod[Istio Control Plane<br/>Managed by Azure<br/>$0 additional]
+        end
+        
+        subgraph "Routing Layer"
+            GW1[Gateway: portfolio<br/>TLS termination]
+            GW2[Gateway: api<br/>TLS termination]
+            VS1[VirtualService<br/>Path routing, retries<br/>Circuit breakers]
+            VS2[VirtualService<br/>Canary routing<br/>Traffic splitting]
+        end
+        
+        subgraph "Application Nodes - Standard_D2s_v3"
+            Node1[Node Pool 1<br/>3 nodes<br/>~$220/mo]
+            Node2[Node Pool 2<br/>Spot instances<br/>~$50/mo]
+        end
+        
+        subgraph "Workloads"
+            Svc1[Service: portfolio<br/>ClusterIP<br/>Health checks]
+            Svc2[Service: api<br/>ClusterIP<br/>Circuit breakers]
+            Pod1[Portfolio pods<br/>2-5 replicas<br/>HPA enabled]
+            Pod2[API pods<br/>2-10 replicas<br/>HPA enabled]
+        end
+        
+        subgraph "Certificate Management"
+            CM[cert-manager<br/>~$10/mo<br/>Let's Encrypt integration]
+            Secrets[TLS Secrets<br/>Auto-rotation<br/>30-day renewal window]
+        end
+        
+        subgraph "Observability Stack"
+            Prom[Prometheus<br/>15-day retention<br/>~$50/mo storage]
+            Graf[Grafana<br/>Dashboards<br/>~$20/mo]
+            Jaeger[Jaeger Tracing<br/>7-day retention<br/>~$40/mo]
+            Kiali[Kiali Service Graph<br/>Included]
+        end
+        
+        subgraph "Data Layer"
+            PVC[Persistent Volumes<br/>Azure Disk/Files<br/>Variable cost]
+            DB[Azure Database<br/>PostgreSQL Flexible<br/>$30-500/mo]
+        end
+    end
+    
+    subgraph "CI/CD"
+        GH[GitHub Actions<br/>Docker build<br/>Free tier]
+        ACR[Azure Container Registry<br/>Basic: $5/mo<br/>Premium: $167/mo]
+    end
+    
+    Users -->|DNS Query| NS
+    Registrar -->|NS Delegation| NS
+    NS --> Records
+    Users -->|HTTPS| DDoS
+    DDoS -->|Filtered| LB
+    LB -->|Forward| Gateway
+    Gateway -->|TLS Offload| Secrets
+    Gateway --> GW1
+    Gateway --> GW2
+    GW1 --> VS1
+    GW2 --> VS2
+    VS1 -->|Route| Svc1
+    VS2 -->|Route| Svc2
+    Svc1 -->|Load Balance| Pod1
+    Svc2 -->|Load Balance| Pod2
+    Pod1 -.->|State| PVC
+    Pod2 -.->|Query| DB
+    CP -->|Manages| Node1
+    CP -->|Manages| Node2
+    Istiod -->|Configure| Gateway
+    Istiod -->|Sidecar config| Pod1
+    Istiod -->|Sidecar config| Pod2
+    CM -->|Request Cert| Secrets
+    Pod1 -->|Metrics| Prom
+    Pod2 -->|Traces| Jaeger
+    Prom --> Graf
+    Jaeger --> Kiali
+    GH -->|Push Image| ACR
+    ACR -->|Pull Image| Pod1
+    ACR -->|Pull Image| Pod2
+    
+    classDef cost fill:#f9f,stroke:#333,stroke-width:2px
+    classDef free fill:#9f9,stroke:#333,stroke-width:2px
+    classDef managed fill:#99f,stroke:#333,stroke-width:2px
+    
+    class LB,Node1,Node2,DB,ACR cost
+    class CP,Istiod,Kiali,GH free
+    class CM,Prom,Graf,Jaeger managed
+```
+
+**Key Architectural Patterns:**
+
+1. **Defense in Depth**: DDoS protection → Load balancer → Istio Gateway → Network policies
+2. **Separation of Concerns**: Ingress layer isolated from application layer
+3. **Observability by Default**: Every service instrumented without code changes
+4. **Cost Optimization**: Spot instances for non-critical workloads, right-sized nodes
+5. **High Availability**: Multi-replica deployments, pod anti-affinity, zone distribution
+
+**Monthly Cost Breakdown (Rough Estimates):**
+- **Compute**: $220 (3x D2s_v3) + $50 (spot) = $270
+- **Control Plane**: $0 (free tier) or $73 (99.95% SLA)
+- **Networking**: $18.25 (load balancer) + ~$10 (bandwidth)
+- **Storage**: $30 (database) + $10 (disks)
+- **Container Registry**: $5 (basic) or $167 (premium with geo-replication)
+- **Monitoring**: $110 (Prometheus, Grafana, Jaeger storage)
+- **DNS**: $1
+- **Total**: **~$444/mo** (free tier) or **~$517/mo** (with SLA)
+
+*Scales to ~$800-1200/mo at 10 services, ~$2000-3000/mo at 50 services*
+
+---
+
+## 📋 Prerequisites and Team Readiness
+
+### Technical Prerequisites
+
+- Azure account with **Owner** or **Contributor** + **User Access Administrator** role
+- Azure CLI (`az`) version 2.50.0+
+- `kubectl` version matching cluster (typically 1.28+)
+- `helm` v3.12+ for package management
+- Registered domain name with ability to change name servers
+- Azure subscription with sufficient quota:
+  - 12+ vCPUs (preferably D-series or E-series)
+  - Standard Load Balancer quota
+  - Public IP quota
+- Understanding of Kubernetes concepts (pods, services, deployments, namespaces)
+
+### Organizational Readiness Assessment
+
+Before implementing service mesh, assess your team's readiness:
+
+**✅ Good Fit:**
+- Team has 2+ engineers with Kubernetes production experience
+- Running 20+ microservices or planning to reach that scale
+- Need centralized traffic policies across services
+- Require mTLS without modifying application code
+- Budget supports ~$500-1000/mo infrastructure costs
+- Dedicated platform or SRE team available (even part-time)
+
+**⚠️ Proceed with Caution:**
+- Team new to Kubernetes (6 months experience recommended minimum)
+- Running <10 services (simpler ingress solutions may suffice)
+- Tight budget constraints (<$500/mo infrastructure spend)
+- No dedicated operations support
+- Need to ship features weekly (learning curve may slow velocity initially)
+
+**❌ Not Recommended:**
+- First Kubernetes deployment (start simpler, add mesh later)
+- Single developer or small team (<3 engineers total)
+- Prototype or proof-of-concept phase
+- Services already have robust observability and security
+
+### Install Required Tools
+
+```bash
+# Install Azure CLI (macOS)
+brew install azure-cli
+
+# Verify version
+az --version  # Should be 2.50.0+
+
+# Install kubectl
+az aks install-cli
+
+# Verify kubectl
+kubectl version --client
+
+# Install Helm
+brew install helm
+
+# Verify Helm
+helm version  # Should be v3.12+
+
+# Install useful optional tools
+brew install k9s          # Terminal UI for Kubernetes
+brew install stern        # Multi-pod log tailing
+brew install kubectx      # Context and namespace switching
+brew install istioctl     # Istio CLI (optional but helpful)
+
+# Login to Azure
+az login
+
+# List subscriptions
+az account list --output table
+
+# Set your subscription
+export AZURE_SUBSCRIPTION_ID="<your-subscription-id>"
+az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+
+# Verify access
+az account show
+```
+
+### Cost Awareness and Budget Planning
+
+**Initial Setup Costs (First Month):**
+- Domain registration (if new): $10-15/year
+- AKS cluster setup: $300-500 (includes learning/experimentation time)
+- DNS testing and configuration: Minimal
+- Certificate setup: Free (Let's Encrypt)
+
+**Ongoing Monthly Costs (Conservative Estimate):**
+```
+Base Infrastructure:
+- AKS Control Plane (free tier): $0
+- OR Control Plane SLA (99.95%): $73
+- 3x Standard_D2s_v3 nodes: $220
+- Azure Load Balancer: $18.25
+- Azure DNS: $1
+- Container Registry (Basic): $5
+- Monitoring storage: $50-100
+
+Total Base: $294-417/mo
+
+Per-Service Costs (Approximate):
+- Additional compute: $20-40/service
+- Storage (if needed): $10-50/service
+- Database (if needed): $30-500/service
+- Bandwidth: ~$0.08/GB egress
+
+Expected Scaling:
+- 5 services: ~$450-600/mo
+- 10 services: ~$800-1200/mo
+- 25 services: ~$1500-2500/mo
+- 50 services: ~$3000-5000/mo
+```
+
+**Cost Optimization Strategies:**
+1. **Use Spot Instances**: 70-90% discount for non-critical workloads
+2. **Right-size Nodes**: Start with D2s_v3, scale up only if needed
+3. **Reserved Instances**: 30-40% discount for 1-3 year commitments
+4. **Autoscaling**: HPA and cluster autoscaler to match demand
+5. **Monitoring Retention**: Reduce Prometheus retention to 7-15 days
+6. **Dev/Staging Clusters**: Shut down nights and weekends (terraform automation)
+
+---
+
+## 🚀 Step 1: Create Production-Grade AKS Cluster with Istio
+
+### 1.1 Cluster Sizing and Configuration Decisions
+
+**Node Size Selection Trade-offs:**
+
+| VM Size | vCPU | RAM | Price/mo | Use Case | Considerations |
+|---------|------|-----|----------|----------|----------------|
+| Standard_B2s | 2 | 4GB | $30 | Dev/test only | **Not recommended**: Burstable, inconsistent performance |
+| Standard_D2s_v3 | 2 | 8GB | $70 | Small prod workloads | **Recommended starter**: Good balance, upgradeable |
+| Standard_D4s_v3 | 4 | 16GB | $140 | Medium prod | Better pod density, more headroom |
+| Standard_D8s_v3 | 8 | 32GB | $280 | Large prod | Best pod density, overkill for <20 services |
+| Standard_E2s_v3 | 2 | 16GB | $109 | Memory-intensive | Higher memory-to-CPU ratio |
+
+**Decision Framework:**
+- **Start with D2s_v3** for initial deployment (2-5 services)
+- **Plan for D4s_v3** when approaching 50% node capacity
+- **Consider E-series** if services average >500MB memory per pod
+- **Use node pools** with different sizes for workload-specific optimization
+
+**Node Count Considerations:**
+- **Minimum 3 nodes** for production (quorum, rolling updates, node failures)
+- **Start with 3**, enable cluster autoscaler (3-10 nodes typical range)
+- **Cost vs. Availability**: 3 nodes = 2-node failures tolerated, 5 nodes = 3-node failures
+- **Zone Distribution**: Spread across availability zones (requires 3+ nodes)
+
+### 1.2 Define Cluster Configuration
+
+```bash
+# Cluster configuration with rationale
+export RESOURCE_GROUP="aks-production-rg"
+export LOCATION="eastus"  # Choose region closest to users
+export CLUSTER_NAME="my-aks-cluster"
+
+# Node configuration
+export NODE_COUNT=3           # Minimum for HA
+export NODE_SIZE="Standard_D2s_v3"  # 2 vCPU, 8GB RAM
+export NODE_DISK_SIZE=128     # OS disk size (GB) - default is often 128GB
+
+# Kubernetes version - check available versions
+az aks get-versions --location "$LOCATION" --output table
+
+# Use recent stable version (not preview)
+export K8S_VERSION="1.28.3"  # Update to latest stable
+
+# Enable advanced features
+export ENABLE_MONITORING="true"
+export ENABLE_AUTOSCALER="true"
+export MIN_NODE_COUNT=3
+export MAX_NODE_COUNT=10
+```
+
+### 1.3 Create Resource Group with Tags
+
+```bash
+# Create resource group with metadata tags for cost tracking
+az group create \
+  --name "$RESOURCE_GROUP" \
+  --location "$LOCATION" \
+  --tags \
+    environment=production \
+    costCenter=engineering \
+    managedBy=terraform \
+    project=platform
+
+# Verify creation
+az group show --name "$RESOURCE_GROUP"
+```
+
+### 1.4 Create AKS Cluster with Istio and Advanced Features
+
+```bash
+# Create production-grade AKS cluster
+# This takes 10-15 minutes
+az aks create \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$CLUSTER_NAME" \
+  --location "$LOCATION" \
+  --kubernetes-version "$K8S_VERSION" \
+  --node-count "$NODE_COUNT" \
+  --node-vm-size "$NODE_SIZE" \
+  --node-osdisk-size "$NODE_DISK_SIZE" \
+  --enable-managed-identity \
+  --enable-asm \
+  --network-plugin azure \
+  --network-policy azure \
+  --enable-cluster-autoscaler \
+  --min-count "$MIN_NODE_COUNT" \
+  --max-count "$MAX_NODE_COUNT" \
+  --enable-addons monitoring \
+  --generate-ssh-keys \
+  --zones 1 2 3 \
+  --tier standard \
+  --tags environment=production project=platform
+
+# Alternative: Free tier for non-production (no SLA)
+# --tier free
+
+# Get cluster credentials
+az aks get-credentials \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$CLUSTER_NAME" \
+  --overwrite-existing
+
+# Verify cluster is running
+kubectl get nodes -o wide
+
+# Check node zones (should be distributed)
+kubectl get nodes -o custom-columns=NAME:.metadata.name,ZONE:.metadata.labels."topology\.kubernetes\.io/zone"
+```
+
+**Expected Output:**
+```
+NAME                                STATUS   ROLES   AGE   VERSION   ZONE
+aks-nodepool1-12345678-vmss000000   Ready    agent   5m    v1.28.3   eastus-1
+aks-nodepool1-12345678-vmss000001   Ready    agent   5m    v1.28.3   eastus-2
+aks-nodepool1-12345678-vmss000002   Ready    agent   5m    v1.28.3   eastus-3
+```
+
+### 1.5 Verify Istio Installation and Components
+
+```bash
+# Check Istio namespaces
+kubectl get namespaces | grep istio
+
+# Expected output:
+# aks-istio-ingress    Active   5m
+# aks-istio-system     Active   5m
+
+# Check Istio control plane components
+kubectl get pods -n aks-istio-system
+
+# Expected output:
+# NAME                     READY   STATUS    RESTARTS   AGE
+# istiod-asm-xxxx-xxxxx    1/1     Running   0          5m
+
+# Check Istio ingress gateway
+kubectl get pods -n aks-istio-ingress
+
+# Expected output:
+# NAME                                                READY   STATUS    RESTARTS   AGE
+# aks-istio-ingressgateway-external-xxxxxxxx-xxxxx   1/1     Running   0          5m
+
+# Get Istio Gateway external IP (save this!)
+kubectl get svc -n aks-istio-ingress aks-istio-ingressgateway-external
+
+# Expected output:
+# NAME                                TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)
+# aks-istio-ingressgateway-external   LoadBalancer   10.0.123.45   52.188.x.x     15021:30001/TCP,80:30002/TCP,443:30003/TCP
+
+# Export for later use
+export ISTIO_INGRESS_IP=$(kubectl get svc -n aks-istio-ingress aks-istio-ingressgateway-external -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+echo "Istio Ingress IP: $ISTIO_INGRESS_IP"
+
+# Verify Istio version and configuration
+kubectl get mutatingwebhookconfigurations | grep istio
+kubectl get validatingwebhookconfigurations | grep istio
+```
+
+### 1.6 Configure Node Pools for Workload Isolation (Optional but Recommended)
+
+For production, consider separating system workloads from application workloads:
+
+```bash
+# Add a spot instance node pool for non-critical workloads (70-90% cost savings)
+az aks nodepool add \
+  --resource-group "$RESOURCE_GROUP" \
+  --cluster-name "$CLUSTER_NAME" \
+  --name spotpool \
+  --priority Spot \
+  --eviction-policy Delete \
+  --spot-max-price -1 \
+  --enable-cluster-autoscaler \
+  --min-count 0 \
+  --max-count 5 \
+  --node-count 1 \
+  --node-vm-size Standard_D2s_v3 \
+  --node-taints kubernetes.azure.com/scalesetpriority=spot:NoSchedule \
+  --labels workloadType=batch priority=low
+
+# Verify node pools
+az aks nodepool list \
+  --resource-group "$RESOURCE_GROUP" \
+  --cluster-name "$CLUSTER_NAME" \
+  --output table
+```
+
+### 1.7 Cluster Architecture Deep Dive
+
+```mermaid
+graph TB
+    subgraph "Azure Region - eastus"
+        subgraph "Availability Zone 1"
+            Node1[Node 1<br/>D2s_v3<br/>System + App Pods]
+        end
+        
+        subgraph "Availability Zone 2"
+            Node2[Node 2<br/>D2s_v3<br/>System + App Pods]
+        end
+        
+        subgraph "Availability Zone 3"
+            Node3[Node 3<br/>D2s_v3<br/>System + App Pods]
+            SpotNode[Spot Node<br/>Optional<br/>Batch workloads]
+        end
+    end
+    
+    subgraph "Control Plane - Managed by Azure"
+        API[Kubernetes API Server<br/>Managed, Multi-AZ]
+        ETCD[etcd Cluster<br/>Managed, Replicated]
+        Scheduler[Scheduler<br/>Managed]
+        Controller[Controller Manager<br/>Managed]
+    end
+    
+    subgraph "Istio Control Plane - aks-istio-system"
+        Istiod[istiod<br/>Pilot, Galley, Citadel<br/>Certificate Authority]
+    end
+    
+    subgraph "Istio Data Plane - aks-istio-ingress"
+        IngressGW[Ingress Gateway<br/>LoadBalancer Service<br/>Static IP<br/>2+ replicas]
+    end
+    
+    subgraph "Application Pods"
+        Pod1[App Pod<br/>+ Envoy Sidecar]
+        Pod2[App Pod<br/>+ Envoy Sidecar]
+        Pod3[Batch Pod<br/>On Spot Node]
+    end
+    
+    subgraph "Cluster Autoscaler"
+        CA[Cluster Autoscaler<br/>Watches pending pods<br/>Scales node pool]
+    end
+    
+    API -->|Schedule| Node1
+    API -->|Schedule| Node2
+    API -->|Schedule| Node3
+    API -->|Schedule| SpotNode
+    Istiod -->|Configure| IngressGW
+    Istiod -->|Inject & Configure| Pod1
+    Istiod -->|Inject & Configure| Pod2
+    IngressGW -->|Route Traffic| Pod1
+    IngressGW -->|Route Traffic| Pod2
+    CA -->|Scale Decision| API
+    API -->|Query| ETCD
+    
+    classDef managed fill:#e1f5ff,stroke:#0078d4,stroke-width:2px
+    classDef app fill:#fff4e1,stroke:#f39c12,stroke-width:2px
+    classDef spot fill:#ffe1e1,stroke:#e74c3c,stroke-width:2px
+    
+    class API,ETCD,Scheduler,Controller,Istiod managed
+    class Pod1,Pod2,IngressGW app
+    class SpotNode,Pod3 spot
+```
+
+**Key Reliability Patterns:**
+
+1. **Zone Distribution**: Nodes spread across 3 availability zones
+   - Tolerates entire zone failure
+   - Azure SLA: 99.99% uptime with zones
+
+2. **Control Plane HA**: Managed by Azure
+   - Multi-region replication
+   - Automatic failover
+   - Separate from worker nodes
+
+3. **Istio Control Plane**: Azure-managed istiod
+   - Automatic updates and patches
+   - SLA backed by Azure support
+   - Reduced operational burden
+
+4. **Cluster Autoscaler**: Automatically adjusts node count
+   - Scales up when pods are pending
+   - Scales down when nodes underutilized (>50% idle for 10 min)
+   - Cost optimization while maintaining performance
+
+**Failure Scenarios and Recovery:**
+
+| Failure Type | Impact | Recovery Time | Mitigation |
+|--------------|--------|---------------|------------|
+| Single node failure | 33% capacity loss | Immediate (pods rescheduled) | 3+ nodes, pod anti-affinity |
+| Zone failure | 33% capacity loss | Immediate | Multi-zone deployment |
+| Istio control plane | No new config changes | 5-15 minutes | Data plane continues functioning |
+| Ingress gateway pod | Partial traffic loss | <30 seconds | Multiple replicas, health checks |
+| Control plane API | No new deployments | Azure SLA: 99.95% | Use managed tier SLA |
+
+### 1.8 Enable Cost Analysis and Monitoring
+
+```bash
+# Enable Azure Cost Management insights
+az aks update \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$CLUSTER_NAME" \
+  --enable-cost-analysis
+
+# View cluster costs (after 24-48 hours of data collection)
+az aks show \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$CLUSTER_NAME" \
+  --query "addonProfiles.azurePolicy"
+
+# Install metrics-server for HPA (if not already installed)
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+# Verify metrics-server
+kubectl get deployment metrics-server -n kube-system
+kubectl top nodes
+kubectl top pods -A
+```
+
+**Post-Creation Validation Checklist:**
+
+- [ ] All 3 nodes are in `Ready` state
+- [ ] Nodes distributed across 3 availability zones
+- [ ] Istio control plane pod running in `aks-istio-system`
+- [ ] Istio ingress gateway has external IP
+- [ ] Cluster autoscaler enabled (3-10 node range)
+- [ ] Monitoring addon enabled (Azure Monitor)
+- [ ] `kubectl` context set to new cluster
+- [ ] Ingress IP saved to environment variable
+- [ ] Cost tracking tags applied
+
+---
+
+## 🌐 Step 2: Configure Custom Domain in Azure DNS
+
+Now we'll set up Azure DNS to manage your custom domain.
+
+### 2.1 Create DNS Zone
+
+```bash
+export DOMAIN_NAME="cat-herding.net"
+
+# Create DNS zone
+az network dns zone create \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$DOMAIN_NAME"
+
+# Get name servers
+az network dns zone show \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$DOMAIN_NAME" \
+  --query nameServers \
+  --output table
+```
+
+**Expected Output:**
+```
+Result
+-------------------
+ns1-01.azure-dns.com.
+ns2-01.azure-dns.net.
+ns3-01.azure-dns.org.
+ns4-01.azure-dns.info.
+```
+
+### 2.2 Update Domain Registrar Name Servers
+
+Go to your domain registrar (GoDaddy, Namecheap, etc.) and update the name servers to the Azure DNS name servers from the previous step.
+
+**DNS Propagation Flow:**
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Registrar
+    participant AzureDNS
+    participant AKS
+    
+    User->>Registrar: Update name servers
+    Note over Registrar: Propagation begins<br/>(0-48 hours)
+    User->>AzureDNS: Query cat-herding.net
+    AzureDNS->>AzureDNS: Check A records
+    AzureDNS-->>User: Return IP address
+    User->>AKS: HTTPS request to IP
+    AKS-->>User: Response
+```
+
+### 2.3 Create DNS Records
+
+```bash
+# Get Istio ingress gateway IP
+export INGRESS_IP=$(kubectl get svc -n aks-istio-ingress \
+  aks-istio-ingressgateway-external \
+  -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+echo "Ingress Gateway IP: $INGRESS_IP"
+
+# Create A record for root domain
+az network dns record-set a add-record \
+  --resource-group "$RESOURCE_GROUP" \
+  --zone-name "$DOMAIN_NAME" \
+  --record-set-name "@" \
+  --ipv4-address "$INGRESS_IP"
+
+# Create A record for www subdomain
+az network dns record-set a add-record \
+  --resource-group "$RESOURCE_GROUP" \
+  --zone-name "$DOMAIN_NAME" \
+  --record-set-name "www" \
+  --ipv4-address "$INGRESS_IP"
+
+# Verify DNS records
+az network dns record-set a list \
+  --resource-group "$RESOURCE_GROUP" \
+  --zone-name "$DOMAIN_NAME" \
+  --output table
+```
+
+### 2.4 Test DNS Resolution
+
+```bash
+# Test DNS resolution (may take a few minutes)
+nslookup cat-herding.net
+nslookup www.cat-herding.net
+
+# Test from multiple locations
+dig cat-herding.net
+```
+
+---
+
+## 🔐 Step 3: Install cert-manager for TLS Certificates
+
+cert-manager automates the provisioning and renewal of TLS certificates from Let's Encrypt.
+
+### 3.1 Install cert-manager with Helm
+
+```bash
+# Add cert-manager Helm repository
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+
+# Create namespace
+kubectl create namespace cert-manager
+
+# Install cert-manager
+helm install cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --version v1.13.0 \
+  --set installCRDs=true
+
+# Verify installation
+kubectl get pods -n cert-manager
+```
+
+**cert-manager Architecture:**
+
+```mermaid
+graph LR
+    subgraph "cert-manager Namespace"
+        CM[cert-manager<br/>controller]
+        Webhook[cert-manager<br/>webhook]
+        CAInjector[cert-manager<br/>cainjector]
+    end
+    
+    subgraph "Your Namespace"
+        Cert[Certificate<br/>Resource]
+        Secret[TLS Secret]
+    end
+    
+    subgraph "External"
+        LE[Let's Encrypt<br/>ACME Server]
+    end
+    
+    Cert -->|Watches| CM
+    CM -->|Creates Challenge| LE
+    LE -->|Validates| CM
+    CM -->|Provisions| Secret
+    Webhook -->|Validates| Cert
+```
+
+### 3.2 Create ClusterIssuer for Let's Encrypt
+
+```bash
+# Create production ClusterIssuer
+cat <<EOF | kubectl apply -f -
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: admin@cat-herding.net  # Change to your email
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - http01:
+        ingress:
+          class: istio
+EOF
+
+# Verify ClusterIssuer
+kubectl get clusterissuer letsencrypt-prod
+kubectl describe clusterissuer letsencrypt-prod
+```
+
+### 3.3 Create Certificate Resource
+
+```bash
+cat <<EOF | kubectl apply -f -
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cat-herding-tls-cert
+  namespace: default
+spec:
+  secretName: cat-herding-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - cat-herding.net
+    - www.cat-herding.net
+EOF
+
+# Check certificate status
+kubectl get certificate -n default
+kubectl describe certificate cat-herding-tls-cert -n default
+
+# Check if secret was created
+kubectl get secret cat-herding-tls -n default
+```
+
+**Certificate Lifecycle:**
+
+```mermaid
+stateDiagram-v2
+    [*] --> Pending: Create Certificate
+    Pending --> Validating: Order Created
+    Validating --> Issuing: Challenge Passed
+    Issuing --> Ready: Certificate Issued
+    Ready --> Renewing: 30 days before expiry
+    Renewing --> Ready: Certificate Renewed
+    Ready --> [*]: Certificate Deleted
+    
+    note right of Validating
+        HTTP-01 Challenge
+        .well-known/acme-challenge
+    end note
+    
+    note right of Ready
+        Secret Created
+        Valid for 90 days
+    end note
+```
+
+---
+
+## 🎯 Step 4: Deploy Your First Application
+
+Let's deploy a sample application with Istio routing and TLS.
+
+### 4.1 Create Application Directory Structure
+
+```bash
+mkdir -p k8s/apps/portfolio/base
+cd k8s/apps/portfolio/base
+```
+
+### 4.2 Create Deployment Manifest
+
+```yaml
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portfolio
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: portfolio
+  template:
+    metadata:
+      labels:
+        app: portfolio
+        version: v1
+      annotations:
+        sidecar.istio.io/inject: 'false'
+    spec:
+      containers:
+        - name: portfolio
+          image: gabby.azurecr.io/portfolio:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: PORT
+              value: "3000"
+            - name: NODE_ENV
+              value: "production"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+```
+
+### 4.3 Create Service Manifest
+
+```yaml
+# service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: portfolio
+spec:
+  selector:
+    app: portfolio
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
+  type: ClusterIP
+```
+
+### 4.4 Create Istio Gateway
+
+```yaml
+# istio-gateway.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: portfolio-gateway
+  namespace: default
+spec:
+  selector:
+    istio: aks-istio-ingressgateway-external
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "cat-herding.net"
+        - "www.cat-herding.net"
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      hosts:
+        - "cat-herding.net"
+        - "www.cat-herding.net"
+      tls:
+        mode: SIMPLE
+        credentialName: cat-herding-tls
+```
+
+### 4.5 Create Istio VirtualService
+
+```yaml
+# istio-virtualservice.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: portfolio-virtualservice
+spec:
+  hosts:
+    - "cat-herding.net"
+    - "www.cat-herding.net"
+  gateways:
+    - portfolio-gateway
+  http:
+    # Health check endpoints
+    - match:
+        - uri:
+            exact: /api/health
+        - uri:
+            exact: /health
+      route:
+        - destination:
+            host: portfolio
+            port:
+              number: 80
+    # All other traffic
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: portfolio
+            port:
+              number: 80
+```
+
+### 4.6 Create Kustomization File
+
+```yaml
+# kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - service.yaml
+  - istio-gateway.yaml
+  - istio-virtualservice.yaml
+
+namespace: default
+```
+
+### 4.7 Deploy Application
+
+```bash
+# Validate manifests
+kubectl kustomize k8s/apps/portfolio/base
+
+# Apply manifests
+kubectl apply -k k8s/apps/portfolio/base
+
+# Watch deployment
+kubectl rollout status deployment/portfolio -n default
+
+# Check resources
+kubectl get pods -l app=portfolio -n default
+kubectl get svc portfolio -n default
+kubectl get gateway portfolio-gateway -n default
+kubectl get virtualservice portfolio-virtualservice -n default
+```
+
+**Request Flow:**
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant DNS
+    participant Gateway as Istio Gateway
+    participant VS as VirtualService
+    participant Svc as Service
+    participant Pod
+    
+    Client->>DNS: Resolve cat-herding.net
+    DNS-->>Client: Return Ingress IP
+    Client->>Gateway: HTTPS request
+    Note over Gateway: Terminate TLS<br/>using cat-herding-tls secret
+    Gateway->>VS: Route by hostname
+    VS->>VS: Match rules<br/>(path, headers)
+    VS->>Svc: Forward to portfolio service
+    Svc->>Pod: Load balance to pod
+    Pod-->>Svc: Response
+    Svc-->>VS: Response
+    VS-->>Gateway: Response
+    Gateway-->>Client: HTTPS response
+```
+
+---
+
+## 🧪 Step 5: Test and Verify
+
+### 5.1 Test HTTP/HTTPS Connectivity
+
+```bash
+# Test HTTP (should work)
+curl -v http://cat-herding.net
+
+# Test HTTPS (should work with valid certificate)
+curl -v https://cat-herding.net
+
+# Test specific endpoint
+curl https://cat-herding.net/api/health
+
+# Check certificate details
+echo | openssl s_client -servername cat-herding.net -connect cat-herding.net:443 2>/dev/null | openssl x509 -noout -dates
+```
+
+### 5.2 Verify Certificate
+
+```bash
+# Check certificate secret
+kubectl get secret cat-herding-tls -n default
+
+# Decode and inspect certificate
+kubectl get secret cat-herding-tls -n default -o jsonpath='{.data.tls\.crt}' | base64 -d | openssl x509 -text -noout
+
+# Check expiration
+kubectl get secret cat-herding-tls -n default -o jsonpath='{.data.tls\.crt}' | base64 -d | openssl x509 -noout -enddate
+```
+
+### 5.3 Test from Inside Cluster
+
+```bash
+# Create test pod
+kubectl run curl-test --image=curlimages/curl:latest --rm -it --restart=Never -- sh
+
+# From inside the pod
+curl -v http://portfolio.default.svc.cluster.local
+exit
+```
+
+---
+
+## 🔄 Step 6: Deploy Additional Applications with Subdomains
+
+Now let's deploy a second application on a subdomain (e.g., `api.cat-herding.net`).
+
+### 6.1 Create DNS Record for Subdomain
+
+```bash
+# Create A record for api subdomain
+az network dns record-set a add-record \
+  --resource-group "$RESOURCE_GROUP" \
+  --zone-name "$DOMAIN_NAME" \
+  --record-set-name "api" \
+  --ipv4-address "$INGRESS_IP"
+
+# Verify
+nslookup api.cat-herding.net
+```
+
+### 6.2 Create Certificate for Subdomain
+
+```bash
+cat <<EOF | kubectl apply -f -
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: api-tls-cert
+  namespace: default
+spec:
+  secretName: api-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - api.cat-herding.net
+EOF
+
+# Check certificate status
+kubectl get certificate api-tls-cert -n default
+```
+
+### 6.3 Create API Application Manifests
+
+```bash
+mkdir -p k8s/apps/api-service/base
+cd k8s/apps/api-service/base
+```
+
+```yaml
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api-service
+  template:
+    metadata:
+      labels:
+        app: api-service
+        version: v1
+    spec:
+      containers:
+        - name: api-service
+          image: your-registry.azurecr.io/api-service:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: PORT
+              value: "8080"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+```
+
+```yaml
+# service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+spec:
+  selector:
+    app: api-service
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+```
+
+```yaml
+# istio-gateway.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: api-gateway
+  namespace: default
+spec:
+  selector:
+    istio: aks-istio-ingressgateway-external
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "api.cat-herding.net"
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      hosts:
+        - "api.cat-herding.net"
+      tls:
+        mode: SIMPLE
+        credentialName: api-tls
+```
+
+```yaml
+# istio-virtualservice.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: api-virtualservice
+spec:
+  hosts:
+    - "api.cat-herding.net"
+  gateways:
+    - api-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: api-service
+            port:
+              number: 80
+```
+
+```yaml
+# kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - service.yaml
+  - istio-gateway.yaml
+  - istio-virtualservice.yaml
+
+namespace: default
+```
+
+### 6.4 Deploy API Service
+
+```bash
+# Apply manifests
+kubectl apply -k k8s/apps/api-service/base
+
+# Verify deployment
+kubectl get pods -l app=api-service
+kubectl get svc api-service
+kubectl get gateway api-gateway
+kubectl get virtualservice api-virtualservice
+
+# Test
+curl https://api.cat-herding.net/health
+```
+
+**Multi-Application Routing:**
+
+```mermaid
+graph TB
+    subgraph "External Requests"
+        User1[User → cat-herding.net]
+        User2[User → api.cat-herding.net]
+    end
+    
+    subgraph "Istio Gateway Layer"
+        Gateway[aks-istio-ingressgateway-external<br/>LoadBalancer IP: X.X.X.X]
+    end
+    
+    subgraph "Routing Layer"
+        GW1[Gateway: portfolio-gateway<br/>Hosts: cat-herding.net, www.cat-herding.net]
+        GW2[Gateway: api-gateway<br/>Hosts: api.cat-herding.net]
+        VS1[VirtualService: portfolio<br/>Route: → portfolio service]
+        VS2[VirtualService: api<br/>Route: → api-service]
+    end
+    
+    subgraph "Services Layer"
+        Svc1[Service: portfolio<br/>ClusterIP]
+        Svc2[Service: api-service<br/>ClusterIP]
+    end
+    
+    subgraph "Application Pods"
+        Pod1[portfolio pods<br/>:3000]
+        Pod2[api-service pods<br/>:8080]
+    end
+    
+    User1 -->|DNS Resolution| Gateway
+    User2 -->|DNS Resolution| Gateway
+    Gateway -->|Match Host| GW1
+    Gateway -->|Match Host| GW2
+    GW1 --> VS1
+    GW2 --> VS2
+    VS1 --> Svc1
+    VS2 --> Svc2
+    Svc1 --> Pod1
+    Svc2 --> Pod2
+```
+
+---
+
+## 🔒 Security Architecture and Zero-Trust Implementation
+
+### Defense-in-Depth Strategy
+
+Production Kubernetes security requires multiple layers. A single breach should not compromise the entire system.
+
+```mermaid
+graph TB
+    subgraph "Layer 7: Data Security"
+        Encryption[Data Encryption<br/>at Rest & Transit]
+        Secrets[Azure Key Vault<br/>Secret Management]
+    end
+    
+    subgraph "Layer 6: Application Security"
+        AppSec[OWASP Top 10<br/>Input Validation<br/>Auth/Authz]
+        RBAC[K8s RBAC<br/>Least Privilege]
+    end
+    
+    subgraph "Layer 5: Network Security"
+        mTLS[Istio mTLS<br/>Service-to-Service]
+        NetPol[Network Policies<br/>Pod Isolation]
+        Firewall[Azure Firewall<br/>Egress Control]
+    end
+    
+    subgraph "Layer 4: Compute Security"
+        PodSec[Pod Security<br/>Standards]
+        SecContext[Security Contexts<br/>Non-root, Read-only FS]
+        ImageScan[Image Scanning<br/>Trivy/Defender]
+    end
+    
+    subgraph "Layer 3: Identity & Access"
+        AAD[Azure AD<br/>Integration]
+        WorkloadID[Workload Identity<br/>Pod-to-Azure]
+        CertAuth[Certificate-based<br/>Authentication]
+    end
+    
+    subgraph "Layer 2: Infrastructure Security"
+        NodeSec[Node Security<br/>Patches, CIS Benchmarks]
+        Isolation[Node Pool<br/>Isolation]
+    end
+    
+    subgraph "Layer 1: Perimeter Security"
+        DDoS[DDoS Protection<br/>Azure Standard]
+        WAF[Web Application<br/>Firewall]
+        TLS[TLS 1.3<br/>Strong Ciphers]
+    end
+    
+    External[External Threat] -->|Attack| DDoS
+    DDoS -->|Filtered| WAF
+    WAF -->|Validated| TLS
+    TLS -->|Decrypted| NetPol
+    NetPol -->|Allowed| mTLS
+    mTLS -->|Authenticated| AppSec
+    AppSec -->|Authorized| RBAC
+    RBAC -->|Accesses| Secrets
+    
+    classDef critical fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px
+    classDef important fill:#ffa94d,stroke:#d9480f,stroke-width:2px
+    classDef baseline fill:#69db7c,stroke:#2f9e44,stroke-width:2px
+    
+    class mTLS,Secrets,RBAC critical
+    class NetPol,AppSec,PodSec important
+    class DDoS,WAF,NodeSec baseline
+```
+
+### Implementing Mutual TLS (mTLS) with Istio
+
+Istio provides automatic mTLS between services without code changes—one of its primary value propositions.
+
+**mTLS Benefits:**
+- Zero-trust networking: No service trusts network by default
+- Encryption of all inter-service communication
+- Certificate-based authentication (vs. API keys)
+- Automatic certificate rotation (default: 24-hour validity)
+- Defense against man-in-the-middle attacks
+
+**mTLS Configuration:**
+
+```yaml
+# Enable strict mTLS for entire namespace
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: default
+spec:
+  mtls:
+    mode: STRICT  # PERMISSIVE allows both mTLS and plaintext (migration mode)
+
+---
+# Alternatively, configure cluster-wide
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: istio-system
+spec:
+  mtls:
+    mode: STRICT
+```
+
+```bash
+# Apply mTLS policy
+kubectl apply -f - <<EOF
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: default
+spec:
+  mtls:
+    mode: STRICT
+EOF
+
+# Verify mTLS status
+istioctl x describe pod <pod-name> -n default
+
+# Check certificate details
+istioctl proxy-config secret <pod-name> -n default -o json | jq -r '.dynamicActiveSecrets[0].secret.tlsCertificate.certificateChain.inlineBytes' | base64 -d | openssl x509 -text -noout
+```
+
+**mTLS Performance Impact:**
+- Latency: ~1-3ms additional per hop
+- CPU: ~5-10% overhead for encryption/decryption
+- Memory: ~20-30MB per sidecar for certificates
+- **Trade-off**: Security vs. microsecond-level latency requirements
+
+### Network Policies for Pod Isolation
+
+```yaml
+# Deny all traffic by default (baseline security)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: default
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+
+---
+# Allow specific service communication
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: portfolio-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: portfolio
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: aks-istio-ingress
+    ports:
+    - protocol: TCP
+      port: 3000
+  egress:
+  # Allow DNS
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow API service communication
+  - to:
+    - podSelector:
+        matchLabels:
+          app: api-service
+    ports:
+    - protocol: TCP
+      port: 8080
+  # Allow database connection (Azure PostgreSQL)
+  - to:
+    - podSelector: {}
+    ports:
+    - protocol: TCP
+      port: 5432
+  # Allow external HTTPS (for external APIs)
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 443
+```
+
+### Pod Security Standards (PSS)
+
+```yaml
+# Enforce restricted pod security at namespace level
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+
+---
+# Example: Compliant deployment with security contexts
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secure-portfolio
+  namespace: production
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: portfolio
+  template:
+    metadata:
+      labels:
+        app: portfolio
+    spec:
+      # Pod-level security context
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      
+      # Service account with minimal permissions
+      serviceAccountName: portfolio-sa
+      automountServiceAccountToken: false
+      
+      containers:
+      - name: portfolio
+        image: gabby.azurecr.io/portfolio:v1.2.3  # Use specific tags, not :latest
+        
+        # Container-level security context
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true  # Immutable container filesystem
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+            - ALL  # Drop all Linux capabilities
+        
+        # Resource limits prevent resource exhaustion attacks
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+        
+        # Writable volumes for tmp and cache
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: cache
+          mountPath: /app/.next/cache
+        
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+        
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+      
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: cache
+        emptyDir: {}
+```
+
+### Azure Key Vault Integration for Secrets
+
+Never store secrets in Git, ConfigMaps, or even Kubernetes Secrets (base64 is not encryption).
+
+```bash
+# Install Azure Key Vault provider for Secrets Store CSI
+helm repo add csi-secrets-store-provider-azure https://azure.github.io/secrets-store-csi-driver-provider-azure/charts
+helm install csi-secrets-store-provider-azure/csi-secrets-store-provider-azure --generate-name --namespace kube-system
+
+# Create Key Vault
+export KEY_VAULT_NAME="aks-prod-kv-$(uuidgen | cut -c1-8)"
+az keyvault create \
+  --name "$KEY_VAULT_NAME" \
+  --resource-group "$RESOURCE_GROUP" \
+  --location "$LOCATION" \
+  --enable-rbac-authorization
+
+# Store secrets
+az keyvault secret set \
+  --vault-name "$KEY_VAULT_NAME" \
+  --name "database-connection-string" \
+  --value "postgresql://user:password@host:5432/db"
+
+# Configure workload identity for pod to access Key Vault
+# (Detailed setup omitted for brevity - see Azure docs)
+```
+
+### Security Monitoring and Audit
+
+```bash
+# Enable Azure Defender for Kubernetes
+az security pricing create \
+  --name KubernetesService \
+  --tier Standard
+
+# View security recommendations
+az security assessment list \
+  --resource-group "$RESOURCE_GROUP"
+
+# Enable audit logging
+az aks update \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$CLUSTER_NAME" \
+  --enable-azure-rbac
+
+# Query audit logs (requires Azure Monitor integration)
+kubectl get events --all-namespaces --sort-by='.lastTimestamp' | grep -i "security\|unauthorized\|forbidden"
+```
+
+### Incident Response Playbook
+
+**Common Security Incidents:**
+
+1. **Compromised Pod**
+   ```bash
+   # Immediately isolate pod with network policy
+   kubectl apply -f - <<EOF
+   apiVersion: networking.k8s.io/v1
+   kind: NetworkPolicy
+   metadata:
+     name: isolate-compromised-pod
+     namespace: default
+   spec:
+     podSelector:
+       matchLabels:
+         app: compromised-app
+     policyTypes:
+     - Ingress
+     - Egress
+   EOF
+   
+   # Capture pod logs before deletion
+   kubectl logs compromised-pod -n default --all-containers > incident-logs.txt
+   
+   # Exec into pod for forensics (if safe)
+   kubectl exec -it compromised-pod -n default -- /bin/sh
+   
+   # Delete and redeploy from known-good image
+   kubectl delete pod compromised-pod -n default
+   kubectl rollout restart deployment/app-name -n default
+   
+   # Review image for vulnerabilities
+   trivy image gabby.azurecr.io/app:tag
+   ```
+
+2. **Certificate Expiration (Let's Encrypt)**
+   ```bash
+   # Check certificate expiration
+   kubectl get certificate -A
+   kubectl describe certificate cat-herding-tls-cert -n default
+   
+   # Force renewal if <30 days
+   kubectl delete secret cat-herding-tls -n default
+   kubectl delete certificate cat-herding-tls-cert -n default
+   kubectl apply -f certificate.yaml
+   
+   # Monitor renewal
+   kubectl get certificaterequest -n default -w
+   ```
+
+3. **Istio Control Plane Failure**
+   ```bash
+   # Data plane continues functioning, but no config changes
+   # Check istiod status
+   kubectl get pods -n aks-istio-system
+   kubectl logs -n aks-istio-system -l app=istiod
+   
+   # Contact Azure support (managed Istio)
+   # Meanwhile, avoid deploying new services or changing routing
+   ```
+
+**Security Checklist for Production:**
+
+- [ ] mTLS enabled in STRICT mode
+- [ ] Network policies deny all by default
+- [ ] Pod Security Standards enforced (restricted)
+- [ ] All containers run as non-root
+- [ ] Read-only root filesystem where possible
+- [ ] Resource limits on all pods
+- [ ] Image scanning in CI/CD pipeline
+- [ ] Secrets stored in Azure Key Vault
+- [ ] RBAC roles follow least privilege
+- [ ] Audit logging enabled
+- [ ] Azure Defender for Kubernetes enabled
+- [ ] Regular security assessments scheduled
+- [ ] Incident response playbook documented
+
+## 🔍 Troubleshooting: Real-World Incident Scenarios
+
+### Debugging Methodology for Service Mesh
+
+Service mesh adds complexity—when things break, methodical debugging is essential.
+
+```mermaid
+graph TD
+    Start[Service Unavailable] --> Layer{Which Layer?}
+    
+    Layer -->|External| DNS[DNS Resolution]
+    DNS -->|Failed| DNSFix[Check DNS records<br/>Check propagation<br/>Verify name servers]
+    DNS -->|OK| LB[Load Balancer]
+    
+    Layer -->|Ingress| LB
+    LB -->|Failed| LBFix[Check LB health<br/>Verify public IP<br/>Check NSG rules]
+    LB -->|OK| Gateway[Istio Gateway]
+    
+    Layer -->|Gateway| Gateway
+    Gateway -->|Failed| GWFix[Check Gateway config<br/>Verify TLS certs<br/>Check listener ports]
+    Gateway -->|OK| VS[VirtualService]
+    
+    Layer -->|Routing| VS
+    VS -->|Failed| VSFix[Check host matching<br/>Verify route rules<br/>Check weights]
+    VS -->|OK| Svc[Kubernetes Service]
+    
+    Layer -->|Service| Svc
+    Svc -->|Failed| SvcFix[Check endpoints<br/>Verify selector<br/>Check port mapping]
+    Svc -->|OK| Pod[Application Pod]
+    
+    Layer -->|Application| Pod
+    Pod -->|Failed| PodFix[Check pod logs<br/>Verify health probes<br/>Check resource limits]
+    
+    classDef fix fill:#ff6b6b,stroke:#c92a2a,stroke-width:2px
+    class DNSFix,LBFix,GWFix,VSFix,SvcFix,PodFix fix
+```
+
+### Issue 1: 503 Service Unavailable (Most Common)
+
+**Symptoms:**
+- `curl https://cat-herding.net` returns 503
+- Browser shows "Service Temporarily Unavailable"
+- Istio Gateway logs show "no healthy upstream"
+
+**Root Causes and Solutions:**
+
+```bash
+# Step 1: Verify pods are running
+kubectl get pods -l app=portfolio -n default
+
+# If pods are not Running:
+kubectl describe pod <pod-name> -n default
+kubectl logs <pod-name> -n default --previous  # Check previous container logs
+
+# Common causes:
+# - ImagePullBackOff: Wrong image name or missing credentials
+# - CrashLoopBackOff: Application error, check logs
+# - Pending: Insufficient resources, check node capacity
+
+# Step 2: Check if service has endpoints
+kubectl get endpoints portfolio -n default
+
+# If no endpoints:
+# - Selector mismatch: kubectl get svc portfolio -n default -o yaml | grep selector
+# - Pod labels: kubectl get pods -l app=portfolio --show-labels
+
+# Step 3: Check health probes
+kubectl describe pod <pod-name> -n default | grep -A5 "Liveness\|Readiness"
+
+# If probes failing:
+# - Wrong path: Check /api/health is correct
+# - Slow startup: Increase initialDelaySeconds
+# - Application not ready: Fix app code
+
+# Step 4: Verify VirtualService routing
+kubectl get virtualservice portfolio-virtualservice -n default -o yaml
+
+# Check host matching
+kubectl describe virtualservice portfolio-virtualservice -n default
+
+# Step 5: Check Istio Gateway logs
+kubectl logs -n aks-istio-ingress -l istio=aks-istio-ingressgateway-external --tail=100
+
+# Look for:
+# - "no healthy upstream"
+# - "upstream connect error"
+# - certificate errors
+```
+
+**Real Example with Solution:**
+
+```yaml
+# Problem: VirtualService host doesn't match Gateway
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: portfolio-gateway
+spec:
+  servers:
+  - hosts:
+    - "cat-herding.net"  # ❌ Missing www subdomain
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: portfolio-vs
+spec:
+  hosts:
+  - "www.cat-herding.net"  # ❌ Requests to www.cat-herding.net fail!
+  gateways:
+  - portfolio-gateway
+
+# Solution: Match hosts exactly
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: portfolio-gateway
+spec:
+  servers:
+  - hosts:
+    - "cat-herding.net"
+    - "www.cat-herding.net"  # ✅ Include all expected hosts
+```
+
+### Issue 2: Certificate Not Ready / TLS Errors
+
+**Symptoms:**
+- Certificate stuck in "Pending" or "False" state
+- Browser shows "Your connection is not private"
+- `kubectl describe certificate` shows challenge failures
+
+**Debugging Steps:**
+
+```bash
+# Step 1: Check certificate status
+kubectl get certificate -A
+kubectl describe certificate cat-herding-tls-cert -n default
+
+# Look for status conditions:
+# - Ready: False
+# - Reason: Pending / Failed
+# - Message: (describes what's wrong)
+
+# Step 2: Check certificate request
+kubectl get certificaterequest -n default
+kubectl describe certificaterequest <request-name> -n default
+
+# Step 3: Check ACME challenge
+kubectl get challenges -A
+kubectl describe challenge <challenge-name> -n default
+
+# Common HTTP-01 challenge failures:
+# - DNS not propagating (wait 5-60 minutes)
+# - Firewall blocking /.well-known/acme-challenge/
+# - VirtualService not routing challenge requests
+
+# Step 4: Check cert-manager logs
+kubectl logs -n cert-manager -l app=cert-manager --tail=100
+
+# Look for:
+# - "failed to determine the list of Challenge resources"
+# - "Error accepting challenge"
+# - "certificate request has failed"
+
+# Step 5: Verify Let's Encrypt rate limits
+# Let's Encrypt limits:
+# - 50 certificates per registered domain per week
+# - 5 duplicate certificates per week
+# Check: https://crt.sh/?q=cat-herding.net
+
+# Solution 1: Delete and recreate certificate (if misconfigured)
+kubectl delete certificate cat-herding-tls-cert -n default
+kubectl delete secret cat-herding-tls -n default
+kubectl apply -f certificate.yaml
+
+# Solution 2: Use staging issuer for testing (avoids rate limits)
+cat <<EOF | kubectl apply -f -
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: admin@cat-herding.net
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    solvers:
+    - http01:
+        ingress:
+          class: istio
+EOF
+
+# Update certificate to use staging issuer
+kubectl edit certificate cat-herding-tls-cert -n default
+# Change issuerRef.name to letsencrypt-staging
+
+# Solution 3: Manual certificate if all else fails
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout tls.key -out tls.crt \
+  -subj "/CN=cat-herding.net"
+
+kubectl create secret tls cat-herding-tls \
+  --cert=tls.crt --key=tls.key -n default
+```
+
+### Issue 3: High Latency / Slow Responses
+
+**Symptoms:**
+- Response times > 500ms
+- Intermittent timeouts
+- User complaints about performance
+
+**Investigation:**
+
+```bash
+# Step 1: Isolate the layer causing latency
+# Test internal service (bypasses Istio Gateway)
+kubectl run curl-test --image=curlimages/curl:latest --rm -it --restart=Never -- \
+  time curl -w "\ntime_total: %{time_total}s\n" http://portfolio.default.svc.cluster.local
+
+# If fast internally but slow externally:
+# - Problem is Gateway, DNS, or network path
+# If slow internally:
+# - Problem is application or sidecar
+
+# Step 2: Check resource utilization
+kubectl top pods -n default
+kubectl top nodes
+
+# If pods near limits:
+# - Increase resource requests/limits
+# - Scale horizontally (more replicas)
+
+# Step 3: Check Envoy sidecar overhead
+kubectl exec -it <pod-name> -c istio-proxy -n default -- pilot-agent request GET stats | grep -E "upstream_rq_time|response_time"
+
+# Typical sidecar overhead: 1-5ms
+# If >10ms: Investigate Istio configuration
+
+# Step 4: Enable distributed tracing
+# Jaeger should show request flow and timing breakdown
+kubectl port-forward -n istio-system svc/jaeger-query 16686:16686
+
+# Open http://localhost:16686 and search for slow traces
+
+# Step 5: Check for CPU throttling
+kubectl describe pod <pod-name> -n default | grep -A5 "Requests\|Limits"
+
+# If throttling:
+# - Increase CPU limits
+# - Review application efficiency
+
+# Solution 1: Horizontal Pod Autoscaler
+kubectl autoscale deployment portfolio --cpu-percent=70 --min=2 --max=10
+
+# Solution 2: Increase resources
+kubectl set resources deployment portfolio -c portfolio \
+  --requests=cpu=500m,memory=1Gi \
+  --limits=cpu=2000m,memory=2Gi
+
+# Solution 3: Optimize application code
+# - Add caching layer (Redis)
+# - Optimize database queries
+# - Use CDN for static assets
+```
+
+### Issue 4: DNS Not Resolving
+
+**Symptoms:**
+- `nslookup cat-herding.net` times out or returns wrong IP
+- Works from some locations but not others
+- Intermittent failures
+
+**Resolution:**
+
+```bash
+# Step 1: Verify DNS records in Azure
+az network dns record-set a list \
+  --resource-group "$RESOURCE_GROUP" \
+  --zone-name "cat-herding.net" \
+  --output table
+
+# Expected: A record pointing to $ISTIO_INGRESS_IP
+
+# Step 2: Check name server delegation
+nslookup -type=NS cat-herding.net
+
+# Should return Azure DNS name servers:
+# ns1-01.azure-dns.com.
+# ns2-01.azure-dns.net.
+# ns3-01.azure-dns.org.
+# ns4-01.azure-dns.info.
+
+# If not: Update name servers at domain registrar
+
+# Step 3: Test DNS from multiple servers
+dig @8.8.8.8 cat-herding.net  # Google DNS
+dig @1.1.1.1 cat-herding.net  # Cloudflare DNS
+dig @ns1-01.azure-dns.com cat-herding.net  # Azure DNS directly
+
+# If inconsistent: DNS propagation in progress (wait 5-60 min)
+
+# Step 4: Check TTL values
+dig cat-herding.net | grep "^cat-herding.net"
+
+# TTL should be reasonable (300-3600 seconds)
+# Lower TTL = faster updates, more queries
+# Higher TTL = slower updates, fewer queries, better performance
+
+# Step 5: Flush local DNS cache
+# macOS:
+sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
+
+# Linux:
+sudo systemd-resolve --flush-caches
+
+# Windows:
+ipconfig /flushdns
+
+# Solution: If propagation is taking too long
+# Temporarily add entry to /etc/hosts for testing:
+echo "$ISTIO_INGRESS_IP cat-herding.net www.cat-herding.net" | sudo tee -a /etc/hosts
+```
+
+### Issue 5: Istio Control Plane Failure
+
+**Symptoms:**
+- Cannot deploy new services
+- VirtualService changes not applied
+- Gateway configuration stuck
+
+**Impact:**
+- **Data plane continues working**: Existing traffic unaffected
+- **Control plane down**: Cannot change routing, deploy new services, or update config
+
+**Response:**
+
+```bash
+# Step 1: Verify istiod health
+kubectl get pods -n aks-istio-system
+kubectl describe pod <istiod-pod> -n aks-istio-system
+kubectl logs -n aks-istio-system -l app=istiod --tail=100
+
+# Step 2: Check Istio webhook configuration
+kubectl get mutatingwebhookconfigurations | grep istio
+kubectl get validatingwebhookconfigurations | grep istio
+
+# If webhooks failing:
+# - Pods may not get sidecar injection
+# - Configuration validation may fail
+
+# Step 3: For Azure-managed Istio, contact Azure support
+# Service Request Type: AKS > Istio Add-on Issue
+# Include:
+# - Cluster name and resource group
+# - Timestamp of issue start
+# - Output of kubectl get pods -n aks-istio-system
+
+# Step 4: Temporary workarounds
+# - Avoid deploying new services until resolved
+# - Existing services continue functioning
+# - Do not delete/recreate Gateway or VirtualService resources
+
+# Step 5: If self-hosted Istio, restart control plane
+kubectl rollout restart deployment/istiod -n istio-system
+```
+
+### Emergency Commands Cheat Sheet
+
+```bash
+# Quick health check
+kubectl get pods -A | grep -v Running
+kubectl get nodes | grep -v Ready
+kubectl top nodes
+kubectl get events --all-namespaces --sort-by='.lastTimestamp' | tail -20
+
+# Restart everything (last resort)
+kubectl rollout restart deployment/<app-name> -n default
+kubectl rollout restart deployment/istiod -n aks-istio-system
+
+# Force certificate renewal
+kubectl delete secret <cert-secret-name> -n default
+kubectl delete certificate <cert-name> -n default
+kubectl apply -f certificate.yaml
+
+# Check all Istio configuration
+istioctl analyze -A
+
+# Dump Istio proxy configuration
+kubectl exec -it <pod-name> -c istio-proxy -n default -- curl localhost:15000/config_dump > config.json
+
+# Port-forward for local debugging
+kubectl port-forward svc/portfolio 8080:80 -n default
+curl http://localhost:8080
+
+# Emergency: Scale down problematic service
+kubectl scale deployment <app-name> --replicas=0 -n default
+
+# View all resources in namespace
+kubectl get all -n default
+
+# Check certificate from external
+echo | openssl s_client -servername cat-herding.net -connect cat-herding.net:443 2>/dev/null | openssl x509 -noout -dates
+```
+
+### Performance Degradation Patterns
+
+**Pattern 1: Gradual Performance Degradation**
+- **Cause**: Memory leak or file descriptor exhaustion
+- **Solution**: Enable HPA, set appropriate resource limits, restart pods regularly
+
+**Pattern 2: Spike During Deployments**
+- **Cause**: Rolling update with insufficient replicas
+- **Solution**: Increase minReplicas, use pod anti-affinity, configure PodDisruptionBudget
+
+**Pattern 3: Periodic Slowdowns**
+- **Cause**: Batch jobs, backups, or cron consuming resources
+- **Solution**: Use separate node pool for batch workloads, set resource limits
+
+**Pattern 4: Certificate Expiration Every 90 Days**
+- **Cause**: Let's Encrypt certificates not auto-renewing
+- **Solution**: Verify cert-manager running, check ClusterIssuer, monitor certificate expiration
+
+**Monitoring Checklist:**
+
+```bash
+# Set up alerts for:
+# - Pod crash loop (>3 restarts in 5 minutes)
+# - High error rate (>1% 5xx responses)
+# - Certificate expiration (<30 days)
+# - Node CPU >80% sustained
+# - Node memory >85% sustained
+# - Disk space <10% free
+
+# Example: Prometheus alert rules
+# (Configure in Prometheus or Azure Monitor)
+groups:
+- name: kubernetes_alerts
+  rules:
+  - alert: PodCrashLooping
+    expr: rate(kube_pod_container_status_restarts_total[15m]) > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Pod {{ $labels.pod }} is crash looping"
+```
+
+```bash
+# Check certificate status
+kubectl describe certificate cat-herding-tls-cert -n default
+
+# Check cert-manager logs
+kubectl logs -n cert-manager -l app=cert-manager
+
+# Check challenges
+kubectl get challenges -A
+
+# Manually trigger certificate renewal
+kubectl delete certificate cat-herding-tls-cert -n default
+kubectl apply -f certificate.yaml
+```
+
+### Issue 2: DNS Not Resolving
+
+```bash
+# Check DNS records in Azure
+az network dns record-set a list \
+  --resource-group "$RESOURCE_GROUP" \
+  --zone-name "$DOMAIN_NAME"
+
+# Test DNS from different servers
+dig @8.8.8.8 cat-herding.net
+dig @1.1.1.1 cat-herding.net
+
+# Check propagation status
+nslookup cat-herding.net
+```
+
+### Issue 3: 503 Service Unavailable
+
+```bash
+# Check if pods are running
+kubectl get pods -l app=portfolio
+
+# Check pod logs
+kubectl logs -l app=portfolio --tail=50
+
+# Check service endpoints
+kubectl get endpoints portfolio
+
+# Check Istio configuration
+istioctl analyze -n default
+
+# Check VirtualService routing
+kubectl describe virtualservice portfolio-virtualservice
+```
+
+### Issue 4: TLS Certificate Errors
+
+```bash
+# Verify secret exists and has correct data
+kubectl get secret cat-herding-tls -n default -o yaml
+
+# Check certificate expiration
+kubectl get secret cat-herding-tls -n default -o jsonpath='{.data.tls\.crt}' | \
+  base64 -d | openssl x509 -noout -enddate
+
+# Check if Gateway is using correct secret
+kubectl get gateway portfolio-gateway -o yaml | grep credentialName
+
+# Test certificate from external
+echo | openssl s_client -servername cat-herding.net -connect cat-herding.net:443 2>/dev/null | \
+  openssl x509 -noout -subject -issuer -dates
+```
+
+---
+
+## 📊 Monitoring and Observability
+
+### Enable Istio Telemetry
+
+```bash
+# Install Prometheus
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/prometheus.yaml
+
+# Install Grafana
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/grafana.yaml
+
+# Install Kiali (Istio dashboard)
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/kiali.yaml
+
+# Access Kiali dashboard
+kubectl port-forward -n istio-system svc/kiali 20001:20001
+# Open http://localhost:20001
+```
+
+### View Istio Traffic Flow
+
+```mermaid
+graph LR
+    subgraph "Monitoring Stack"
+        Prometheus[(Prometheus)]
+        Grafana[Grafana<br/>Dashboards]
+        Kiali[Kiali<br/>Service Graph]
+    end
+    
+    subgraph "Istio Telemetry"
+        Envoy[Envoy Sidecars]
+        Metrics[Metrics Export]
+    end
+    
+    subgraph "Applications"
+        Apps[Application Pods]
+    end
+    
+    Apps -->|Traffic| Envoy
+    Envoy -->|Telemetry| Metrics
+    Metrics -->|Scrape| Prometheus
+    Prometheus --> Grafana
+    Prometheus --> Kiali
+```
+
+---
+
+## 🎓 Best Practices
+
+### 1. Resource Organization
+
+```
+k8s/
+├── kustomization.yaml              # Root kustomization
+└── apps/
+    ├── portfolio/
+    │   └── base/
+    │       ├── kustomization.yaml
+    │       ├── deployment.yaml
+    │       ├── service.yaml
+    │       ├── istio-gateway.yaml
+    │       └── istio-virtualservice.yaml
+    └── api-service/
+        └── base/
+            ├── kustomization.yaml
+            ├── deployment.yaml
+            ├── service.yaml
+            ├── istio-gateway.yaml
+            └── istio-virtualservice.yaml
+```
+
+### 2. Security Considerations
+
+- **Use RBAC**: Implement proper role-based access control
+- **Network Policies**: Restrict pod-to-pod communication
+- **Image Scanning**: Scan container images for vulnerabilities
+- **Secrets Management**: Use Azure Key Vault for sensitive data
+- **TLS Everywhere**: Always use HTTPS, even for internal services
+
+### 3. High Availability
+
+```yaml
+# Example: HA deployment configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portfolio
+spec:
+  replicas: 3  # Multiple replicas
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0  # Zero-downtime deployments
+  template:
+    spec:
+      affinity:
+        podAntiAffinity:  # Spread across nodes
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - portfolio
+              topologyKey: kubernetes.io/hostname
+```
+
+### 4. Resource Limits
+
+Always define resource requests and limits:
+
+```yaml
+resources:
+  requests:
+    cpu: 250m      # Guaranteed CPU
+    memory: 512Mi  # Guaranteed memory
+  limits:
+    cpu: 1000m     # Maximum CPU
+    memory: 1Gi    # Maximum memory
+```
+
+---
+
+## 🚀 Deployment Automation
+
+### Create Deployment Script
+
+```bash
+#!/bin/bash
+# deploy-app.sh - Automated application deployment
+
+set -e
+
+APP_NAME=$1
+SUBDOMAIN=$2
+IMAGE=$3
+PORT=$4
+
+if [ -z "$APP_NAME" ] || [ -z "$SUBDOMAIN" ] || [ -z "$IMAGE" ] || [ -z "$PORT" ]; then
+  echo "Usage: ./deploy-app.sh <app-name> <subdomain> <image> <port>"
+  echo "Example: ./deploy-app.sh my-app api myregistry.azurecr.io/my-app:v1.0 8080"
+  exit 1
+fi
+
+RESOURCE_GROUP="aks-production-rg"
+DOMAIN_NAME="cat-herding.net"
+
+echo "🚀 Deploying $APP_NAME on $SUBDOMAIN.$DOMAIN_NAME"
+
+# 1. Get Ingress IP
+echo "📡 Getting Ingress Gateway IP..."
+INGRESS_IP=$(kubectl get svc -n aks-istio-ingress aks-istio-ingressgateway-external -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+echo "   IP: $INGRESS_IP"
+
+# 2. Create DNS Record
+echo "🌐 Creating DNS record..."
+az network dns record-set a add-record \
+  --resource-group "$RESOURCE_GROUP" \
+  --zone-name "$DOMAIN_NAME" \
+  --record-set-name "$SUBDOMAIN" \
+  --ipv4-address "$INGRESS_IP" 2>/dev/null || echo "   DNS record already exists"
+
+# 3. Create Certificate
+echo "🔐 Creating TLS certificate..."
+cat <<EOF | kubectl apply -f -
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ${SUBDOMAIN}-tls-cert
+  namespace: default
+spec:
+  secretName: ${SUBDOMAIN}-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - ${SUBDOMAIN}.${DOMAIN_NAME}
+EOF
+
+# 4. Wait for certificate
+echo "⏳ Waiting for certificate to be ready (this may take a few minutes)..."
+kubectl wait --for=condition=Ready certificate/${SUBDOMAIN}-tls-cert -n default --timeout=300s
+
+# 5. Deploy application
+echo "📦 Deploying application manifests..."
+mkdir -p k8s/apps/${APP_NAME}/base
+cd k8s/apps/${APP_NAME}/base
+
+# Generate manifests (templates omitted for brevity - see full examples above)
+# ... deployment.yaml, service.yaml, gateway.yaml, virtualservice.yaml ...
+
+kubectl apply -k .
+
+# 6. Wait for rollout
+echo "⏳ Waiting for deployment to be ready..."
+kubectl rollout status deployment/${APP_NAME} -n default
+
+# 7. Test
+echo "✅ Testing deployment..."
+sleep 10
+curl -f https://${SUBDOMAIN}.${DOMAIN_NAME}/health || echo "⚠️  Health check failed (may need time)"
+
+echo "🎉 Deployment complete! Visit https://${SUBDOMAIN}.${DOMAIN_NAME}"
+```
+
+---
+
+## 📝 Summary
+
+You now have a complete production-ready Azure AKS cluster with:
+
+✅ **Managed Kubernetes cluster** with auto-scaling  
+✅ **Istio service mesh** for advanced traffic management  
+✅ **Custom domain DNS** managed in Azure  
+✅ **Automated TLS certificates** via cert-manager and Let's Encrypt  
+✅ **HTTP/HTTPS routing** with subdomain support  
+✅ **Monitoring and observability** with Prometheus, Grafana, and Kiali  
+✅ **Reusable deployment templates** for new applications  
+
+### Complete System Architecture
+
+```mermaid
+graph TB
+    subgraph "External Layer"
+        Users[Users]
+        Registrar[Domain Registrar]
+    end
+    
+    subgraph "Azure DNS"
+        DNS[DNS Zone<br/>cat-herding.net]
+        Records[A Records<br/>@, www, api, ...]
+    end
+    
+    subgraph "AKS Cluster"
+        subgraph "Istio Layer"
+            Gateway[Istio Gateway<br/>LoadBalancer]
+            GW1[Gateway: portfolio]
+            GW2[Gateway: api]
+            VS1[VirtualService: portfolio]
+            VS2[VirtualService: api]
+        end
+        
+        subgraph "Application Layer"
+            Svc1[Service: portfolio]
+            Svc2[Service: api-service]
+            Pods1[Portfolio Pods]
+            Pods2[API Pods]
+        end
+        
+        subgraph "Certificate Management"
+            CM[cert-manager]
+            LE[Let's Encrypt]
+            Secrets[TLS Secrets]
+        end
+        
+        subgraph "Monitoring"
+            Prom[Prometheus]
+            Graf[Grafana]
+            Kiali[Kiali]
+        end
+    end
+    
+    Users -->|DNS Query| DNS
+    Registrar -->|Delegate| DNS
+    DNS -->|A Records| Records
+    Records -->|Resolve to| Gateway
+    Users -->|HTTPS| Gateway
+    Gateway -->|TLS| Secrets
+    Gateway --> GW1
+    Gateway --> GW2
+    GW1 --> VS1
+    GW2 --> VS2
+    VS1 --> Svc1
+    VS2 --> Svc2
+    Svc1 --> Pods1
+    Svc2 --> Pods2
+    CM -->|Request| LE
+    LE -->|Issue| Secrets
+    Pods1 -->|Metrics| Prom
+    Pods2 -->|Metrics| Prom
+    Prom --> Graf
+    Prom --> Kiali
+```
+
+## 📊 Production Observability and SRE Practices
+
+### Defining SLIs, SLOs, and Error Budgets
+
+Service Level Objectives drive operational decisions and balance feature velocity with reliability.
+
+**Example SLO Definition:**
+
+```yaml
+# portfolio-slos.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: portfolio-slos
+  namespace: default
+data:
+  slo-definition: |
+    # Portfolio Service SLOs (30-day rolling window)
+    
+    Availability SLO:
+      Target: 99.5% uptime
+      Measurement: (successful requests / total requests) >= 0.995
+      Error Budget: 0.5% (216 minutes/month or ~7.2 minutes/day)
+      
+    Latency SLO:
+      p50 < 200ms
+      p95 < 500ms
+      p99 < 1000ms
+      
+    Error Rate SLO:
+      5xx errors < 0.1% of requests
+      4xx errors < 5% of requests
+      
+    Data Freshness SLO:
+      Blog posts appear within 60 seconds of publish
+```
+
+**SLI Implementation with Prometheus:**
+
+```yaml
+# prometheus-rules-slis.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: portfolio-slis
+  namespace: default
+spec:
+  groups:
+  - name: portfolio_slis
+    interval: 30s
+    rules:
+    # Availability SLI
+    - record: portfolio:availability:ratio_rate5m
+      expr: |
+        sum(rate(istio_requests_total{
+          destination_service_name="portfolio",
+          response_code!~"5.."
+        }[5m]))
+        /
+        sum(rate(istio_requests_total{
+          destination_service_name="portfolio"
+        }[5m]))
+    
+    # Latency SLI (p95)
+    - record: portfolio:latency:p95
+      expr: |
+        histogram_quantile(0.95,
+          sum(rate(istio_request_duration_milliseconds_bucket{
+            destination_service_name="portfolio"
+          }[5m])) by (le)
+        )
+    
+    # Error Rate SLI
+    - record: portfolio:error_rate:ratio_rate5m
+      expr: |
+        sum(rate(istio_requests_total{
+          destination_service_name="portfolio",
+          response_code=~"5.."
+        }[5m]))
+        /
+        sum(rate(istio_requests_total{
+          destination_service_name="portfolio"
+        }[5m]))
+```
+
+**Alert Design Philosophy:**
+
+| Alert Type | Triggers On | Action | Example |
+|------------|-------------|--------|---------|
+| **Page** | SLO violation imminent, customer impact | Immediate response (2-5 min) | Availability <99.0%, p95 latency >1000ms |
+| **Ticket** | Early warning, no customer impact yet | Next business day | Availability <99.7%, error budget 50% consumed |
+| **Info** | Useful context, no action needed | Review weekly | New deployment, configuration change |
+
+```yaml
+# prometheus-alerts-slos.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: portfolio-slo-alerts
+  namespace: default
+spec:
+  groups:
+  - name: portfolio_slo_alerts
+    rules:
+    # Page: SLO violation (immediate impact)
+    - alert: PortfolioAvailabilityCritical
+      expr: |
+        (
+          sum(rate(istio_requests_total{
+            destination_service_name="portfolio",
+            response_code!~"5.."
+          }[5m]))
+          /
+          sum(rate(istio_requests_total{
+            destination_service_name="portfolio"
+          }[5m]))
+        ) < 0.990
+      for: 2m
+      labels:
+        severity: critical
+        slo: availability
+      annotations:
+        summary: "Portfolio availability below 99% (current: {{ $value | humanizePercentage }})"
+        description: "SLO violation - immediate customer impact. Error budget exhausted."
+        runbook: "https://wiki.company.com/runbooks/portfolio-availability"
+    
+    # Ticket: Early warning (50% error budget consumed)
+    - alert: PortfolioErrorBudgetBurning
+      expr: |
+        (
+          1 - (
+            sum(rate(istio_requests_total{
+              destination_service_name="portfolio",
+              response_code!~"5.."
+            }[2h]))
+            /
+            sum(rate(istio_requests_total{
+              destination_service_name="portfolio"
+            }[2h]))
+          )
+        ) > 0.0025  # 50% of 0.5% error budget
+      for: 15m
+      labels:
+        severity: warning
+        slo: availability
+      annotations:
+        summary: "Error budget burning faster than sustainable rate"
+        description: "At current rate, error budget will be exhausted in {{ $value | humanizeDuration }}"
+    
+    # Page: Latency SLO violation
+    - alert: PortfolioLatencyCritical
+      expr: |
+        histogram_quantile(0.95,
+          sum(rate(istio_request_duration_milliseconds_bucket{
+            destination_service_name="portfolio"
+          }[5m])) by (le)
+        ) > 1000
+      for: 5m
+      labels:
+        severity: critical
+        slo: latency
+      annotations:
+        summary: "p95 latency above 1000ms (current: {{ $value }}ms)"
+        description: "User experience degraded. Investigate immediately."
+```
+
+### Distributed Tracing Strategy
+
+**Trace Context Propagation:**
+
+```typescript
+// src/middleware.ts - Ensure trace headers are propagated
+import { NextRequest, NextResponse } from 'next/server';
+
+export function middleware(request: NextRequest) {
+  const response = NextResponse.next();
+  
+  // Propagate Istio/Jaeger trace headers
+  const traceHeaders = [
+    'x-request-id',
+    'x-b3-traceid',
+    'x-b3-spanid',
+    'x-b3-parentspanid',
+    'x-b3-sampled',
+    'x-b3-flags',
+    'b3',
+    'traceparent',   // W3C Trace Context
+    'tracestate',
+  ];
+  
+  traceHeaders.forEach(header => {
+    const value = request.headers.get(header);
+    if (value) {
+      response.headers.set(header, value);
+    }
+  });
+  
+  return response;
+}
+```
+
+**Jaeger Configuration:**
+
+```bash
+# Deploy Jaeger for distributed tracing
+kubectl apply -f - <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jaeger
+  template:
+    metadata:
+      labels:
+        app: jaeger
+    spec:
+      containers:
+      - name: jaeger
+        image: jaegertracing/all-in-one:1.52
+        env:
+        - name: COLLECTOR_OTLP_ENABLED
+          value: "true"
+        - name: SPAN_STORAGE_TYPE
+          value: "memory"  # Use elasticsearch for production
+        ports:
+        - containerPort: 16686
+          name: ui
+        - containerPort: 14268
+          name: collector
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-query
+  namespace: default
+spec:
+  ports:
+  - port: 16686
+    targetPort: 16686
+    name: ui
+  selector:
+    app: jaeger
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-collector
+  namespace: default
+spec:
+  ports:
+  - port: 14268
+    targetPort: 14268
+    name: collector
+  selector:
+    app: jaeger
+EOF
+
+# Configure Istio to send traces to Jaeger
+kubectl apply -f - <<EOF
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: istio-config
+  namespace: aks-istio-system
+spec:
+  meshConfig:
+    defaultConfig:
+      tracing:
+        sampling: 1.0  # 100% sampling (reduce in production to 1-10%)
+        zipkin:
+          address: jaeger-collector.default.svc.cluster.local:9411
+EOF
+
+# Access Jaeger UI
+kubectl port-forward -n default svc/jaeger-query 16686:16686
+# Open http://localhost:16686
+```
+
+**Trace Sampling Strategy:**
+
+| Environment | Sampling Rate | Rationale | Storage Cost |
+|-------------|---------------|-----------|--------------|
+| **Development** | 100% | Debug all requests | Negligible (memory storage) |
+| **Staging** | 50% | Balance between coverage and cost | ~$50-100/mo (Elasticsearch) |
+| **Production (<1K RPS)** | 10-20% | Capture anomalies, control costs | ~$100-200/mo |
+| **Production (>10K RPS)** | 1-5% | Focused sampling, head-based | ~$200-500/mo |
+| **Incident Investigation** | 100% (tail-based) | Temporarily sample errors only | Spike during incident |
+
+### Capacity Planning Models
+
+**Resource Projection Formula:**
+
+```python
+# capacity-planning.py
+def project_capacity(
+    current_rps: int,
+    target_rps: int,
+    current_pods: int,
+    cpu_per_request_ms: float,
+    memory_per_request_mb: float,
+    target_cpu_utilization: float = 0.70,  # 70% target
+    overhead_factor: float = 1.20,  # 20% overhead for spikes
+) -> dict:
+    """
+    Project required capacity for target RPS.
+    
+    Example:
+    - Current: 100 RPS with 3 pods @ 50% CPU
+    - Target: 500 RPS
+    - CPU per request: 10ms
+    - Memory per request: 5MB
+    """
+    # Calculate CPU requirements
+    total_cpu_ms_per_sec = target_rps * cpu_per_request_ms
+    total_cpu_cores = (total_cpu_ms_per_sec / 1000) / target_cpu_utilization
+    total_cpu_with_overhead = total_cpu_cores * overhead_factor
+    
+    # Calculate memory requirements
+    # Assume requests are processed concurrently with 100ms average latency
+    concurrent_requests = target_rps * 0.1  # 100ms latency = 0.1s
+    total_memory_mb = concurrent_requests * memory_per_request_mb
+    total_memory_with_overhead = total_memory_mb * overhead_factor
+    
+    # Calculate pod requirements
+    # Assume each pod can handle 0.5 CPU cores and 1GB memory
+    pods_for_cpu = int(total_cpu_with_overhead / 0.5) + 1
+    pods_for_memory = int(total_memory_with_overhead / 1024) + 1
+    required_pods = max(pods_for_cpu, pods_for_memory)
+    
+    # Calculate node requirements
+    # Standard_D2s_v3: 2 vCPU, 8GB RAM
+    # Assume 1.6 CPU and 6.4GB usable per node (20% for system)
+    required_nodes = int((required_pods * 0.5) / 1.6) + 1
+    
+    # Cost estimate ($75/node/month for Standard_D2s_v3)
+    monthly_cost = required_nodes * 75
+    
+    return {
+        "target_rps": target_rps,
+        "required_pods": required_pods,
+        "required_cpu_cores": total_cpu_with_overhead,
+        "required_memory_gb": total_memory_with_overhead / 1024,
+        "required_nodes": required_nodes,
+        "monthly_cost_usd": monthly_cost,
+        "cpu_utilization_target": target_cpu_utilization,
+        "overhead_factor": overhead_factor,
+    }
+
+# Example calculation
+result = project_capacity(
+    current_rps=100,
+    target_rps=500,
+    current_pods=3,
+    cpu_per_request_ms=10,
+    memory_per_request_mb=5,
+)
+
+print(f"For {result['target_rps']} RPS:")
+print(f"  Required Pods: {result['required_pods']}")
+print(f"  Required Nodes: {result['required_nodes']}")
+print(f"  CPU Cores: {result['required_cpu_cores']:.2f}")
+print(f"  Memory: {result['required_memory_gb']:.2f} GB")
+print(f"  Monthly Cost: ${result['monthly_cost_usd']}")
+```
+
+**Load Testing with K6:**
+
+```javascript
+// load-test.js
+import http from 'k6/http';
+import { check, sleep } from 'k6';
+import { Rate, Trend } from 'k6/metrics';
+
+// Custom metrics
+const errorRate = new Rate('error_rate');
+const latencyTrend = new Trend('latency');
+
+export const options = {
+  stages: [
+    { duration: '2m', target: 50 },    // Ramp up to 50 users
+    { duration: '5m', target: 50 },    // Stay at 50 users
+    { duration: '2m', target: 100 },   // Ramp to 100 users
+    { duration: '5m', target: 100 },   // Stay at 100 users
+    { duration: '2m', target: 200 },   // Spike to 200 users
+    { duration: '5m', target: 200 },   // Sustained high load
+    { duration: '2m', target: 0 },     // Ramp down
+  ],
+  thresholds: {
+    'http_req_duration': ['p(95)<500', 'p(99)<1000'],  // 95% < 500ms, 99% < 1s
+    'error_rate': ['rate<0.01'],  // Error rate < 1%
+    'http_req_failed': ['rate<0.01'],
+  },
+};
+
+export default function () {
+  const response = http.get('https://cat-herding.net');
+  
+  // Check response
+  const success = check(response, {
+    'status is 200': (r) => r.status === 200,
+    'response time OK': (r) => r.timings.duration < 500,
+  });
+  
+  // Record metrics
+  errorRate.add(!success);
+  latencyTrend.add(response.timings.duration);
+  
+  sleep(1);
+}
+
+// Run test:
+// k6 run --out json=results.json load-test.js
+// Analyze: k6 stats results.json
+```
+
+### Deployment Strategies and Rollback Plans
+
+**Canary Deployment with Istio:**
+
+```yaml
+# portfolio-canary.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portfolio-v2-canary
+  namespace: default
+spec:
+  replicas: 1  # Start with 1 pod (10% of traffic)
+  selector:
+    matchLabels:
+      app: portfolio
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: portfolio
+        version: v2
+    spec:
+      containers:
+      - name: portfolio
+        image: gabby.azurecr.io/portfolio:v2-candidate
+        # ... rest of spec same as v1
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: portfolio-canary
+  namespace: default
+spec:
+  hosts:
+  - "cat-herding.net"
+  - "www.cat-herding.net"
+  gateways:
+  - portfolio-gateway
+  http:
+  - match:
+    - headers:
+        x-canary:
+          exact: "true"  # Internal testing
+    route:
+    - destination:
+        host: portfolio
+        subset: v2
+      weight: 100
+  - route:
+    - destination:
+        host: portfolio
+        subset: v1
+      weight: 90  # 90% to stable version
+    - destination:
+        host: portfolio
+        subset: v2
+      weight: 10  # 10% to canary
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: portfolio-versions
+  namespace: default
+spec:
+  host: portfolio
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+```
+
+**Automated Canary Promotion with Flagger:**
+
+```bash
+# Install Flagger (progressive delivery operator)
+kubectl apply -k github.com/fluxcd/flagger//kustomize/istio
+
+# Define automated canary rollout
+cat <<EOF | kubectl apply -f -
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: portfolio
+  namespace: default
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: portfolio
+  service:
+    port: 80
+  analysis:
+    interval: 1m
+    threshold: 5  # Number of failed checks before rollback
+    maxWeight: 50  # Max canary weight
+    stepWeight: 10  # Increment weight by 10% each step
+    metrics:
+    - name: request-success-rate
+      thresholdRange:
+        min: 99  # Rollback if success rate < 99%
+      interval: 1m
+    - name: request-duration
+      thresholdRange:
+        max: 500  # Rollback if p99 > 500ms
+      interval: 1m
+    webhooks:
+    - name: slack-notification
+      url: https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
+      timeout: 5s
+      metadata:
+        channel: "#deployments"
+EOF
+
+# Trigger canary by updating image
+kubectl set image deployment/portfolio portfolio=gabby.azurecr.io/portfolio:v2
+
+# Flagger will:
+# 1. Deploy canary (0% traffic)
+# 2. Shift 10% traffic to canary
+# 3. Wait 1 minute, check metrics
+# 4. If metrics good: Shift 20%, repeat
+# 5. If metrics bad: Rollback immediately
+# 6. If success: Promote to 100%
+```
+
+**Emergency Rollback Playbook:**
+
+```bash
+# SCENARIO: Deployment causing errors, need immediate rollback
+
+# Step 1: Identify current deployment
+kubectl rollout history deployment/portfolio -n default
+
+# Step 2: Check current revision
+kubectl get deployment portfolio -n default -o jsonpath='{.metadata.annotations.deployment\.kubernetes\.io/revision}'
+
+# Step 3: Quick rollback to previous revision
+kubectl rollout undo deployment/portfolio -n default
+
+# Step 4: Verify rollback is working
+kubectl rollout status deployment/portfolio -n default
+kubectl get pods -n default -l app=portfolio -w
+
+# Step 5: If using Istio canary, immediately shift traffic to v1
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: portfolio-virtualservice
+  namespace: default
+spec:
+  hosts:
+  - "cat-herding.net"
+  - "www.cat-herding.net"
+  gateways:
+  - portfolio-gateway
+  http:
+  - route:
+    - destination:
+        host: portfolio
+        subset: v1
+      weight: 100  # 100% to stable version
+    - destination:
+        host: portfolio
+        subset: v2
+      weight: 0  # 0% to broken canary
+EOF
+
+# Step 6: Communicate status
+# Post to #incidents Slack channel:
+# "🔥 Emergency rollback executed for portfolio service
+#  Reason: [high error rate / latency / crashes]
+#  Action: Rolled back from revision X to revision Y
+#  Status: Monitoring recovery
+#  ETA: Stable in 2-5 minutes"
+
+# Step 7: Monitor recovery
+watch -n 2 'kubectl get pods -n default -l app=portfolio'
+
+# Step 8: Verify metrics returning to normal
+# Check Grafana dashboard, Prometheus alerts, error logs
+
+# Step 9: Post-mortem (after recovery)
+# Document:
+# - What triggered the rollback
+# - How it was detected (alert, user report, monitoring)
+# - Time to detection and time to recovery
+# - Root cause analysis
+# - Action items to prevent recurrence
+```
+
+### Cost Optimization Strategies
+
+**Right-Sizing Workloads:**
+
+```bash
+# Install Vertical Pod Autoscaler (VPA) for recommendations
+kubectl apply -f https://github.com/kubernetes/autoscaler/releases/download/vertical-pod-autoscaler-0.13.0/vpa-v0.13.0.yaml
+
+# Create VPA in recommendation mode (doesn't auto-adjust)
+cat <<EOF | kubectl apply -f -
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: portfolio-vpa
+  namespace: default
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: portfolio
+  updatePolicy:
+    updateMode: "Off"  # Recommendation only
+  resourcePolicy:
+    containerPolicies:
+    - containerName: portfolio
+      minAllowed:
+        cpu: 100m
+        memory: 128Mi
+      maxAllowed:
+        cpu: 2000m
+        memory: 4Gi
+EOF
+
+# Get recommendations after 24-48 hours
+kubectl describe vpa portfolio-vpa -n default
+
+# Example output:
+# Recommendation:
+#   Container Recommendations:
+#     Container Name:  portfolio
+#     Lower Bound:
+#       Cpu:     150m
+#       Memory:  256Mi
+#     Target:
+#       Cpu:     300m  # Recommended request
+#       Memory:  512Mi  # Recommended request
+#     Uncapped Target:
+#       Cpu:     450m
+#       Memory:  768Mi
+#     Upper Bound:
+#       Cpu:     1000m
+#       Memory:  1Gi
+```
+
+**Spot Instance Strategy:**
+
+```yaml
+# Mixed node pool: on-demand + spot
+# Use on-demand for critical services, spot for batch workloads
+
+# Label portfolio deployment to prefer spot instances
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portfolio-batch-jobs
+spec:
+  template:
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: kubernetes.azure.com/scalesetpriority
+                operator: In
+                values:
+                - spot
+      tolerations:
+      - key: kubernetes.azure.com/scalesetpriority
+        operator: Equal
+        value: spot
+        effect: NoSchedule
+      containers:
+      - name: batch-processor
+        image: gabby.azurecr.io/batch:latest
+        # Batch jobs can tolerate interruptions (70-90% cost savings)
+```
+
+**Idle Resource Cleanup:**
+
+```bash
+# Identify unused resources
+# Cost optimization tip: Delete these regularly
+
+# Unused PersistentVolumeClaims (orphaned storage)
+kubectl get pvc -A --field-selector=status.phase!=Bound
+
+# Unused ConfigMaps/Secrets (check if referenced)
+kubectl get configmaps -A
+kubectl get secrets -A
+
+# Old ReplicaSets (kept for rollback history, can be pruned)
+kubectl get rs -A --sort-by=.metadata.creationTimestamp
+
+# Clean up completed jobs older than 7 days
+kubectl delete jobs --field-selector status.successful=1 \
+  --all-namespaces \
+  --dry-run=client  # Remove dry-run when ready
+
+# Schedule automatic cleanup with CronJob
+cat <<EOF | kubectl apply -f -
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cleanup-old-jobs
+  namespace: default
+spec:
+  schedule: "0 2 * * 0"  # Every Sunday at 2 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: cleanup-sa
+          containers:
+          - name: kubectl
+            image: bitnami/kubectl:latest
+            command:
+            - /bin/sh
+            - -c
+            - |
+              kubectl delete jobs --field-selector status.successful=1 \
+                -A --ignore-not-found=true \
+                $(kubectl get jobs -A -o json | jq -r '.items[] | select(.status.completionTime != null and (now - (.status.completionTime | fromdateiso8601)) > 604800) | "\(.metadata.namespace)/\(.metadata.name)"')
+          restartPolicy: OnFailure
+EOF
+```
+
+**Cost Monitoring Dashboard:**
+
+| Resource | Monthly Cost | Optimization Opportunity |
+|----------|--------------|--------------------------|
+| **AKS cluster management** | $0 | N/A (free) |
+| **3x Standard_D2s_v3 nodes** | $225 | Use spot instances for non-critical (~$68) |
+| **Managed Istio** | $150 | Consider self-hosted if team has expertise |
+| **Load Balancer (public IP)** | $20 | Share LB across multiple services |
+| **Azure DNS Zone** | $1 | N/A (minimal) |
+| **Bandwidth (100GB egress)** | $10 | Use CDN to reduce egress |
+| **Persistent storage (500GB)** | $38 | Clean up old PVCs, use lifecycle policies |
+| **Total** | **$444/mo** | **Optimized: $292/mo (34% savings)** |
+
+### Next Steps: Building Production-Grade Platform
+
+- **GitOps with Flux CD**: Automated deployments from Git commits
+- **Multi-Environment Strategy**: Separate dev/staging/prod with namespace isolation
+- **Secret Management**: Migrate to Azure Key Vault with CSI driver
+- **Database Integration**: Connect to Azure Database for PostgreSQL with connection pooling
+- **Advanced Autoscaling**: KEDA for event-driven scaling (queues, schedules, metrics)
+- **Disaster Recovery**: Backup strategy with Velero, multi-region failover
+- **Compliance**: Pod Security Standards enforcement, network policies, audit logging
+- **Developer Experience**: Internal developer platform (IDP) with self-service deployment
+
+## 🎯 Key Takeaways: Decision Framework for Platform Teams
+
+### When to Adopt This Architecture
+
+**✅ Good Fit:**
+- **Microservices at scale** (20+ services): Service mesh provides observability, security, and traffic management
+- **Multi-team organizations**: Teams need isolation, independent deployment, and self-service capabilities
+- **Compliance requirements**: mTLS, audit logging, and fine-grained access control are mandatory
+- **High availability needs**: SLOs require 99.5%+ uptime with multi-region capabilities
+- **Mature DevOps culture**: Team has SRE practices, GitOps, and infrastructure-as-code expertise
+
+**❌ Poor Fit:**
+- **Monolith or <10 services**: Service mesh overhead outweighs benefits
+- **Cost-sensitive startups**: $400-500/mo base infrastructure may be too high for MVP stage
+- **Limited Kubernetes expertise**: Steep learning curve can delay time-to-market
+- **Simple request/response patterns**: Don't need advanced routing, retries, or circuit breaking
+- **Minimal traffic** (<100 RPS): Serverless (Azure Functions, Container Apps) more cost-effective
+
+### Architecture Decision Summary
+
+| Decision | Choice | Trade-off | When to Reconsider |
+|----------|--------|-----------|---------------------|
+| **Service Mesh** | Managed Istio | +$150-235/mo, operational complexity | When service count >50 or team expertise grows |
+| **Node Size** | Standard_D2s_v3 | Balanced cost/performance | If workloads are memory-heavy (upgrade to D4s_v3) or CPU-light (downgrade to B-series) |
+| **Certificate Management** | cert-manager + Let's Encrypt | Free certificates, requires maintenance | If >100 certificates or need extended validation (EV) certificates, consider paid CA |
+| **DNS Provider** | Azure DNS | $1/mo, Azure-native integration | If need advanced features (geo-routing, DNSSEC), consider Cloudflare or Route53 |
+| **Monitoring Stack** | Prometheus + Grafana | Self-hosted, requires management | If team lacks monitoring expertise, consider Azure Monitor or Datadog |
+| **Deployment Strategy** | Canary with Flagger | Automated progressive delivery | If team is small or risk-averse, use blue-green or manual rollouts |
+
+### Cost Optimization Decision Tree
+
+```mermaid
+graph TD
+    Start[Monthly Cost >$500?] -->|Yes| High[High Cost Path]
+    Start -->|No| Accept[Current cost acceptable]
+    
+    High --> Q1{Traffic >1000 RPS?}
+    Q1 -->|Yes| Scale[Scale is justified]
+    Q1 -->|No| Overprovisioned[Likely overprovisioned]
+    
+    Overprovisioned --> Q2{Using spot instances?}
+    Q2 -->|No| Spot[Migrate 50-70% workloads to spot<br/>Save: $150-200/mo]
+    Q2 -->|Yes| Q3{Resource requests optimized?}
+    
+    Q3 -->|No| VPA[Use VPA recommendations<br/>Save: $50-100/mo]
+    Q3 -->|Yes| Q4{Need service mesh?}
+    
+    Q4 -->|Uncertain| Remove[Try removing Istio<br/>Save: $150-235/mo<br/>Test for 2 weeks]
+    Q4 -->|Yes| Q5{Using managed Istio?}
+    
+    Q5 -->|No| Managed[Switch to managed Istio<br/>Save: $100-190/mo operational cost]
+    Q5 -->|Yes| Q6{Multi-region failover needed?}
+    
+    Q6 -->|No| SingleRegion[Remove secondary region<br/>Save: $300-500/mo]
+    Q6 -->|Yes| Q7{Idle resources during off-hours?}
+    
+    Q7 -->|Yes| Autoscale[Configure aggressive autoscaling<br/>Save: $100-200/mo]
+    Q7 -->|No| Optimized[Architecture is cost-optimized]
+    
+    Accept --> Monitor[Set up cost alerts]
+    Scale --> Monitor
+    Optimized --> Monitor
+    
+    classDef save fill:#51cf66,stroke:#2f9e44,stroke-width:2px
+    classDef warning fill:#ffd43b,stroke:#fab005,stroke-width:2px
+    class Spot,VPA,Remove,Managed,SingleRegion,Autoscale save
+    class Overprovisioned warning
+```
+
+### Operational Maturity Roadmap
+
+**Phase 1: Foundation (Months 1-2)**
+- ✅ AKS cluster with managed Istio running
+- ✅ Basic monitoring (Prometheus, Grafana)
+- ✅ Manual deployments via kubectl
+- ✅ Certificate automation with cert-manager
+- ✅ Single production environment
+
+**Phase 2: Automation (Months 3-4)**
+- 🔄 GitOps with Flux CD or ArgoCD
+- 🔄 CI/CD pipelines (GitHub Actions, Azure DevOps)
+- 🔄 Automated canary deployments with Flagger
+- 🔄 Infrastructure-as-code (Terraform, Bicep)
+- 🔄 Dev/staging environments with parity
+
+**Phase 3: Observability (Months 5-6)**
+- 🔲 SLO-based alerting (not just resource alerts)
+- 🔲 Distributed tracing (Jaeger, Tempo)
+- 🔲 Log aggregation (Loki, Azure Log Analytics)
+- 🔲 Cost monitoring and attribution by team
+- 🔲 Error budget tracking and reporting
+
+**Phase 4: Resilience (Months 7-9)**
+- 🔲 Chaos engineering (Litmus, Chaos Mesh)
+- 🔲 Multi-region active-passive setup
+- 🔲 Disaster recovery runbooks tested quarterly
+- 🔲 Automated incident response (PagerDuty + Kubernetes)
+- 🔲 Load testing in CI/CD pipeline
+
+**Phase 5: Platform Engineering (Months 10-12)**
+- 🔲 Internal Developer Platform (IDP) with self-service
+- 🔲 Golden paths for common deployment patterns
+- 🔲 Policy-as-code (OPA, Kyverno)
+- 🔲 Developer productivity metrics (DORA metrics)
+- 🔲 Platform team vs product teams separation
+
+### Lessons from Production Incidents
+
+**Incident 1: Certificate Expiration Outage (2 AM)**
+- **What happened**: Let's Encrypt certificate expired, HTTPS traffic failed
+- **Root cause**: cert-manager webhook was blocked by network policy
+- **Impact**: 30 minutes downtime, 0.07% monthly error budget consumed
+- **Prevention**: Alert on certificate expiration <30 days, test renewal quarterly
+- **Lesson**: Monitor certificate lifecycle, not just pod health
+
+**Incident 2: Istio Control Plane Upgrade Breaking Change**
+- **What happened**: Managed Istio upgraded from 1.17 to 1.18 with breaking CRD changes
+- **Root cause**: Azure auto-upgraded during maintenance window without notification
+- **Impact**: VirtualService configuration failed validation, 503 errors for 15 minutes
+- **Prevention**: Pin Istio minor version, test upgrades in dev first, subscribe to release notes
+- **Lesson**: Managed services reduce operational burden but sacrifice control
+
+**Incident 3: Pod Eviction Cascade (Out of Memory)**
+- **What happened**: Memory leak in application caused OOMKilled, cascading pod evictions
+- **Root cause**: Missing memory limits allowed pod to consume node resources
+- **Impact**: 5 pods restarted in 2 minutes, 60-second request latency spike
+- **Prevention**: Set memory limits, enable memory profiling, use VPA recommendations
+- **Lesson**: Resource limits are not optional in production
+
+**Incident 4: DNS Propagation Delay on New Subdomain**
+- **What happened**: New subdomain added but not resolving for 45 minutes
+- **Root cause**: Azure DNS TTL was 3600 seconds, previous record cached
+- **Impact**: Delayed launch announcement, no customer impact
+- **Prevention**: Lower TTL to 300 seconds before DNS changes, wait for propagation
+- **Lesson**: DNS is eventually consistent; plan changes ahead of announcements
+
+**Incident 5: Cost Spike from Forgotten Load Test**
+- **What happened**: Load test ran overnight, autoscaler increased nodes from 3 to 30
+- **Root cause**: No autoscaler max limit configured, test had no timeout
+- **Impact**: $500 unexpected bill for 8 hours, no customer impact
+- **Prevention**: Set autoscaler maxReplicas, configure cost alerts, add timeouts to tests
+- **Lesson**: Cost visibility is essential; autoscalers need upper bounds
+
+### Final Recommendations for Platform Teams
+
+**Before You Start:**
+1. **Validate scale requirements**: Do you really need service mesh? (<20 services likely don't)
+2. **Assess team expertise**: Do you have Kubernetes/Istio experience? Budget for training
+3. **Calculate total cost**: Include management time, not just infrastructure ($444/mo + 0.5-1 FTE)
+4. **Define success metrics**: What SLOs justify this investment? What's the alternative cost?
+
+**During Implementation:**
+1. **Start small**: Single service in production, validate before migrating all workloads
+2. **Automate early**: GitOps from day 1, manual kubectl is error-prone at scale
+3. **Monitor everything**: If you can't measure it, you can't improve it (observability first)
+4. **Document runbooks**: Incident response is only as good as your documentation
+
+**After Go-Live:**
+1. **Review costs weekly**: First month will reveal unexpected expenses
+2. **Conduct game days**: Test failure scenarios before they happen in production
+3. **Measure developer productivity**: Platform value = features shipped / time, not uptime alone
+4. **Iterate on processes**: Retrospectives after every incident, quarterly architecture reviews
+
+### When to Choose Alternatives
+
+| Alternative | Best For | Cost Comparison | Migration Difficulty |
+|-------------|----------|-----------------|---------------------|
+| **Azure Container Apps** | <10 services, serverless workload | ~$50-200/mo (consumption-based) | Easy (similar Kubernetes API) |
+| **Azure App Service** | Traditional web apps, minimal DevOps | ~$100-300/mo (PaaS pricing) | Easy (no Kubernetes knowledge needed) |
+| **Azure Functions** | Event-driven, sporadic traffic | ~$0-50/mo (pay-per-execution) | Medium (code refactoring required) |
+| **Self-Hosted Kubernetes (VM)** | Maximum control, compliance needs | ~$300-400/mo (3 VMs) | Hard (full cluster management) |
+| **GKE/EKS (multi-cloud)** | Avoid vendor lock-in, global footprint | ~$500-700/mo (cross-cloud costs) | Medium (Kubernetes-compatible) |
+
+**Recommended Migration Path for Startups:**
+
+```
+Phase 1: Azure Functions (MVP, <$50/mo)
+  ↓ (Growing traffic, need more control)
+Phase 2: Azure Container Apps (Scale, ~$200/mo)
+  ↓ (10+ microservices, need service mesh)
+Phase 3: AKS + Istio (This guide, ~$400-500/mo)
+  ↓ (100+ microservices, multi-region)
+Phase 4: Multi-cloud Kubernetes (Enterprise, $2000-5000/mo)
+```
+
+---
+
+## 🔗 Additional Resources
+
+### Official Documentation
+- [Azure AKS Documentation](https://learn.microsoft.com/en-us/azure/aks/)
+- [Istio Documentation](https://istio.io/latest/docs/)
+- [cert-manager Documentation](https://cert-manager.io/docs/)
+- [Azure DNS Documentation](https://learn.microsoft.com/en-us/azure/dns/)
+- [Prometheus Operator](https://prometheus-operator.dev/)
+
+### Books & Deep Dives
+- **"Kubernetes Patterns"** by Bilgin Ibryam & Roland Huß - Reusable patterns for cloud-native apps
+- **"Production Kubernetes"** by Josh Rosso et al. - Running Kubernetes at scale
+- **"The Site Reliability Workbook"** by Google SRE - SLO/SLI implementation guide
+- **"Cloud Native DevOps with Kubernetes"** by John Arundel & Justin Domingus
+
+### Community & Tools
+- [CNCF Landscape](https://landscape.cncf.io/) - Comprehensive cloud-native ecosystem map
+- [Awesome Kubernetes](https://github.com/ramitsurana/awesome-kubernetes) - Curated tools and resources
+- [Kubernetes Failure Stories](https://k8s.af/) - Learn from production incidents
+- [Learnk8s](https://learnk8s.io/) - Kubernetes training and best practices
+
+### Cost Calculators
+- [Azure Pricing Calculator](https://azure.microsoft.com/en-us/pricing/calculator/) - Estimate infrastructure costs
+- [KubeCost](https://www.kubecost.com/) - Kubernetes cost monitoring and optimization
+
+---
+
+## 📝 Closing Thoughts
+
+Building production-grade Kubernetes infrastructure is a journey, not a destination. This architecture represents months of learning, incidents, and iterations. The decisions outlined here are not universal truths—they're context-dependent trade-offs that worked for our team's scale, budget, and expertise.
+
+**The most important question isn't "Should I use Kubernetes?"—it's "What problem am I solving, and is Kubernetes the simplest solution?"** For many teams, managed PaaS services (Container Apps, App Service) provide 90% of the benefits at 20% of the complexity.
+
+But if you're building a platform for multiple teams, need fine-grained control over traffic routing, or have compliance requirements that demand mTLS and network policies, this architecture provides a solid foundation.
+
+**Key Philosophy:**
+- **Simplicity > Features**: Only add complexity when it solves a real problem
+- **Observability > Availability**: You can't improve what you don't measure
+- **Automation > Documentation**: Runbooks should execute themselves
+- **Learning > Perfection**: Every incident is an opportunity to improve
+
+Start small, automate early, and always question whether the complexity you're adding is worth the value it provides.
+
+---
+
+**Questions or feedback?** I'd love to hear about your Kubernetes journey—find me on [Twitter](https://twitter.com/yourhandle) or [LinkedIn](https://linkedin.com/in/yourprofile).
+
+**Found this guide helpful?** Consider sharing it with your team or contributing improvements on [GitHub](https://github.com/ianlintner/portfolio).
+
+---
+
+*This guide reflects production experience as of January 2025. Cloud platforms and best practices evolve rapidly—verify configurations against current documentation before implementing.*

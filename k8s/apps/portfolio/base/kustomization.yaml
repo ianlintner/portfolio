@@ -2,27 +2,12 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  # - cloudsql-instance.yaml
-  # - cloudsql-serviceaccount.yaml
   - deployment.yaml
-  # - dns-zone.yaml
   - istio-gateway.yaml
-  - istio-static-ip.yaml
   - istio-virtualservice.yaml
-  - istio-certificate.yaml
-  # - istio-ingressgateway-service.yaml
   - service.yaml
   - serviceaccount.yaml
   - auth.yaml
-
-# labels:
-#   - pairs:
-#       app.kubernetes.io/managed-by: flux
-#       app.kubernetes.io/created-by: hobby-cluster
-
-# commonAnnotations:
-#   policy.kubernetes.io/validate: "true"
-#   fluxcd.io/automated: "true"
 
 generatorOptions:
   disableNameSuffixHash: true
@@ -32,26 +17,18 @@ configMapGenerator:
     behavior: create
     literals:
       - NODE_ENV=production
-      - NEXTAUTH_URL=https://portfolio.example.com
-      - CLOUD_SQL_CONNECTION_NAME=kame-457417:us-central1:portfolio-db-base
-  # Removed prisma/schema.prisma and reset-inline.js from configMapGenerator
-  # because they are not valid Kubernetes resources and break CI
-  # - name: prisma-schema
-  #   behavior: create
-  #   files:
-  #     - prisma/schema.prisma
-  #     - scripts/reset-inline.js
+      - NEXTAUTH_URL=https://www.cat-herding.net
+      - AZURE_DEPLOYMENT=true
 
 secretGenerator:
   - name: portfolio-secrets
     behavior: create
     literals:
-      - NEXTAUTH_SECRET=change-me-in-overlay
+      - NEXTAUTH_SECRET=change-me-in-production
+      - ADMIN_EMAIL=admin@cat-herding.net
+      - ADMIN_PASSWORD=change-me-in-production
+      - ADMIN_NAME=Portfolio Admin
   - name: portfolio-db-secret
     behavior: create
     literals:
-      - DATABASE_URL=postgresql://portfolio-db-user:change-me-in-overlay@localhost:5432/portfolio-db-database
-  - name: portfolio-db-password
-    behavior: create
-    literals:
-      - password=change-me-in-overlay
+      - DATABASE_URL=postgresql://portfolio:change-me@localhost:5432/portfolio
