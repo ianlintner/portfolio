@@ -5,6 +5,7 @@ This document summarizes the optimizations and improvements made to the CI/CD pi
 ## Overview of Changes
 
 ### Migration to Azure
+
 - ✅ Replaced Google Cloud Platform (GCP) with Azure services
 - ✅ Moved from Google Artifact Registry to Azure Container Registry (ACR)
 - ✅ Updated from GKE to AKS deployment patterns
@@ -15,40 +16,47 @@ This document summarizes the optimizations and improvements made to the CI/CD pi
 ## CI Workflow Optimizations
 
 ### 1. **Concurrency Controls**
+
 ```yaml
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 ```
+
 - Automatically cancels outdated workflow runs
 - Saves compute resources and reduces build queue time
 - Per-branch and per-PR isolation
 
 ### 2. **Path-Based Triggers**
+
 ```yaml
 on:
   push:
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.github/workflows/docker.yml'
+      - "**.md"
+      - "docs/**"
+      - ".github/workflows/docker.yml"
 ```
+
 - Skips CI runs for documentation-only changes
 - Reduces unnecessary workflow executions
 - Faster feedback for actual code changes
 
 ### 3. **Matrix Strategy for Parallel Execution**
+
 ```yaml
 strategy:
   fail-fast: false
   matrix:
     check: [lint, format, test]
 ```
+
 - Runs quality checks in parallel instead of sequentially
 - Reduces total CI time by ~66% (3 jobs in parallel vs sequential)
 - Provides faster feedback on all check types
 
 ### 4. **Intelligent Caching**
+
 ```yaml
 # pnpm store cache
 - name: Cache pnpm dependencies
@@ -64,27 +72,33 @@ strategy:
     path: .next/cache
     key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.ts') }}
 ```
+
 - Caches pnpm store for faster dependency installation
 - Caches Next.js build artifacts for incremental builds
 - Can reduce build time by 40-60%
 
 ### 5. **Job Dependencies**
+
 ```yaml
 build:
   needs: quality
 ```
+
 - Build only runs after quality checks pass
 - Prevents wasted build time on failing code
 - Clear dependency chain
 
 ### 6. **Conditional K8s Validation**
+
 ```yaml
 if: github.event_name == 'push' || contains(github.event.pull_request.changed_files, 'k8s/')
 ```
+
 - Only validates K8s manifests when they change
 - Saves ~30-60 seconds per run for non-K8s changes
 
 ### 7. **Optimized Tool Setup**
+
 - Combined tool installations in single steps
 - Used `curl` instead of `wget` for faster downloads
 - Streamlined validation scripts
@@ -92,6 +106,7 @@ if: github.event_name == 'push' || contains(github.event.pull_request.changed_fi
 ## Docker Workflow Optimizations
 
 ### 1. **OIDC Authentication**
+
 ```yaml
 - name: Azure Login (OIDC)
   uses: azure/login@v2
@@ -100,55 +115,67 @@ if: github.event_name == 'push' || contains(github.event.pull_request.changed_fi
     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 ```
+
 - Keyless authentication (no stored credentials)
 - More secure than service principal secrets
 - Automatic token rotation
 
 ### 2. **Registry Caching**
+
 ```yaml
 cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
 cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
 ```
+
 - Uses ACR as build cache storage
 - Dramatically reduces rebuild time (~50-70%)
 - Shares cache across workflow runs
 
 ### 3. **Multi-Platform Builds**
+
 ```yaml
 platforms: linux/amd64,linux/arm64
 ```
+
 - Single workflow builds for multiple architectures
 - Future-proofs for ARM-based Azure VMs
 - Enables AKS node diversity
 
 ### 4. **Smart Concurrency**
+
 ```yaml
 concurrency:
   group: docker-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 ```
+
 - Cancels outdated builds on feature branches
 - Never cancels main branch builds (production-critical)
 - Prevents duplicate image builds
 
 ### 5. **Flux CD Compatible Tagging**
+
 ```yaml
 FLUX_TAG="${BRANCH_NAME}-${COMMIT_SHA}-${TIMESTAMP}"
 ```
+
 - Generates sortable, timestamp-based tags
 - Enables automatic image updates via Flux CD
 - Maintains semantic versioning for releases
 
 ### 6. **Security Scanning**
+
 ```yaml
 - name: Image scan with Trivy
   uses: aquasecurity/trivy-action@master
 ```
+
 - Automatic vulnerability scanning
 - SARIF output for GitHub Security tab
 - Non-blocking (continue-on-error: true)
 
 ### 7. **Build Summaries**
+
 - Rich markdown summaries in GitHub Actions UI
 - Shows all generated tags
 - Deployment status and pod information
@@ -159,27 +186,31 @@ FLUX_TAG="${BRANCH_NAME}-${COMMIT_SHA}-${TIMESTAMP}"
 Created `.github/actions/setup-node-pnpm/action.yml`:
 
 ### Benefits
+
 - DRY principle - single source of truth for Node/pnpm setup
 - Consistent caching configuration across all jobs
 - Easy to update versions in one place
 - Cleaner workflow files
 
 ### Usage
+
 ```yaml
 - uses: ./.github/actions/setup-node-pnpm
   with:
-    node-version: '20'
-    pnpm-version: '10'
+    node-version: "20"
+    pnpm-version: "10"
 ```
 
 ## Performance Improvements
 
 ### Before Optimizations
+
 - **CI Duration**: ~8-12 minutes (sequential quality checks)
 - **Docker Build**: ~5-8 minutes (cold cache)
 - **Total Time**: ~13-20 minutes
 
 ### After Optimizations
+
 - **CI Duration**: ~3-5 minutes (parallel quality checks + caching)
 - **Docker Build**: ~2-4 minutes (registry cache + BuildKit)
 - **Total Time**: ~5-9 minutes
@@ -189,11 +220,13 @@ Created `.github/actions/setup-node-pnpm/action.yml`:
 ## Cost Savings
 
 ### Compute Time Reduction
+
 - Faster builds = less GitHub Actions minutes used
 - Parallel execution prevents wasted sequential processing
 - Intelligent triggers skip unnecessary runs
 
 ### Azure Resource Optimization
+
 - Registry caching reduces build time and data transfer
 - Multi-platform builds eliminate separate workflows
 - OIDC eliminates need for secret rotation management
@@ -201,21 +234,25 @@ Created `.github/actions/setup-node-pnpm/action.yml`:
 ## Security Improvements
 
 ### 1. **OIDC Over Service Principals**
+
 - No stored credentials
 - Short-lived tokens
 - Auditable via Azure AD logs
 
 ### 2. **Vulnerability Scanning**
+
 - Automatic Trivy scanning on every build
 - Integration with GitHub Security tab
 - Blocks deployments of critical vulnerabilities (optional)
 
 ### 3. **Minimal Permissions**
+
 - Workflows use least-privilege principle
 - Separate permissions for CI vs Docker workflows
 - Read-only where possible
 
 ### 4. **Secret Management**
+
 - Secrets stored in GitHub Secrets (encrypted)
 - Variables used for non-sensitive config
 - Environment-specific secret scopes
@@ -223,12 +260,14 @@ Created `.github/actions/setup-node-pnpm/action.yml`:
 ## Monitoring and Observability
 
 ### Job Summaries
+
 - Rich markdown summaries for each workflow
 - Generated image tags and digests
 - Deployment status and pod health
 - Links to relevant resources
 
 ### Artifacts
+
 - Deployment manifests saved for 30 days
 - K8s validation outputs for debugging
 - Build logs automatically retained
@@ -236,15 +275,18 @@ Created `.github/actions/setup-node-pnpm/action.yml`:
 ## Configuration Variables
 
 ### Required GitHub Secrets
+
 - `AZURE_CLIENT_ID`: OIDC client ID
 - `AZURE_TENANT_ID`: Azure tenant ID
 - `AZURE_SUBSCRIPTION_ID`: Azure subscription ID
 
 ### Required GitHub Variables
+
 - `AZURE_REGISTRY_NAME`: ACR name
 - `AZURE_RESOURCE_GROUP`: Resource group name
 
 ### Optional Variables
+
 - `ENABLE_AUTO_DEPLOY`: Enable AKS deployment
 - `AKS_CLUSTER_NAME`: AKS cluster name
 - `DEPLOY_NAMESPACE`: Target namespace
@@ -252,6 +294,7 @@ Created `.github/actions/setup-node-pnpm/action.yml`:
 ## Best Practices Checklist
 
 ### Workflow Design
+
 - ✅ Use concurrency controls
 - ✅ Implement path-based triggers
 - ✅ Parallelize independent jobs
@@ -260,6 +303,7 @@ Created `.github/actions/setup-node-pnpm/action.yml`:
 - ✅ Set explicit timeouts
 
 ### Security
+
 - ✅ Use OIDC authentication
 - ✅ Scan container images
 - ✅ Minimize permissions
@@ -267,6 +311,7 @@ Created `.github/actions/setup-node-pnpm/action.yml`:
 - ✅ Use environment protection rules
 
 ### Performance
+
 - ✅ Layer caching (Docker + pnpm + Next.js)
 - ✅ Parallel job execution
 - ✅ Registry as build cache
@@ -274,6 +319,7 @@ Created `.github/actions/setup-node-pnpm/action.yml`:
 - ✅ Incremental builds
 
 ### Maintainability
+
 - ✅ Reusable composite actions
 - ✅ Clear job and step names
 - ✅ Comprehensive summaries
@@ -310,21 +356,25 @@ When adopting these workflows:
 ## Troubleshooting Guide
 
 ### CI Taking Too Long?
+
 - Check if caches are being hit
 - Verify path-based triggers are working
 - Review if jobs can be parallelized further
 
 ### Docker Build Slow?
+
 - Ensure registry caching is configured
 - Verify BuildKit is enabled
 - Check Docker layer optimization
 
 ### Authentication Failures?
+
 - Verify OIDC federated credentials
 - Check secret/variable names match workflow
 - Ensure proper RBAC in Azure
 
 ### Cache Not Working?
+
 - Verify cache keys are consistent
 - Check cache size limits
 - Review cache hit/miss in logs
@@ -332,6 +382,7 @@ When adopting these workflows:
 ## Future Enhancements
 
 ### Potential Optimizations
+
 - [ ] Implement workflow reuse for shared logic
 - [ ] Add test result caching
 - [ ] Implement progressive deployments (canary)
@@ -339,6 +390,7 @@ When adopting these workflows:
 - [ ] Implement automatic rollback on failures
 
 ### Monitoring Improvements
+
 - [ ] Add workflow duration tracking
 - [ ] Implement cost tracking dashboard
 - [ ] Set up alerting for failed workflows

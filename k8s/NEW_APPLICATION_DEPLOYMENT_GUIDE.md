@@ -1,9 +1,11 @@
 # Deploy New Application with Subdomain on Azure AKS + Istio
 
 ## Context
+
 We have an Azure AKS cluster with Istio service mesh deployed. The base domain `cat-herding.net` is managed in Azure DNS. We need to deploy a new application accessible via a subdomain (e.g., `api.cat-herding.net`) with HTTP/HTTPS routing through Istio Gateway.
 
 ## Prerequisites
+
 - Azure CLI (`az`) authenticated and configured
 - `kubectl` configured for AKS cluster
 - Istio installed on AKS cluster with external ingress gateway selector: `istio: aks-istio-ingressgateway-external`
@@ -11,6 +13,7 @@ We have an Azure AKS cluster with Istio service mesh deployed. The base domain `
 - TLS certificate available or cert-manager configured
 
 ## Required Information
+
 - **App Name**: `<APP_NAME>` (e.g., `api-service`, `blog`, `admin`)
 - **Subdomain**: `<SUBDOMAIN>.cat-herding.net` (e.g., `api.cat-herding.net`)
 - **Container Image**: `<ACR_NAME>.azurecr.io/<IMAGE>:<TAG>`
@@ -22,6 +25,7 @@ We have an Azure AKS cluster with Istio service mesh deployed. The base domain `
 ## Deployment Checklist
 
 ### 1. Azure DNS Configuration
+
 **Goal**: Create A record pointing subdomain to Istio Ingress Gateway Load Balancer IP
 
 ```bash
@@ -52,6 +56,7 @@ nslookup "${SUBDOMAIN}.${DNS_ZONE}"
 ```
 
 **Checklist**:
+
 - [ ] Retrieved Istio ingress IP
 - [ ] Created DNS A record in Azure DNS
 - [ ] Verified DNS record exists
@@ -60,9 +65,11 @@ nslookup "${SUBDOMAIN}.${DNS_ZONE}"
 ---
 
 ### 2. TLS Certificate Setup
+
 **Goal**: Ensure TLS certificate secret exists for HTTPS
 
 **Option A: Using existing certificate (manual)**
+
 ```bash
 # Create TLS secret from certificate files
 kubectl create secret tls <SUBDOMAIN>-tls \
@@ -75,6 +82,7 @@ kubectl get secret <SUBDOMAIN>-tls -n default
 ```
 
 **Option B: Using cert-manager (automated)**
+
 ```yaml
 # Create Certificate resource (save as certificate.yaml)
 apiVersion: cert-manager.io/v1
@@ -101,6 +109,7 @@ kubectl describe certificate <SUBDOMAIN>-tls-cert -n default
 ```
 
 **Checklist**:
+
 - [ ] TLS secret created/exists
 - [ ] Secret is in correct namespace (same as Gateway)
 - [ ] Certificate is valid
@@ -108,9 +117,11 @@ kubectl describe certificate <SUBDOMAIN>-tls-cert -n default
 ---
 
 ### 3. Create Kubernetes Manifests
+
 **Goal**: Create deployment, service, and Istio routing manifests
 
 **Directory Structure**:
+
 ```
 k8s/apps/<APP_NAME>/
 ├── base/
@@ -122,6 +133,7 @@ k8s/apps/<APP_NAME>/
 ```
 
 **3a. Deployment** (`deployment.yaml`):
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -138,7 +150,7 @@ spec:
         app: <APP_NAME>
         version: v1
       annotations:
-        sidecar.istio.io/inject: 'false'  # Disable if not using ambient mesh
+        sidecar.istio.io/inject: "false" # Disable if not using ambient mesh
     spec:
       containers:
         - name: <APP_NAME>
@@ -172,6 +184,7 @@ spec:
 ```
 
 **3b. Service** (`service.yaml`):
+
 ```yaml
 apiVersion: v1
 kind: Service
@@ -188,6 +201,7 @@ spec:
 ```
 
 **3c. Istio Gateway** (`istio-gateway.yaml`):
+
 ```yaml
 apiVersion: networking.istio.io/v1beta1
 kind: Gateway
@@ -216,6 +230,7 @@ spec:
 ```
 
 **3d. Istio VirtualService** (`istio-virtualservice.yaml`):
+
 ```yaml
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
@@ -238,6 +253,7 @@ spec:
 ```
 
 **3e. Kustomization** (`kustomization.yaml`):
+
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -252,6 +268,7 @@ namespace: default
 ```
 
 **Checklist**:
+
 - [ ] Created deployment.yaml
 - [ ] Created service.yaml
 - [ ] Created istio-gateway.yaml with correct subdomain
@@ -262,6 +279,7 @@ namespace: default
 ---
 
 ### 4. Validate Manifests
+
 **Goal**: Ensure manifests are valid before applying
 
 ```bash
@@ -276,6 +294,7 @@ kubectl apply --dry-run=server -k k8s/apps/<APP_NAME>/base
 ```
 
 **Checklist**:
+
 - [ ] Kustomize builds without errors
 - [ ] Dry-run succeeds
 - [ ] No validation warnings
@@ -283,6 +302,7 @@ kubectl apply --dry-run=server -k k8s/apps/<APP_NAME>/base
 ---
 
 ### 5. Deploy Application
+
 **Goal**: Apply manifests to cluster
 
 ```bash
@@ -300,6 +320,7 @@ kubectl logs -l app=<APP_NAME> -n default --tail=50
 ```
 
 **Checklist**:
+
 - [ ] Deployment created successfully
 - [ ] Pods are running
 - [ ] Service exists
@@ -309,6 +330,7 @@ kubectl logs -l app=<APP_NAME> -n default --tail=50
 ---
 
 ### 6. Verify Istio Configuration
+
 **Goal**: Ensure Istio routing is correctly configured
 
 ```bash
@@ -326,6 +348,7 @@ istioctl analyze -n default
 ```
 
 **Checklist**:
+
 - [ ] Gateway shows correct hosts and TLS config
 - [ ] VirtualService routes to correct service
 - [ ] No Istio configuration errors
@@ -334,6 +357,7 @@ istioctl analyze -n default
 ---
 
 ### 7. Test Connectivity
+
 **Goal**: Verify application is accessible via subdomain
 
 ```bash
@@ -352,6 +376,7 @@ kubectl run curl-test --image=curlimages/curl:latest --rm -it --restart=Never --
 ```
 
 **Checklist**:
+
 - [ ] HTTP request succeeds
 - [ ] HTTPS request succeeds with valid certificate
 - [ ] Application responds correctly
@@ -360,6 +385,7 @@ kubectl run curl-test --image=curlimages/curl:latest --rm -it --restart=Never --
 ---
 
 ### 8. Add to Root Kustomization (Optional)
+
 **Goal**: Include new app in centralized kustomization
 
 ```bash
@@ -373,6 +399,7 @@ kubectl kustomize k8s
 ```
 
 **Checklist**:
+
 - [ ] Added to root kustomization
 - [ ] Root kustomize builds successfully
 
@@ -435,6 +462,7 @@ curl https://api.cat-herding.net/health
 ---
 
 ## Summary Checklist
+
 - [ ] DNS A record created in Azure DNS
 - [ ] DNS resolves correctly
 - [ ] TLS certificate secret exists

@@ -126,7 +126,7 @@ jobs:
           # Output for use in subsequent steps
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
           echo "commit_sha=${COMMIT_SHA}" >> $GITHUB_OUTPUT
-          
+
           # Display generated tags
           echo "### 🏷️ Generated Image Tags" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
@@ -193,7 +193,7 @@ jobs:
           DEPLOYMENT_NAME: ${{ env.IMAGE_NAME }}
         run: |
           echo "🚀 Deploying to AKS..."
-          
+
           # Get AKS credentials
           az aks get-credentials \
             --resource-group ${{ env.RESOURCE_GROUP }} \
@@ -202,10 +202,10 @@ jobs:
 
           # Restart deployment to pull new image
           kubectl rollout restart deployment/${DEPLOYMENT_NAME} -n ${NAMESPACE}
-          
+
           # Wait for rollout
           kubectl rollout status deployment/${DEPLOYMENT_NAME} -n ${NAMESPACE} --timeout=5m
-          
+
           # Verify deployment
           echo "✅ Deployment successful!"
           kubectl get pods -n ${NAMESPACE} -l app=${DEPLOYMENT_NAME}
@@ -215,14 +215,14 @@ jobs:
         continue-on-error: true
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tags.outputs.commit_sha }}
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          format: "sarif"
+          output: "trivy-results.sarif"
 
       - name: Upload Trivy results
         uses: github/codeql-action/upload-sarif@v3
         continue-on-error: true
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
 
       - name: Build summary
         if: always()

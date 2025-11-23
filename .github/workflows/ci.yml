@@ -4,14 +4,14 @@ on:
   push:
     branches: [main, develop, staging]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.github/workflows/docker.yml'
+      - "**.md"
+      - "docs/**"
+      - ".github/workflows/docker.yml"
   pull_request:
     branches: [main, develop, staging]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
+      - "**.md"
+      - "docs/**"
 
 permissions:
   contents: read
@@ -45,7 +45,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Get pnpm store directory
         shell: bash
@@ -91,13 +91,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
-          cache: 'pip'
+          python-version: "3.x"
+          cache: "pip"
 
       - name: Get pnpm store directory
         shell: bash
@@ -156,15 +156,15 @@ jobs:
           # Setup Kustomize
           curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
           sudo mv kustomize /usr/local/bin/
-          
+
           # Setup kubeconform
           curl -sL https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz | tar xz
           sudo mv kubeconform /usr/local/bin/
-          
+
           # Setup kube-score
           curl -sL https://github.com/zegl/kube-score/releases/download/v1.18.0/kube-score_1.18.0_linux_amd64.tar.gz | tar xz
           sudo mv kube-score /usr/local/bin/
-          
+
           # Setup yq
           curl -sL https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /tmp/yq
           sudo mv /tmp/yq /usr/local/bin/yq

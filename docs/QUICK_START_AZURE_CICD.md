@@ -5,6 +5,7 @@
 Your CI/CD pipelines have been completely migrated from GCP to Azure and optimized following GitHub Actions best practices.
 
 ### Key Changes
+
 - ✅ **GCP → Azure**: All workflows now use Azure Container Registry and Azure Kubernetes Service
 - ✅ **50-60% faster**: Parallel execution, intelligent caching, optimized triggers
 - ✅ **More secure**: OIDC authentication, vulnerability scanning, least-privilege access
@@ -33,11 +34,13 @@ gh variable set AZURE_RESOURCE_GROUP --body "portfolio-rg"
 ### 3. Set Up Azure OIDC (10 minutes)
 
 Follow the complete guide in `docs/AZURE_CI_CD_SETUP.md` to:
+
 1. Create Azure AD application
 2. Configure federated credentials
 3. Assign ACR permissions
 
 **Quick command**:
+
 ```bash
 # See AZURE_CI_CD_SETUP.md Step 2, Option A for full script
 ```
@@ -57,16 +60,19 @@ gh run watch
 ## What You Get
 
 ### Faster Builds
+
 - **Before**: 13-20 minutes total
 - **After**: 5-9 minutes total
 - **Savings**: 50-60% reduction
 
 ### Better Security
+
 - No stored credentials (OIDC)
 - Automatic vulnerability scanning
 - Least-privilege access patterns
 
 ### Improved Developer Experience
+
 - Parallel quality checks (lint, format, test)
 - Rich GitHub Actions summaries
 - Smart caching for faster builds
@@ -75,12 +81,14 @@ gh run watch
 ## Files Created/Modified
 
 ### New Files
+
 - `.github/actions/setup-node-pnpm/action.yml` - Reusable setup action
 - `docs/AZURE_CI_CD_SETUP.md` - Complete setup guide
 - `docs/CI_CD_OPTIMIZATIONS.md` - Detailed optimizations doc
 - `docs/QUICK_START_AZURE_CICD.md` - This file
 
 ### Modified Files
+
 - `.github/workflows/ci.yml` - Optimized CI with Azure-only validations
 - `.github/workflows/docker.yml` - Complete Azure ACR integration
 - `.github/copilot-instructions.md` - Updated for Azure
@@ -89,12 +97,15 @@ gh run watch
 ## Common Issues
 
 ### "Context access might be invalid" warnings
+
 These are expected linting warnings for secrets/vars that will be configured. They won't affect functionality.
 
 ### Authentication failures
+
 Ensure you've completed the OIDC setup in Azure and added all required secrets to GitHub.
 
 ### Image push failures
+
 Verify your ACR name matches the `AZURE_REGISTRY_NAME` variable and that permissions are correctly assigned.
 
 ## Documentation

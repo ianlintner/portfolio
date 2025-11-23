@@ -6,39 +6,46 @@
 ## Azure Resources Created
 
 ### Resource Group
+
 - **Name**: `portfolio-rg`
 - **Location**: `eastus`
 - **Status**: Succeeded ✅
 
 ### Azure Container Registry (ACR)
+
 - **Name**: `portfolioregistry`
 - **Login Server**: `portfolioregistry.azurecr.io`
 - **SKU**: Basic
 - **Status**: Succeeded ✅
 
 ### Azure AD Application (OIDC)
+
 - **Display Name**: GitHub-Portfolio-OIDC
 - **Application ID**: `1bed63fe-9eea-412f-8018-40d9ef3f82d9`
 - **Tenant ID**: `42ddc44e-97dd-4c3b-bf8a-31c785e24c67`
 - **Subscription ID**: `79307c77-54c3-4738-be2a-dc96da7464d9`
 
 ### Federated Credentials Configured ✅
+
 - ✅ `GitHubMain` - repo:ianlintner/portfolio:ref:refs/heads/main
 - ✅ `GitHubDevelop` - repo:ianlintner/portfolio:ref:refs/heads/develop
 - ✅ `GitHubStaging` - repo:ianlintner/portfolio:ref:refs/heads/staging
 - ✅ `GitHubPR` - repo:ianlintner/portfolio:pull_request
 
 ### Role Assignments
+
 - ✅ Service Principal assigned `AcrPush` role on ACR
 
 ## GitHub Configuration
 
 ### Secrets Configured ✅
+
 - ✅ `AZURE_CLIENT_ID` - 1bed63fe-9eea-412f-8018-40d9ef3f82d9
 - ✅ `AZURE_TENANT_ID` - 42ddc44e-97dd-4c3b-bf8a-31c785e24c67
 - ✅ `AZURE_SUBSCRIPTION_ID` - 79307c77-54c3-4738-be2a-dc96da7464d9
 
 ### Variables Configured ✅
+
 - ✅ `AZURE_REGISTRY_NAME` - portfolioregistry
 - ✅ `AZURE_RESOURCE_GROUP` - portfolio-rg
 
@@ -137,6 +144,7 @@ gh secret set DATABASE_URL --body "postgresql://dbadmin:<password>@portfolio-db.
 ## Monitoring
 
 ### View Azure Resources
+
 ```bash
 # List all resources
 az resource list --resource-group portfolio-rg --output table
@@ -146,6 +154,7 @@ az acr show-usage --name portfolioregistry --output table
 ```
 
 ### View GitHub Actions
+
 ```bash
 # List recent workflow runs
 gh run list --repo ianlintner/portfolio
@@ -157,11 +166,13 @@ gh run view <run-id> --repo ianlintner/portfolio
 ## Cost Optimization
 
 Current setup uses cost-effective resources:
+
 - **ACR Basic SKU**: ~$5/month
 - **No AKS cluster** (unless you create one): $0/month
 - **GitHub Actions**: Free for public repos
 
 ### Clean Up Resources (if needed)
+
 ```bash
 # Delete entire resource group (removes all resources)
 az group delete --name portfolio-rg --yes --no-wait
@@ -170,6 +181,7 @@ az group delete --name portfolio-rg --yes --no-wait
 ## Troubleshooting
 
 ### Check Authentication
+
 ```bash
 # Test Azure CLI
 az account show
@@ -182,11 +194,13 @@ az acr login --name portfolioregistry
 ```
 
 ### View Federated Credentials
+
 ```bash
 az ad app federated-credential list --id 1bed63fe-9eea-412f-8018-40d9ef3f82d9 --output table
 ```
 
 ### Check Role Assignments
+
 ```bash
 az role assignment list --assignee 1bed63fe-9eea-412f-8018-40d9ef3f82d9 --all --output table
 ```
@@ -203,6 +217,7 @@ az role assignment list --assignee 1bed63fe-9eea-412f-8018-40d9ef3f82d9 --all --
 🎉 **Your Azure CI/CD pipeline is fully configured and ready to use!**
 
 Everything is set up for:
+
 - ✅ Automatic Docker builds on push to main/develop/staging
 - ✅ Secure OIDC authentication (no stored credentials)
 - ✅ Images pushed to Azure Container Registry

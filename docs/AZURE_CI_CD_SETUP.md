@@ -38,6 +38,7 @@ GitHub Push → CI Checks → Docker Build → ACR Push → AKS Deploy (optional
 ## Step 1: Create Azure Resources
 
 ### Create Resource Group
+
 ```bash
 az group create \
   --name portfolio-rg \
@@ -45,6 +46,7 @@ az group create \
 ```
 
 ### Create Azure Container Registry
+
 ```bash
 az acr create \
   --resource-group portfolio-rg \
@@ -53,6 +55,7 @@ az acr create \
 ```
 
 ### Create AKS Cluster (Optional)
+
 ```bash
 az aks create \
   --resource-group portfolio-rg \
@@ -69,6 +72,7 @@ az aks create \
 OIDC provides keyless authentication without storing credentials in GitHub.
 
 #### 1. Create Azure AD Application
+
 ```bash
 # Create the app registration
 az ad app create --display-name "GitHub-Portfolio-OIDC"
@@ -79,6 +83,7 @@ echo "Application ID: $APP_ID"
 ```
 
 #### 2. Create Service Principal
+
 ```bash
 az ad sp create --id $APP_ID
 
@@ -88,6 +93,7 @@ echo "Object ID: $OBJECT_ID"
 ```
 
 #### 3. Configure Federated Credentials
+
 ```bash
 # For main branch
 az ad app federated-credential create \
@@ -111,6 +117,7 @@ az ad app federated-credential create \
 ```
 
 #### 4. Assign ACR Permissions
+
 ```bash
 # Get ACR resource ID
 ACR_ID=$(az acr show --name portfolioregistry --query id -o tsv)
@@ -123,6 +130,7 @@ az role assignment create \
 ```
 
 #### 5. Configure GitHub Secrets
+
 ```bash
 # Get your Azure Tenant ID
 TENANT_ID=$(az account show --query tenantId -o tsv)
@@ -141,6 +149,7 @@ echo "AZURE_SUBSCRIPTION_ID: $SUBSCRIPTION_ID"
 If you prefer using service principal credentials:
 
 #### 1. Create Service Principal
+
 ```bash
 az ad sp create-for-rbac \
   --name "github-portfolio-sp" \
@@ -152,6 +161,7 @@ az ad sp create-for-rbac \
 This outputs JSON credentials - save them as the `AZURE_CREDENTIALS` secret in GitHub.
 
 #### 2. Assign ACR Permissions
+
 ```bash
 # Get the service principal's App ID
 SP_ID=$(az ad sp list --display-name "github-portfolio-sp" --query "[0].appId" -o tsv)
@@ -169,23 +179,28 @@ az role assignment create \
 Navigate to your GitHub repository → Settings → Secrets and variables → Actions
 
 ### Required Secrets (OIDC)
+
 - `AZURE_CLIENT_ID`: Application (client) ID from Azure AD
 - `AZURE_TENANT_ID`: Your Azure tenant ID
 - `AZURE_SUBSCRIPTION_ID`: Your Azure subscription ID
 
 ### Required Secrets (Service Principal)
+
 - `AZURE_CREDENTIALS`: JSON output from `az ad sp create-for-rbac`
 
 ### Required Variables
+
 - `AZURE_REGISTRY_NAME`: Your ACR name (e.g., `portfolioregistry`)
 - `AZURE_RESOURCE_GROUP`: Resource group name (e.g., `portfolio-rg`)
 
 ### Optional Variables (for AKS auto-deploy)
+
 - `ENABLE_AUTO_DEPLOY`: Set to `true` to enable automatic deployment
 - `AKS_CLUSTER_NAME`: Your AKS cluster name
 - `DEPLOY_NAMESPACE`: Kubernetes namespace (default: `prod`)
 
 ### Example Configuration
+
 ```bash
 # Using GitHub CLI
 gh secret set AZURE_CLIENT_ID --body "$APP_ID"
@@ -217,6 +232,7 @@ env:
 ## Step 5: Test the Pipeline
 
 ### Trigger CI Workflow
+
 ```bash
 # Make a change and push
 git add .
@@ -225,12 +241,14 @@ git push origin main
 ```
 
 ### Check Workflow Status
+
 ```bash
 gh run list
 gh run view <run-id>
 ```
 
 ### View in GitHub
+
 - Navigate to Actions tab in your repository
 - Watch the CI workflow complete
 - Watch the Docker workflow trigger and build
@@ -254,11 +272,13 @@ az acr repository show-tags \
 ### CI Workflow (`ci.yml`)
 
 **Triggers**:
+
 - Push to `main`, `develop`, `staging` branches
 - Pull requests to these branches
 - Ignores: markdown files, docs, docker workflow
 
 **Jobs**:
+
 1. **Quality Checks** (parallel):
    - Lint: ESLint validation
    - Format: Prettier validation
@@ -267,6 +287,7 @@ az acr repository show-tags \
 3. **K8s Validate**: Validates Kubernetes manifests with Kustomize
 
 **Optimizations**:
+
 - Matrix strategy for parallel quality checks
 - Intelligent caching (pnpm store, Next.js build cache)
 - Path-based triggers to skip unnecessary runs
@@ -275,10 +296,12 @@ az acr repository show-tags \
 ### Docker Workflow (`docker.yml`)
 
 **Triggers**:
+
 - After successful CI workflow completion
 - Push of version tags (e.g., `v1.0.0`)
 
 **Jobs**:
+
 1. **Build and Push**:
    - Builds Docker image with BuildKit
    - Multi-platform support (amd64, arm64)
@@ -288,6 +311,7 @@ az acr repository show-tags \
    - Optional: Auto-deploy to AKS
 
 **Image Tags**:
+
 - `{commit-sha}`: Short commit hash (e.g., `a1b2c3d`)
 - `{branch}`: Branch name (e.g., `main`, `develop`)
 - `{branch}-{commit}-{timestamp}`: Flux CD compatible
@@ -299,12 +323,15 @@ az acr repository show-tags \
 The pipeline includes Trivy security scanning for container vulnerabilities.
 
 ### View Scan Results
+
 1. Go to Security tab in GitHub
 2. Select Code scanning alerts
 3. Review findings and remediate as needed
 
 ### Disable Scanning (not recommended)
+
 Remove or comment out the Trivy steps in `docker.yml`:
+
 ```yaml
 # - name: Image scan with Trivy
 #   uses: aquasecurity/trivy-action@master
@@ -320,6 +347,7 @@ develop-b2c3d4e-1703001235
 ```
 
 ### Configure Flux ImagePolicy
+
 ```yaml
 apiVersion: image.toolkit.fluxcd.io/v1beta2
 kind: ImagePolicy
@@ -331,10 +359,10 @@ spec:
     name: portfolio
   policy:
     semver:
-      range: '>=1.0.0'
+      range: ">=1.0.0"
   filterTags:
-    pattern: '^main-[a-f0-9]+-(?P<ts>[0-9]+)$'
-    extract: '$ts'
+    pattern: "^main-[a-f0-9]+-(?P<ts>[0-9]+)$"
+    extract: "$ts"
 ```
 
 ## Troubleshooting
@@ -342,6 +370,7 @@ spec:
 ### Authentication Failures
 
 **OIDC Issues**:
+
 ```bash
 # Verify federated credential configuration
 az ad app federated-credential list --id $APP_ID
@@ -351,6 +380,7 @@ az role assignment list --assignee $APP_ID --all
 ```
 
 **Service Principal Issues**:
+
 ```bash
 # Test login
 az login --service-principal \
@@ -365,11 +395,13 @@ az acr login --name portfolioregistry
 ### Build Failures
 
 **Check logs**:
+
 ```bash
 gh run view <run-id> --log
 ```
 
 **Common issues**:
+
 - Missing secrets/variables in GitHub
 - Incorrect ACR name or permissions
 - Docker build errors (check Dockerfile)
@@ -406,6 +438,7 @@ kubectl describe pod <pod-name> -n prod
 ## Best Practices
 
 ### Security
+
 - ✅ Use OIDC authentication (keyless)
 - ✅ Enable vulnerability scanning
 - ✅ Use minimal ACR SKU for cost savings
@@ -415,6 +448,7 @@ kubectl describe pod <pod-name> -n prod
 - ⚠️ Rotate service principal secrets regularly
 
 ### Performance
+
 - ✅ Use build caching (registry cache)
 - ✅ Multi-stage Dockerfile for smaller images
 - ✅ Parallel job execution in CI
@@ -422,6 +456,7 @@ kubectl describe pod <pod-name> -n prod
 - ✅ Intelligent dependency caching
 
 ### Cost Optimization
+
 - Use Basic ACR SKU for development
 - Scale AKS node pools based on demand
 - Clean up old container images regularly:
@@ -441,11 +476,13 @@ kubectl describe pod <pod-name> -n prod
 ## Monitoring and Observability
 
 ### GitHub Actions Insights
+
 - View workflow run history in Actions tab
 - Set up status badges in README
 - Configure failure notifications
 
 ### Azure Monitor
+
 ```bash
 # Enable Container Insights for AKS
 az aks enable-addons \
@@ -455,7 +492,9 @@ az aks enable-addons \
 ```
 
 ### Application Insights
+
 Configure in your application for:
+
 - Request tracking
 - Dependency monitoring
 - Exception logging
@@ -491,6 +530,7 @@ Configure in your application for:
 ## Support
 
 For issues or questions:
+
 1. Check the troubleshooting section above
 2. Review workflow logs in GitHub Actions
 3. Check Azure resource health in Azure Portal
