@@ -177,21 +177,24 @@ public/               # Static assets
 
 ### Infrastructure
 
-- **Platform**: GKE (Google Kubernetes Engine)
+- **Platform**: Azure Kubernetes Service (AKS)
+- **Container Registry**: Azure Container Registry (ACR)
 - **Ingress**: Istio IngressGateway + VirtualService
-- **Database**: Cloud SQL for PostgreSQL via sidecar Cloud SQL Auth Proxy
+- **Database**: Azure Database for PostgreSQL (or via sidecar proxy)
 - **GitOps**: Flux CD for automated deployments
 
 ### Manifests Location
 
 - `k8s/apps/portfolio` - Application manifests
-- `k8s/flux-system` - Flux CD configuration
+- `k8s/flux-system` - Flux CD configuration (if applicable)
 
 ### CI/CD
 
 - Docker build/push via GitHub Actions (`.github/workflows/docker.yml`)
+- CI quality checks (`.github/workflows/ci.yml`)
 - Automated image updates via Flux CD
 - Environment-specific overlays for dev/staging/production
+- Images pushed to Azure Container Registry: `{registry}.azurecr.io/portfolio`
 
 ## Documentation
 

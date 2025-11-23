@@ -2,21 +2,47 @@ apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: portfolio-virtualservice
-  namespace: prod
 spec:
   hosts:
-    - "portfolio.hugecat.net"
+    - "cat-herding.net"
+    - "www.cat-herding.net"
   gateways:
     - portfolio-gateway
   http:
-    # - match:
-    #   - uri:
-    #       prefix: /.well-known/acme-challenge/
-    # route:
-    #   - destination:
-    #       host: cm-acme-http-solver-jdwgn
-    #       port:
-    #         number: 8089
+    # Health check endpoints
+    - match:
+        - uri:
+            exact: /api/health
+        - uri:
+            exact: /health
+      route:
+        - destination:
+            host: portfolio
+            port:
+              number: 80
+    # API endpoints
+    - match:
+        - uri:
+            prefix: /api
+      route:
+        - destination:
+            host: portfolio
+            port:
+              number: 80
+      timeout: 60s
+      corsPolicy:
+        allowOrigins:
+          - regex: ".*"
+        allowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        allowHeaders:
+          - "*"
+        allowCredentials: true
+    # Root and all other paths (Next.js handles routing)
     - match:
         - uri:
             prefix: /

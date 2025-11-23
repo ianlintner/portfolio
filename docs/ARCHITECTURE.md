@@ -1,6 +1,6 @@
 # Architecture Overview
 
-This document explains the application architecture, how data flows end‑to‑end, and how the system is deployed to Google Kubernetes Engine (GKE) using GitOps.
+This document explains the application architecture, how data flows end‑to‑end, and how the system is deployed to Azure Kubernetes Service (AKS) using GitOps.
 
 ## Application Stack
 
@@ -41,47 +41,46 @@ This document explains the application architecture, how data flows end‑to‑e
 - Session JWT enriched with `role` for admin‑only routes/mutations.
 - Admin UI under `src/app/admin/*` uses protected procedures in tRPC.
 
-## Kubernetes (GKE)
+## Kubernetes (AKS)
 
 Manifests live under `k8s/apps/portfolio`:
 
 - Deployment: `base/deployment.yaml`
   - App container runs on port 3000 (health endpoint `/api/health`)
-  - Sidecar: Cloud SQL Auth Proxy (port 5432)
   - ServiceAccount: Workload Identity enabled (`portfolio-workload-identity`)
   - Env from ConfigMap/Secrets (`portfolio-config`, `portfolio-secrets`, `portfolio-db-secret`)
 - Service: `base/service.yaml` (ClusterIP)
 - Istio Gateway + VirtualService: `base/istio-gateway.yaml`, `base/istio-virtualservice.yaml`
-  - Static IP: `base/istio-static-ip.yaml`
-  - TLS: `base/istio-certificate.yaml` (Google ManagedCertificate)
+  - Static IP configuration
+  - TLS certificate management
 - NetworkPolicy: `base/networkpolicy.yaml`
-- Cloud SQL resources: `base/cloudsql-instance.yaml`, `base/cloudsql-serviceaccount.yaml`
+- Database configuration via Azure Database for PostgreSQL
 - Admin utility job: `base/admin-password-reset-job.yaml`
 
 Environment overlays in `k8s/apps/portfolio/overlays/*` adjust namespace, DNS, and any env‑specific values.
 
 ### Database Connectivity
 
-- The app connects to Cloud SQL Postgres via the sidecar proxy.
-- Connection string is supplied via Secret (`portfolio-db-secret`).
-- Workload Identity provides GCP IAM to the pod without node‑wide secrets.
+- The app connects to Azure Database for PostgreSQL
+- Connection string is supplied via Secret (`portfolio-db-secret`)
+- Workload Identity provides Azure AD authentication without secrets
 
 ### Ingress
 
-- Client traffic terminates at the Istio IngressGateway (GCLB).
-- `VirtualService` routes HTTP(S) to the `Service` on port 80 → container 3000.
-- TLS is managed by Google ManagedCertificate.
+- Client traffic terminates at the Istio IngressGateway (Azure Load Balancer)
+- `VirtualService` routes HTTP(S) to the `Service` on port 80 → container 3000
+- TLS is managed by cert-manager or Azure Front Door
 
 ## CI/CD & GitOps
 
-- Build: GitHub Actions build/push image to Artifact Registry (`docker.yml`).
-- CI: Lint/tests/quality checks in `ci.yml`.
-- GitOps: Flux CD (`k8s/flux-system/*`) watches the registry and updates image tags via `ImageRepository` + `ImagePolicy` + `ImageUpdateAutomation`.
-- Kustomizations per environment reconcile manifests into the cluster.
+- Build: GitHub Actions build/push image to Azure Container Registry (`docker.yml`)
+- CI: Lint/tests/quality checks in `ci.yml`
+- GitOps: Flux CD (`k8s/flux-system/*`) watches the registry and updates image tags via `ImageRepository` + `ImagePolicy` + `ImageUpdateAutomation`
+- Kustomizations per environment reconcile manifests into the cluster
 
 References:
 
-- `DOCKER_CI_SETUP.md` — building and pushing images
+- `AZURE_CI_CD_SETUP.md` — Complete Azure CI/CD setup guide
 - `FLUX_CD_MIGRATION.md` — GitOps image automation
 - `AUTOMATIC_DEPLOYMENT_SETUP.md` — branch → environment deployments
 - `PODS_IMAGE_POLICY.md` — security and policy notes
