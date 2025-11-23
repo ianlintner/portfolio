@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portfolio
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: portfolio
+        version: v1
+      annotations:
+        # Disable Istio sidecar injection for Azure (not using ambient mesh)
+        sidecar.istio.io/inject: 'false'
+    spec:
+      serviceAccountName: portfolio-workload-identity
+      containers:
+        - name: portfolio
+          # Update to use Azure Container Registry (ACR)
+          image: gabby.azurecr.io/portfolio:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: AZURE_DEPLOYMENT
+              value: 'true'
+            - name: PORT
+              value: '3000'
+            - name: HOST
+              value: '0.0.0.0'
+          envFrom:
+            - configMapRef:
+                name: portfolio-config
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 2
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: '250m'
+              memory: '512Mi'
+            limits:
+              cpu: '1000m'
+              memory: '1Gi'
