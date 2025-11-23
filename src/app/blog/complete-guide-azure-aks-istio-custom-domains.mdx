@@ -3731,6 +3731,369 @@ graph TD
 
 For my personal portfolio, the migration to Azure was a no-brainer—I saved $1,212/year while gaining managed Istio as an option. The free cluster management fee alone pays for a nice dinner every month.
 
+### Comprehensive Service Cost Comparison: Azure vs GCP vs AWS
+
+Beyond the base Kubernetes infrastructure, let's compare the full stack of services you'll need for a production application across all three major cloud providers.
+
+#### Database Services: PostgreSQL Comparison
+
+| Tier | GCP Cloud SQL | Azure Database | AWS RDS PostgreSQL | Winner | Use Case |
+|------|---------------|----------------|-------------------|--------|----------|
+| **Hobby** | db-f1-micro<br/>1 shared vCPU, 614MB<br/>**$7.67/mo** | B1ms<br/>1 vCPU, 2GB<br/>**$12.41/mo** | db.t4g.micro<br/>2 vCPU, 1GB<br/>**$12.41/mo** | **GCP** 🏆 | Personal, <100 req/hr |
+| **Small** | db-g1-small<br/>1 shared vCPU, 1.7GB<br/>**$25.00/mo** | B2s<br/>2 vCPU, 4GB<br/>**$49.64/mo** | db.t4g.small<br/>2 vCPU, 2GB<br/>**$24.82/mo** | **AWS** 🏆 | Small apps, <1K req/hr |
+| **Medium** | db-n1-standard-1<br/>1 vCPU, 3.75GB<br/>**$49.95/mo** | D2s_v3<br/>2 vCPU, 8GB<br/>**$116.80/mo** | db.t4g.medium<br/>2 vCPU, 4GB<br/>**$49.64/mo** | **GCP** 🏆 | Mid-size, 1-10K req/hr |
+| **High Availability** | db-n1-std-2 + HA<br/>2 vCPU, 7.5GB<br/>**$198.90/mo** | D2s_v3 HA<br/>2 vCPU, 8GB<br/>**$233.60/mo** | db.m6g.large Multi-AZ<br/>2 vCPU, 8GB<br/>**$188.50/mo** | **AWS** 🏆 | Production with failover |
+| **High Performance** | db-n1-standard-4<br/>4 vCPU, 15GB<br/>**$199.05/mo** | D4s_v3<br/>4 vCPU, 16GB<br/>**$233.59/mo** | db.m6g.xlarge<br/>4 vCPU, 16GB<br/>**$282.24/mo** | **GCP** 🏆 | Heavy, >10K req/hr |
+
+**Overall Winner**: **GCP** for hobby/medium, **AWS** for small/HA scenarios
+
+**Note**: GCP's shared vCPU tiers are cheapest for hobby projects. AWS t4g (Graviton) instances offer best price/performance for small-medium workloads.
+
+#### Database Services: MySQL Comparison
+
+| Tier | GCP Cloud SQL | Azure Database | AWS RDS MySQL | Winner | Notes |
+|------|--------------|----------------|---------------|--------|-------|
+| **Hobby** | db-f1-micro<br/>**$7.18/mo** | B1ms<br/>**$13.14/mo** | db.t4g.micro<br/>**$11.59/mo** | **GCP** 🏆 | MySQL 8.0 |
+| **Small** | db-g1-small<br/>**$24.51/mo** | B2s<br/>**$52.56/mo** | db.t4g.small<br/>**$23.18/mo** | **AWS** 🏆 | MySQL 8.0 |
+| **Medium** | db-n1-standard-1<br/>**$48.23/mo** | D2s_v3<br/>**$123.29/mo** | db.t4g.medium<br/>**$46.35/mo** | **AWS** 🏆 | MySQL 8.0 |
+| **High Performance** | db-n1-standard-4<br/>**$192.92/mo** | D4s_v3<br/>**$246.58/mo** | db.m6g.xlarge<br/>**$263.52/mo** | **GCP** 🏆 | MySQL 8.0 |
+
+**Overall Winner**: **GCP** for hobby, **AWS** for small/medium production workloads
+
+#### Cache Services: Redis Comparison
+
+| Tier | GCP Memorystore | Azure Cache for Redis | AWS ElastiCache | Winner | Notes |
+|------|----------------|----------------------|-----------------|--------|-------|
+| **Basic 1GB** | **$41.61/mo** | Basic C1 (1GB)<br/>**$16.06/mo** | cache.t4g.micro (0.5GB)<br/>**$11.52/mo** | **AWS** 🏆 | No HA, single zone |
+| **Basic 5GB** | **$208.05/mo** | Basic C3 (6GB)<br/>**$64.24/mo** | cache.m6g.large (6.38GB)<br/>**$75.74/mo** | **Azure** 🏆 | No HA |
+| **Standard 1GB HA** | **$78.84/mo** | Standard C1 (1GB)<br/>**$44.53/mo** | cache.t4g.small (1.55GB)<br/>**$46.08/mo** | **Azure** 🏆 | High availability |
+| **Standard 5GB HA** | **$393.44/mo** | Standard C3 (6GB)<br/>**$128.48/mo** | cache.m6g.large (6.38GB) Multi-AZ<br/>**$151.48/mo** | **Azure** 🏆 | HA with replica |
+| **Premium 26GB HA** | **$810.72/mo** | Premium P1 (6GB)<br/>**$164.25/mo** | cache.m6g.xlarge (12.93GB) Cluster<br/>**$302.96/mo** | **Azure** 🏆 | Clustering, persistence |
+| **Premium 100GB HA** | **$3,242.88/mo** | Premium P4 (26GB)<br/>**$657.00/mo** | cache.r6g.xlarge (26.32GB) Cluster<br/>**$605.92/mo** | **AWS** 🏆 | Enterprise features |
+
+**Overall Winner**: **Azure** for most tiers (40-70% cheaper), **AWS** for small hobby and large enterprise
+
+**Note**: Azure Cache for Redis is dramatically cheaper than both GCP and AWS for standard production workloads. This is one of Azure's biggest competitive advantages.
+
+#### Object Storage Comparison
+
+| Storage Type | GCP Cloud Storage | Azure Blob Storage | AWS S3 | Winner | Use Case |
+|--------------|------------------|-------------------|--------|--------|----------|
+| **Hot Storage** | Standard<br/>**$0.020/GB/mo** | Hot tier<br/>**$0.0184/GB/mo** | Standard<br/>**$0.023/GB/mo** | **Azure** 🏆 | Frequently accessed |
+| **Warm Storage** | Nearline (30-day)<br/>**$0.010/GB/mo** | Cool tier<br/>**$0.01/GB/mo** | S3 Infrequent Access<br/>**$0.0125/GB/mo** | **Tie (Azure/GCP)** | Monthly access |
+| **Cold Storage** | Coldline (90-day)<br/>**$0.004/GB/mo** | Archive tier<br/>**$0.00099/GB/mo** | Glacier Flexible<br/>**$0.0036/GB/mo** | **Azure** 🏆 | Rarely accessed |
+| **Deep Archive** | Archive<br/>**$0.0012/GB/mo** | Archive tier<br/>**$0.00099/GB/mo** | Glacier Deep Archive<br/>**$0.00099/GB/mo** | **Tie (Azure/AWS)** | Long-term backup |
+| **Egress (1TB)** | **$0.12/GB** | **$0.087/GB** | **$0.09/GB** | **Azure** 🏆 | Data transfer out |
+| **Requests (per 10K)** | **$0.40** (Class A) | **$0.50** (write) | **$0.50** (PUT) | **GCP** 🏆 | Write operations |
+
+**Overall Winner**: **Azure** for storage costs and egress, **GCP** for request pricing
+
+**Note**: Azure Archive tier is cheapest for cold storage. All three are competitive for hot storage within 20%.
+
+#### Compute (Virtual Machines) Comparison
+
+| VM Size | GCP (us-central1) | Azure (East US) | AWS (us-east-1) | Winner | Specs |
+|---------|------------------|-----------------|-----------------|--------|-------|
+| **Micro** | e2-micro<br/>**$6.11/mo** | B1s<br/>**$7.59/mo** | t4g.nano<br/>**$3.07/mo** | **AWS** 🏆 | 0.25-2 vCPU, 0.5-1GB |
+| **Small** | e2-small<br/>**$12.23/mo** | B1ms<br/>**$15.18/mo** | t4g.micro<br/>**$6.14/mo** | **AWS** 🏆 | 0.5-2 vCPU, 1-2GB |
+| **Medium Burst** | e2-medium<br/>**$24.45/mo** | B2s<br/>**$40.12/mo** | t4g.small<br/>**$12.29/mo** | **AWS** 🏆 | 2 vCPU, 2-4GB |
+| **Medium Standard** | n1-standard-1<br/>**$24.73/mo** | D2s_v3<br/>**$75.19/mo** | t4g.medium<br/>**$24.58/mo** | **GCP** 🏆 | 1-2 vCPU, 3.75-4GB |
+| **Medium Standard** | n1-standard-2<br/>**$49.45/mo** | D2s_v3<br/>**$75.19/mo** | m6g.large<br/>**$60.74/mo** | **GCP** 🏆 | 2 vCPU, 7.5-8GB |
+| **Large** | n1-standard-4<br/>**$98.91/mo** | D4s_v3<br/>**$150.38/mo** | m6g.xlarge<br/>**$121.47/mo** | **GCP** 🏆 | 4 vCPU, 15-16GB |
+| **Spot Instance** | e2-medium (preemptible)<br/>**$7.34/mo** (70% off) | B2s (spot)<br/>**$12.04/mo** (70% off) | t4g.small (spot)<br/>**$3.69/mo** (70% off) | **AWS** 🏆 | 2 vCPU, 2-4GB |
+
+**Overall Winner**: **AWS** for burstable/spot instances, **GCP** for standard compute
+
+**Note**: AWS t4g (Graviton ARM) instances offer best value for burstable workloads. GCP wins for sustained compute. Azure is most expensive across the board.
+
+#### Kubernetes Node Pricing (Actual Cluster Nodes)
+
+| Node Type | GCP GKE | Azure AKS | AWS EKS | Winner (3-node cost) |
+|-----------|---------|-----------|---------|----------------------|
+| **Hobby** | e2-small<br/>0.5 vCPU, 2GB | B1ms<br/>1 vCPU, 2GB | t4g.micro<br/>2 vCPU, 1GB | GCP: $36.69<br/>Azure: $45.54<br/>AWS: **$18.42** 🏆 |
+| **Small** | e2-medium<br/>2 vCPU, 4GB | B2s<br/>2 vCPU, 4GB | t4g.small<br/>2 vCPU, 2GB | GCP: $73.35<br/>Azure: $120.36<br/>AWS: **$36.87** 🏆 |
+| **Production** | n1-standard-2<br/>2 vCPU, 7.5GB | D2s_v3<br/>2 vCPU, 8GB | m6g.large<br/>2 vCPU, 8GB | GCP: **$148.35** 🏆<br/>Azure: $225.57<br/>AWS: $182.22 |
+| **High Perf** | n1-standard-4<br/>4 vCPU, 15GB | D4s_v3<br/>4 vCPU, 16GB | m6g.xlarge<br/>4 vCPU, 16GB | GCP: **$296.73** 🏆<br/>Azure: $451.14<br/>AWS: $364.41 |
+| **Spot Nodes** | e2-medium<br/>(preemptible) | B2s<br/>(spot) | t4g.small<br/>(spot) | GCP: $22.02<br/>Azure: $36.12<br/>AWS: **$11.07** 🏆 |
+
+**Overall Winner**: **AWS** for hobby/small/spot, **GCP** for production sustained workloads
+
+**Critical Factors**:
+- GCP: Add **$74.40/mo cluster management fee** (negates savings for small clusters)
+- Azure: **$0 cluster management** (free)
+- AWS: Add **$73/mo per cluster management fee** (similar to GCP)
+
+#### Load Balancer Comparison
+
+| Load Balancer Type | GCP | Azure | AWS | Winner | Notes |
+|-------------------|-----|-------|-----|--------|-------|
+| **Basic (HTTP/HTTPS)** | Cloud LB<br/>**$18.26/mo** | Standard LB<br/>**$3.65/mo** | ALB<br/>**$16.43/mo** | **Azure** 🏆 | 5 forwarding rules |
+| **With SSL** | + free cert<br/>**$18.26/mo** | + free cert<br/>**$3.65/mo** | + free cert (ACM)<br/>**$16.43/mo** | **Azure** 🏆 | Managed certificates |
+| **Network LB** | Regional LB<br/>**$18.26/mo** | Basic LB<br/>**$0/mo** | NLB<br/>**$16.43/mo** | **Azure** 🏆 | Layer 4 |
+| **Data Processing** | **$0.008/GB** | **$0.005/GB** | **$0.008/GB** | **Azure** 🏆 | Per GB processed |
+| **LCU Hours** | Included | Included | **$0.008/hour** | **Tie (Azure/GCP)** | Load Balancer Capacity Units |
+
+**Overall Winner**: **Azure** for load balancers (75-100% cheaper than both)
+
+**Note**: Azure's load balancer pricing is one of its strongest competitive advantages. AWS ALB charges for LCUs, GCP charges per forwarding rule.
+
+#### Content Delivery Network (CDN) Comparison
+
+| CDN Tier | GCP Cloud CDN | Azure CDN | AWS CloudFront | Winner | Use Case |
+|----------|---------------|-----------|----------------|--------|----------|
+| **Cache Egress (10TB)** | **$0.08/GB** | **$0.087/GB** | **$0.085/GB** | **GCP** 🏆 | Cache hit |
+| **Origin Egress** | **$0.12/GB** | **$0.087/GB** | **$0.085/GB** | **AWS** 🏆 | Cache miss |
+| **Requests (per 10K)** | **$0.0075** | **$0.0096** | **$0.0075** | **Tie (GCP/AWS)** | HTTP/HTTPS |
+
+**Overall Winner**: **GCP/AWS tie** for cache performance, **Azure** for origin-heavy workloads
+
+**Note**: All three are competitive within 10%. Choice depends on your cache hit ratio and existing cloud infrastructure.
+
+#### Managed Kubernetes Service: Total Cost Comparison
+
+Let's compare **identical workloads** on all three platforms:
+
+**Scenario: 3-node production cluster with database, cache, and storage**
+
+| Component | GCP Monthly Cost | Azure Monthly Cost | AWS Monthly Cost | Winner |
+|-----------|-----------------|-------------------|------------------|--------|
+| **Cluster Management Fee** | **$74.40** | **$0** ✅ | **$73.00** | **Azure** |
+| **3x Nodes (2 vCPU, 4GB)** | **$73.35** ✅ (e2-medium) | **$120.36** (B2s) | **$36.87** ✅ (t4g.small) | **AWS** |
+| **PostgreSQL (small)** | **$25.00** ✅ (db-g1-small) | **$49.64** (B2s) | **$24.82** ✅ (t4g.small) | **AWS** |
+| **Redis Cache (1GB HA)** | **$78.84** (Memorystore) | **$44.53** ✅ (Standard C1) | **$46.08** (t4g.small) | **Azure** |
+| **Load Balancer** | **$18.26** | **$3.65** ✅ | **$16.43** | **Azure** |
+| **Storage (500GB SSD)** | **$85.00** (SSD PD) | **$48.00** ✅ (Premium SSD) | **$50.00** (gp3) | **Azure** |
+| **Bandwidth (100GB)** | **$12.00** | **$8.76** ✅ | **$9.00** | **Azure** |
+| **DNS** | **$0.20** ✅ | **$0.50** | **$0.50** (Route53) | **GCP** |
+| **Container Registry** | **$0** ✅ (500MB free) | **$5.00** (Basic) | **$0** ✅ (500MB free) | **Tie (GCP/AWS)** |
+| **Monitoring** | **$8.00** (Cloud Logging) | **$0** ✅ (basic included) | **$10.00** (CloudWatch) | **Azure** |
+| **Total** | **$375.05** | **$280.44** ✅ | **$266.70** ✅ | **AWS wins by $13.74/mo** |
+| **Annual Total** | **$4,500.60** | **$3,365.28** | **$3,200.40** ✅ | **AWS saves $1,300.20/year** |
+
+**Winner**: **AWS** for this configuration (saves $1,300/year vs GCP, $165/year vs Azure)
+
+#### Cost Winner by Service Category
+
+```mermaid
+graph TB
+    subgraph "Azure Wins"
+        A1[Cluster Management<br/>FREE vs $73-74/mo]
+        A2[Redis Cache<br/>40-70% cheaper]
+        A3[Load Balancer<br/>75-100% cheaper]
+        A4[Storage<br/>20-30% cheaper]
+        A5[Bandwidth<br/>25% cheaper]
+    end
+    
+    subgraph "AWS Wins"
+        W1[Micro/Small VMs<br/>50-75% cheaper]
+        W2[Spot Instances<br/>50-70% cheaper]
+        W3[Small Databases<br/>t4g instances]
+        W4[Large Redis<br/>100GB+ clusters]
+    end
+    
+    subgraph "GCP Wins"
+        G1[Standard Compute<br/>n1-standard series]
+        G2[Hobby Databases<br/>Shared vCPU tiers]
+        G3[Medium Databases<br/>Best sustained perf]
+        G4[Request Pricing<br/>Storage ops]
+    end
+    
+    subgraph "Roughly Equal"
+        E1[Object Storage Hot<br/>Within 10-20%]
+        E2[CDN<br/>Usage-dependent]
+        E3[DNS<br/>Minimal difference]
+    end
+    
+    style A1 fill:#51cf66,stroke:#2f9e44
+    style A2 fill:#51cf66,stroke:#2f9e44
+    style A3 fill:#51cf66,stroke:#2f9e44
+    style A4 fill:#51cf66,stroke:#2f9e44
+    style A5 fill:#51cf66,stroke:#2f9e44
+    style W1 fill:#ff922b,stroke:#e8590c
+    style W2 fill:#ff922b,stroke:#e8590c
+    style W3 fill:#ff922b,stroke:#e8590c
+    style W4 fill:#ff922b,stroke:#e8590c
+    style G1 fill:#4dabf7,stroke:#1971c2
+    style G2 fill:#4dabf7,stroke:#1971c2
+    style G3 fill:#4dabf7,stroke:#1971c2
+    style G4 fill:#4dabf7,stroke:#1971c2
+```
+
+#### Real-World Cost Scenario Analysis
+
+**Scenario 1: Hobby Developer (Personal Portfolio)**
+
+```
+Workload:
+- 1 node cluster
+- Small database
+- No cache
+- <1K visitors/day
+
+GCP Cost:
+- GKE management: $74.40
+- 1x e2-small node: $12.23
+- db-f1-micro: $7.67
+- Load balancer: $18.26
+- DNS: $0.20
+Total: $112.76/mo
+
+Azure Cost:
+- AKS management: $0 ✅
+- 1x B1ms node: $15.18
+- B1ms PostgreSQL: $12.41
+- Load balancer: $3.65 ✅
+- DNS: $0.50
+Total: $31.74/mo
+
+AWS Cost:
+- EKS management: $73.00
+- 1x t4g.micro node: $6.14 ✅
+- db.t4g.micro: $12.41
+- ALB: $16.43
+- Route53: $0.50
+Total: $108.48/mo
+
+Winner: Azure saves $81.02/mo vs GCP (72% cheaper)
+Winner: Azure saves $76.74/mo vs AWS (71% cheaper)
+```
+
+**Scenario 2: Startup (10 Services, Growing Traffic)**
+
+```
+Workload:
+- 3-5 nodes (autoscaling)
+- Medium database with HA
+- Redis cache for sessions
+- 10-50K visitors/day
+
+GCP Cost:
+- GKE management: $74.40
+- 3x e2-medium nodes: $73.35
+- db-n1-standard-2 HA: $198.90
+- Memorystore 5GB HA: $393.44
+- Load balancer: $18.26
+- Storage 1TB: $170.00
+- Bandwidth 500GB: $60.00
+Total: $988.35/mo
+
+Azure Cost:
+- AKS management: $0 ✅
+- 3x B2s nodes: $120.36
+- D2s_v3 PostgreSQL HA: $233.60
+- Standard C3 Redis HA: $128.48 ✅
+- Load balancer: $3.65 ✅
+- Storage 1TB: $96.00 ✅
+- Bandwidth 500GB: $43.80 ✅
+Total: $625.89/mo
+
+AWS Cost:
+- EKS management: $73.00
+- 3x t4g.small nodes: $36.87 ✅
+- db.m6g.large Multi-AZ: $188.50 ✅
+- cache.m6g.large Multi-AZ: $151.48
+- ALB: $16.43
+- Storage 1TB: $100.00
+- Bandwidth 500GB: $45.00
+Total: $611.28/mo ✅
+
+Winner: AWS saves $377.07/mo vs GCP (38% cheaper)
+Winner: AWS saves $14.61/mo vs Azure (2% cheaper)
+```
+
+**Scenario 3: Enterprise (50+ Services, High Traffic)**
+
+```
+Workload:
+- 10-20 nodes (autoscaling)
+- Large database cluster
+- Multiple Redis instances
+- 1M+ visitors/day
+- Multi-region
+
+GCP Cost:
+- GKE management: $74.40
+- 10x n1-standard-4 nodes: $989.10
+- db-n1-standard-8 HA: $796.20
+- Memorystore 100GB HA: $3,242.88
+- Multiple load balancers: $60.00
+- Storage 5TB: $850.00
+- Bandwidth 5TB: $600.00
+- CDN: $400.00
+Total: $7,012.58/mo
+
+Azure Cost:
+- AKS management: $0 ✅
+- 10x D4s_v3 nodes: $1,503.80
+- D8s_v3 PostgreSQL HA: $935.16
+- Premium P4 Redis HA: $657.00 ✅
+- Multiple load balancers: $20.00 ✅
+- Storage 5TB: $480.00 ✅
+- Bandwidth 5TB: $438.00 ✅
+- CDN: $435.00
+Total: $4,469.96/mo
+
+AWS Cost:
+- EKS management: $73.00
+- 10x m6g.xlarge nodes: $1,214.70 ✅
+- db.m6g.4xlarge Multi-AZ: $1,129.00
+- cache.r6g.xlarge Cluster: $605.92 ✅
+- Multiple ALBs: $50.00
+- Storage 5TB: $500.00
+- Bandwidth 5TB: $450.00
+- CloudFront: $425.00
+Total: $4,447.62/mo ✅
+
+Winner: AWS saves $2,564.96/mo vs GCP (37% cheaper)
+Winner: AWS saves $22.34/mo vs Azure (0.5% cheaper)
+Annual savings: AWS saves $30,779/year vs GCP, $268/year vs Azure
+```
+
+#### Cost Optimization Recommendations
+
+**Choose GCP if:**
+- Heavy sustained compute requirements (>100 vCPUs running 24/7)
+- Hobby databases (db-f1-micro $7.67/mo is cheapest shared vCPU tier)
+- Already using Google Cloud services (BigQuery, Cloud Run, Pub/Sub)
+- Need GKE Autopilot for simplified management ($73/mo + per-pod pricing)
+- Prefer preemptible instances for batch workloads (sustained use discounts up to 30%)
+
+**Choose Azure if:**
+- Cache-heavy architecture (Redis is 40-70% cheaper than GCP/AWS)
+- Multiple microservices (free cluster management saves $73-74/mo vs GCP/AWS)
+- Storage-intensive (blob storage 30-40% cheaper than GCP)
+- Need managed Istio service mesh (included in AKS at no extra cost)
+- Load balancer-heavy architecture (Basic LB $3.65/mo is 75-100% cheaper)
+- Microsoft ecosystem integration (AD/Entra, Windows containers, .NET)
+- Cost optimization is top priority for small-medium clusters
+
+**Choose AWS if:**
+- ARM-compatible workloads (Graviton t4g/m6g instances 50-75% cheaper)
+- Startup phase with standard production cluster (lowest overall cost $266.70/mo)
+- Small databases with burstable requirements (db.t4g.micro $12.41/mo)
+- Heavy spot instance usage (deepest spot market with most availability zones)
+- Already using AWS services (Lambda, DynamoDB, S3, SQS)
+- Need highest availability zones per region (up to 6 AZs vs 3 for GCP/Azure)
+
+**Hybrid Strategy:**
+- Run Kubernetes on AWS for overall lowest cost ($266.70/mo base)
+- Use Azure Cache for Redis (huge savings: $44.53/mo vs $46.08 AWS vs $78.84 GCP)
+- Use GCP Cloud SQL for hobby databases (db-f1-micro $7.67/mo)
+- Store cold data on Azure Archive (75% cheaper than GCP/AWS)
+- Use AWS Graviton instances where workload allows (50-75% compute savings)
+
+#### Hidden Costs to Consider
+
+| Cost Factor | GCP | Azure | AWS | Impact |
+|-------------|-----|-------|-----|--------|
+| **Egress to Internet** | $0.12/GB (first 1TB) | $0.087/GB | $0.09/GB | Azure 27% cheaper, AWS 25% cheaper |
+| **Egress between zones** | $0.01/GB | $0.01/GB | $0.01/GB (same region) | Same |
+| **Egress between regions** | $0.12/GB | $0.02/GB | $0.02/GB | Azure/AWS 83% cheaper ✅ |
+| **Snapshot storage** | $0.026/GB | $0.05/GB | $0.05/GB | GCP 48% cheaper |
+| **IP addresses** | $6.57/mo per static IP | $3.65/mo per public IP | $3.60/mo per Elastic IP | AWS/Azure 44% cheaper |
+| **NAT Gateway** | $0.045/hour + $0.045/GB | $0.045/hour + $0.045/GB | $0.045/hour + $0.045/GB | Same |
+| **VPN Gateway** | $36.50/mo | $26.28/mo | $36.50/mo | Azure 28% cheaper ✅ |
+
 ### Next Steps: Building Production-Grade Platform
 
 - **GitOps with Flux CD**: Automated deployments from Git commits
