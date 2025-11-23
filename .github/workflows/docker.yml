@@ -1,54 +1,72 @@
-name: Build and Push Docker Image depedent on CI github task
+name: Build and Push to Azure Container Registry
 
 on:
   workflow_run:
     workflows: ["CI"]
     branches: [main, develop, staging]
     types: [completed]
-  # Keep tag builds direct, since CI doesn't run on tags currently
   push:
     tags:
       - "v*"
 
+permissions:
+  contents: read
+  id-token: write
+  packages: read
+
+# Cancel in-progress builds for the same branch (except main)
+concurrency:
+  group: docker-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 env:
-  REGISTRY: us-central1-docker.pkg.dev
-  PROJECT_ID: kame-457417
-  REPOSITORY: kame-house-images
+  REGISTRY: ${{ vars.AZURE_REGISTRY_NAME || 'portfolioregistry' }}.azurecr.io
   IMAGE_NAME: portfolio
+  RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP || 'portfolio-rg' }}
 
 jobs:
   build-and-push:
+    name: Build and Push Docker Image
     # Run when CI completes successfully, or when a release tag is pushed
     if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-      packages: write
 
     steps:
-      - name: Checkout repository (from CI run)
+      - name: Checkout code (from CI run)
         if: github.event_name == 'workflow_run'
         uses: actions/checkout@v4
         with:
-          # Ensure we build the exact commit that passed CI
+          # Build the exact commit that passed CI
           ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Checkout repository
+      - name: Checkout code (tag push)
         if: github.event_name != 'workflow_run'
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          driver-opts: |
+            image=moby/buildkit:latest
+            network=host
 
-      - name: Configure Docker to use gcloud as credential helper
+      # Azure OIDC authentication (recommended for security)
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Alternative: Service Principal authentication
+      # - name: Azure Login (Service Principal)
+      #   uses: azure/login@v2
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to Azure Container Registry
         run: |
-          gcloud auth configure-docker us-central1-docker.pkg.dev
+          az acr login --name ${{ vars.AZURE_REGISTRY_NAME || 'portfolioregistry' }}
 
       - name: Generate image tags
         id: tags
@@ -58,12 +76,11 @@ jobs:
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           REF: ${{ github.ref }}
           REF_NAME: ${{ github.ref_name }}
-          REF_TYPE: ${{ github.ref_type }}
         run: |
           TAGS=""
           TIMESTAMP=$(date +%s)
 
-          # Determine commit SHA based on event context
+          # Determine commit SHA
           if [ "${EVENT_NAME}" = "workflow_run" ] && [ -n "${HEAD_SHA}" ]; then
             COMMIT_SHA=$(echo "${HEAD_SHA}" | cut -c1-7)
           else
@@ -71,69 +88,78 @@ jobs:
           fi
 
           # Always add commit SHA tag
-          TAGS="${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${COMMIT_SHA}"
+          TAGS="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${COMMIT_SHA}"
 
-          # Add branch-based tags with timestamp for Flux CD image automation
-          # For workflow_run: use head_branch; For tag pushes: skip branch tags
+          # Branch-based tags for Flux CD image automation
           if [ "${EVENT_NAME}" = "workflow_run" ]; then
             BRANCH_NAME=$(echo "${HEAD_BRANCH}" | sed 's/[^a-zA-Z0-9._-]/-/g')
             
-            # Flux CD compatible tag format: branch-commit-timestamp
+            # Flux CD compatible: branch-commit-timestamp
             FLUX_TAG="${BRANCH_NAME}-${COMMIT_SHA}-${TIMESTAMP}"
-            TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${FLUX_TAG}"
+            TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${FLUX_TAG}"
             
-            # Keep the branch name tag for compatibility
-            TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${BRANCH_NAME}"
+            # Branch name tag
+            TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${BRANCH_NAME}"
             
-            # Add latest tag for main branch
+            # Latest tag for main branch
             if [[ "${HEAD_BRANCH}" == "main" ]]; then
-              TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest"
+              TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
             fi
           fi
 
-          # Add version tags for releases
+          # Version tags for releases
           if [[ "${EVENT_NAME}" == "push" && "${REF}" == refs/tags/* ]]; then
             TAG_NAME="${REF_NAME}"
-            TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${TAG_NAME}"
+            TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${TAG_NAME}"
             
-            # Add semver tags if it's a valid semver tag
+            # Semver tags
             if [[ ${TAG_NAME} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
               VERSION=${TAG_NAME#v}
               MAJOR=$(echo ${VERSION} | cut -d. -f1)
               MINOR=$(echo ${VERSION} | cut -d. -f1-2)
-              TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${VERSION}"
-              TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${MAJOR}"
-              TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${MINOR}"
+              TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}"
+              TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${MAJOR}"
+              TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${MINOR}"
             fi
           fi
 
+          # Output for use in subsequent steps
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
-          echo "Generated tags: ${TAGS}"
+          echo "commit_sha=${COMMIT_SHA}" >> $GITHUB_OUTPUT
+          
+          # Display generated tags
+          echo "### 🏷️ Generated Image Tags" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "${TAGS}" | tr ',' '\n' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64
-          push: ${{ github.event_name != 'pull_request' }}
+          platforms: linux/amd64,linux/arm64
+          push: true
           tags: ${{ steps.tags.outputs.tags }}
           labels: |
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
-            org.opencontainers.image.description=Portfolio application
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.description=Portfolio and Blog Application
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.url=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.created=${{ github.event.head_commit.timestamp }}
+            org.opencontainers.image.created=${{ github.event.repository.updated_at }}
+            org.opencontainers.image.version=${{ steps.tags.outputs.commit_sha }}
           build-args: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            BUILDKIT_INLINE_CACHE=1
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
+          provenance: false
 
       - name: Generate deployment manifest
-        if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.head_branch == 'main') || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+        if: github.event.workflow_run.head_branch == 'main' || github.ref == 'refs/heads/main'
         run: |
-          COMMIT_SHA=$(git rev-parse --short HEAD)
-          IMAGE_TAG="${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${COMMIT_SHA}"
+          COMMIT_SHA="${{ steps.tags.outputs.commit_sha }}"
+          IMAGE_TAG="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${COMMIT_SHA}"
 
           cat > deployment-image-update.yaml << EOF
           # Generated image tag for deployment
@@ -141,94 +167,69 @@ jobs:
           # Commit: ${{ github.sha }}
           # Build Date: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
           # 
-          # Use this image tag in your Kubernetes deployment:
-          # kubectl set image deployment/portfolio-deployment portfolio=${IMAGE_TAG}
+          # Update your Kubernetes deployment:
+          # kubectl set image deployment/portfolio portfolio=${IMAGE_TAG} -n <namespace>
           #
-          # Or update your kustomization.yaml with:
+          # Or update kustomization.yaml:
           images:
           - name: portfolio
-            newName: ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}
+            newName: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
             newTag: ${COMMIT_SHA}
           EOF
 
       - name: Upload deployment info
-        if: github.ref == 'refs/heads/main'
+        if: github.event.workflow_run.head_branch == 'main' || github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: deployment-info
           path: deployment-image-update.yaml
           retention-days: 30
 
-      - name: Set up kubectl
-        if: github.event_name != 'pull_request'
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          version: "latest"
-
-      - name: Install GKE auth plugin
-        if: github.event_name != 'pull_request'
-        run: |
-          # Install the GKE auth plugin for kubectl
-          gcloud components install gke-gcloud-auth-plugin
-
-      - name: Configure kubectl
-        if: github.event_name != 'pull_request'
-        run: |
-          # Configure kubectl for the cluster
-          gcloud container clusters get-credentials kame-house --region=us-central1 --project=${{ env.PROJECT_ID }}
-
-      - name: Deploy to Production
-        if: github.event_name != 'pull_request' && (github.event.workflow_run.head_branch == 'main' || github.ref == 'refs/heads/main')
+      - name: Deploy to AKS (optional)
+        if: vars.ENABLE_AUTO_DEPLOY == 'true' && (github.event.workflow_run.head_branch == 'main' || github.ref == 'refs/heads/main')
         env:
-          NAMESPACE: prod
+          CLUSTER_NAME: ${{ vars.AKS_CLUSTER_NAME }}
+          NAMESPACE: ${{ vars.DEPLOY_NAMESPACE || 'prod' }}
           DEPLOYMENT_NAME: ${{ env.IMAGE_NAME }}
         run: |
-          echo "🚀 Deploying to production namespace..."
-          echo "Deployment: ${DEPLOYMENT_NAME}"
-          echo "Namespace: ${NAMESPACE}"
+          echo "🚀 Deploying to AKS..."
+          
+          # Get AKS credentials
+          az aks get-credentials \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --name ${CLUSTER_NAME} \
+            --overwrite-existing
 
-          # Restart the deployment to pull the latest image
-          if ! kubectl rollout restart deployment/${DEPLOYMENT_NAME} -n ${NAMESPACE}; then
-            echo "❌ Failed to restart deployment ${DEPLOYMENT_NAME} in namespace ${NAMESPACE}"
-            exit 1
-          fi
-
-          # Wait for the rollout to complete (timeout after 5 minutes)
-          echo "⏳ Waiting for rollout to complete..."
-          if ! kubectl rollout status deployment/${DEPLOYMENT_NAME} -n ${NAMESPACE} --timeout=5m; then
-            echo "❌ Deployment rollout failed or timed out after 5 minutes"
-            echo "Getting pod status for debugging..."
-            kubectl get pods -n ${NAMESPACE} -l app=${DEPLOYMENT_NAME}
-            kubectl describe pods -n ${NAMESPACE} -l app=${DEPLOYMENT_NAME} | tail -50
-            exit 1
-          fi
-
-          # Verify pods are running
-          echo "✅ Deployment successful! Current pod status:"
+          # Restart deployment to pull new image
+          kubectl rollout restart deployment/${DEPLOYMENT_NAME} -n ${NAMESPACE}
+          
+          # Wait for rollout
+          kubectl rollout status deployment/${DEPLOYMENT_NAME} -n ${NAMESPACE} --timeout=5m
+          
+          # Verify deployment
+          echo "✅ Deployment successful!"
           kubectl get pods -n ${NAMESPACE} -l app=${DEPLOYMENT_NAME}
 
-          # Add to summary
-          echo "### 🎉 Production Deployment Complete" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Namespace:** \`${NAMESPACE}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Deployment:** \`${DEPLOYMENT_NAME}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** Successfully restarted and rolled out" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          kubectl get pods -n ${NAMESPACE} -l app=${DEPLOYMENT_NAME} >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+      - name: Image scan with Trivy
+        uses: aquasecurity/trivy-action@master
+        continue-on-error: true
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tags.outputs.commit_sha }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
 
-      - name: Image build summary
-        if: github.event_name != 'pull_request'
+      - name: Upload Trivy results
+        uses: github/codeql-action/upload-sarif@v3
+        continue-on-error: true
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Build summary
+        if: always()
         run: |
-          echo "### 🐳 Docker Image Built and Deployed Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "### 🐳 Docker Build Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Image Tags:**" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.tags.outputs.tags }}" | tr ',' '\n' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Registry:** \`${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Registry:** \`${{ env.REGISTRY }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${{ env.IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "The image has been pushed to Google Artifact Registry and deployed to production." >> $GITHUB_STEP_SUMMARY
+          echo "**Tags:** See above" >> $GITHUB_STEP_SUMMARY
