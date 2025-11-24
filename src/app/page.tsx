@@ -26,7 +26,7 @@ export default function HomePage() {
       description:
         "A command-line utility written in Rust for analyzing audio and providing AI-powered feedback for guitar practice sessions.",
       technologies: ["Rust", "FFmpeg", "AI"],
-      liveUrl: "https://audio-ai.hugecat.net",
+      liveUrl: "https://github.com/ianlintner/audio-ai",
     },
     {
       id: "1",
@@ -35,7 +35,7 @@ export default function HomePage() {
       description:
         "A comprehensive study app for mastering data structures and algorithms through interactive coding challenges.",
       technologies: ["Python", "Flask"],
-      liveUrl: "https://dsa.hugecat.net",
+      liveUrl: "https://dsa.cat-herding.net",
     },
     {
       id: "2",
@@ -44,7 +44,7 @@ export default function HomePage() {
       description:
         "Full-stack chat application with real-time messaging, user authentication, and message history.",
       technologies: ["Next.js", "Socket.io", "PostgreSQL"],
-      liveUrl: "https://chat.hugecat.net",
+      liveUrl: "https://example-chat.cat-herding.net/",
     },
   ];
   return (

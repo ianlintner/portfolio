@@ -1,0 +1,39 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: admin@cat-herding.net
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+      - selector:
+          dnsZones:
+            - cat-herding.net
+        dns01:
+          azureDNS:
+            clientID: 5d950411-dc78-458d-a2e4-27091c972aae
+            clientSecretSecretRef:
+              key: client-secret
+              name: azuredns-config
+            environment: AzurePublicCloud
+            hostedZoneName: cat-herding.net
+            resourceGroupName: nekoc
+            subscriptionID: 79307c77-54c3-4738-be2a-dc96da7464d9
+            tenantID: 42ddc44e-97dd-4c3b-bf8a-31c785e24c67
+      - selector:
+          dnsZones:
+            - hugecat.net
+        dns01:
+          azureDNS:
+            clientID: 5d950411-dc78-458d-a2e4-27091c972aae
+            clientSecretSecretRef:
+              key: client-secret
+              name: azuredns-config
+            environment: AzurePublicCloud
+            hostedZoneName: hugecat.net
+            resourceGroupName: nekoc
+            subscriptionID: 79307c77-54c3-4738-be2a-dc96da7464d9
+            tenantID: 42ddc44e-97dd-4c3b-bf8a-31c785e24c67

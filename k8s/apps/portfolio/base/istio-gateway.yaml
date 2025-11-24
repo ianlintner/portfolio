@@ -7,6 +7,7 @@ spec:
   selector:
     istio: aks-istio-ingressgateway-external
   servers:
+    # HTTP port - all domains
     - port:
         number: 80
         name: http
@@ -14,13 +15,31 @@ spec:
       hosts:
         - "cat-herding.net"
         - "www.cat-herding.net"
+        - "hugecat.net"
+        - "www.hugecat.net"
+        - "portfolio.cat-herding.net"
+        - "portfolio.hugecat.net"
+    # HTTPS - cat-herding.net domains with cat-herding-tls certificate
     - port:
         number: 443
-        name: https
+        name: https-cat-herding
         protocol: HTTPS
       hosts:
         - "cat-herding.net"
         - "www.cat-herding.net"
+        - "portfolio.cat-herding.net"
       tls:
         mode: SIMPLE
         credentialName: cat-herding-tls
+    # HTTPS - hugecat.net domains with hugecat-tls certificate
+    - port:
+        number: 443
+        name: https-hugecat
+        protocol: HTTPS
+      hosts:
+        - "hugecat.net"
+        - "www.hugecat.net"
+        - "portfolio.hugecat.net"
+      tls:
+        mode: SIMPLE
+        credentialName: hugecat-tls
