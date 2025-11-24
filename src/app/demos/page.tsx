@@ -39,6 +39,20 @@ export const metadata: Metadata = {
 // Mock demo data - will be replaced with tRPC calls
 const mockDemos = [
   {
+    id: "5",
+    title: "Authentication Showcase",
+    slug: "authentication-showcase",
+    description:
+      "A comprehensive demo of major authentication methods in modern web applications. Demonstrates email/password, OAuth 2.0, magic links, MFA, and session management with AI-enforced security best practices.",
+    category: "FULL_STACK",
+    technologies: ["Next.js", "NextAuth.js", "OAuth", "Security"],
+    githubUrl: "https://github.com/ianlintner/authentication-showc",
+    liveUrl: "https://auth-demo.cat-herding.net",
+    imageUrl: "/demos/auth-showcase.jpg",
+    featured: true,
+    createdAt: new Date("2025-11-24"),
+  },
+  {
     id: "1",
     title: "Interview Data Structures & Algorithms Study App",
     slug: "interview-data-structures-algorithms-study-app",
