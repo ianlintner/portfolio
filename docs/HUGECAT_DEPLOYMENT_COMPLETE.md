@@ -7,6 +7,7 @@ Successfully deployed hugecat.net domain routing to the AKS cluster with full HT
 ### What Was Done
 
 #### 1. DNS Configuration
+
 - **Azure DNS Zone**: hugecat.net zone already existed in resource group `nekoc`
 - **A Records**: Created apex and www A records pointing to `52.182.228.75` (Istio ingress IP)
 - **CNAME**: Updated portfolio.hugecat.net → www.cat-herding.net
@@ -17,13 +18,15 @@ Successfully deployed hugecat.net domain routing to the AKS cluster with full HT
   - ns4-07.azure-dns.info
 
 #### 2. TLS Certificates
-- **Created Certificate**: `certificate-hugecat.yaml` for *.hugecat.net wildcard cert
+
+- **Created Certificate**: `certificate-hugecat.yaml` for \*.hugecat.net wildcard cert
 - **Issuer**: Used existing `letsencrypt-prod` ClusterIssuer
 - **Extended ClusterIssuer**: Added DNS-01 solver selector for hugecat.net zone
 - **Granted Permissions**: Added DNS Zone Contributor role for service principal on hugecat.net zone
 - **Critical Fix**: Moved certificate to `aks-istio-ingress` namespace (Istio requirement)
 
 #### 3. Istio Gateway Configuration
+
 - **Updated istio-gateway.yaml**: Added separate HTTPS server block for hugecat domains:
   ```yaml
   - port:
@@ -40,16 +43,18 @@ Successfully deployed hugecat.net domain routing to the AKS cluster with full HT
   ```
 
 #### 4. VirtualService Configuration
+
 - **Updated istio-virtualservice.yaml**: Added hugecat hosts to existing routing rules
 - All HTTP routes (health, API, root) now serve both cat-herding.net and hugecat.net domains
 
 #### 5. Documentation & Tooling
+
 - **Created docs/HUGECAT_DNS_MIGRATION.md**: Comprehensive migration guide
 - **Created scripts/update-hugecat-dns.sh**: DNS verification and status checking script
 
 ### Key Technical Discovery
 
-**Istio TLS Secret Namespace Requirement**: 
+**Istio TLS Secret Namespace Requirement**:
 TLS secrets referenced by Gateway resources must exist in the **same namespace as the Istio ingress gateway pods** (aks-istio-ingress), not the Gateway resource namespace (default). This is an Istio architectural requirement for Envoy to load certificates.
 
 ### Verification Results
@@ -104,11 +109,13 @@ kubectl get virtualservice portfolio-virtualservice -n default
 **Certificate Renewal**: Automatic via cert-manager (90 days, auto-renews at 60 days)
 
 **DNS Monitoring**:
+
 ```bash
 ./scripts/update-hugecat-dns.sh
 ```
 
 **TLS Verification**:
+
 ```bash
 openssl s_client -connect 52.182.228.75:443 -servername hugecat.net
 ```
@@ -118,17 +125,20 @@ openssl s_client -connect 52.182.228.75:443 -servername hugecat.net
 #### If HTTPS Stops Working
 
 1. Check certificate status:
+
    ```bash
    kubectl get certificate hugecat-cert -n aks-istio-ingress
    kubectl describe certificate hugecat-cert -n aks-istio-ingress
    ```
 
 2. Check secret exists in correct namespace:
+
    ```bash
    kubectl get secret hugecat-tls -n aks-istio-ingress
    ```
 
 3. Verify Envoy loaded the secret:
+
    ```bash
    kubectl exec -n aks-istio-ingress <gateway-pod> -- \
      pilot-agent request GET config_dump | \
@@ -144,12 +154,14 @@ openssl s_client -connect 52.182.228.75:443 -servername hugecat.net
 #### If Certificate Fails to Renew
 
 1. Check ACME challenges:
+
    ```bash
    kubectl get challenges -n aks-istio-ingress
    kubectl describe challenge <name> -n aks-istio-ingress
    ```
 
 2. Verify DNS resolution:
+
    ```bash
    dig TXT _acme-challenge.hugecat.net
    ```
