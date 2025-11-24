@@ -8,6 +8,7 @@ resources:
   - service.yaml
   - serviceaccount.yaml
   - auth.yaml
+  - certificate-hugecat.yaml
 
 generatorOptions:
   disableNameSuffixHash: true

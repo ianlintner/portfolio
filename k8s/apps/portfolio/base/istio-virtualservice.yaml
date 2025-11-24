@@ -6,6 +6,10 @@ spec:
   hosts:
     - "cat-herding.net"
     - "www.cat-herding.net"
+    - "hugecat.net"
+    - "www.hugecat.net"
+    - "portfolio.cat-herding.net"
+    - "portfolio.hugecat.net"
   gateways:
     - portfolio-gateway
   http:

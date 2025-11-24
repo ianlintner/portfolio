@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: hugecat-cert
+  namespace: aks-istio-ingress
+spec:
+  secretName: hugecat-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "*.hugecat.net"
+  dnsNames:
+    - "*.hugecat.net"
+    - "hugecat.net"
