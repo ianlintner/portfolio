@@ -182,16 +182,16 @@ jobs:
           TIMESTAMP=$(date +%s)
           REGISTRY="${{ vars.AZURE_REGISTRY_NAME }}.azurecr.io"
           IMAGE_NAME="portfolio"
-          
+
           # Main branch gets: commit SHA, latest, and timestamped tag
           TAGS="${REGISTRY}/${IMAGE_NAME}:${COMMIT_SHA}"
           TAGS="${TAGS},${REGISTRY}/${IMAGE_NAME}:latest"
           TAGS="${TAGS},${REGISTRY}/${IMAGE_NAME}:main-${COMMIT_SHA}-${TIMESTAMP}"
-          
+
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
           echo "commit_sha=${COMMIT_SHA}" >> $GITHUB_OUTPUT
           echo "image=${REGISTRY}/${IMAGE_NAME}" >> $GITHUB_OUTPUT
-          
+
           echo "### 🏷️ Docker Image Tags" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           echo "${TAGS}" | tr ',' '\n' >> $GITHUB_STEP_SUMMARY
@@ -264,25 +264,25 @@ jobs:
         run: |
           NAMESPACE="${{ vars.DEPLOY_NAMESPACE }}"
           IMAGE="${REGISTRY}/portfolio:${COMMIT_SHA}"
-          
+
           echo "🚀 Deploying image: ${IMAGE}"
           echo "📍 Namespace: ${NAMESPACE}"
-          
+
           # Update deployment image
           kubectl set image deployment/portfolio \
             portfolio=${IMAGE} \
             -n ${NAMESPACE}
-          
+
           # Wait for rollout to complete
           echo "⏳ Waiting for rollout..."
           kubectl rollout status deployment/portfolio \
             -n ${NAMESPACE} \
             --timeout=10m
-          
+
           # Verify deployment
           echo "✅ Deployment successful!"
           kubectl get pods -n ${NAMESPACE} -l app=portfolio
-          
+
           echo "### 🚀 Deployment Complete" >> $GITHUB_STEP_SUMMARY
           echo "**Namespace:** \`${NAMESPACE}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Image:** \`${IMAGE}\`" >> $GITHUB_STEP_SUMMARY
