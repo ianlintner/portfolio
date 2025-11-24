@@ -142,3 +142,148 @@ jobs:
             .next
             public/docs
           retention-days: 1
+
+  # Docker build and push (only on main branch)
+  docker:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      commit_sha: ${{ steps.tags.outputs.commit_sha }}
+      image: ${{ steps.tags.outputs.image }}
+      tags: ${{ steps.tags.outputs.tags }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Login to Azure Container Registry
+        run: |
+          az acr login --name ${{ vars.AZURE_REGISTRY_NAME }}
+
+      - name: Generate image tags
+        id: tags
+        run: |
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          TIMESTAMP=$(date +%s)
+          REGISTRY="${{ vars.AZURE_REGISTRY_NAME }}.azurecr.io"
+          IMAGE_NAME="portfolio"
+          
+          # Main branch gets: commit SHA, latest, and timestamped tag
+          TAGS="${REGISTRY}/${IMAGE_NAME}:${COMMIT_SHA}"
+          TAGS="${TAGS},${REGISTRY}/${IMAGE_NAME}:latest"
+          TAGS="${TAGS},${REGISTRY}/${IMAGE_NAME}:main-${COMMIT_SHA}-${TIMESTAMP}"
+          
+          echo "tags=${TAGS}" >> $GITHUB_OUTPUT
+          echo "commit_sha=${COMMIT_SHA}" >> $GITHUB_OUTPUT
+          echo "image=${REGISTRY}/${IMAGE_NAME}" >> $GITHUB_OUTPUT
+          
+          echo "### 🏷️ Docker Image Tags" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "${TAGS}" | tr ',' '\n' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          labels: |
+            org.opencontainers.image.title=portfolio
+            org.opencontainers.image.description=Portfolio and Blog Application
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ steps.tags.outputs.commit_sha }}
+          cache-from: type=registry,ref=${{ steps.tags.outputs.image }}:buildcache
+          cache-to: type=registry,ref=${{ steps.tags.outputs.image }}:buildcache,mode=max
+          provenance: false
+
+      - name: Image scan with Trivy
+        uses: aquasecurity/trivy-action@master
+        continue-on-error: true
+        with:
+          image-ref: ${{ steps.tags.outputs.image }}:${{ steps.tags.outputs.commit_sha }}
+          format: "sarif"
+          output: "trivy-results.sarif"
+
+      - name: Upload Trivy results
+        uses: github/codeql-action/upload-sarif@v3
+        continue-on-error: true
+        with:
+          sarif_file: "trivy-results.sarif"
+
+  # Deploy to AKS (only on main branch)
+  deploy:
+    name: Deploy to AKS
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get AKS credentials
+        run: |
+          az aks get-credentials \
+            --resource-group ${{ vars.AKS_RESOURCE_GROUP }} \
+            --name ${{ vars.AKS_CLUSTER_NAME }} \
+            --overwrite-existing
+
+      - name: Deploy to AKS
+        env:
+          REGISTRY: ${{ vars.AZURE_REGISTRY_NAME }}.azurecr.io
+          COMMIT_SHA: ${{ needs.docker.outputs.commit_sha }}
+        run: |
+          NAMESPACE="${{ vars.DEPLOY_NAMESPACE }}"
+          IMAGE="${REGISTRY}/portfolio:${COMMIT_SHA}"
+          
+          echo "🚀 Deploying image: ${IMAGE}"
+          echo "📍 Namespace: ${NAMESPACE}"
+          
+          # Update deployment image
+          kubectl set image deployment/portfolio \
+            portfolio=${IMAGE} \
+            -n ${NAMESPACE}
+          
+          # Wait for rollout to complete
+          echo "⏳ Waiting for rollout..."
+          kubectl rollout status deployment/portfolio \
+            -n ${NAMESPACE} \
+            --timeout=10m
+          
+          # Verify deployment
+          echo "✅ Deployment successful!"
+          kubectl get pods -n ${NAMESPACE} -l app=portfolio
+          
+          echo "### 🚀 Deployment Complete" >> $GITHUB_STEP_SUMMARY
+          echo "**Namespace:** \`${NAMESPACE}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${IMAGE}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ✅ Success" >> $GITHUB_STEP_SUMMARY
