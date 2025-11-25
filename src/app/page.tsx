@@ -20,6 +20,15 @@ export default function HomePage() {
   // Latest demos data (matching the structure from demos page)
   const latestDemos = [
     {
+      id: "5",
+      title: "Authentication Showcase",
+      slug: "authentication-showcase",
+      description:
+        "A demo of major authentication methods in modern web applications with AI-enforced security best practices.",
+      technologies: ["Next.js", "NextAuth.js", "OAuth"],
+      liveUrl: "https://auth-demo.cat-herding.net",
+    },
+    {
       id: "4",
       title: "Audio Analysis and AI Review Utility in Rust",
       slug: "audio-ai-rust",
@@ -36,15 +45,6 @@ export default function HomePage() {
         "A comprehensive study app for mastering data structures and algorithms through interactive coding challenges.",
       technologies: ["Python", "Flask"],
       liveUrl: "https://dsa.cat-herding.net",
-    },
-    {
-      id: "2",
-      title: "Real-time Chat Application",
-      slug: "realtime-chat-application",
-      description:
-        "Full-stack chat application with real-time messaging, user authentication, and message history.",
-      technologies: ["Next.js", "Socket.io", "PostgreSQL"],
-      liveUrl: "https://example-chat.cat-herding.net/",
     },
   ];
   return (
