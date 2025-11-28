@@ -3,6 +3,9 @@ kind: Kustomization
 
 resources:
   - deployment.yaml
+  - vpa.yaml
+  - hpa.yaml
+  - pdb.yaml
   - istio-gateway.yaml
   - istio-virtualservice.yaml
   - service.yaml
