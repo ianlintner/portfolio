@@ -6,3 +6,6 @@ yarn.lock
 # MkDocs build output
 public/docs/
 site/
+
+# GitHub Copilot instructions
+.github/copilot-instructions.md
