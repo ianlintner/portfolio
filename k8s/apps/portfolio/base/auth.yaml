@@ -2,7 +2,7 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: portfolio-policy
-  namespace: prod
+  namespace: default
 spec:
   action: ALLOW
   rules:
