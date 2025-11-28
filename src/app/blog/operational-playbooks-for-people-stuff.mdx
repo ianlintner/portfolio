@@ -243,10 +243,22 @@ You can reuse the same structure for any people playbook:
 9. **Where this lives & how it evolves**
 
    - Links in your internal knowledge base.
-   - A named owner and “last updated” date.
+   - A named owner and "last updated" date.
    - A review cadence (every 6–12 months, or after major incidents).
 
 Each playbook should be **1–3 pages**: long enough to be clear, short enough to be read.
+
+```mermaid
+flowchart TD
+  A[Identify recurring<br />people situation] --> B[Define purpose<br />and scope]
+  B --> C[List participants<br />and roles]
+  C --> D[Map step-by-step flow]
+  D --> E[Clarify decision<br />criteria]
+  E --> F[Add accessibility<br />and inclusion notes]
+  F --> G[Publish in shared<br />knowledge base]
+  G --> H[Use in real cases]
+  H --> I[Retro and iterate<br />on the playbook]
+```
 
 ---
 
@@ -267,8 +279,42 @@ This “playbook for playbooks” captures the philosophy behind all the others.
 
 - **As paved paths, not railroad rails** – A playbook is the default, low-friction way through a situation, not the only legal way. Stepping off the path is fine—just communicate why.
 - **As working contracts, not edicts** – Treat playbooks as **negotiated agreements** between managers and ICs, or between teams and leadership.
-- **As conversation starters, not conversation enders** – “Our conflict playbook says we usually start with a direct conversation—does that feel okay to you?”
-- **As shared APIs, not personal preferences** – They document the team’s *social API* so behavioral expectations don’t depend on one manager’s quirks.
+- **As conversation starters, not conversation enders** – "Our conflict playbook says we usually start with a direct conversation—does that feel okay to you?"
+- **As shared APIs, not personal preferences** – They document the team's *social API* so behavioral expectations don't depend on one manager's quirks.
+
+```mermaid
+graph LR
+  subgraph Goals
+    G1[Clarity<br />not control]
+    G2[Fairness<br />not rigidity]
+    G3[Psychological safety<br />not bureaucracy]
+    G4[Inclusion<br />by default]
+  end
+
+  subgraph Usage
+    U1[Paved paths<br />not rails]
+    U2[Working contracts<br />not edicts]
+    U3[Conversation starters<br />not enders]
+    U4[Shared APIs<br />not preferences]
+  end
+
+  subgraph AntiPatterns
+    A1[Legalistic weapons]
+    A2[Substitute for empathy]
+    A3[Immutable law]
+    A4[Dodging responsibility]
+  end
+
+  G1 --> U1
+  G2 --> U2
+  G3 --> U3
+  G4 --> U4
+
+  U1 -. avoid .-> A3
+  U2 -. avoid .-> A1
+  U3 -. avoid .-> A2
+  U4 -. avoid .-> A4
+```
 
 ### How *not* to use playbooks
 
@@ -290,7 +336,17 @@ If this all sounds good but large, keep it small and iterative:
 3. **Co-create with your team** – Share the draft, gather feedback in a meeting or async doc, and adjust.
 4. **Use it in the next real instance** – When the next promotion cycle or conflict arises, walk through the playbook step by step.
 5. **Retro the playbook itself** – After a few uses, ask: What reduced stress or confusion? What was still ambiguous? Where did we need more flexibility?
-6. **Repeat for the next interaction type** – Over time you’ll build a small, coherent library of people playbooks that your org actually believes in.
+6. **Repeat for the next interaction type** – Over time you'll build a small, coherent library of people playbooks that your org actually believes in.
+
+```mermaid
+flowchart LR
+  S[Pick one<br />high-anxiety interaction]
+    --> D[Draft a one-page<br />playbook]
+    --> C[Co-create with<br />the team]
+    --> U[Use it in a real<br />instance]
+    --> R[Retro the playbook]
+    --> N[Repeat for next<br />interaction type]
+```
 
 ---
 
