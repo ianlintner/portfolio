@@ -23,6 +23,12 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 COPY requirements.txt ./
 RUN pip3 install --break-system-packages -r requirements.txt
 COPY . .
+# Provide build-time defaults so NextAuth secret check does not fail during image build.
+# These are only used in this build stage and are not copied into the final runtime image.
+ARG NEXTAUTH_SECRET=build-time-stub-secret
+ENV NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+ARG NEXTAUTH_URL=http://localhost:3000
+ENV NEXTAUTH_URL=${NEXTAUTH_URL}
 # Build Next.js app (includes docs:build via pnpm docs:build && next build)
 RUN pnpm run build
 
