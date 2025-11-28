@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: portfolio
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: portfolio
@@ -13,8 +13,15 @@ spec:
         app: portfolio
         version: v1
       annotations:
-        # Disable Istio sidecar injection for Azure (not using ambient mesh)
-        sidecar.istio.io/inject: "false"
+        # Enable Istio sidecar injection for mTLS, telemetry, and traffic policy
+        sidecar.istio.io/inject: "true"
+        # Keep Envoy sidecar lightweight for low-traffic app
+        # Requests
+        sidecar.istio.io/proxyCPU: "50m"
+        sidecar.istio.io/proxyMemory: "64Mi"
+        # Limits
+        sidecar.istio.io/proxyCPULimit: "200m"
+        sidecar.istio.io/proxyMemoryLimit: "256Mi"
     spec:
       securityContext:
         runAsNonRoot: true
@@ -32,11 +39,11 @@ spec:
               name: http
           resources:
             requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
               cpu: 250m
               memory: 512Mi
-            limits:
-              cpu: 1000m
-              memory: 1Gi
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
