@@ -24,3 +24,22 @@
 - Container images are built by `.github/workflows/docker.yml` and promoted through Flux image automation—keep image tags mutable only via GitOps, not manual kubectl.
 - Secrets for PostgreSQL commonly come from Azure Flexible Server or Cloud SQL; `scripts/fetch-azure-kv-secrets.sh` and `infra/postgres-flexible-server.bicep` show how credentials are provisioned.
 - When touching deployment settings, update the relevant doc in `docs/` (e.g., `ARCHITECTURE.md`, `AZURE_CI_CD_SETUP.md`) so the rendered site under `public/docs` stays accurate.
+## Blog authoring (MDX)
+- Location: add posts under `src/app/blog/*.mdx`. The filename (without `.mdx`) is the `slug` used in routes.
+- Front‑matter required and parsed by `src/lib/posts.ts`:
+	- `title: string`
+	- `date: YYYY-MM-DD` (sorted descending)
+	- `excerpt: string`
+	- `tags: string[]` (optional)
+	- `author: string` (optional, defaults to "Ian Lintner")
+	- `image: string` and `imageAlt: string` (optional; store images in `public/images/` and reference via `/images/...`)
+- Content guidelines to match engineering posts:
+	- Prefer clear problem–solution narratives with small, runnable code snippets.
+	- Use fenced code blocks with explicit language; align with project stack (TypeScript/TSX, shell).
+	- Diagrams: use the `Mermaid` component (`@/components/Mermaid`) for sequence/flow when helpful.
+	- Styling: rely on site defaults (`src/styles/highlight.css`, `MarkdownRenderer`)—avoid inline styles.
+	- Keep intros tight; lead with context, constraints, and trade‑offs. Link to repo files (e.g., `@/server/api/routers/post.ts`).
+- Verify locally:
+	- Run `pnpm dev`, open the blog route, check rendering, links, and images.
+	- Ensure front‑matter dates are valid; sorting depends on `new Date(date)`.
+	- Keep slugs unique (filename) and avoid spaces/uppercase; use `kebab-case`.
