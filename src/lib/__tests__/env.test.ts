@@ -1,6 +1,6 @@
-import type {} from '@jest/globals';
+import type {} from "@jest/globals";
 
-describe('env validation', () => {
+describe("env validation", () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
@@ -12,31 +12,31 @@ describe('env validation', () => {
     process.env = originalEnv;
   });
 
-  it('throws in production when NEXTAUTH_SECRET is missing', () => {
-    process.env.NODE_ENV = 'production';
+  it("throws in production when NEXTAUTH_SECRET is missing", () => {
+    process.env.NODE_ENV = "production";
     delete process.env.NEXTAUTH_SECRET;
     expect(() => {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      require('../env');
+      require("../env");
     }).toThrow(/NEXTAUTH_SECRET is required in production/);
   });
 
-  it('parses when NEXTAUTH_SECRET is set in production', () => {
-    process.env.NODE_ENV = 'production';
-    process.env.NEXTAUTH_SECRET = 'test-secret';
+  it("parses when NEXTAUTH_SECRET is set in production", () => {
+    process.env.NODE_ENV = "production";
+    process.env.NEXTAUTH_SECRET = "test-secret";
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { env } = require('../env');
-    expect(env.NEXTAUTH_SECRET).toBe('test-secret');
+    const { env } = require("../env");
+    expect(env.NEXTAUTH_SECRET).toBe("test-secret");
   });
 
-  it('does not throw in development when NEXTAUTH_SECRET is missing', () => {
-    process.env.NODE_ENV = 'development';
+  it("does not throw in development when NEXTAUTH_SECRET is missing", () => {
+    process.env.NODE_ENV = "development";
     delete process.env.NEXTAUTH_SECRET;
 
     expect(() => {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      require('../env');
+      require("../env");
     }).not.toThrow();
   });
 });

@@ -3,7 +3,7 @@ import { z } from "zod";
 // Define the base schema for environment variables the app cares about.
 const baseSchema = z.object({
   NODE_ENV: z
-    .enum(["development", "test", "production"]) 
+    .enum(["development", "test", "production"])
     .default("development"),
 
   // Auth
