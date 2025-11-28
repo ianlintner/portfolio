@@ -437,6 +437,31 @@ kubectl get pods -n prod
 kubectl describe pod <pod-name> -n prod
 ```
 
+### NEXTAUTH_SECRET missing in production
+
+Symptoms: Next.js/NextAuth fails to start or returns 500 with an error indicating `NEXTAUTH_SECRET` is required.
+
+Resolution options:
+
+1. Ensure the secret exists in your deployment environment (Kubernetes secret, container app settings, etc.).
+2. If you use Azure Key Vault, store the secret as `NEXTAUTH-SECRET` and surface it to your runtime:
+
+```bash
+# Create the secret (random value)
+az keyvault secret set \
+  --vault-name <kv-name> \
+  --name NEXTAUTH-SECRET \
+  --value "$(openssl rand -base64 48 | tr -d '\n')"
+
+# Optional: export to local env for dev
+source scripts/fetch-azure-kv-secrets.sh <kv-name>
+
+# Verify or auto-create
+scripts/verify-nextauth-secret.sh <kv-name> --create
+```
+
+This repository enforces a runtime check that throws a clear error when `NEXTAUTH_SECRET` is missing in production. See `src/lib/env.ts`.
+
 ## Best Practices
 
 ### Security

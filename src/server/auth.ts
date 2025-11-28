@@ -7,6 +7,7 @@ import {
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "../server/db";
+import { env } from "@/lib/env";
 import * as schema from "../server/db/schema";
 import { eq } from "drizzle-orm";
 
@@ -24,6 +25,9 @@ declare module "next-auth" {
 }
 
 export const authOptions: NextAuthOptions = {
+  // Provide the secret explicitly so NextAuth doesn't rely on implicit env lookups
+  // and to ensure our env validation runs early in production.
+  secret: env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
   },

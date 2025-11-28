@@ -26,4 +26,14 @@ else
   echo "DATABASE_URL not stored directly; will be assembled by application at runtime." >&2
 fi
 
-echo "Exported Azure Postgres secrets from Key Vault '$KV_NAME'."
+# Optionally export NEXTAUTH_SECRET if present in Key Vault
+if az keyvault secret show --vault-name "$KV_NAME" --name NEXTAUTH-SECRET >/dev/null 2>&1; then
+  export NEXTAUTH_SECRET=$(fetch_secret NEXTAUTH-SECRET)
+  echo "Exported NEXTAUTH_SECRET from Key Vault '$KV_NAME'."
+else
+  echo "NEXTAUTH-SECRET was not found in Key Vault '$KV_NAME'." >&2
+  echo "In production, NEXTAUTH_SECRET is required. You can create one with:" >&2
+  echo "  az keyvault secret set --vault-name $KV_NAME --name NEXTAUTH-SECRET --value \"$(openssl rand -base64 48 | tr -d '\n')\"" >&2
+fi
+
+echo "Exported Azure secrets from Key Vault '$KV_NAME'."
