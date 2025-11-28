@@ -16,7 +16,7 @@ describe('env validation', () => {
     process.env.NODE_ENV = 'production';
     delete process.env.NEXTAUTH_SECRET;
     expect(() => {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       require('../env');
     }).toThrow(/NEXTAUTH_SECRET is required in production/);
   });
@@ -25,7 +25,7 @@ describe('env validation', () => {
     process.env.NODE_ENV = 'production';
     process.env.NEXTAUTH_SECRET = 'test-secret';
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { env } = require('../env');
     expect(env.NEXTAUTH_SECRET).toBe('test-secret');
   });
@@ -35,7 +35,7 @@ describe('env validation', () => {
     delete process.env.NEXTAUTH_SECRET;
 
     expect(() => {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       require('../env');
     }).not.toThrow();
   });
