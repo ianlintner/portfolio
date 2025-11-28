@@ -183,6 +183,7 @@ Navigate to your GitHub repository → Settings → Secrets and variables → Ac
 - `AZURE_CLIENT_ID`: Application (client) ID from Azure AD
 - `AZURE_TENANT_ID`: Your Azure tenant ID
 - `AZURE_SUBSCRIPTION_ID`: Your Azure subscription ID
+- `NEXTAUTH_SECRET`: Secret for NextAuth (generate with `openssl rand -base64 32`)
 
 ### Required Secrets (Service Principal)
 
@@ -206,6 +207,7 @@ Navigate to your GitHub repository → Settings → Secrets and variables → Ac
 gh secret set AZURE_CLIENT_ID --body "$APP_ID"
 gh secret set AZURE_TENANT_ID --body "$TENANT_ID"
 gh secret set AZURE_SUBSCRIPTION_ID --body "$SUBSCRIPTION_ID"
+gh secret set NEXTAUTH_SECRET --body "$(openssl rand -base64 32)"
 
 gh variable set AZURE_REGISTRY_NAME --body "portfolioregistry"
 gh variable set AZURE_RESOURCE_GROUP --body "portfolio-rg"

@@ -257,12 +257,33 @@ jobs:
             --name ${{ vars.AKS_CLUSTER_NAME }} \
             --overwrite-existing
 
+      - name: Create NEXTAUTH secret
+        env:
+          NAMESPACE: ${{ vars.DEPLOY_NAMESPACE }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+        run: |
+          NAMESPACE="${NAMESPACE:-prod}"
+
+          if [ -z "${NEXTAUTH_SECRET}" ]; then
+            echo "NEXTAUTH_SECRET GitHub secret is not set; required for production auth." >&2
+            exit 1
+          fi
+
+          # Ensure namespace exists and apply/update the secret
+          kubectl create namespace "${NAMESPACE}" --dry-run=client -o yaml | kubectl apply -f -
+
+          kubectl create secret generic nextauth-secret \
+            --from-literal=NEXTAUTH_SECRET="${NEXTAUTH_SECRET}" \
+            -n "${NAMESPACE}" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
       - name: Deploy to AKS
         env:
           REGISTRY: ${{ vars.AZURE_REGISTRY_NAME }}.azurecr.io
           COMMIT_SHA: ${{ needs.docker.outputs.commit_sha }}
         run: |
           NAMESPACE="${{ vars.DEPLOY_NAMESPACE }}"
+          NAMESPACE="${NAMESPACE:-prod}"
           IMAGE="${REGISTRY}/portfolio:${COMMIT_SHA}"
 
           echo "🚀 Deploying image: ${IMAGE}"
