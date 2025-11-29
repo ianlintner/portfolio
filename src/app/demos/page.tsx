@@ -81,7 +81,7 @@ const mockDemos = [
       "NextAuth.js",
     ],
     githubUrl: "https://github.com/ianlintner/Example-React-AI-Chat-App",
-    liveUrl: "https://example-chat.cat-herding.net",
+    liveUrl: "https://chat.cat-herding.net",
     imageUrl: "/demos/chat-app.jpg",
     featured: true,
     createdAt: new Date("2025-07-18"),
