@@ -29,11 +29,11 @@ This guide provides a comprehensive deep dive into Gemini 3 Pro—from API setup
 
 Gemini 3 isn't a single model—it's a family optimized for different use cases and budgets:
 
-| Model                      | Context Window | Best For                                  | Cost/1M Tokens    |
-| -------------------------- | -------------- | ----------------------------------------- | ----------------- |
-| **gemini-3-pro-preview**   | 1M             | Complex reasoning, deep analysis          | $2.00 / $12       |
-| **gemini-3-pro** (>200K)   | 1M             | Very long documents, codebases            | $4.00 / $18       |
-| **gemini-3-flash**         | 1M             | Fast responses, lower cost                | $0.50 / $3.00     |
+| Model                    | Context Window | Best For                         | Cost/1M Tokens |
+| ------------------------ | -------------- | -------------------------------- | -------------- |
+| **gemini-3-pro-preview** | 1M             | Complex reasoning, deep analysis | $2.00 / $12    |
+| **gemini-3-pro** (>200K) | 1M             | Very long documents, codebases   | $4.00 / $18    |
+| **gemini-3-flash**       | 1M             | Fast responses, lower cost       | $0.50 / $3.00  |
 
 _Prices shown as Input/Output per million tokens_
 
@@ -99,7 +99,9 @@ async function main() {
     contents: [
       {
         role: "user",
-        parts: [{ text: "Explain dependency injection in software architecture." }],
+        parts: [
+          { text: "Explain dependency injection in software architecture." },
+        ],
       },
     ],
   });
@@ -213,10 +215,10 @@ response = client.models.generate_content(
     contents="""
     Analyze this multi-step business scenario:
     [Complex problem description]
-    
+
     Provide:
     1. Root cause analysis
-    2. Impact assessment  
+    2. Impact assessment
     3. Recommended solutions with trade-offs
     """,
     config={"thinking_level": "high"}
@@ -255,11 +257,11 @@ graph LR
 
 Excellent benchmark performance for development tasks:
 
-| Code Benchmark       | Gemini 3 Pro | GPT-5.1 | Claude 4.5  |
-| -------------------- | ------------ | ------- | ----------- |
-| SWE-bench Verified   | **76.2%**    | ~65%    | **77.2%**   |
-| WebDev Arena Elo     | **1487**     | ~1420   | ~1450       |
-| Terminal-Bench 2.0   | **54.2%**    | ~45%    | ~50%        |
+| Code Benchmark     | Gemini 3 Pro | GPT-5.1 | Claude 4.5 |
+| ------------------ | ------------ | ------- | ---------- |
+| SWE-bench Verified | **76.2%**    | ~65%    | **77.2%**  |
+| WebDev Arena Elo   | **1487**     | ~1420   | ~1450      |
+| Terminal-Bench 2.0 | **54.2%**    | ~45%    | ~50%       |
 
 ```python
 # Analyze an entire codebase
@@ -562,7 +564,7 @@ Set consistent behavior across conversations:
 chat = client.chats.create(
     model="gemini-3-pro-preview",
     config={
-        "system_instruction": """You are a senior Python developer. 
+        "system_instruction": """You are a senior Python developer.
         Always provide production-ready code with proper error handling.
         Include type hints and docstrings."""
     }
@@ -626,12 +628,12 @@ response = client.models.generate_content(
 
 ### Cost Comparison Table
 
-| Strategy                 | Savings   | Best For                          |
-| ------------------------ | --------- | --------------------------------- |
-| Flash over Pro           | ~75%      | Simple tasks, high throughput     |
-| Stay under 200K tokens   | 50%       | Most interactive use cases        |
-| Context caching          | Up to 90% | Repeated system prompts           |
-| Batch processing         | ~50%      | Bulk processing, reports          |
+| Strategy               | Savings   | Best For                      |
+| ---------------------- | --------- | ----------------------------- |
+| Flash over Pro         | ~75%      | Simple tasks, high throughput |
+| Stay under 200K tokens | 50%       | Most interactive use cases    |
+| Context caching        | Up to 90% | Repeated system prompts       |
+| Batch processing       | ~50%      | Bulk processing, reports      |
 
 ---
 
@@ -741,10 +743,10 @@ class GeminiMetrics:
             rates = {"input": 2.00, "output": 12.00}
         else:
             rates = {"input": 4.00, "output": 18.00}
-        
+
         if "flash" in model:
             rates = {"input": 0.50, "output": 3.00}
-            
+
         return (
             (input_tokens * rates["input"] +
              output_tokens * rates["output"]) / 1_000_000
