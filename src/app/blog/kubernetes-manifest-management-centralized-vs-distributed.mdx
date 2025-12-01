@@ -34,14 +34,14 @@ Neither is universally correct. The right choice depends on your organization's 
 
 ![High-level comparison of centralized vs app-scoped Kubernetes manifest strategies](/images/k8s-centralized-vs-distributed-diagram.svg)
 
-| Factor | Centralized Repo | App-Scoped (`k8s/` per app) |
-|--------|------------------|---------------------------|
-| **Best for** | Platform teams, regulated industries, &lt;50 services | Product-focused teams, microservices, 10-200 services |
-| **Ownership** | Platform/SRE team | Application developers |
-| **Change velocity** | Slower, controlled | Faster, autonomous |
-| **Blast radius visibility** | Excellent | Limited |
-| **Developer experience** | Context switching | Unified workflow |
-| **Compliance** | Easier auditing | Distributed auditing |
+| Factor                      | Centralized Repo                                      | App-Scoped (`k8s/` per app)                           |
+| --------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
+| **Best for**                | Platform teams, regulated industries, &lt;50 services | Product-focused teams, microservices, 10-200 services |
+| **Ownership**               | Platform/SRE team                                     | Application developers                                |
+| **Change velocity**         | Slower, controlled                                    | Faster, autonomous                                    |
+| **Blast radius visibility** | Excellent                                             | Limited                                               |
+| **Developer experience**    | Context switching                                     | Unified workflow                                      |
+| **Compliance**              | Easier auditing                                       | Distributed auditing                                  |
 
 ---
 
@@ -52,7 +52,7 @@ graph TB
     subgraph "Pattern A: Centralized Platform Repo"
         direction TB
         PlatformRepo[("📁 platform-infra<br/>(single repo)")]
-        
+
         subgraph "Repository Structure"
             K8sBase["k8s/"]
             AppsDir["├── apps/"]
@@ -65,7 +65,7 @@ graph TB
             StagingEnv["    ├── staging/"]
             ProdEnv["    └── prod/"]
         end
-        
+
         PlatformRepo --> K8sBase
         K8sBase --> AppsDir
         AppsDir --> App1Dir
@@ -83,7 +83,7 @@ graph TB
         AppRepo1[("📁 app-1-repo")]
         AppRepo2[("📁 app-2-repo")]
         AppRepo3[("📁 app-3-repo")]
-        
+
         subgraph "Each App Repo"
             SrcDir["src/"]
             TestsDir["tests/"]
@@ -93,7 +93,7 @@ graph TB
             LocalDev["    ├── dev/"]
             LocalProd["    └── prod/"]
         end
-        
+
         AppRepo1 --> SrcDir
         AppRepo1 --> TestsDir
         AppRepo1 --> K8sLocal
@@ -238,25 +238,25 @@ spec:
 
 ### Advantages of Centralized
 
-| Benefit | Details |
-|---------|---------|
-| **Single Source of Truth** | One place to understand entire cluster state |
-| **Atomic Multi-Service Changes** | Update network policies affecting 10 services in one PR |
-| **Consistent Standards** | Enforce labeling, security contexts, resource limits |
-| **Simplified Auditing** | One repo's history tells the complete infrastructure story |
-| **Platform Team Efficiency** | Experts focus on infrastructure without context-switching |
-| **Dependency Visibility** | Easy to see which services share configurations |
+| Benefit                          | Details                                                    |
+| -------------------------------- | ---------------------------------------------------------- |
+| **Single Source of Truth**       | One place to understand entire cluster state               |
+| **Atomic Multi-Service Changes** | Update network policies affecting 10 services in one PR    |
+| **Consistent Standards**         | Enforce labeling, security contexts, resource limits       |
+| **Simplified Auditing**          | One repo's history tells the complete infrastructure story |
+| **Platform Team Efficiency**     | Experts focus on infrastructure without context-switching  |
+| **Dependency Visibility**        | Easy to see which services share configurations            |
 
 ### Disadvantages of Centralized
 
-| Challenge | Mitigation |
-|-----------|------------|
-| **Developer Friction** | Devs must make PRs to separate repo for infra changes |
-| **Coupling** | App and infra changes can't be atomic |
-| **Bottleneck Risk** | Platform team becomes a gatekeeper |
-| **Conway's Law Tension** | Separation may not match team structure |
-| **Scaling Issues** | Single repo can become unwieldy at 100+ services |
-| **Context Switching** | Developers lose context when jumping between repos |
+| Challenge                | Mitigation                                            |
+| ------------------------ | ----------------------------------------------------- |
+| **Developer Friction**   | Devs must make PRs to separate repo for infra changes |
+| **Coupling**             | App and infra changes can't be atomic                 |
+| **Bottleneck Risk**      | Platform team becomes a gatekeeper                    |
+| **Conway's Law Tension** | Separation may not match team structure               |
+| **Scaling Issues**       | Single repo can become unwieldy at 100+ services      |
+| **Context Switching**    | Developers lose context when jumping between repos    |
 
 ---
 
@@ -351,7 +351,7 @@ spec:
     spec:
       containers:
         - name: my-service
-          image: my-service:latest  # Replaced by FluxCD image automation
+          image: my-service:latest # Replaced by FluxCD image automation
           ports:
             - containerPort: 8080
           env:
@@ -383,30 +383,30 @@ patches:
 images:
   - name: my-service
     newName: acr.azurecr.io/my-service
-    newTag: ${GIT_SHA}  # Replaced by CI/CD
+    newTag: ${GIT_SHA} # Replaced by CI/CD
 ```
 
 ### Advantages of Distributed
 
-| Benefit | Details |
-|---------|---------|
-| **Atomic Changes** | App code + manifests in single commit/PR |
-| **Team Ownership** | Full accountability, no handoffs |
-| **Local Development** | Test K8s configs with Skaffold, Tilt, or Telepresence |
-| **Reduced Coordination** | No cross-team dependencies for deployments |
-| **Natural Boundaries** | Manifests follow service boundaries |
-| **Version Cohesion** | App version and manifest version always match |
+| Benefit                  | Details                                               |
+| ------------------------ | ----------------------------------------------------- |
+| **Atomic Changes**       | App code + manifests in single commit/PR              |
+| **Team Ownership**       | Full accountability, no handoffs                      |
+| **Local Development**    | Test K8s configs with Skaffold, Tilt, or Telepresence |
+| **Reduced Coordination** | No cross-team dependencies for deployments            |
+| **Natural Boundaries**   | Manifests follow service boundaries                   |
+| **Version Cohesion**     | App version and manifest version always match         |
 
 ### Disadvantages of Distributed
 
-| Challenge | Mitigation |
-|-----------|------------|
-| **Inconsistency** | Teams may diverge on patterns, labels, security |
-| **Duplication** | Similar configs repeated across repos |
-| **Cross-Cutting Pain** | Network policies, RBAC updates require many PRs |
-| **Visibility Gap** | Hard to see full cluster state |
-| **Sprawl** | Many repos to maintain, template, update |
-| **Compliance Complexity** | Auditing requires scanning many repositories |
+| Challenge                 | Mitigation                                      |
+| ------------------------- | ----------------------------------------------- |
+| **Inconsistency**         | Teams may diverge on patterns, labels, security |
+| **Duplication**           | Similar configs repeated across repos           |
+| **Cross-Cutting Pain**    | Network policies, RBAC updates require many PRs |
+| **Visibility Gap**        | Hard to see full cluster state                  |
+| **Sprawl**                | Many repos to maintain, template, update        |
+| **Compliance Complexity** | Auditing requires scanning many repositories    |
 
 ---
 
@@ -422,17 +422,17 @@ graph TD
     Start -->|Single Platform Team| A[Lean Centralized]
     Start -->|Product-Focused Squads| B[Consider Distributed]
     Start -->|Mixed/Matrix| C[Hybrid Approach]
-    
+
     A --> D{Service Count?}
     D -->|< 20| E[Centralized]
     D -->|20-50| F[Centralized + Golden Paths]
     D -->|> 50| G[Consider Breaking Up]
-    
+
     B --> H{GitOps Maturity?}
     H -->|Low| I[Start Centralized]
     H -->|Medium| J[Distributed OK]
     H -->|High| K[Distributed + Policies]
-    
+
     C --> L[Hybrid: Platform Infra + App Manifests]
 ```
 
@@ -469,35 +469,35 @@ graph TB
         ClusterConfig["Cluster Configuration<br/>• Namespaces<br/>• RBAC<br/>• Network Policies<br/>• Resource Quotas"]
         SharedInfra["Shared Infrastructure<br/>• Ingress Controllers<br/>• Service Mesh<br/>• Monitoring Stack<br/>• Cert Manager"]
         BaseTemplates["Base Templates<br/>• Deployment patterns<br/>• Security policies<br/>• Labeling standards"]
-        
+
         InfraRepo --> ClusterConfig
         InfraRepo --> SharedInfra
         InfraRepo --> BaseTemplates
     end
-    
+
     subgraph "App Repos (Distributed)"
         AppRepo1[("📁 app-1")]
         AppRepo2[("📁 app-2")]
         AppRepo3[("📁 app-3")]
-        
+
         K8sDir1["k8s/<br/>• Deployment<br/>• Service<br/>• HPA"]
         K8sDir2["k8s/<br/>• Deployment<br/>• ConfigMap"]
         K8sDir3["k8s/<br/>• Deployment<br/>• CronJob"]
-        
+
         AppRepo1 --> K8sDir1
         AppRepo2 --> K8sDir2
         AppRepo3 --> K8sDir3
     end
-    
+
     subgraph "FluxCD / ArgoCD"
         GitOps["GitOps Controller"]
-        
+
         GitOps -->|"Syncs cluster config"| InfraRepo
         GitOps -->|"Syncs app manifests"| AppRepo1
         GitOps -->|"Syncs app manifests"| AppRepo2
         GitOps -->|"Syncs app manifests"| AppRepo3
     end
-    
+
     BaseTemplates -.->|"Teams extend"| K8sDir1
     BaseTemplates -.->|"Teams extend"| K8sDir2
     BaseTemplates -.->|"Teams extend"| K8sDir3
@@ -505,16 +505,16 @@ graph TB
 
 **Hybrid Responsibilities:**
 
-| Centralized (Platform Repo) | Distributed (App Repos) |
-|-----------------------------|-------------------------|
-| Namespace creation & policies | Application-specific deployments |
-| Cluster-wide RBAC | Service accounts for the app |
-| Network policies (deny-all defaults) | Egress rules for app dependencies |
-| Resource quotas per namespace | Resource requests/limits within quota |
-| Ingress controller, service mesh | VirtualServices, DestinationRules |
-| Monitoring infrastructure | App-specific ServiceMonitors |
-| Base deployment templates | Overlay customizations |
-| Security policies (OPA/Kyverno) | Compliance with policies |
+| Centralized (Platform Repo)          | Distributed (App Repos)               |
+| ------------------------------------ | ------------------------------------- |
+| Namespace creation & policies        | Application-specific deployments      |
+| Cluster-wide RBAC                    | Service accounts for the app          |
+| Network policies (deny-all defaults) | Egress rules for app dependencies     |
+| Resource quotas per namespace        | Resource requests/limits within quota |
+| Ingress controller, service mesh     | VirtualServices, DestinationRules     |
+| Monitoring infrastructure            | App-specific ServiceMonitors          |
+| Base deployment templates            | Overlay customizations                |
+| Security policies (OPA/Kyverno)      | Compliance with policies              |
 
 ---
 
@@ -527,20 +527,24 @@ Regardless of where your manifests live, you need a strategy for "paved paths"�
 In a **Centralized** model, the platform team often hardcodes connections to shared infrastructure. In a **Distributed** model, app teams need a way to discover these resources without copy-pasting credentials.
 
 #### 1. Observability & Logging
+
 Instead of asking every team to configure a Prometheus sidecar or Fluentd config:
+
 - **Centralized:** Deploy `ServiceMonitors` and `ClusterOutput` resources in the platform repo.
 - **Distributed:** Provide a "base" Kustomize layer that includes standard labels and annotations.
   ```yaml
   # k8s/base/monitoring.yaml
   metadata:
     labels:
-      monitoring.company.io/enabled: "true"  # Operator picks this up
+      monitoring.company.io/enabled: "true" # Operator picks this up
     annotations:
       logging.company.io/parser: "json"
   ```
 
 #### 2. Authentication (AuthN/AuthZ)
+
 Don't let teams implement their own OIDC logic.
+
 - **Pattern:** Use an ingress-level authentication provider (like OAuth2 Proxy) managed centrally.
 - **Implementation:** App teams just add an annotation to their Ingress resource.
   ```yaml
@@ -553,7 +557,9 @@ Don't let teams implement their own OIDC logic.
   ```
 
 #### 3. Databases & Cloud Resources
+
 How do apps get their `DATABASE_URL`?
+
 - **Old Way:** Terraform outputs -> LastPass -> Kubernetes Secrets (Manual).
 - **Paved Path:** Use **Crossplane** or **Azure Service Operator** to provision DBs via K8s manifests, then use **Service Binding** to inject secrets.
   ```yaml
@@ -598,7 +604,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - ../../base/web-service  # Shared base with security, monitoring
+  - ../../base/web-service # Shared base with security, monitoring
 
 configMapGenerator:
   - name: app-config
@@ -639,11 +645,11 @@ spec:
     - name: require-standard-labels
       match:
         any:
-        - resources:
-            kinds:
-              - Deployment
-              - StatefulSet
-              - DaemonSet
+          - resources:
+              kinds:
+                - Deployment
+                - StatefulSet
+                - DaemonSet
       validate:
         message: "Required labels are missing. See https://wiki.company.io/k8s-labels"
         pattern:
@@ -708,17 +714,17 @@ spec:
 
 ## 📊 Comparison Matrix
 
-| Dimension | Centralized | Distributed | Hybrid |
-|-----------|-------------|-------------|--------|
-| **Setup Complexity** | ⭐ Low | ⭐⭐ Medium | ⭐⭐⭐ High |
-| **Ongoing Maintenance** | ⭐⭐ Medium | ⭐⭐ Medium | ⭐⭐⭐ High |
-| **Developer Experience** | ⭐⭐ Medium | ⭐⭐⭐ High | ⭐⭐⭐ High |
-| **Platform Team Burden** | ⭐⭐⭐ High | ⭐ Low | ⭐⭐ Medium |
-| **Consistency** | ⭐⭐⭐ High | ⭐ Low (without policies) | ⭐⭐⭐ High |
-| **Audit Trail** | ⭐⭐⭐ Easy | ⭐ Distributed | ⭐⭐ Medium |
-| **Cross-Cutting Changes** | ⭐⭐⭐ Easy | ⭐ Hard | ⭐⭐ Medium |
-| **Service Independence** | ⭐ Low | ⭐⭐⭐ High | ⭐⭐⭐ High |
-| Scaling (50+ services) | ⭐ Challenging | ⭐⭐⭐ Natural | ⭐⭐⭐ Designed for |
+| Dimension                 | Centralized    | Distributed               | Hybrid              |
+| ------------------------- | -------------- | ------------------------- | ------------------- |
+| **Setup Complexity**      | ⭐ Low         | ⭐⭐ Medium               | ⭐⭐⭐ High         |
+| **Ongoing Maintenance**   | ⭐⭐ Medium    | ⭐⭐ Medium               | ⭐⭐⭐ High         |
+| **Developer Experience**  | ⭐⭐ Medium    | ⭐⭐⭐ High               | ⭐⭐⭐ High         |
+| **Platform Team Burden**  | ⭐⭐⭐ High    | ⭐ Low                    | ⭐⭐ Medium         |
+| **Consistency**           | ⭐⭐⭐ High    | ⭐ Low (without policies) | ⭐⭐⭐ High         |
+| **Audit Trail**           | ⭐⭐⭐ Easy    | ⭐ Distributed            | ⭐⭐ Medium         |
+| **Cross-Cutting Changes** | ⭐⭐⭐ Easy    | ⭐ Hard                   | ⭐⭐ Medium         |
+| **Service Independence**  | ⭐ Low         | ⭐⭐⭐ High               | ⭐⭐⭐ High         |
+| Scaling (50+ services)    | ⭐ Challenging | ⭐⭐⭐ Natural            | ⭐⭐⭐ Designed for |
 
 ---
 
@@ -730,25 +736,25 @@ As we move toward AI-assisted engineering, your repo structure impacts how effec
 
 AI agents thrive on context, but they have limits.
 
-*   **Centralized Repo:**
-    *   **Pros:** The agent can see the *entire* system state in one place. It can easily spot that "changing this Service name will break that Ingress." It's easier to build a Knowledge Base (KB) from a single repo.
-    *   **Cons:** The repo can be massive. Agents might get confused by similar files across 50 different apps if file paths aren't distinct.
-    *   **Agent Strategy:** Use a **Model Context Protocol (MCP)** server that indexes the repo and allows the agent to query "all deployments with label X" rather than dumping 500 YAML files into the context window.
+- **Centralized Repo:**
+  - **Pros:** The agent can see the _entire_ system state in one place. It can easily spot that "changing this Service name will break that Ingress." It's easier to build a Knowledge Base (KB) from a single repo.
+  - **Cons:** The repo can be massive. Agents might get confused by similar files across 50 different apps if file paths aren't distinct.
+  - **Agent Strategy:** Use a **Model Context Protocol (MCP)** server that indexes the repo and allows the agent to query "all deployments with label X" rather than dumping 500 YAML files into the context window.
 
-*   **Distributed Repos:**
-    *   **Pros:** Context is naturally scoped. When an agent works on `app-1`, it only sees `app-1`'s manifests. Less noise, lower hallucination risk for app-specific tasks.
-    *   **Cons:** The agent is "blind" to the wider cluster. It doesn't know that `app-1` depends on a shared Redis in the `platform` repo.
-    *   **Agent Strategy:** You need a "meta-agent" or a multi-repo search tool. You might need to explicitly provide "interface definitions" (like a `shared-services.yaml` summary) in the app repo so the agent knows what external resources exist.
+- **Distributed Repos:**
+  - **Pros:** Context is naturally scoped. When an agent works on `app-1`, it only sees `app-1`'s manifests. Less noise, lower hallucination risk for app-specific tasks.
+  - **Cons:** The agent is "blind" to the wider cluster. It doesn't know that `app-1` depends on a shared Redis in the `platform` repo.
+  - **Agent Strategy:** You need a "meta-agent" or a multi-repo search tool. You might need to explicitly provide "interface definitions" (like a `shared-services.yaml` summary) in the app repo so the agent knows what external resources exist.
 
 ### Instructions & Paved Paths for Agents
 
 Just as you write `CONTRIBUTING.md` for humans, you should write instructions for agents.
 
-*   **In a Centralized Repo:** Add a `.github/copilot-instructions.md` (or similar) at the root.
-    > "When adding a new service, always check `k8s/base/ports-registry.yaml` to ensure the NodePort is unique."
-*   **In Distributed Repos:** You need to distribute these instructions.
-    *   **Tradeoff:** If you update the "standard deployment pattern," you have to update the instructions in 50 repos, or the agents in those repos will continue generating outdated manifests.
-    *   **Solution:** Use a shared "ruleset" or "instruction set" that is synced to all repos, or reference a central URL in your agent configuration.
+- **In a Centralized Repo:** Add a `.github/copilot-instructions.md` (or similar) at the root.
+  > "When adding a new service, always check `k8s/base/ports-registry.yaml` to ensure the NodePort is unique."
+- **In Distributed Repos:** You need to distribute these instructions.
+  - **Tradeoff:** If you update the "standard deployment pattern," you have to update the instructions in 50 repos, or the agents in those repos will continue generating outdated manifests.
+  - **Solution:** Use a shared "ruleset" or "instruction set" that is synced to all repos, or reference a central URL in your agent configuration.
 
 **Verdict:** Currently, **Centralized Repos** are slightly easier for AI agents to reason about globally, while **Distributed Repos** are safer for focused, single-service code generation.
 
@@ -757,32 +763,39 @@ Just as you write `CONTRIBUTING.md` for humans, you should write instructions fo
 If you are building a custom agent (e.g., using GitHub Copilot Extensions or a custom MCP client) to manage your cluster, here is a reference architecture:
 
 #### 1. The Resources (Tools & Context)
+
 Don't just feed the agent text files. Give it tools to inspect the live cluster.
-*   **Kubernetes MCP Server:** Connect your agent to a read-only `ServiceAccount` in the cluster.
-    *   *Tool:* `kubectl_get_resources` (allowed: Pods, Services, Ingress, Events)
-    *   *Tool:* `kubectl_describe` (for debugging crash loops)
-    *   *Tool:* `helm_list` (to see what's installed)
-*   **Documentation Index:** A vector database containing your internal platform docs ("How to expose a service", "Golden path for databases").
+
+- **Kubernetes MCP Server:** Connect your agent to a read-only `ServiceAccount` in the cluster.
+  - _Tool:_ `kubectl_get_resources` (allowed: Pods, Services, Ingress, Events)
+  - _Tool:_ `kubectl_describe` (for debugging crash loops)
+  - _Tool:_ `helm_list` (to see what's installed)
+- **Documentation Index:** A vector database containing your internal platform docs ("How to expose a service", "Golden path for databases").
 
 #### 2. The System Prompt (Instructions)
+
 Your agent needs a persona and strict guardrails.
 
 ```markdown
 # System Prompt
+
 You are the Platform Engineering Agent.
 Your goal is to help developers deploy services to the "Acme Corp" Kubernetes cluster.
 
 ## Constraints
+
 1. NEVER generate a Service of type `LoadBalancer`. Always use `ClusterIP` with an `Ingress`.
 2. ALWAYS add the label `cost-center: <team-id>` to every resource.
 3. Before suggesting a fix for a crash, use the `kubectl_logs` tool to read the actual error.
 
 ## Knowledge Base
+
 - If the user asks for a database, refer to the "CloudSQL Paved Path" documentation.
 - If the user asks for a domain, check the `external-dns` annotations guide.
 ```
 
 #### 3. The Workflow
+
 1.  **User:** "My pod is crashing."
 2.  **Agent:** Calls `kubectl_get_pods` -> sees `CrashLoopBackOff`.
 3.  **Agent:** Calls `kubectl_logs` -> sees "Connection refused to DB".
@@ -841,18 +854,21 @@ If inconsistency is causing operational pain:
 The choice between centralized and distributed manifest management isn't about finding the "correct" answer—it's about understanding your organization's needs and constraints.
 
 **Start Centralized if:**
+
 - You're new to Kubernetes and GitOps
 - You have a dedicated platform team
 - Compliance requires unified audit trails
 - You have fewer than 30 services
 
 **Go Distributed if:**
+
 - Product teams own services end-to-end
 - You're experiencing platform team bottlenecks
 - Developers need fast, autonomous deployments
 - You have mature GitOps tooling and practices
 
 **Adopt Hybrid if:**
+
 - You need platform standards with team autonomy
 - You're scaling from 30 to 100+ services
 - Different services have different ownership models
