@@ -21,7 +21,7 @@ imageAlt: "Kubernetes Manifest Management: Centralized vs Distributed Strategies
 
 One of the most consequential—and often overlooked—architectural decisions in Kubernetes adoption is **where to store your manifests**. This choice ripples through your entire organization: affecting developer velocity, security posture, operational complexity, and your ability to reason about system state.
 
-After years of operating Kubernetes platforms and observing patterns across organizations of all sizes, I've seen two dominant approaches emerge:
+Across organizations of all sizes, two dominant approaches have emerged for managing Kubernetes manifests:
 
 1. **Centralized Platform Repository**: A single "infrastructure" or "platform" repo containing all Kubernetes manifests for all applications
 2. **Distributed App-Scoped Directories**: Each application repository contains its own `k8s/` or `deploy/` directory with its manifests
@@ -182,7 +182,7 @@ mindmap
 
 ### Real-World Example: Enterprise Financial Services
 
-A fintech company I worked with adopted centralized manifests for their 40-service platform. Their reasoning:
+Consider a fintech company that adopted centralized manifests for their 40-service platform. Their reasoning:
 
 1. **SOC 2 Compliance**: Auditors needed a single repo to review all infrastructure changes
 2. **Separation of Duties**: Developers couldn't modify production resource limits or network policies
