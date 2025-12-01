@@ -32,7 +32,7 @@ But **gameplay** is an experience. **Audio** is a signal. **UI** is a visual and
 
 When an AI writes a React component for a form, it has seen millions of examples of `<input>` tags. It knows the pattern.
 
-When an AI tries to write a game loop, it knows the *syntax* of `requestAnimationFrame`, but it doesn't understand "fun." It doesn't understand "game feel." It can't "see" that the jump physics feel floaty or that the collision detection is janky.
+When an AI tries to write a game loop, it knows the _syntax_ of `requestAnimationFrame`, but it doesn't understand "fun." It doesn't understand "game feel." It can't "see" that the jump physics feel floaty or that the collision detection is janky.
 
 It's like trying to learn to paint by reading books about chemistry. You might know how to mix the pigments, but you don't know how to make art.
 
@@ -43,21 +43,21 @@ graph TD
         Patterns[Syntax Patterns]
         Logic[Static Logic]
     end
-    
+
     subgraph "The Real World"
         Visuals[Visual Layout]
         Timing[Real-time Timing]
         Feel[User Experience / 'Feel']
         Audio[Audio Signals]
     end
-    
+
     Text -->|Training Data| AI{AI Model}
     Patterns -->|Training Data| AI
-    
+
     AI -.->|Struggles with| Visuals
     AI -.->|Struggles with| Timing
     AI -.->|Struggles with| Feel
-    
+
     style AI fill:#fee2e2,stroke:#991b1b
 ```
 
@@ -79,7 +79,7 @@ Ever ask an AI to design a "modern, beautiful landing page"?
 
 It usually gives you something that looks like a Bootstrap template from 2015.
 
-Why? Because it doesn't have eyes. It doesn't understand whitespace, visual hierarchy, or contrast in a perceptual way. It only knows the CSS rules that *usually* go together.
+Why? Because it doesn't have eyes. It doesn't understand whitespace, visual hierarchy, or contrast in a perceptual way. It only knows the CSS rules that _usually_ go together.
 
 It's mimicking design, not creating it.
 

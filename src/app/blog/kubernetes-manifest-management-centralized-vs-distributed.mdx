@@ -118,9 +118,9 @@ In this pattern, all Kubernetes manifests live in a dedicated infrastructure rep
 
 ### When Centralized Works Well
 
-*   **Compliance & Audit:** If you have auditors breathing down your neck, pointing them to one repo is a heck of a lot easier than pointing them to 50.
-*   **Platform Teams:** If you have a dedicated SRE team that treats infrastructure as a product, this gives them a nice sandbox.
-*   **Cross-Cutting Concerns:** Changing a network policy for everyone? One PR. Done.
+- **Compliance & Audit:** If you have auditors breathing down your neck, pointing them to one repo is a heck of a lot easier than pointing them to 50.
+- **Platform Teams:** If you have a dedicated SRE team that treats infrastructure as a product, this gives them a nice sandbox.
+- **Cross-Cutting Concerns:** Changing a network policy for everyone? One PR. Done.
 
 ### Real-World Example: The "Big Bank" Approach
 
@@ -130,8 +130,8 @@ Why? **Separation of Duties.** Developers wrote code, but they couldn't touch th
 
 ### The "Ope" Moment (Disadvantages)
 
-*   **Developer Friction:** "Ope, I forgot to update the infra repo." Context switching is real.
-*   **Bottlenecks:** The Platform team becomes the gatekeeper. And nobody likes a gatekeeper when they're trying to ship a hotfix on a Friday.
+- **Developer Friction:** "Ope, I forgot to update the infra repo." Context switching is real.
+- **Bottlenecks:** The Platform team becomes the gatekeeper. And nobody likes a gatekeeper when they're trying to ship a hotfix on a Friday.
 
 ---
 
@@ -141,9 +141,9 @@ Here, every app packs its own lunch. The manifests live right next to the source
 
 ### When Distributed Works Well
 
-*   **Team Autonomy:** You want your product teams to move fast? Give them the keys.
-*   **Microservices:** If you have 80 services, managing them in one repo is a nightmare.
-*   **GitOps Maturity:** If you're using Flux or ArgoCD with image automation, this is the way to go.
+- **Team Autonomy:** You want your product teams to move fast? Give them the keys.
+- **Microservices:** If you have 80 services, managing them in one repo is a nightmare.
+- **GitOps Maturity:** If you're using Flux or ArgoCD with image automation, this is the way to go.
 
 ### Real-World Example: The SaaS Startup
 
@@ -154,8 +154,8 @@ A mid-sized SaaS company I know (about 80 microservices) went this route.
 
 ### The "Uff Da" Moment (Disadvantages)
 
-*   **Inconsistency:** Team A uses Helm, Team B uses Kustomize, and Team C is copy-pasting raw YAML. It gets messy.
-*   **Sprawl:** Updating a base image across 80 repos? You better have a script for that.
+- **Inconsistency:** Team A uses Helm, Team B uses Kustomize, and Team C is copy-pasting raw YAML. It gets messy.
+- **Sprawl:** Updating a base image across 80 repos? You better have a script for that.
 
 ---
 
@@ -168,23 +168,23 @@ It comes down to your team structure. In my grad classes, we talk about "socio-t
 ### Key Questions to Ask
 
 1.  **Who owns deployments?**
-    *   Platform team? -> **Centralized**.
-    *   Product squads? -> **Distributed**.
+    - Platform team? -> **Centralized**.
+    - Product squads? -> **Distributed**.
 
 2.  **How scary is your compliance officer?**
-    *   Very scary? -> **Centralized**.
-    *   Chill? -> **Distributed**.
+    - Very scary? -> **Centralized**.
+    - Chill? -> **Distributed**.
 
 3.  **How many services we talkin'?**
-    *   < 20? -> **Centralized**. Keep it simple.
-    *   > 50? -> **Distributed**. Don't create a monolith if you don't have to.
+    - < 20? -> **Centralized**. Keep it simple.
+    - > 50? -> **Distributed**. Don't create a monolith if you don't have to.
 
 ### The Hybrid Approach (The "Hotdish" of Architectures)
 
 Many mature orgs do a mix. It's like a tater tot hotdish—a little bit of everything, baked together.
 
-*   **Platform Repo:** Holds the cluster config, namespaces, RBAC, and "Golden Path" templates.
-*   **App Repos:** Hold the specific Deployment and Service definitions.
+- **Platform Repo:** Holds the cluster config, namespaces, RBAC, and "Golden Path" templates.
+- **App Repos:** Hold the specific Deployment and Service definitions.
 
 This is usually where I steer people. It gives you control where you need it (security) and freedom where you want it (features).
 
@@ -219,4 +219,5 @@ You betcha.
 ## Footnotes
 
 [^1]: Kubernetes Documentation. "Configuration Best Practices." [https://kubernetes.io/docs/concepts/configuration/overview/](https://kubernetes.io/docs/concepts/configuration/overview/)
+
 [^2]: FluxCD. "Multi-Tenancy." [https://fluxcd.io/flux/installation/configuration/multitenancy/](https://fluxcd.io/flux/installation/configuration/multitenancy/)

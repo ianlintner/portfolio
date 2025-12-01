@@ -41,7 +41,7 @@ graph TD
     Schema[JSON Schema / Pydantic] --> API
     API -->|Guaranteed Structure| App[Application Logic]
     App --> DB[(Database)]
-    
+
     style API fill:#dcfce7,stroke:#166534
     style Schema fill:#fef9c3,stroke:#166534
 ```
@@ -55,8 +55,9 @@ One of the interesting trade-offs in 5.1 is the explicit control over "thinking"
 For a chat bot, you want low latency. But for a complex architectural review? I'll happily wait 30 seconds if it means the model actually checks its work.
 
 **The Engineer's Take:**
-*   **User-facing UI:** Dial down the reasoning, optimize for TTFT (Time To First Token).
-*   **Background Jobs:** Crank up the reasoning. Let it think.
+
+- **User-facing UI:** Dial down the reasoning, optimize for TTFT (Time To First Token).
+- **Background Jobs:** Crank up the reasoning. Let it think.
 
 ---
 

@@ -48,18 +48,18 @@ sequenceDiagram
     User->>Manager: "Refactor Auth Module"
     Manager->>Coder: Assign Task: Implement Interface
     Manager->>Tester: Assign Task: Write Unit Tests
-    
+
     par Parallel Work
         Coder->>Coder: Writing Code...
         Tester->>Tester: Writing Tests...
     end
-    
+
     Coder-->>Manager: Code Complete
     Tester-->>Manager: Tests Ready
-    
+
     Manager->>Writer: Assign Task: Update Docs
     Writer-->>Manager: Docs Updated
-    
+
     Manager-->>User: "Refactor Complete & Verified"
 ```
 
@@ -81,10 +81,10 @@ And by running them in parallel, you slash the wall-clock time for complex tasks
 
 The key to making this work is the **Orchestrator**. This is the "Manager" agent that:
 
-*   Decomposes the user's request.
-*   Assigns tasks to the right sub-agents.
-*   Aggregates the results.
-*   Handles errors (e.g., "The Tester found a bug, send it back to the Coder").
+- Decomposes the user's request.
+- Assigns tasks to the right sub-agents.
+- Aggregates the results.
+- Handles errors (e.g., "The Tester found a bug, send it back to the Coder").
 
 It's a classic **Map-Reduce** pattern, applied to AI.
 
@@ -94,9 +94,9 @@ It's a classic **Map-Reduce** pattern, applied to AI.
 
 It's not all sunshine and rainbows.
 
-*   **Coordination Overhead:** Managing the state between agents is hard.
-*   **Cost:** Running 5 agents is 5x the token cost (roughly).
-*   **Loops:** Agents can get into arguments. "Fix this." "I fixed it." "No you didn't." You need loop detection.
+- **Coordination Overhead:** Managing the state between agents is hard.
+- **Cost:** Running 5 agents is 5x the token cost (roughly).
+- **Loops:** Agents can get into arguments. "Fix this." "I fixed it." "No you didn't." You need loop detection.
 
 ---
 
