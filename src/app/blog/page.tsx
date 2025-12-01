@@ -65,8 +65,7 @@ export default function BlogPage() {
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               Just some notes from a 44-year-old engineering leader trying to
-              keep up. Expect a mix of deep dives, "uff da" moments, and
-              whatever I'm learning in grad school.
+              keep up.
             </p>
 
             {/* Search Bar */}
