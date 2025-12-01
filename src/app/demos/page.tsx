@@ -39,6 +39,20 @@ export const metadata: Metadata = {
 // Mock demo data - will be replaced with tRPC calls
 const mockDemos = [
   {
+    id: "6",
+    title: "OAuth2 Proxy Sidecar",
+    slug: "oauth2-sidecar",
+    description:
+      "Production-ready OAuth2 authentication for Kubernetes using the sidecar pattern. Includes Helm charts, custom sign-in templates, and SSO support for GitHub, Google, Azure AD, and generic OIDC providers. Eliminates complex centralized auth services in favor of per-app authentication containers.",
+    category: "FULL_STACK",
+    technologies: ["Kubernetes", "OAuth2", "Istio", "Helm", "Security"],
+    githubUrl: "https://github.com/ianlintner/authproxy",
+    liveUrl: "https://ianlintner.github.io/authproxy/",
+    imageUrl: "/demos/oauth2-sidecar.jpg",
+    featured: true,
+    createdAt: new Date("2025-12-01"),
+  },
+  {
     id: "5",
     title: "Authentication Showcase",
     slug: "authentication-showcase",

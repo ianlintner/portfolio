@@ -64,8 +64,7 @@ export default function BlogPage() {
               Engineering Notes & Musings
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Just some notes from a 44-year-old engineering leader trying to
-              keep up.
+              Just some notes from an engineering leader trying to keep up.
             </p>
 
             {/* Search Bar */}

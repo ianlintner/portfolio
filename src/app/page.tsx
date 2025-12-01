@@ -20,6 +20,15 @@ export default function HomePage() {
   // Latest demos data (matching the structure from demos page)
   const latestDemos = [
     {
+      id: "6",
+      title: "OAuth2 Proxy Sidecar",
+      slug: "oauth2-sidecar",
+      description:
+        "Decentralized authentication for Kubernetes using the sidecar pattern. A production-ready solution with Helm charts, custom templates, and SSO support.",
+      technologies: ["Kubernetes", "OAuth2", "Istio", "Helm"],
+      liveUrl: "https://github.com/ianlintner/authproxy",
+    },
+    {
       id: "5",
       title: "Authentication Showcase",
       slug: "authentication-showcase",
@@ -36,15 +45,6 @@ export default function HomePage() {
         "A command-line utility written in Rust for analyzing audio and providing AI-powered feedback for guitar practice sessions.",
       technologies: ["Rust", "FFmpeg", "AI"],
       liveUrl: "https://github.com/ianlintner/audio-ai",
-    },
-    {
-      id: "1",
-      title: "Interview Data Structures & Algorithms Study App",
-      slug: "interview-data-structures-algorithms-study-app",
-      description:
-        "A comprehensive study app for mastering data structures and algorithms through interactive coding challenges.",
-      technologies: ["Python", "Flask"],
-      liveUrl: "https://dsa.cat-herding.net",
     },
   ];
   return (
