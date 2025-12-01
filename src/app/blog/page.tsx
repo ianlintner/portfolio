@@ -61,11 +61,10 @@ export default function BlogPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
-              Technical Blog
+              Engineering Notes & Musings
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Insights, tutorials, and thoughts on modern web development, cloud
-              architecture, and building scalable applications.
+              Just some notes from a 44-year-old engineering leader trying to keep up. Expect a mix of deep dives, "uff da" moments, and whatever I'm learning in grad school.
             </p>
 
             {/* Search Bar */}
