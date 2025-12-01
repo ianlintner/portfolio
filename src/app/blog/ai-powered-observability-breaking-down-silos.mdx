@@ -18,7 +18,9 @@ author: "Ian Lintner"
 
 # 🔍 Breaking Down Silos: How AI-Powered Observability Lets Ops Teams Master Unknown Systems
 
-As engineering leaders (Staff Engineer, Principal Engineer, SRE Lead, or Platform Manager), you're increasingly dealing with systems you didn't build and teams you didn't hire—often across multiple clouds and after several acquisitions. The "you build it, you run it" model has collided with the reality of **multi-cloud, multi-team, multi-acquisition complexity**.
+If you've been in this game as long as I have, you know the feeling. You inherit a system, the docs are from 2019, and the only person who knows how it works just left for a startup.
+
+As engineering leaders (Staff Engineer, Principal Engineer, SRE Lead, or Platform Manager), we're increasingly dealing with systems we didn't build and teams we didn't hire. The "you build it, you run it" model is great in theory, but it collides hard with the reality of **multi-cloud, multi-team, multi-acquisition complexity**.
 
 This blog provides **execution-ready strategies** for building AI-powered observability that actually reduces toil, accelerates incident response, and keeps your on-call teams sane.
 
@@ -75,18 +77,26 @@ The next stage is **AI that is wired into your telemetry, tools, and runbooks**�
 
 ```mermaid
 graph TD
+    subgraph "The Old Way"
     A[Alert Storm] --> B{Traditional AIOps}
-    A --> C{AI-Powered Observability}
     B --> D[Probabilistic Filtering]
     B --> E[Still Too Much Noise]
+    D --> I[Manual Investigation]
+    E --> I
+    end
+
+    subgraph "The AI Way"
+    A --> C{AI-Powered Observability}
     C --> F[Context-Aware Reasoning]
     C --> G[Root Cause Analysis]
     C --> H[Actionable Insights]
-    D --> I[Manual Investigation]
-    E --> I
     F --> J[Rapid Resolution]
     G --> J
     H --> J
+    end
+    
+    style C fill:#dcfce7,stroke:#166534
+    style J fill:#dbeafe,stroke:#1e40af
 ```
 
 **Figure 1:** Traditional AIOps vs. AI-powered observability with context integration.

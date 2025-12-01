@@ -16,11 +16,94 @@ author: "Ian Lintner"
 
 # 🧠 Goal-Seeking AI Architecture: How Multi-Agent Systems Collaborate Toward Shared Objectives
 
-As engineering leaders (Staff Engineer, Principal Engineer, or Manager), you're increasingly asked to deliver **systems that don't just react**, but **proactively pursue business objectives**.  
-To meet this challenge, AI must evolve from deterministic workflows into **goal-oriented, multi-agent ecosystems** capable of working together, reasoning, and aligning toward shared outcomes.
+Back when I was an IC, we wrote code that did exactly what we told it to do. If it didn't, it was a bug. Simple.
 
-This blog explores how to architect **goal-seeking multi-agent systems (MAS)** and integrate them into existing interactive platforms.  
-The focus is on **execution-ready engineering insights, operational risks, and leadership perspectives**, along with references to current research you can bring into your roadmap.
+Now? We're building systems that have *goals*. It's like managing a team of junior engineers—you give them a direction, not a script. And just like managing people, it's messy.
+
+As engineering leaders (Staff Engineer, Principal Engineer, or Manager), you're increasingly asked to deliver **systems that don't just react**, but **proactively pursue business objectives**. To meet this challenge, AI must evolve from deterministic workflows into **goal-oriented, multi-agent ecosystems**.
+
+This blog explores how to architect **goal-seeking multi-agent systems (MAS)**. I'll share some execution-ready engineering insights, operational risks, and leadership perspectives—stuff I wish I knew before I started tinkering with this.
+
+---
+
+## 🧩 Core Architectural Layers
+
+Here's a refined model you can use to structure your proposals and design docs (and impress your boss):
+
+```mermaid
+flowchart TD
+  A["Environment / Data<br/>(external APIs, user input, sensors)"] --> B[Perception Layer]
+  B --> C[Cognition Layer]
+  C --> D[Coordination Layer]
+  D --> E[Action Layer]
+  E -->|Feedback| A
+  D -->|Agent-to-Agent Messages| D2[Other Agents]
+  D2 --> D
+  
+  style C fill:#dcfce7,stroke:#166534
+  style D fill:#dbeafe,stroke:#1e40af
+```
+
+**Figure 1:** A high-level control flow: environment → perception → cognition → coordination → action → back to environment.
+
+**What this means for leadership:**
+
+- **Don't build a monolith.** Break down your chunk of work into these architectural layers.
+- **Assign ownership.** Give the "Perception" layer to one team and "Cognition" to another.
+- **Watch the coordination layer.** This is where the complexity lives. It's the "meeting room" of your AI agents.
+
+Studies of MAS underline this layered decomposition as foundational.  
+Source: [Stone & Veloso, _Multiagent Systems: A Survey from a Machine Learning Perspective_ (Carnegie Mellon University, 2000)](https://www.cs.cmu.edu/~mmv/papers/MASsurvey.pdf?utm_source=chatgpt.com)
+
+---
+
+## 🧠 Agent Internals: The Goal-Seeking Loop
+
+Within each agent lives a feedback loop enabling it to pursue goals, evaluate progress, and adapt.  
+Here's a sequence:
+
+```mermaid
+sequenceDiagram
+  participant G as Goal Manager
+  participant P as Perception Module
+  participant R as Reasoner/Planner
+  participant A as Action Executor
+  participant E as Environment
+
+  G->>P: Monitor environment
+  P->>R: Provide state/context
+  R->>G: Evaluate goal progress
+  R->>A: Generate plan/actions
+  A->>E: Execute actions
+  E-->>P: Return updated state
+  G->>G: Update or reprioritize goals
+```
+
+**Figure 2:** The internal loop of a goal-seeking agent.
+
+**Leadership notes:**
+
+- **Metrics matter.** Each agent should expose metrics like _goal completion rate_, _sub-goal churn_, and _action latency_.
+- **Design for failure.** Ensure design includes a **Goal Manager** (setting and tracking goals) and a **Feedback Evaluator** (measuring progress).
+- **Observability is key.** When scaling to many agents, you'll need to instrument these loops for observability and drift detection.
+
+Recent surveys of multi-agent reinforcement learning (MARL) highlight how communication and internal feedback loops are essential to avoid divergence or deadlock.  
+Source: [Cui et al., _A Survey on Large-Population Systems and Scalable Multi-Agent Reinforcement Learning_ (2022)](https://arxiv.org/abs/2209.03859?utm_source=chatgpt.com)
+
+---
+
+## 🔗 Communication & Coordination Mechanisms
+
+Coordination is where the real engineering risk—and opportunity—resides.
+
+### Message Bus Architecture
+
+```mermaid
+graph LR
+  A[Agent Alpha] -- Pub/Sub --> X[Message Bus]
+  B[Agent Beta] -- Pub/Sub --> X
+  C[Agent Gamma] -- Pub/Sub --> X
+```
 
 ---
 

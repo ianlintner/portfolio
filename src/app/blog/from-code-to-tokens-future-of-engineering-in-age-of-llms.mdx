@@ -15,9 +15,13 @@ author: "Ian Lintner"
 
 # 🔮 From Code to Tokens: The Future of Engineering in the Age of LLMs
 
-For decades, we've treated _code_ as something fundamentally distinct from _language_. Developers learned the syntax and semantics of multiple programming languages—C++, Python, JavaScript, Go—each with its own idioms, quirks, and ecosystems. But large language models (LLMs) are quietly dissolving that distinction.
+Back in the day, we treated code like sacred texts. You had to learn the syntax, the quirks, the secret handshakes of C++ or Java.
+
+But large language models (LLMs) are quietly dissolving that distinction.
 
 To an LLM, code _is_ language—just another structured sequence of tokens. Whether it's English, Rust, or Verilog, the model parses and generates them with equal fluency. This simple fact reframes the entire notion of programming.
+
+It's a shift that makes my brain spin, but my pragmatic side sees the potential.
 
 ---
 
@@ -70,6 +74,19 @@ In other words, software engineering becomes systems engineering again.
 ## 🔄 Continuous Co-Development: Humans + Machines
 
 The new software lifecycle might look like this:
+
+```mermaid
+graph TD
+    A[Human Intent] -->|Specification| B[AI Synthesis]
+    B -->|Code & Config| C[System Execution]
+    C -->|Telemetry| D[Observation]
+    D -->|Feedback| E[Validation]
+    E -->|Refinement| A
+    
+    style A fill:#dbeafe,stroke:#1e40af
+    style B fill:#dcfce7,stroke:#166534
+    style E fill:#fef9c3,stroke:#854d0e
+```
 
 1. **Specification** — Humans define requirements, constraints, and goals.
 2. **Synthesis** — LLMs generate code, configurations, and documentation.
