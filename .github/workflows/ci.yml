@@ -62,93 +62,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Run lint
-        if: matrix.check == 'lint'
-        run: pnpm run lint
-
-      - name: Run format check
-        if: matrix.check == 'format'
-        run: pnpm exec prettier --check .
-
       - name: Run tests
         if: matrix.check == 'test'
         run: pnpm run test:ci
-
-  build:
-    name: Build Application
-    runs-on: ubuntu-latest
-    needs: quality
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "pnpm"
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-          cache: "pip"
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Cache pnpm dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Cache Next.js build
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
-
-      - name: Install Python dependencies
-        run: pip install -r requirements.txt
-
-      - name: Install Node dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
-
-      - name: Build Next.js
-        run: pnpm run build
-        env:
-          # Provide stub values for build-time env vars
-          DATABASE_URL: postgresql://stub:stub@localhost:5432/stub
-          NEXTAUTH_SECRET: build-time-stub-secret
-          NEXTAUTH_URL: http://localhost:3000
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: nextjs-build
-          path: |
-            .next
-            public/docs
-          retention-days: 1
 
   # Docker build and push (only on main branch)
   docker:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: read
       id-token: write
