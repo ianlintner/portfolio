@@ -752,6 +752,43 @@ Just as you write `CONTRIBUTING.md` for humans, you should write instructions fo
 
 **Verdict:** Currently, **Centralized Repos** are slightly easier for AI agents to reason about globally, while **Distributed Repos** are safer for focused, single-service code generation.
 
+### 🏗️ Blueprint: Building a "Cluster-Aware" Copilot Agent
+
+If you are building a custom agent (e.g., using GitHub Copilot Extensions or a custom MCP client) to manage your cluster, here is a reference architecture:
+
+#### 1. The Resources (Tools & Context)
+Don't just feed the agent text files. Give it tools to inspect the live cluster.
+*   **Kubernetes MCP Server:** Connect your agent to a read-only `ServiceAccount` in the cluster.
+    *   *Tool:* `kubectl_get_resources` (allowed: Pods, Services, Ingress, Events)
+    *   *Tool:* `kubectl_describe` (for debugging crash loops)
+    *   *Tool:* `helm_list` (to see what's installed)
+*   **Documentation Index:** A vector database containing your internal platform docs ("How to expose a service", "Golden path for databases").
+
+#### 2. The System Prompt (Instructions)
+Your agent needs a persona and strict guardrails.
+
+```markdown
+# System Prompt
+You are the Platform Engineering Agent.
+Your goal is to help developers deploy services to the "Acme Corp" Kubernetes cluster.
+
+## Constraints
+1. NEVER generate a Service of type `LoadBalancer`. Always use `ClusterIP` with an `Ingress`.
+2. ALWAYS add the label `cost-center: <team-id>` to every resource.
+3. Before suggesting a fix for a crash, use the `kubectl_logs` tool to read the actual error.
+
+## Knowledge Base
+- If the user asks for a database, refer to the "CloudSQL Paved Path" documentation.
+- If the user asks for a domain, check the `external-dns` annotations guide.
+```
+
+#### 3. The Workflow
+1.  **User:** "My pod is crashing."
+2.  **Agent:** Calls `kubectl_get_pods` -> sees `CrashLoopBackOff`.
+3.  **Agent:** Calls `kubectl_logs` -> sees "Connection refused to DB".
+4.  **Agent:** Checks repo manifests -> sees missing `DATABASE_URL` secret.
+5.  **Agent:** Suggests: "It looks like your app can't reach the DB. You are missing the `db-binding` secret in your `deployment.yaml`."
+
 ---
 
 ## 🚀 Migration Strategies
