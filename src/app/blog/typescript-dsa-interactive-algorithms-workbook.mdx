@@ -1,0 +1,447 @@
+---
+title: "Building an Interactive Data Structures & Algorithms Workbook with TypeScript"
+date: 2025-12-01
+excerpt: "A deep dive into creating a browser-based, interactive learning platform for 50+ algorithms and data structures using TypeScript, React, and Vite—optimized for static deployment and technical interview preparation."
+tags:
+  [
+    "TypeScript",
+    "React",
+    "Data Structures",
+    "Algorithms",
+    "Education",
+    "Static Web Apps",
+    "Vite",
+    "Interview Prep",
+  ]
+author: "Ian Lintner"
+image: "/images/typescript-dsa-social.svg"
+imageAlt: "TypeScript DSA Interactive Workbook - Algorithm Visualization Platform"
+---
+
+# Building an Interactive Data Structures & Algorithms Workbook with TypeScript
+
+After building a successful Python-based DSA learning platform, I wanted to create a version that runs entirely in the browser—no backend, no server costs, just pure client-side TypeScript. The result is an interactive workbook featuring 50+ algorithm implementations with visualizations, complexity analysis, and real-world use cases.
+
+**Live Demo:** [https://ianlintner.github.io/typescript_dsa/](https://ianlintner.github.io/typescript_dsa/)  
+**Source Code:** [https://github.com/ianlintner/typescript_dsa](https://github.com/ianlintner/typescript_dsa)
+
+## Why TypeScript for Algorithms?
+
+While Python is the go-to language for algorithm education, TypeScript offers unique advantages for interactive learning platforms:
+
+- **Type Safety**: Catch errors at compile-time rather than runtime
+- **Browser Native**: No compilation to WASM, runs directly in V8
+- **Rich Tooling**: VS Code, ESLint, and Prettier provide excellent DX
+- **Static Deployment**: Zero infrastructure costs with GitHub Pages or Azure Static Web Apps
+- **Performance**: V8's JIT compilation rivals Python for algorithm execution
+
+The trade-off? TypeScript's verbosity compared to Python's conciseness. But for a learning platform where clarity matters more than brevity, explicit types enhance understanding.
+
+## Architecture: Pure Static with React + Vite
+
+The application architecture prioritizes simplicity and developer experience:
+
+```typescript
+// Stack
+- React 18 (UI components)
+- TypeScript 5 (type safety)
+- Vite (build tooling)
+- Vitest (unit testing)
+- GitHub Actions (CI/CD)
+- Azure Static Web Apps / GitHub Pages (hosting)
+```
+
+### Why Vite Over Create React App?
+
+Vite's esbuild-powered dev server starts in milliseconds versus CRA's webpack taking 30+ seconds. For an educational project where contributors iterate rapidly, this matters:
+
+- **Dev Server**: ~200ms cold start vs ~30s
+- **HMR**: Instant vs 1-3s per change
+- **Build Time**: ~5s vs ~45s for production
+- **Bundle Size**: Tree-shaking removes unused algorithms
+
+### Static-First Design
+
+Every feature is designed to work without a backend:
+
+```typescript
+// No server-side rendering
+// No API routes
+// No database calls
+// No authentication (public learning resource)
+
+// Instead:
+- Algorithm implementations in pure functions
+- Visualizations using Canvas API
+- State management via React hooks
+- Routing via React Router (client-side)
+```
+
+This enables deployment to any static host with zero operational overhead.
+
+## Algorithm Categories & Implementations
+
+The workbook organizes 50+ algorithms into eight categories:
+
+### 🚀 Sorting Algorithms (8)
+
+- QuickSort, MergeSort, HeapSort
+- Bubble, Insertion, Selection, Counting, Radix
+
+**Design Decision**: Each algorithm includes multiple implementations (iterative, recursive, optimized) to demonstrate trade-offs between readability and performance.
+
+### 🔍 Searching Algorithms (6)
+
+- Binary Search (iterative & recursive)
+- Linear Search, Jump Search, Interpolation Search
+- Exponential Search, Ternary Search
+
+**Key Feature**: Interactive visualizations show how different search strategies behave with various data distributions.
+
+### 🕸️ Graph Algorithms (8)
+
+- BFS, DFS, Dijkstra's Shortest Path
+- Bellman-Ford, Floyd-Warshall
+- Kruskal's MST, Prim's MST, Topological Sort
+
+**Implementation Note**: Graph representations use adjacency lists for space efficiency (O(V + E) vs O(V²) for matrices).
+
+### 🧩 Dynamic Programming (8)
+
+- Fibonacci (memoization & tabulation)
+- Knapsack (0/1 & unbounded)
+- Longest Common Subsequence
+- Edit Distance, Coin Change, Matrix Chain Multiplication
+
+**Teaching Approach**: Each DP problem includes:
+
+1. Naive recursive solution (to show exponential complexity)
+2. Top-down memoized version
+3. Bottom-up tabulation
+4. Space-optimized variant when applicable
+
+### 🏗️ Data Structures (7)
+
+- Binary Search Tree, AVL Tree, Red-Black Tree
+- Min/Max Heap, Trie, Segment Tree, Union-Find
+
+**Interactive Component**: Visual tree builders let users insert/delete nodes and see balancing operations in real-time.
+
+### 📝 String Algorithms (5)
+
+- KMP Pattern Matching
+- Rabin-Karp, Boyer-Moore
+- Longest Palindromic Substring
+- Manacher's Algorithm
+
+### 🎯 Problem Patterns (6)
+
+- Two Pointers, Sliding Window
+- Fast & Slow Pointers
+- Backtracking, Greedy Algorithms
+- Divide & Conquer
+
+### 🔢 Math Utilities (15+)
+
+- Prime generation (Sieve of Eratosthenes)
+- GCD, LCM, Modular exponentiation
+- Factorial, Permutations, Combinations
+
+## Code Quality & Testing
+
+Every algorithm includes:
+
+```typescript
+// 1. Type-safe implementation
+export function quickSort<T>(
+  arr: T[],
+  compareFn: (a: T, b: T) => number = defaultCompare,
+): T[] {
+  // Implementation...
+}
+
+// 2. Comprehensive unit tests
+describe("quickSort", () => {
+  it("sorts numbers in ascending order", () => {
+    expect(quickSort([3, 1, 4, 1, 5])).toEqual([1, 1, 3, 4, 5]);
+  });
+
+  it("handles edge cases", () => {
+    expect(quickSort([])).toEqual([]);
+    expect(quickSort([1])).toEqual([1]);
+  });
+
+  it("works with custom comparators", () => {
+    const desc = (a: number, b: number) => b - a;
+    expect(quickSort([1, 2, 3], desc)).toEqual([3, 2, 1]);
+  });
+});
+
+// 3. Big-O complexity documentation
+/**
+ * Quick Sort
+ *
+ * Time Complexity:
+ * - Best: O(n log n)
+ * - Average: O(n log n)
+ * - Worst: O(n²) - when pivot is consistently min/max
+ *
+ * Space Complexity: O(log n) - recursion stack
+ *
+ * Stability: No
+ * In-place: Yes (can be implemented in-place)
+ */
+```
+
+### Testing Strategy
+
+- **Unit Tests**: Vitest for algorithm correctness
+- **Type Tests**: TypeScript's strict mode catches type errors
+- **Visual Tests**: Manual verification of visualizations
+- **CI Pipeline**: GitHub Actions runs tests on every PR
+
+## Algorithm Visualizer
+
+The interactive visualizer is the platform's killer feature:
+
+```typescript
+// Visualizer Architecture
+1. Algorithm Selection → Choose from 50+ algorithms
+2. Input Configuration → Provide test data
+3. Step-by-Step Execution → Watch algorithm progress
+4. Performance Metrics → See time/space complexity in action
+```
+
+**Technical Implementation:**
+
+- Canvas API for rendering (better performance than SVG for animations)
+- Request Animation Frame for smooth 60fps updates
+- Web Workers for algorithm execution (keeps UI responsive)
+- Configurable speed controls (0.25x to 4x)
+
+**Example: Visualizing QuickSort**
+
+```typescript
+interface VisualizationStep {
+  array: number[];
+  pivotIndex: number;
+  comparisons: [number, number][];
+  swaps: [number, number][];
+  message: string;
+}
+
+function* quickSortVisualization(arr: number[]): Generator<VisualizationStep> {
+  // Yield visualization steps during sorting
+  // Canvas updates after each yield
+}
+```
+
+## Big-O Reference Guide
+
+The built-in complexity guide provides quick reference:
+
+| Algorithm     | Best       | Average    | Worst      | Space    |
+| ------------- | ---------- | ---------- | ---------- | -------- |
+| QuickSort     | O(n log n) | O(n log n) | O(n²)      | O(log n) |
+| MergeSort     | O(n log n) | O(n log n) | O(n log n) | O(n)     |
+| Binary Search | O(1)       | O(log n)   | O(log n)   | O(1)     |
+| DFS/BFS       | O(V + E)   | O(V + E)   | O(V + E)   | O(V)     |
+
+**Interactive Features:**
+
+- Sort table by any complexity metric
+- Filter by algorithm category
+- Compare multiple algorithms side-by-side
+
+## Deployment: Static Web Apps
+
+The application deploys to multiple platforms:
+
+### GitHub Pages (Primary)
+
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - run: npm ci
+      - run: npm run build
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+```
+
+**Cost**: $0/month (GitHub Pages is free for public repos)
+
+### Azure Static Web Apps (Alternative)
+
+```json
+// staticwebapp.config.json
+{
+  "routes": [
+    {
+      "route": "/*",
+      "serve": "/index.html",
+      "statusCode": 200
+    }
+  ],
+  "navigationFallback": {
+    "rewrite": "/index.html"
+  },
+  "mimeTypes": {
+    ".json": "application/json"
+  }
+}
+```
+
+**Benefits:**
+
+- Global CDN distribution
+- Automatic PR previews
+- Custom domains with free SSL
+- Staging slots
+
+**Cost**: Free tier includes 100GB bandwidth/month
+
+## Performance Optimizations
+
+### Code Splitting
+
+```typescript
+// Lazy load algorithm categories
+const SortingAlgorithms = lazy(() =>
+  import('./categories/SortingAlgorithms')
+);
+const GraphAlgorithms = lazy(() =>
+  import('./categories/GraphAlgorithms')
+);
+
+// Route-based splitting
+<Route path="/sorting" element={
+  <Suspense fallback={<Loading />}>
+    <SortingAlgorithms />
+  </Suspense>
+} />
+```
+
+**Result**: Initial bundle ~150KB, lazy chunks ~20-40KB each
+
+### Tree Shaking
+
+Vite's Rollup-based bundler automatically removes unused algorithms:
+
+```typescript
+// User only visits sorting page
+// → Graph, DP, and string algorithms never loaded
+// Saves ~200KB of JavaScript
+```
+
+### Asset Optimization
+
+- SVG icons inlined when <5KB
+- Images served as WebP with PNG fallback
+- Fonts subseted to include only used glyphs
+- Gzip/Brotli compression on CDN
+
+**Lighthouse Score**: 98/100 (Performance)
+
+## Future Enhancements
+
+### Planned Features
+
+1. **Leetcode Integration**: Map algorithms to relevant problems
+2. **Code Playground**: Live editor to modify algorithms
+3. **Performance Benchmarks**: Compare implementations with real metrics
+4. **Mobile App**: React Native version with offline support
+5. **Collaborative Features**: Share custom test cases via URL params
+
+### Technical Debt
+
+- Replace Canvas with WebGL for better visualization performance
+- Add Web Workers for all algorithm execution (not just visualizer)
+- Implement service worker for offline-first experience
+- Add internationalization (i18n) for non-English speakers
+
+## Lessons Learned
+
+### What Worked
+
+1. **TypeScript Everywhere**: Type safety caught countless bugs during development
+2. **Static-First**: Zero operational overhead, infinite scalability
+3. **Vite**: Incredible DX improvement over previous tooling
+4. **Incremental Development**: Ship algorithm categories independently
+
+### What I'd Do Differently
+
+1. **Start with Visualizations**: Built algorithms first, visualizations later—should've done both together
+2. **Better Testing Utilities**: Need snapshot tests for visualization states
+3. **Earlier Performance Testing**: Discovered some O(n²) rendering only after building 20+ visualizations
+4. **Documentation First**: Writing docs after implementation is harder than alongside
+
+## Comparison: TypeScript vs Python DSA
+
+| Aspect             | TypeScript Version            | Python Version                 |
+| ------------------ | ----------------------------- | ------------------------------ |
+| **Performance**    | V8 JIT ~equal to CPython      | CPython interpreter            |
+| **Deployment**     | Static files, free hosting    | Requires server (Flask/Django) |
+| **Type Safety**    | Compile-time checking         | Runtime only (without mypy)    |
+| **Learning Curve** | Steeper (types + async)       | Gentler for beginners          |
+| **Interactivity**  | Browser-native (Canvas/WebGL) | Requires matplotlib/pygame     |
+| **Cost**           | $0/month                      | $5-20/month (hosting)          |
+
+**When to Use TypeScript:**
+
+- Building public learning resources (static = free)
+- Need browser-based interactivity
+- Team already uses TypeScript
+- Prioritize type safety over conciseness
+
+**When to Use Python:**
+
+- Teaching absolute beginners
+- Need NumPy/SciPy for advanced math
+- Jupyter notebooks for exploration
+- Rapid prototyping over production readiness
+
+## Try It Yourself
+
+The platform is live and free to use:
+
+🎬 **Interactive Demo**: [https://ianlintner.github.io/typescript_dsa/](https://ianlintner.github.io/typescript_dsa/)  
+📊 **Algorithm Visualizer**: [Try the visualizer](https://ianlintner.github.io/typescript_dsa/visualizer)  
+📈 **Big-O Reference**: [Complexity guide](https://ianlintner.github.io/typescript_dsa/big-o)  
+💻 **Source Code**: [GitHub Repository](https://github.com/ianlintner/typescript_dsa)
+
+## Conclusion
+
+Building a browser-based DSA learning platform with TypeScript demonstrates the power of modern web technologies for educational tools. By prioritizing static deployment, type safety, and interactive visualizations, we created a resource that's:
+
+- **Free to host** (GitHub Pages)
+- **Fast to load** (<200ms initial render)
+- **Easy to maintain** (TypeScript catches bugs)
+- **Globally accessible** (CDN distribution)
+
+Whether you're preparing for technical interviews, teaching algorithms, or just exploring computer science fundamentals, I hope this project serves as both a learning resource and a reference implementation for building educational web applications.
+
+**Next Steps:**
+
+1. Explore the [live demo](https://ianlintner.github.io/typescript_dsa/)
+2. Try the [algorithm visualizer](https://ianlintner.github.io/typescript_dsa/visualizer)
+3. Contribute on [GitHub](https://github.com/ianlintner/typescript_dsa)
+4. Check out the [Python version](https://github.com/ianlintner/python_dsa) for comparison
+
+---
+
+_Have feedback or want to contribute? Open an issue or PR on GitHub. Let's make algorithm education more accessible together._

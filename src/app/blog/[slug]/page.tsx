@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
@@ -127,7 +128,34 @@ export default async function BlogPostPage({ params }: Props) {
               {meta.title}
             </h1>
 
-            {/* Tags not yet implemented from MDX frontmatter */}
+            {/* Hero Image */}
+            {meta.image && (
+              <div className="relative w-full aspect-[2.4/1] rounded-lg overflow-hidden mb-8 bg-muted">
+                <Image
+                  src={meta.image}
+                  alt={meta.imageAlt || meta.title}
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                />
+              </div>
+            )}
+
+            {/* Tags */}
+            {meta.tags && meta.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-6">
+                {meta.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center gap-1 px-3 py-1 text-sm bg-primary/10 text-primary rounded-full"
+                  >
+                    <Tag className="h-3 w-3" />
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* Share Button */}
             <div className="flex items-center gap-4 pt-6 border-t border-border">
