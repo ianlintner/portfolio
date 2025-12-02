@@ -60,11 +60,11 @@ export function getPostBySlug(slug: string) {
       excerpt: data.excerpt,
       slug,
       id: slug,
-      tags: data.tags || [],
+      tags: (data.tags as string[]) || [],
       author: data.author || "Ian Lintner",
       image: data.image,
       imageAlt: data.imageAlt,
-    },
+    } as PostMeta,
     content,
   };
 }
