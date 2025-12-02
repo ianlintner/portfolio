@@ -1,0 +1,29 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0f172a"/>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.5"/>
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0.1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grad1)"/>
+  
+  <!-- Pipeline/Gears -->
+  <circle cx="250" cy="200" r="50" stroke="#22c55e" stroke-width="8" fill="none" stroke-dasharray="20 10"/>
+  <circle cx="340" cy="200" r="30" stroke="#3b82f6" stroke-width="6" fill="none" stroke-dasharray="15 8"/>
+  
+  <!-- Checkmarks -->
+  <path d="M450 200 L470 220 L510 180" stroke="#22c55e" stroke-width="8" fill="none"/>
+  <path d="M550 200 L570 220 L610 180" stroke="#22c55e" stroke-width="8" fill="none"/>
+
+  <text x="80" y="480" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="white">CI/CD & Observability in AI Era</text>
+  <text x="80" y="550" font-family="Arial, sans-serif" font-size="40" fill="#94a3b8">Why Support Matters More Than Ever</text>
+  
+  <text x="1000" y="580" font-family="Arial, sans-serif" font-size="24" fill="#64748b">by Ian Lintner</text>
+</svg>

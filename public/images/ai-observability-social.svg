@@ -1,0 +1,33 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0f172a"/>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.5"/>
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0.1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grad1)"/>
+  
+  <!-- Eye/Observability Icon -->
+  <path d="M200 250 Q400 100 600 250 Q400 400 200 250 Z" stroke="#8b5cf6" stroke-width="8" fill="none"/>
+  <circle cx="400" cy="250" r="60" fill="#8b5cf6" opacity="0.6"/>
+  <circle cx="400" cy="250" r="30" fill="#0f172a"/>
+  
+  <!-- Data Points/Graph -->
+  <circle cx="650" cy="150" r="8" fill="#3b82f6"/>
+  <circle cx="700" cy="120" r="8" fill="#3b82f6"/>
+  <circle cx="750" cy="180" r="8" fill="#3b82f6"/>
+  <line x1="650" y1="150" x2="700" y2="120" stroke="#3b82f6" stroke-width="2" opacity="0.5"/>
+  <line x1="700" y1="120" x2="750" y2="180" stroke="#3b82f6" stroke-width="2" opacity="0.5"/>
+
+  <text x="80" y="480" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="white">AI-Powered Observability</text>
+  <text x="80" y="550" font-family="Arial, sans-serif" font-size="40" fill="#94a3b8">Breaking Down Silos & Reducing MTTR</text>
+  
+  <text x="1000" y="580" font-family="Arial, sans-serif" font-size="24" fill="#64748b">by Ian Lintner</text>
+</svg>
