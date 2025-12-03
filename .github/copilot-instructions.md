@@ -55,3 +55,22 @@
   - Run `pnpm dev`, open the blog route, check rendering, links, and images.
   - Ensure front‑matter dates are valid; sorting depends on `new Date(date)`.
   - Keep slugs unique (filename) and avoid spaces/uppercase; use `kebab-case`.
+
+## SVG & Hero Image Generation
+
+- **Standard Dimensions**: Always use `width="1200"` and `height="630"` (OpenGraph standard).
+- **Theme & Background**:
+  - Base fill: `#0f172a` (Slate 900).
+  - Grid pattern: Use a `<pattern>` def with `width="40" height="40"` and stroke `#1e293b`.
+  - Overlay: Add a subtle linear gradient (e.g., purple `#8b5cf6` to blue `#3b82f6`) with low opacity (~0.15).
+- **Typography**:
+  - Font family: `Arial, sans-serif`.
+  - Title: `font-size="64" font-weight="bold" fill="white"`. Position around `y="480"` for bottom-left alignment or centered.
+  - Subtitle: `font-size="40" fill="#94a3b8"`. Position below title.
+  - Footer/Author: `font-size="24" fill="#64748b"`. Usually "by Ian Lintner" at bottom right (`x="1000" y="580"`).
+  - **Important**: Always escape special characters in text (e.g., use `&amp;` instead of `&`).
+- **Graphics & Icons**:
+  - Use abstract geometric shapes to represent concepts (e.g., nodes/edges for AI, gears for DevOps, brackets for code).
+  - Apply filters like drop shadows (`<feDropShadow>`) or glows (`<feGaussianBlur>`) defined in `<defs>`.
+  - Palette: Use Tailwind-inspired colors (Blue `#3b82f6`, Purple `#8b5cf6`, Green `#10b981`, Orange `#f97316`, Red `#ef4444`).
+- **Output**: Return the full, valid XML SVG code block. Ensure no unescaped entities exist.
