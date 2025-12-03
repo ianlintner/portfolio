@@ -22,7 +22,7 @@
   <path d="M450 200 L470 220 L510 180" stroke="#22c55e" stroke-width="8" fill="none"/>
   <path d="M550 200 L570 220 L610 180" stroke="#22c55e" stroke-width="8" fill="none"/>
 
-  <text x="80" y="480" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="white">CI/CD & Observability in AI Era</text>
+  <text x="80" y="480" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="white">CI/CD &amp; Observability in AI Era</text>
   <text x="80" y="550" font-family="Arial, sans-serif" font-size="40" fill="#94a3b8">Why Support Matters More Than Ever</text>
   
   <text x="1000" y="580" font-family="Arial, sans-serif" font-size="24" fill="#64748b">by Ian Lintner</text>

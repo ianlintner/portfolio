@@ -41,7 +41,7 @@
 
   <g filter="url(#shadow)">
     <text x="80" y="480" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="white">AI-Powered Observability</text>
-    <text x="80" y="550" font-family="Arial, sans-serif" font-size="40" fill="#94a3b8">Breaking Down Silos & Reducing MTTR</text>
+    <text x="80" y="550" font-family="Arial, sans-serif" font-size="40" fill="#94a3b8">Breaking Down Silos &amp; Reducing MTTR</text>
   </g>
   
   <text x="1000" y="580" font-family="Arial, sans-serif" font-size="24" fill="#64748b">by Ian Lintner</text>
