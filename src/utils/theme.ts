@@ -37,44 +37,6 @@ export function useThemeClass(
   return themeClasses[customTheme] ?? defaultClass;
 }
 
-/**
- * Conditionally apply styles based on display theme (light/dark)
- *
- * @example
- * const shadowClass = useDisplayThemeClass({
- *   light: "shadow-md",
- *   dark: "shadow-glow"
- * });
- */
-export function useDisplayThemeClass(
-  classes: Record<"light" | "dark" | "system", string>,
-): string {
-  const { displayTheme } = useTheme();
-
-  if (displayTheme === "system") {
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
-    return prefersDark ? classes.dark : classes.light;
-  }
-
-  return classes[displayTheme];
-}
-
-/**
- * Get whether dark mode is currently active
- */
-export function useIsDarkMode(): boolean {
-  const { displayTheme } = useTheme();
-
-  if (displayTheme === "system") {
-    return typeof window !== "undefined"
-      ? window.matchMedia("(prefers-color-scheme: dark)").matches
-      : false;
-  }
-
-  return displayTheme === "dark";
-}
 
 /**
  * Predefined glass effect variants
