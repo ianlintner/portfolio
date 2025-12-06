@@ -1,6 +1,6 @@
 /**
  * Theme Configuration System
- * 
+ *
  * This file defines all available themes for the application.
  * Each theme exports CSS custom properties that Tailwind consumes.
  */
@@ -48,7 +48,7 @@ export interface ThemeColors {
 
 /**
  * Dark Glassy Theme - Modern 2025 Design
- * 
+ *
  * Features:
  * - Deep navy/slate base for contrast
  * - Frosted glass effect (backdrop blur + semi-transparent)

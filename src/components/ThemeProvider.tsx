@@ -22,8 +22,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize on mount
   useEffect(() => {
-    const storedDisplayTheme = localStorage.getItem("display-theme") as DisplayTheme | null;
-    const storedCustomTheme = localStorage.getItem("custom-theme") as ThemeName | null;
+    const storedDisplayTheme = localStorage.getItem(
+      "display-theme",
+    ) as DisplayTheme | null;
+    const storedCustomTheme = localStorage.getItem(
+      "custom-theme",
+    ) as ThemeName | null;
 
     if (storedDisplayTheme) {
       setDisplayThemeState(storedDisplayTheme);
@@ -47,7 +51,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
    */
   const applyDisplayTheme = (theme: DisplayTheme) => {
     if (theme === "system") {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
       document.documentElement.classList.toggle("dark", prefersDark);
     } else {
       document.documentElement.classList.toggle("dark", theme === "dark");

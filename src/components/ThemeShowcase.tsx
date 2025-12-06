@@ -4,7 +4,7 @@ import { ThemeSwitcher } from "./ThemeSwitcher";
 
 /**
  * ThemeShowcase Component
- * 
+ *
  * Demonstrates all available theme utilities and glass/glow effects
  */
 export function ThemeShowcase() {
@@ -32,7 +32,9 @@ export function ThemeShowcase() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="glass p-6 rounded-xl">
             <p className="text-sm text-muted-foreground mb-2">Standard Glass</p>
-            <p className="text-foreground">Subtle frosted effect with backdrop blur</p>
+            <p className="text-foreground">
+              Subtle frosted effect with backdrop blur
+            </p>
           </div>
           <div className="glass-elevated p-6 rounded-xl">
             <p className="text-sm text-muted-foreground mb-2">Elevated Glass</p>
@@ -50,16 +52,24 @@ export function ThemeShowcase() {
         <h2 className="text-xl font-semibold">Glow Effects</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="h-32 rounded-xl bg-gradient-to-br from-primary to-primary/50 glow-primary flex items-center justify-center">
-            <span className="text-center text-xs font-semibold">Primary Glow</span>
+            <span className="text-center text-xs font-semibold">
+              Primary Glow
+            </span>
           </div>
           <div className="h-32 rounded-xl bg-gradient-to-br from-accent to-accent/50 glow-secondary flex items-center justify-center">
-            <span className="text-center text-xs font-semibold">Secondary Glow</span>
+            <span className="text-center text-xs font-semibold">
+              Secondary Glow
+            </span>
           </div>
           <div className="h-32 rounded-xl bg-gradient-to-br from-glow-accent to-glow-accent/50 glow-accent flex items-center justify-center">
-            <span className="text-center text-xs font-semibold">Accent Glow</span>
+            <span className="text-center text-xs font-semibold">
+              Accent Glow
+            </span>
           </div>
           <div className="h-32 rounded-xl bg-glass-light glow-sm flex items-center justify-center">
-            <span className="text-center text-xs font-semibold">Small Glow</span>
+            <span className="text-center text-xs font-semibold">
+              Small Glow
+            </span>
           </div>
         </div>
       </div>
@@ -79,8 +89,12 @@ export function ThemeShowcase() {
             { name: "Glass Light", class: "bg-glass-light" },
           ].map((color) => (
             <div key={color.name} className="space-y-2">
-              <div className={`h-16 rounded-lg ${color.class} border border-border`} />
-              <p className="text-xs text-muted-foreground text-center">{color.name}</p>
+              <div
+                className={`h-16 rounded-lg ${color.class} border border-border`}
+              />
+              <p className="text-xs text-muted-foreground text-center">
+                {color.name}
+              </p>
             </div>
           ))}
         </div>
@@ -92,15 +106,21 @@ export function ThemeShowcase() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="glass p-6 rounded-xl">
             <div className="h-16 bg-primary rounded-lg animate-glow-pulse mx-auto" />
-            <p className="text-center text-xs text-muted-foreground mt-4">Glow Pulse</p>
+            <p className="text-center text-xs text-muted-foreground mt-4">
+              Glow Pulse
+            </p>
           </div>
           <div className="glass p-6 rounded-xl">
             <div className="h-16 w-16 bg-accent rounded-lg animate-float mx-auto" />
-            <p className="text-center text-xs text-muted-foreground mt-4">Float</p>
+            <p className="text-center text-xs text-muted-foreground mt-4">
+              Float
+            </p>
           </div>
           <div className="glass p-6 rounded-xl">
             <div className="h-16 bg-gradient-to-r from-primary to-accent rounded-lg animate-fade-in mx-auto" />
-            <p className="text-center text-xs text-muted-foreground mt-4">Fade In</p>
+            <p className="text-center text-xs text-muted-foreground mt-4">
+              Fade In
+            </p>
           </div>
         </div>
       </div>

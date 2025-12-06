@@ -66,7 +66,8 @@ const config: Config = {
       boxShadow: {
         glow: "0 0 20px hsla(var(--glow-primary), 0.4)",
         "glow-sm": "0 0 15px hsla(var(--glow-primary), 0.2)",
-        "glow-lg": "0 0 40px hsla(var(--glow-primary), 0.3), 0 0 60px hsla(var(--glow-secondary), 0.15)",
+        "glow-lg":
+          "0 0 40px hsla(var(--glow-primary), 0.3), 0 0 60px hsla(var(--glow-secondary), 0.15)",
         "glow-secondary": "0 0 30px hsla(var(--glow-secondary), 0.4)",
         "glow-accent": "0 0 30px hsla(var(--glow-accent), 0.4)",
       },

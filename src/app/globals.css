@@ -38,7 +38,7 @@
   * {
     @apply border-border;
   }
-  
+
   html {
     /* Enable smooth scrolling */
     scroll-behavior: smooth;
@@ -116,7 +116,8 @@
 }
 
 .glow-lg {
-  box-shadow: 0 0 40px hsla(var(--glow-primary), 0.3),
+  box-shadow:
+    0 0 40px hsla(var(--glow-primary), 0.3),
     0 0 60px hsla(var(--glow-secondary), 0.15);
 }
 
@@ -142,7 +143,8 @@
 /* Focus styles - modern */
 .focus-visible {
   @apply outline-none;
-  box-shadow: 0 0 0 2px hsl(var(--background)),
+  box-shadow:
+    0 0 0 2px hsl(var(--background)),
     0 0 0 4px hsl(var(--ring));
 }
 

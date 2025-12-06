@@ -48,13 +48,12 @@ Glass:         Semi-transparent navy with blur
 import { useTheme } from "@/components/ThemeProvider";
 
 export function MyComponent() {
-  const { displayTheme, setDisplayTheme, customTheme, setCustomTheme } = useTheme();
+  const { displayTheme, setDisplayTheme, customTheme, setCustomTheme } =
+    useTheme();
 
   return (
     <div>
-      <button onClick={() => setDisplayTheme("dark")}>
-        Dark Mode
-      </button>
+      <button onClick={() => setDisplayTheme("dark")}>Dark Mode</button>
       <select onChange={(e) => setCustomTheme(e.target.value)}>
         {/* Theme options */}
       </select>
@@ -128,15 +127,15 @@ Edit `src/config/themes.ts`:
 
 ```typescript
 export const lightModernTheme: ThemeColors = {
-  background: "0 0% 100%",      // white
-  foreground: "222.2 84% 4.9%",  // dark navy
+  background: "0 0% 100%", // white
+  foreground: "222.2 84% 4.9%", // dark navy
   card: "0 0% 100%",
   // ... define all colors
 };
 
 export const themes: Record<ThemeName, ThemeColors> = {
   "dark-glassy": darkGlassyTheme,
-  "light-modern": lightModernTheme,  // Add new theme
+  "light-modern": lightModernTheme, // Add new theme
 };
 ```
 
@@ -230,15 +229,18 @@ Preferences automatically restore on page reload.
 ## Troubleshooting
 
 ### Theme not applying
+
 - Clear browser cache and localStorage
 - Verify `ThemeProvider` wraps your app in `src/app/providers.tsx`
 
 ### Glow not visible
+
 - Ensure parent has overflow visible
 - Check z-index if behind other elements
 - Verify color contrast is sufficient
 
 ### Glass blur not working
+
 - Browser must support `backdrop-filter`
 - Check Firefox needs `-webkit-` prefix in some versions
 - Safari requires specific property syntax
