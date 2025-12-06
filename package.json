@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "lint:staged": "lint-staged",
     "dev": "next dev",
     "build": "pnpm lint && pnpm format && pnpm docs:build && next build",
     "start": "next start",
@@ -15,6 +16,12 @@
     "test": "jest",
     "docs:build": "python3 -m mkdocs build -d public/docs",
     "docs:serve": "python3 -m mkdocs serve"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "pnpm lint",
+      "pnpm test -- --bail --findRelatedTests"
+    ]
   },
   "dependencies": {
     "@tailwindcss/typography": "latest",
