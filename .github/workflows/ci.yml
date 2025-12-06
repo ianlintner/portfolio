@@ -78,7 +78,7 @@ jobs:
         run: pnpm run test:ci
 
       - name: Build static site
-        run: pnpm docs:build && next build
+        run: pnpm docs:build && pnpm next build
 
       - name: Upload static artifact
         uses: actions/upload-artifact@v4
