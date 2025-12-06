@@ -6,6 +6,7 @@
     "lint:staged": "lint-staged",
     "dev": "next dev",
     "build": "pnpm lint && pnpm format && pnpm docs:build && next build",
+    "build:static": "pnpm lint && pnpm format && pnpm docs:build && next build && next export",
     "start": "next start",
     "lint": "eslint .",
     "format": "prettier --check .",

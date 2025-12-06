@@ -87,15 +87,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/admin"
-                  className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1 group"
-                >
-                  <span className="group-hover:translate-x-1 transition-transform inline-block">
-                    →
-                  </span>
-                  Admin
-                </Link>
+                {/* Admin link removed for static site */}
               </li>
             </ul>
           </div>

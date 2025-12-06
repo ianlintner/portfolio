@@ -102,12 +102,6 @@ export function Navigation() {
               <SiLinkedin className="h-4 w-4" />
               <span>Connect</span>
             </a>
-            <Link
-              href="/admin"
-              className="text-sm font-medium text-foreground/60 hover:text-foreground/80 transition-colors px-3"
-            >
-              Admin
-            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -193,13 +187,6 @@ export function Navigation() {
                   >
                     <SiGithub className="h-5 w-5" />
                   </a>
-                  <Link
-                    href="/admin"
-                    className="text-sm font-medium text-foreground/60 hover:text-foreground/80 transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Admin
-                  </Link>
                 </div>
               </div>
             </div>
