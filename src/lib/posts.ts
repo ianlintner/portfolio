@@ -50,6 +50,14 @@ export function getAllPosts(): PostMeta[] {
 
 export function getPostBySlug(slug: string) {
   const fullPath = path.join(postsDirectory, `${slug}.mdx`);
+
+  if (!fs.existsSync(fullPath)) {
+    return { meta: null, content: "" } as {
+      meta: PostMeta | null;
+      content: string;
+    };
+  }
+
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
 
@@ -66,5 +74,8 @@ export function getPostBySlug(slug: string) {
       imageAlt: data.imageAlt,
     } as PostMeta,
     content,
+  } as {
+    meta: PostMeta;
+    content: string;
   };
 }

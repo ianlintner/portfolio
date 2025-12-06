@@ -12,21 +12,24 @@ import {
 } from "lucide-react";
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 
-import { getPostBySlug } from "@/lib/posts";
+import { getAllPosts, getPostBySlug } from "@/lib/posts";
 import { getAbsoluteUrl, getBlogPostImage } from "@/lib/metadata";
 
 // Removed stray markdown/blog content accidentally placed in this file
 // Blog post content should live in MDX files under src/app/blog/*.mdx
 // This file should only contain the page component logic
 interface Props {
-  params: Promise<{
+  params: {
     slug: string;
-  }>;
+  };
+}
+
+export function generateStaticParams() {
+  return getAllPosts().map(({ slug }) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const resolvedParams = await params;
-  const { meta } = getPostBySlug(resolvedParams.slug);
+  const { meta } = getPostBySlug(params.slug);
 
   if (!meta) {
     return {
@@ -34,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const postUrl = getAbsoluteUrl(`/blog/${resolvedParams.slug}`);
+  const postUrl = getAbsoluteUrl(`/blog/${params.slug}`);
   const imageUrl = getBlogPostImage(meta.image);
   const imageAlt = meta.imageAlt || meta.title;
   const author = meta.author ?? "Ian Lintner";
@@ -79,8 +82,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BlogPostPage({ params }: Props) {
-  const resolvedParams = await params;
-  const { meta, content } = getPostBySlug(resolvedParams.slug);
+  const { meta, content } = getPostBySlug(params.slug);
 
   if (!meta) {
     notFound();
