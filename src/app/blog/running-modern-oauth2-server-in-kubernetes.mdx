@@ -235,9 +235,6 @@ kind: RequestAuthentication
 metadata:
   name: require-jwt
   namespace: default
-
-  <Mermaid
-    chart={`
 spec:
   selector:
     matchLabels:
@@ -246,6 +243,17 @@ spec:
     - issuer: "https://auth.example.com"
       jwksUri: "https://auth.example.com/oauth2/jwks"
 ```
+
+<Mermaid
+  chart={`
+flowchart LR
+    Client --> Gateway[Istio Ingress Gateway]
+    Gateway -->|validates JWT| RequestAuth[RequestAuthentication]
+    RequestAuth --> AuthzPolicy[AuthorizationPolicy]
+    AuthzPolicy --> Workload[my-service pod]
+    Workload -->|introspect/metadata| AuthServer[Spring Auth Server]
+`}
+/>
 
 ### 3. Gateway / Cloud-Managed Patterns
 
