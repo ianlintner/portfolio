@@ -24,14 +24,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Quality checks run in parallel for speed
+  # Quality checks share a single install for speed
   quality:
     name: Code Quality
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        check: [lint, format, test]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -62,9 +58,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Run tests
-        if: matrix.check == 'test'
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format check
+        run: pnpm format
+
+      - name: Test
         run: pnpm run test:ci
+
+      - name: Build (validation)
+        run: pnpm build
 
   static-deploy:
     name: Deploy Static Web App
@@ -96,6 +100,18 @@ jobs:
         with:
           node-version: 20
           cache: "pnpm"
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -151,13 +167,3 @@ jobs:
               --sku "$SWA_SKU" \
               --branch "$SWA_BRANCH" \
               --source "https://github.com/${{ github.repository }}"
-          }
-
-      - name: Deploy static assets
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: upload
-          skip_app_build: true
-          app_location: "out"
