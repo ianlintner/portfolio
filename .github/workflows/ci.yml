@@ -145,10 +145,36 @@ jobs:
               --source "https://github.com/${{ github.repository }}"
           }
 
+      - name: Resolve deployment token
+        id: resolve_token
+        env:
+          SWA_DEPLOYMENT_TOKEN: ${{ secrets.SWA_DEPLOYMENT_TOKEN || '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "$SWA_DEPLOYMENT_TOKEN" ]; then
+            echo "Using SWA_DEPLOYMENT_TOKEN secret"
+            echo "token=$SWA_DEPLOYMENT_TOKEN" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "SWA_DEPLOYMENT_TOKEN not set; fetching via az staticwebapp secrets list" >&2
+          token=$(az staticwebapp secrets list \
+            --name "${{ vars.SWA_NAME }}" \
+            --resource-group "${{ vars.SWA_RESOURCE_GROUP }}" \
+            --query "apiKey" -o tsv)
+
+          if [ -z "$token" ]; then
+            echo "Failed to obtain deployment token; set SWA_DEPLOYMENT_TOKEN secret or ensure the identity has access." >&2
+            exit 1
+          fi
+
+          echo "token=$token" >> $GITHUB_OUTPUT
+
       - name: Deploy to Azure Static Web App
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.SWA_DEPLOYMENT_TOKEN }}
+          azure_static_web_apps_api_token: ${{ steps.resolve_token.outputs.token }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
           skip_app_build: true
