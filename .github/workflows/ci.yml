@@ -188,11 +188,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Login to Azure Container Registry
-        run: |
-          az acr login --name ${{ vars.AZURE_REGISTRY_NAME }}
 
-      - name: Generate image tags
         id: tags
         run: |
           COMMIT_SHA=$(git rev-parse --short HEAD)
@@ -214,114 +210,7 @@ jobs:
           echo "${TAGS}" | tr ',' '\n' >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile
-          platforms: linux/amd64
-          push: true
-          tags: ${{ steps.tags.outputs.tags }}
-          labels: |
-            org.opencontainers.image.title=portfolio
-            org.opencontainers.image.description=Portfolio and Blog Application
-            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.version=${{ steps.tags.outputs.commit_sha }}
-          cache-from: type=registry,ref=${{ steps.tags.outputs.image }}:buildcache
-          cache-to: type=registry,ref=${{ steps.tags.outputs.image }}:buildcache,mode=max
-          provenance: false
-
-      - name: Image scan with Trivy
-        uses: aquasecurity/trivy-action@master
-        continue-on-error: true
-        with:
-          image-ref: ${{ steps.tags.outputs.image }}:${{ steps.tags.outputs.commit_sha }}
-          format: "sarif"
-          output: "trivy-results.sarif"
-
-      - name: Upload Trivy results
         uses: github/codeql-action/upload-sarif@v3
         continue-on-error: true
         with:
           sarif_file: "trivy-results.sarif"
-
-  # Deploy to AKS (only on main branch)
-  deploy:
-    name: Deploy to AKS
-    runs-on: ubuntu-latest
-    needs: docker
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    permissions:
-      contents: read
-      id-token: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Azure Login (OIDC)
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Get AKS credentials
-        run: |
-          az aks get-credentials \
-            --resource-group ${{ vars.AKS_RESOURCE_GROUP }} \
-            --name ${{ vars.AKS_CLUSTER_NAME }} \
-            --overwrite-existing
-
-      - name: Create NEXTAUTH secret
-        env:
-          NAMESPACE: ${{ vars.DEPLOY_NAMESPACE }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-        run: |
-          NAMESPACE="${NAMESPACE:-prod}"
-
-          if [ -z "${NEXTAUTH_SECRET}" ]; then
-            echo "NEXTAUTH_SECRET GitHub secret is not set; required for production auth." >&2
-            exit 1
-          fi
-
-          # Ensure namespace exists and apply/update the secret
-          kubectl create namespace "${NAMESPACE}" --dry-run=client -o yaml | kubectl apply -f -
-
-          kubectl create secret generic nextauth-secret \
-            --from-literal=NEXTAUTH_SECRET="${NEXTAUTH_SECRET}" \
-            -n "${NAMESPACE}" \
-            --dry-run=client -o yaml | kubectl apply -f -
-
-      - name: Deploy to AKS
-        env:
-          REGISTRY: ${{ vars.AZURE_REGISTRY_NAME }}.azurecr.io
-          COMMIT_SHA: ${{ needs.docker.outputs.commit_sha }}
-        run: |
-          NAMESPACE="${{ vars.DEPLOY_NAMESPACE }}"
-          NAMESPACE="${NAMESPACE:-prod}"
-          IMAGE="${REGISTRY}/portfolio:${COMMIT_SHA}"
-
-          echo "🚀 Deploying image: ${IMAGE}"
-          echo "📍 Namespace: ${NAMESPACE}"
-
-          # Update deployment image
-          kubectl set image deployment/portfolio \
-            portfolio=${IMAGE} \
-            -n ${NAMESPACE}
-
-          # Wait for rollout to complete
-          echo "⏳ Waiting for rollout..."
-          kubectl rollout status deployment/portfolio \
-            -n ${NAMESPACE} \
-            --timeout=10m
-
-          # Verify deployment
-          echo "✅ Deployment successful!"
-          kubectl get pods -n ${NAMESPACE} -l app=portfolio
-
-          echo "### 🚀 Deployment Complete" >> $GITHUB_STEP_SUMMARY
-          echo "**Namespace:** \`${NAMESPACE}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Image:** \`${IMAGE}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** ✅ Success" >> $GITHUB_STEP_SUMMARY
