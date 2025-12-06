@@ -153,10 +153,11 @@ jobs:
               --source "https://github.com/${{ github.repository }}"
           }
 
-      - name: Upload static assets
-        run: |
-          az staticwebapp upload \
-            --name "$SWA_NAME" \
-            --resource-group "$SWA_RESOURCE_GROUP" \
-            --env production \
-            --source ./out
+      - name: Deploy static assets
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          skip_app_build: true
+          app_location: "out"
