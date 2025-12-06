@@ -66,6 +66,101 @@ jobs:
         if: matrix.check == 'test'
         run: pnpm run test:ci
 
+  static-deploy:
+    name: Deploy Static Web App
+    runs-on: ubuntu-latest
+    needs: quality
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      id-token: write
+
+    env:
+      SWA_NAME: ${{ vars.SWA_NAME }}
+      SWA_RESOURCE_GROUP: ${{ vars.SWA_RESOURCE_GROUP }}
+      SWA_LOCATION: ${{ vars.SWA_LOCATION }}
+      SWA_SKU: ${{ vars.SWA_SKU || 'Free' }}
+      SWA_BRANCH: ${{ vars.SWA_BRANCH || 'main' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install mkdocs tooling
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Build static site
+        run: pnpm build:static
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Ensure Static Web App exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${SWA_NAME}" ] || [ -z "${SWA_RESOURCE_GROUP}" ]; then
+            echo "SWA_NAME and SWA_RESOURCE_GROUP repo variables must be set." >&2
+            exit 1
+          fi
+
+          az group show --name "$SWA_RESOURCE_GROUP" >/dev/null 2>&1 || {
+            if [ -z "${SWA_LOCATION}" ]; then
+              echo "Resource group $SWA_RESOURCE_GROUP not found and SWA_LOCATION not set to create it." >&2
+              exit 1
+            fi
+            az group create --name "$SWA_RESOURCE_GROUP" --location "$SWA_LOCATION"
+          }
+
+          az staticwebapp show \
+            --name "$SWA_NAME" \
+            --resource-group "$SWA_RESOURCE_GROUP" >/dev/null 2>&1 || {
+            if [ -z "${SWA_LOCATION}" ]; then
+              echo "Static Web App $SWA_NAME not found and SWA_LOCATION not set to create it." >&2
+              exit 1
+            fi
+            az staticwebapp create \
+              --name "$SWA_NAME" \
+              --resource-group "$SWA_RESOURCE_GROUP" \
+              --location "$SWA_LOCATION" \
+              --sku "$SWA_SKU" \
+              --branch "$SWA_BRANCH" \
+              --source "https://github.com/${{ github.repository }}"
+          }
+
+      - name: Upload static assets
+        run: |
+          az staticwebapp upload \
+            --name "$SWA_NAME" \
+            --resource-group "$SWA_RESOURCE_GROUP" \
+            --env production \
+            --source ./out
+
   # Docker build and push (only on main branch)
   docker:
     name: Build & Push Docker Image
