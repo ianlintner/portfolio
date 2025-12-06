@@ -7,17 +7,20 @@ Modern, interchangeable theme system with dark, glassy, minimal 2025 design.
 ## Key Components
 
 ### 1. Theme Configuration (`src/config/themes.ts`)
+
 - Define all available themes
 - Central color palette management
 - Easy to extend with new themes
 
 ### 2. ThemeProvider (`src/components/ThemeProvider.tsx`)
+
 - React Context for theme state
 - Manages display theme (light/dark/system)
 - Manages custom theme (design theme)
 - Auto-persists to localStorage
 
 ### 3. ThemeSwitcher (`src/components/ThemeSwitcher.tsx`)
+
 - Pre-built UI for changing themes
 - Display mode buttons
 - Custom theme selector
@@ -25,6 +28,7 @@ Modern, interchangeable theme system with dark, glassy, minimal 2025 design.
 ## Using in Your Components
 
 ### Option 1: Use ThemeSwitcher Directly
+
 ```tsx
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
@@ -38,6 +42,7 @@ export default function Page() {
 ```
 
 ### Option 2: Access Theme Context
+
 ```tsx
 "use client";
 
@@ -45,7 +50,7 @@ import { useTheme } from "@/components/ThemeProvider";
 
 export function MyComponent() {
   const { displayTheme, setDisplayTheme, customTheme } = useTheme();
-  
+
   return (
     <div>
       <p>Current theme: {customTheme}</p>
@@ -56,25 +61,26 @@ export function MyComponent() {
 ```
 
 ### Option 3: Use Theme Utilities
+
 ```tsx
 import { useThemeClass, glassVariants } from "@/utils/theme";
 
 export function MyCard() {
-  const bgClass = useThemeClass({
-    "dark-glassy": "bg-glass-glow",
-  }, "bg-card");
-  
-  return (
-    <div className={`${glassVariants.elevated} p-6`}>
-      Content
-    </div>
+  const bgClass = useThemeClass(
+    {
+      "dark-glassy": "bg-glass-glow",
+    },
+    "bg-card",
   );
+
+  return <div className={`${glassVariants.elevated} p-6`}>Content</div>;
 }
 ```
 
 ## Tailwind Classes
 
 ### Colors
+
 ```tsx
 <div className="bg-primary">Primary</div>
 <div className="bg-secondary">Secondary</div>
@@ -83,6 +89,7 @@ export function MyCard() {
 ```
 
 ### Glass Effects
+
 ```tsx
 <div className="glass">Standard glass</div>
 <div className="glass-elevated">Elevated glass</div>
@@ -90,6 +97,7 @@ export function MyCard() {
 ```
 
 ### Glow Effects
+
 ```tsx
 <div className="glow-primary">Primary glow</div>
 <div className="glow-secondary">Secondary glow</div>
@@ -99,6 +107,7 @@ export function MyCard() {
 ```
 
 ### Animations
+
 ```tsx
 <div className="animate-glow-pulse">Pulsing</div>
 <div className="animate-float">Floating</div>
@@ -108,6 +117,7 @@ export function MyCard() {
 ## CSS Variables
 
 For custom CSS:
+
 ```css
 .custom-element {
   background: hsl(var(--primary));
@@ -117,6 +127,7 @@ For custom CSS:
 ```
 
 Available variables:
+
 - `--background`, `--foreground`
 - `--primary`, `--secondary`, `--accent`
 - `--card`, `--glass`, `--glass-light`, `--glass-dark`
@@ -127,6 +138,7 @@ Available variables:
 ## Adding a New Theme
 
 1. **Define theme in `src/config/themes.ts`:**
+
 ```typescript
 export const myNewTheme: ThemeColors = {
   background: "210 40% 4%",
@@ -136,11 +148,12 @@ export const myNewTheme: ThemeColors = {
 
 export const themes: Record<ThemeName, ThemeColors> = {
   "dark-glassy": darkGlassyTheme,
-  "my-new-theme": myNewTheme,  // Add here
+  "my-new-theme": myNewTheme, // Add here
 };
 ```
 
 2. **Update type:**
+
 ```typescript
 export type ThemeName = "dark-glassy" | "my-new-theme";
 ```
