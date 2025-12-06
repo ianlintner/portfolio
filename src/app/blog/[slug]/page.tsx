@@ -19,9 +19,9 @@ import { getAbsoluteUrl, getBlogPostImage } from "@/lib/metadata";
 // Blog post content should live in MDX files under src/app/blog/*.mdx
 // This file should only contain the page component logic
 interface Props {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export function generateStaticParams() {
@@ -29,7 +29,8 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { meta } = getPostBySlug(params.slug);
+  const resolvedParams = await params;
+  const { meta } = getPostBySlug(resolvedParams.slug);
 
   if (!meta) {
     return {
@@ -37,7 +38,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const postUrl = getAbsoluteUrl(`/blog/${params.slug}`);
+  const postUrl = getAbsoluteUrl(`/blog/${resolvedParams.slug}`);
   const imageUrl = getBlogPostImage(meta.image);
   const imageAlt = meta.imageAlt || meta.title;
   const author = meta.author ?? "Ian Lintner";
@@ -82,7 +83,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BlogPostPage({ params }: Props) {
-  const { meta, content } = getPostBySlug(params.slug);
+  const resolvedParams = await params;
+  const { meta, content } = getPostBySlug(resolvedParams.slug);
 
   if (!meta) {
     notFound();
