@@ -1,14 +1,38 @@
 {
-  "name": "@portfolio/theme",
+  "name": "@ianlintner/theme",
   "version": "0.1.0",
   "description": "Shared theme components and configuration for Portfolio apps",
+  "author": "Ian Lintner",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ianlintner/portfolio.git",
+    "directory": "packages/theme"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
-    "lint": "eslint src/"
+    "build": "tsup src/index.ts --format cjs,esm --dts && cp src/styles/globals.css dist/styles.css",
+    "lint": "eslint src/",
+    "prepublishOnly": "pnpm build"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./tailwind.config": "./tailwind.config.ts"
+  },
+  "files": [
+    "dist",
+    "tailwind.config.ts"
+  ],
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0",
