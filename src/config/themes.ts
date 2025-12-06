@@ -218,7 +218,7 @@ export const midnightTheme: ThemeColors = {
 export const themes: Record<ThemeName, ThemeColors> = {
   "dark-glassy": darkGlassyTheme,
   "cyber-neon": cyberNeonTheme,
-  "midnight": midnightTheme,
+  midnight: midnightTheme,
 };
 
 /**
