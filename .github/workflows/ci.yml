@@ -43,6 +43,11 @@ jobs:
           node-version: 20
           cache: "pnpm"
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
       - name: Get pnpm store directory
         shell: bash
         run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
@@ -57,6 +62,11 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Install mkdocs tooling
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
 
       - name: Lint
         run: pnpm lint
@@ -67,8 +77,14 @@ jobs:
       - name: Test
         run: pnpm run test:ci
 
-      - name: Build (validation)
-        run: pnpm build
+      - name: Build static site
+        run: pnpm docs:build && next build
+
+      - name: Upload static artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-site
+          path: out
 
   static-deploy:
     name: Deploy Static Web App
@@ -79,55 +95,15 @@ jobs:
       contents: read
       id-token: write
 
-    env:
-      SWA_NAME: ${{ vars.SWA_NAME }}
-      SWA_RESOURCE_GROUP: ${{ vars.SWA_RESOURCE_GROUP }}
-      SWA_LOCATION: ${{ vars.SWA_LOCATION }}
-      SWA_SKU: ${{ vars.SWA_SKU || 'Free' }}
-      SWA_BRANCH: ${{ vars.SWA_BRANCH || 'main' }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Download static artifact
+        uses: actions/download-artifact@v4
         with:
-          version: 10
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "pnpm"
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Cache pnpm dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-
-      - name: Install mkdocs tooling
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
-
-      - name: Build static site
-        run: pnpm build:static
+          name: static-site
+          path: out
 
       - name: Azure Login (OIDC)
         uses: azure/login@v2
@@ -140,30 +116,30 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ -z "${SWA_NAME}" ] || [ -z "${SWA_RESOURCE_GROUP}" ]; then
+          if [ -z "${{ vars.SWA_NAME }}" ] || [ -z "${{ vars.SWA_RESOURCE_GROUP }}" ]; then
             echo "SWA_NAME and SWA_RESOURCE_GROUP repo variables must be set." >&2
             exit 1
           fi
 
-          az group show --name "$SWA_RESOURCE_GROUP" >/dev/null 2>&1 || {
-            if [ -z "${SWA_LOCATION}" ]; then
-              echo "Resource group $SWA_RESOURCE_GROUP not found and SWA_LOCATION not set to create it." >&2
+          az group show --name "${{ vars.SWA_RESOURCE_GROUP }}" >/dev/null 2>&1 || {
+            if [ -z "${{ vars.SWA_LOCATION }}" ]; then
+              echo "Resource group ${{ vars.SWA_RESOURCE_GROUP }} not found and SWA_LOCATION not set to create it." >&2
               exit 1
             fi
-            az group create --name "$SWA_RESOURCE_GROUP" --location "$SWA_LOCATION"
+            az group create --name "${{ vars.SWA_RESOURCE_GROUP }}" --location "${{ vars.SWA_LOCATION }}"
           }
 
           az staticwebapp show \
-            --name "$SWA_NAME" \
-            --resource-group "$SWA_RESOURCE_GROUP" >/dev/null 2>&1 || {
-            if [ -z "${SWA_LOCATION}" ]; then
-              echo "Static Web App $SWA_NAME not found and SWA_LOCATION not set to create it." >&2
+            --name "${{ vars.SWA_NAME }}" \
+            --resource-group "${{ vars.SWA_RESOURCE_GROUP }}" >/dev/null 2>&1 || {
+            if [ -z "${{ vars.SWA_LOCATION }}" ]; then
+              echo "Static Web App ${{ vars.SWA_NAME }} not found and SWA_LOCATION not set to create it." >&2
               exit 1
             fi
             az staticwebapp create \
-              --name "$SWA_NAME" \
-              --resource-group "$SWA_RESOURCE_GROUP" \
-              --location "$SWA_LOCATION" \
-              --sku "$SWA_SKU" \
-              --branch "$SWA_BRANCH" \
+              --name "${{ vars.SWA_NAME }}" \
+              --resource-group "${{ vars.SWA_RESOURCE_GROUP }}" \
+              --location "${{ vars.SWA_LOCATION }}" \
+              --sku "${{ vars.SWA_SKU || 'Free' }}" \
+              --branch "${{ vars.SWA_BRANCH || 'main' }}" \
               --source "https://github.com/${{ github.repository }}"
