@@ -1,11 +1,17 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Suspense } from "react";
-import { ThemeSwitcher } from "./ThemeSwitcher";
+
+// Dynamically import ThemeSwitcher to prevent SSR/SSG issues
+const ThemeSwitcher = dynamic(() => import("./ThemeSwitcher").then(mod => ({ default: mod.ThemeSwitcher })), {
+  ssr: false,
+  loading: () => <div className="w-32 h-10" />,
+});
 
 /**
- * Wrapper component for ThemeSwitcher with Suspense boundary
- * Prevents hydration issues by deferring theme switcher rendering
+ * Wrapper component for ThemeSwitcher with dynamic import
+ * Prevents hydration/SSG issues by only rendering on client
  */
 export function ThemeSwitcherNav() {
   return (
