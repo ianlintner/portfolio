@@ -8,7 +8,7 @@ image: /images/modern-oauth2-k8s-social.svg
 imageAlt: Abstract representation of an OAuth2 server in a Kubernetes cluster
 ---
 
-import { Mermaid } from '@/components/Mermaid';
+import { Mermaid } from "@/components/Mermaid";
 
 In 2025, the "paved path" for platform engineering has evolved. We're no longer just deploying stateless microservices; we're owning the entire vertical slice of our infrastructure, including the identity layer. While SaaS providers like Auth0 and Okta are fantastic for getting started, there comes a tipping point—driven by cost, data sovereignty, or the need for deep customization—where running your own Authorization Server becomes the right engineering choice.
 
@@ -24,13 +24,13 @@ The decision to self-host identity isn't taken lightly. The landscape generally 
 
 For teams already invested in the JVM ecosystem, **Spring Authorization Server** (the successor to the deprecated Spring Security OAuth) is the gold standard. It provides a lightweight, spec-compliant engine that you wrap in your own Spring Boot application, giving you complete control over the user experience and data model.
 
-| Option | Primary Stack | Strengths | Watch-outs |
-| --- | --- | --- | --- |
-| Spring Authorization Server (Boots and Cats) | Java / Spring Boot 3.2 | Code-first, JVM-native, excellent observability hooks | Requires JVM expertise; you own upgrades |
-| Ory Hydra + Kratos | Go + SQL | Modular (authz/authn split), stateless core, rich APIs | Operates best with their ecosystem; more moving parts |
-| Keycloak (Quarkus) | Java / Quarkus | Feature-rich admin UI, proven social login support | High memory footprint, configuration drift risk |
-| Node/TypeScript stacks (Auth.js, FusionAuth) | Node.js | Fits JS-heavy orgs, fast iteration | Less battle-tested for extreme scale |
-| Hosted SaaS (Auth0, Okta, Azure AD B2C) | Managed | Minimal ops, compliance reports out of the box | Cost per MAU, vendor lock-in, limited data sovereignty |
+| Option                                       | Primary Stack          | Strengths                                              | Watch-outs                                             |
+| -------------------------------------------- | ---------------------- | ------------------------------------------------------ | ------------------------------------------------------ |
+| Spring Authorization Server (Boots and Cats) | Java / Spring Boot 3.2 | Code-first, JVM-native, excellent observability hooks  | Requires JVM expertise; you own upgrades               |
+| Ory Hydra + Kratos                           | Go + SQL               | Modular (authz/authn split), stateless core, rich APIs | Operates best with their ecosystem; more moving parts  |
+| Keycloak (Quarkus)                           | Java / Quarkus         | Feature-rich admin UI, proven social login support     | High memory footprint, configuration drift risk        |
+| Node/TypeScript stacks (Auth.js, FusionAuth) | Node.js                | Fits JS-heavy orgs, fast iteration                     | Less battle-tested for extreme scale                   |
+| Hosted SaaS (Auth0, Okta, Azure AD B2C)      | Managed                | Minimal ops, compliance reports out of the box         | Cost per MAU, vendor lock-in, limited data sovereignty |
 
 Senior platform engineers usually mix two options: a self-hosted control plane for core workforce or customer identity, and a SaaS bridge for long-tail legacy apps. The rest of this post focuses on the self-hosted lane powered by Spring but calls out where cloud-native or cross-language alternatives shine.
 
@@ -38,7 +38,8 @@ Senior platform engineers usually mix two options: a self-hosted control plane f
 
 We're building a system that fits naturally into a Kubernetes cluster. It's not just a monolithic "auth box"; it's a composed service.
 
-<Mermaid chart={`
+<Mermaid
+  chart={`
 graph TD
     User[User / Client] -->|HTTPS| Ingress[Istio Ingress Gateway]
     Ingress -->|Routing| AuthServer[Spring Auth Server]
@@ -55,14 +56,15 @@ graph TD
         AuthServer -.->|Federate| GitHub[GitHub OAuth]
         AuthServer -.->|Federate| Google[Google OAuth]
     end
-`} />
+`}
+/>
 
 ### The Stack
 
-*   **Core**: Spring Boot 3.2 + Spring Authorization Server 1.2
-*   **Database**: PostgreSQL 15 (Users, Client Registrations, Authorizations)
-*   **Caching**: Redis (Sessions, short-lived auth codes)
-*   **Observability**: OpenTelemetry + Micrometer + Prometheus
+- **Core**: Spring Boot 3.2 + Spring Authorization Server 1.2
+- **Database**: PostgreSQL 15 (Users, Client Registrations, Authorizations)
+- **Caching**: Redis (Sessions, short-lived auth codes)
+- **Observability**: OpenTelemetry + Micrometer + Prometheus
 
 This stack ensures that our auth server is stateless (except for the DB), allowing us to scale pods horizontally in Kubernetes based on CPU or request load.
 
@@ -109,21 +111,21 @@ You can federate with GitHub, Google, or your enterprise IdP by toggling Spring 
 
 ```yaml
 spring:
-    security:
-        oauth2:
-            client:
-                registration:
-                    github:
-                        client-id: ${GITHUB_OAUTH_CLIENT_ID}
-                        client-secret: ${GITHUB_OAUTH_CLIENT_SECRET}
-                        scope: read:user,user:email
-                        redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-                provider:
-                    github:
-                        authorization-uri: https://github.com/login/oauth/authorize
-                        token-uri: https://github.com/login/oauth/access_token
-                        user-info-uri: https://api.github.com/user
-                        user-name-attribute: login
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GITHUB_OAUTH_CLIENT_ID}
+            client-secret: ${GITHUB_OAUTH_CLIENT_SECRET}
+            scope: read:user,user:email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
+            user-name-attribute: login
 ```
 
 The custom `OAuth2UserService` links the GitHub identity to your internal user table, setting tenant, roles, and session TTL based on org membership or team slug claims.
@@ -139,7 +141,7 @@ Here is a simplified example of the security filter chain that powers the author
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
     OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-    
+
     http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
         .oidc(Customizer.withDefaults()); // Enable OpenID Connect 1.0
 
@@ -168,10 +170,10 @@ The magic happens when you link that upstream identity to your local user model.
 
 ## State, Storage, and Session Management
 
-*   **PostgreSQL**: `oauth2_authorization`, `oauth2_registered_client`, and `federated_identity` tables live in the same logical DB as admin metadata. We shard by tenant_id and run logical replication for multi-region failover.
-*   **Redis**: Stores PKCE verifiers, short-lived authorization codes, and Spring Session data (so that replicas don't need sticky sessions). TTLs are enforced aggressively (≤ 5 minutes) to keep Redis lean.
-*   **Secrets**: Client secrets and signing keys are sourced from External Secrets Operator, backed by Azure Key Vault in production and Google Secret Manager in staging.
-*   **Sessions**: Spring Session + Redis enables single logout, back-channel logout, and concurrency limits per user. The session ID is never exposed to browsers thanks to SameSite=strict cookies and browser-only (HttpOnly + Secure) flags.
+- **PostgreSQL**: `oauth2_authorization`, `oauth2_registered_client`, and `federated_identity` tables live in the same logical DB as admin metadata. We shard by tenant_id and run logical replication for multi-region failover.
+- **Redis**: Stores PKCE verifiers, short-lived authorization codes, and Spring Session data (so that replicas don't need sticky sessions). TTLs are enforced aggressively (≤ 5 minutes) to keep Redis lean.
+- **Secrets**: Client secrets and signing keys are sourced from External Secrets Operator, backed by Azure Key Vault in production and Google Secret Manager in staging.
+- **Sessions**: Spring Session + Redis enables single logout, back-channel logout, and concurrency limits per user. The session ID is never exposed to browsers thanks to SameSite=strict cookies and browser-only (HttpOnly + Secure) flags.
 
 Want to inspect your data plane? Use `kubectl exec -n identity deploy/auth-server -- psql -c "select count(*) from oauth2_authorization where principal_name='example@corp.tld';"` during incident response to confirm token issuance volume without leaving the cluster.
 
@@ -199,6 +201,7 @@ sequenceDiagram
     Proxy->>Auth: Token exchange via client credentials
     Auth-->>Proxy: JWT access token + refresh token
     Proxy-->>Client: Set session cookie, forward request to workload
+
 `} />
 
 ## Integration Patterns in Kubernetes
@@ -237,8 +240,8 @@ spec:
     matchLabels:
       app: my-service
   jwtRules:
-  - issuer: "https://auth.example.com"
-    jwksUri: "https://auth.example.com/oauth2/jwks"
+    - issuer: "https://auth.example.com"
+      jwksUri: "https://auth.example.com/oauth2/jwks"
 ```
 
 ### 3. Gateway / Cloud-Managed Patterns
@@ -262,18 +265,20 @@ Operationally, the paved path is a `kubectl apply -k k8s/apps/auth-server/overla
 When you own the identity layer, you own the risks. Here are the critical considerations for 2025:
 
 ### Security
-*   **PKCE (Proof Key for Code Exchange)**: Mandatory for all public clients (SPAs, Mobile). Enforce `code_challenge_method=S256` and reject plain challenges.
-*   **Token Rotation & Reuse Detection**: Spring Authorization Server ships with reuse detection hooks—log and revoke sessions if a refresh token is replayed.
-*   **Strict CSP + FIDO2**: Login pages ship with CSP + WebAuthn (FIDO2) challenges for admins, preventing phished credentials from escalating.
-*   **mTLS Everywhere**: Istio's peer authentication ensures the Auth server only accepts requests from in-mesh workloads; edge ingress terminates TLS using cert-manager issued certs.
-*   **Key Management**: Rotate signing keys quarterly via the JWKS endpoint. Publishes happen through `/actuator/refresh` + External Secrets so that rotations don't require restarts.
+
+- **PKCE (Proof Key for Code Exchange)**: Mandatory for all public clients (SPAs, Mobile). Enforce `code_challenge_method=S256` and reject plain challenges.
+- **Token Rotation & Reuse Detection**: Spring Authorization Server ships with reuse detection hooks—log and revoke sessions if a refresh token is replayed.
+- **Strict CSP + FIDO2**: Login pages ship with CSP + WebAuthn (FIDO2) challenges for admins, preventing phished credentials from escalating.
+- **mTLS Everywhere**: Istio's peer authentication ensures the Auth server only accepts requests from in-mesh workloads; edge ingress terminates TLS using cert-manager issued certs.
+- **Key Management**: Rotate signing keys quarterly via the JWKS endpoint. Publishes happen through `/actuator/refresh` + External Secrets so that rotations don't require restarts.
 
 ### Performance
-*   **JWKS Caching**: Terminate at CloudFront/Azure CDN so requests never touch the pod. For internal services, Envoy's `jwksCluster` can cache keys with backoff.
-*   **Token Size**: Keep JWTs < 4 KB so they fit into HTTP headers even across double proxies. Scope bloat shows up as latency.
-*   **Database Hygiene**: The `oauth2_authorization` table grows fast—run a job (or Postgres `policy`) to delete expired grants hourly. Partition by `issued_at` for painless pruning.
-*   **Autoscaling**: Horizontal Pod Autoscaler watches both CPU and a custom metric (`http_server_requests_active`) exported via Micrometer. Scale to zero in pre-prod with KEDA.
-*   **Load Testing**: Use `kubectl port-forward svc/auth-server 8080` + k6 scripts to validate 99th percentile latency before every release. Capture OpenTelemetry traces to see DB vs. Redis hotspots.
+
+- **JWKS Caching**: Terminate at CloudFront/Azure CDN so requests never touch the pod. For internal services, Envoy's `jwksCluster` can cache keys with backoff.
+- **Token Size**: Keep JWTs < 4 KB so they fit into HTTP headers even across double proxies. Scope bloat shows up as latency.
+- **Database Hygiene**: The `oauth2_authorization` table grows fast—run a job (or Postgres `policy`) to delete expired grants hourly. Partition by `issued_at` for painless pruning.
+- **Autoscaling**: Horizontal Pod Autoscaler watches both CPU and a custom metric (`http_server_requests_active`) exported via Micrometer. Scale to zero in pre-prod with KEDA.
+- **Load Testing**: Use `kubectl port-forward svc/auth-server 8080` + k6 scripts to validate 99th percentile latency before every release. Capture OpenTelemetry traces to see DB vs. Redis hotspots.
 
 ## Conclusion
 

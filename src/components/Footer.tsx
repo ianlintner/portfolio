@@ -86,9 +86,7 @@ export function Footer() {
                   Projects
                 </Link>
               </li>
-              <li>
-                {/* Admin link removed for static site */}
-              </li>
+              <li>{/* Admin link removed for static site */}</li>
             </ul>
           </div>
 
