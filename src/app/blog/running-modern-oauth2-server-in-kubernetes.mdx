@@ -12,7 +12,7 @@ import { Mermaid } from "@/components/Mermaid";
 
 In 2025, the "paved path" for platform engineering has evolved. We're no longer just deploying stateless microservices; we're owning the entire vertical slice of our infrastructure, including the identity layer. While SaaS providers like Auth0 and Okta are fantastic for getting started, there comes a tipping point—driven by cost, data sovereignty, or the need for deep customization—where running your own Authorization Server becomes the right engineering choice.
 
-This post explores how to run a modern, production-ready OAuth2 Authorization Server in Kubernetes, leveraging **Spring Boot 3.2** and **Spring Authorization Server**, and how to integrate it with the cloud-native ecosystem like **Istio** and **OAuth2 Proxy**.
+This post explores how to run a modern, production-ready OAuth2 Authorization Server in Kubernetes, leveraging **Spring Boot 3.2** and **Spring Authorization Server**[^sas], and how to integrate it with the cloud-native ecosystem like **Istio**[^istio] and **OAuth2 Proxy**[^oauth2proxy].
 
 ## The Landscape: Why Build vs. Buy?
 
@@ -22,7 +22,7 @@ The decision to self-host identity isn't taken lightly. The landscape generally 
 2.  **Legacy/Heavy (Keycloak)**: The Java giant. Extremely powerful, but can be resource-heavy and complex to configure via "ClickOps" rather than code.
 3.  **Modern/Modular (Spring Auth Server, Ory)**: Code-first, developer-centric, and highly customizable.
 
-For teams already invested in the JVM ecosystem, **Spring Authorization Server** (the successor to the deprecated Spring Security OAuth) is the gold standard. It provides a lightweight, spec-compliant engine that you wrap in your own Spring Boot application, giving you complete control over the user experience and data model.
+For teams already invested in the JVM ecosystem, **Spring Authorization Server** (the successor to the deprecated Spring Security OAuth) is the gold standard. It provides a lightweight, spec-compliant engine that you wrap in your own Spring Boot application, giving you complete control over the user experience and data model while staying aligned to the OAuth2 core and PKCE specs[^rfc6749][^pkce].
 
 | Option                                       | Primary Stack          | Strengths                                              | Watch-outs                                             |
 | -------------------------------------------- | ---------------------- | ------------------------------------------------------ | ------------------------------------------------------ |
@@ -168,6 +168,71 @@ A modern auth server rarely handles passwords alone. We often want to federate w
 
 The magic happens when you link that upstream identity to your local user model. You can implement a custom `OAuth2UserService` to JIT (Just-In-Time) provision users into your Postgres database when they log in via GitHub.
 
+## OAuth2 Flows at a Glance
+
+### Authorization Code + PKCE (SPA)
+
+<Mermaid
+  chart={`
+sequenceDiagram
+    participant User as User Agent
+    participant SPA as SPA Client
+    participant Auth as Auth Server
+    participant API as Resource Server
+
+    User->>SPA: Navigate to app
+    SPA-->>Auth: /authorize + code_challenge (S256)
+    Auth-->>User: Login + consent
+    User-->>Auth: Credentials + consent
+    Auth-->>SPA: 302 with code
+    SPA-->>Auth: /token + code_verifier
+    Auth-->>SPA: ID token + access token (JWT)
+    SPA-->>API: GET /me Authorization: Bearer
+    API-->>Auth: Validate JWT (cached JWKS)
+    Auth-->>API: Signature + claims OK
+    API-->>SPA: Profile JSON
+`}
+/>
+
+### Client Credentials (Service-to-Service)
+
+<Mermaid
+  chart={`
+sequenceDiagram
+    participant Job as Cron / Service A
+    participant Auth as Auth Server
+    participant SvcB as Service B (resource)
+
+    Job-->>Auth: POST /oauth2/token (client_credentials)
+    Auth-->>Job: access_token (aud=ServiceB)
+    Job-->>SvcB: Call API with Bearer token
+    SvcB-->>Auth: Introspect / validate JWT (if opaque)
+    Auth-->>SvcB: Active=true, scopes
+    SvcB-->>Job: 200 OK
+`}
+/>
+
+### OIDC SSO via GitHub + OAuth2 Proxy
+
+<Mermaid
+  chart={`
+sequenceDiagram
+    participant User
+    participant Proxy as OAuth2 Proxy
+    participant Auth as Auth Server
+    participant GH as GitHub
+
+    User->>Proxy: GET https://app.example.com
+    Proxy-->>User: 302 to Auth (OIDC)
+    User->>Auth: /authorize
+    Auth-->>GH: Redirect to GitHub
+    User->>GH: Approve app
+    GH-->>Auth: Authorization code
+    Auth-->>Proxy: Tokens + ID token
+    Proxy-->>User: Set session cookie, forward to app
+`}
+/>
+
 ## State, Storage, and Session Management
 
 - **PostgreSQL**: `oauth2_authorization`, `oauth2_registered_client`, and `federated_identity` tables live in the same logical DB as admin metadata. We shard by tenant_id and run logical replication for multi-region failover.
@@ -277,11 +342,11 @@ When you own the identity layer, you own the risks. Here are the critical consid
 
 ### Security
 
-- **PKCE (Proof Key for Code Exchange)**: Mandatory for all public clients (SPAs, Mobile). Enforce `code_challenge_method=S256` and reject plain challenges.
+- **PKCE (Proof Key for Code Exchange)**: Mandatory for all public clients (SPAs, Mobile). Enforce `code_challenge_method=S256` and reject plain challenges[^pkce].
 - **Token Rotation & Reuse Detection**: Spring Authorization Server ships with reuse detection hooks—log and revoke sessions if a refresh token is replayed.
 - **Strict CSP + FIDO2**: Login pages ship with CSP + WebAuthn (FIDO2) challenges for admins, preventing phished credentials from escalating.
 - **mTLS Everywhere**: Istio's peer authentication ensures the Auth server only accepts requests from in-mesh workloads; edge ingress terminates TLS using cert-manager issued certs.
-- **Key Management**: Rotate signing keys quarterly via the JWKS endpoint. Publishes happen through `/actuator/refresh` + External Secrets so that rotations don't require restarts.
+- **Key Management**: Rotate signing keys quarterly via the JWKS endpoint[^jwks]. Publishes happen through `/actuator/refresh` + External Secrets so that rotations don't require restarts.
 
 ### Performance
 
@@ -296,3 +361,12 @@ When you own the identity layer, you own the risks. Here are the critical consid
 Building your own "paved path" for identity with Spring Authorization Server gives you the best of both worlds: the control of custom code with the safety of a standards-compliant engine. By deploying this into Kubernetes alongside OAuth2 Proxy and Istio, you create a robust, scalable security fabric that serves your entire organization.
 
 Check out the [full documentation](https://oauth2.cat-herding.net/docs/index.html) and the [GitHub repository](https://github.com/ianlintner/bootsandcats) for the complete source code and deployment manifests.
+
+## References
+
+[^rfc6749]: IETF RFC 6749: The OAuth 2.0 Authorization Framework — https://datatracker.ietf.org/doc/html/rfc6749
+[^pkce]: IETF RFC 7636: Proof Key for Code Exchange (PKCE) — https://datatracker.ietf.org/doc/html/rfc7636
+[^sas]: Spring Authorization Server Reference — https://docs.spring.io/spring-authorization-server/reference/
+[^oauth2proxy]: OAuth2 Proxy Docs — https://oauth2-proxy.github.io/oauth2-proxy/
+[^istio]: Istio RequestAuthentication / AuthorizationPolicy — https://istio.io/latest/docs/tasks/security/authorization/
+[^jwks]: OpenID Connect Discovery (JWKS endpoint) — https://openid.net/specs/openid-connect-discovery-1_0.html
