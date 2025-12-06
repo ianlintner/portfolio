@@ -37,7 +37,6 @@ export function useThemeClass(
   return themeClasses[customTheme] ?? defaultClass;
 }
 
-
 /**
  * Predefined glass effect variants
  */
