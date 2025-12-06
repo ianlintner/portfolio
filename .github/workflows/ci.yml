@@ -143,3 +143,14 @@ jobs:
               --sku "${{ vars.SWA_SKU || 'Free' }}" \
               --branch "${{ vars.SWA_BRANCH || 'main' }}" \
               --source "https://github.com/${{ github.repository }}"
+          }
+
+
+      - name: Deploy to Azure Static Web App
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.SWA_DEPLOYMENT_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          skip_app_build: true
+          app_location: out
