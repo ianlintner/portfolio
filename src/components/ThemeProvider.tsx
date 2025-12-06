@@ -4,11 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import type { ThemeName } from "@/config/themes";
 import { getTheme, themeToCSSVars } from "@/config/themes";
 
-type DisplayTheme = "light" | "dark" | "system";
-
 interface ThemeContextValue {
-  displayTheme: DisplayTheme;
-  setDisplayTheme: (theme: DisplayTheme) => void;
   customTheme: ThemeName;
   setCustomTheme: (theme: ThemeName) => void;
 }
@@ -16,25 +12,14 @@ interface ThemeContextValue {
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [displayTheme, setDisplayThemeState] = useState<DisplayTheme>("system");
   const [customTheme, setCustomThemeState] = useState<ThemeName>("dark-glassy");
   const [mounted, setMounted] = useState(false);
 
   // Initialize on mount
   useEffect(() => {
-    const storedDisplayTheme = localStorage.getItem(
-      "display-theme",
-    ) as DisplayTheme | null;
     const storedCustomTheme = localStorage.getItem(
       "custom-theme",
     ) as ThemeName | null;
-
-    if (storedDisplayTheme) {
-      setDisplayThemeState(storedDisplayTheme);
-      applyDisplayTheme(storedDisplayTheme);
-    } else {
-      applyDisplayTheme("system");
-    }
 
     if (storedCustomTheme) {
       setCustomThemeState(storedCustomTheme);
@@ -45,20 +30,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     setMounted(true);
   }, []);
-
-  /**
-   * Apply display theme (light/dark/system mode)
-   */
-  const applyDisplayTheme = (theme: DisplayTheme) => {
-    if (theme === "system") {
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)",
-      ).matches;
-      document.documentElement.classList.toggle("dark", prefersDark);
-    } else {
-      document.documentElement.classList.toggle("dark", theme === "dark");
-    }
-  };
 
   /**
    * Apply custom theme by setting CSS variables
@@ -74,33 +45,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const setDisplayTheme = (theme: DisplayTheme) => {
-    setDisplayThemeState(theme);
-    if (theme === "system") {
-      localStorage.removeItem("display-theme");
-    } else {
-      localStorage.setItem("display-theme", theme);
-    }
-    applyDisplayTheme(theme);
-  };
-
   const setCustomTheme = (themeName: ThemeName) => {
     setCustomThemeState(themeName);
     localStorage.setItem("custom-theme", themeName);
     applyCustomTheme(themeName);
   };
-
-  // Watch system preference changes in "system" mode
-  useEffect(() => {
-    if (displayTheme === "system" && mounted) {
-      const listener = (e: MediaQueryListEvent) => {
-        applyDisplayTheme(e.matches ? "dark" : "light");
-      };
-      const mql = window.matchMedia("(prefers-color-scheme: dark)");
-      mql.addEventListener("change", listener);
-      return () => mql.removeEventListener("change", listener);
-    }
-  }, [displayTheme, mounted]);
 
   if (!mounted) {
     return <>{children}</>;
@@ -109,8 +58,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
     <ThemeContext.Provider
       value={{
-        displayTheme,
-        setDisplayTheme,
         customTheme,
         setCustomTheme,
       }}
