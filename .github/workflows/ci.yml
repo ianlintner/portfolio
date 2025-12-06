@@ -145,7 +145,6 @@ jobs:
               --source "https://github.com/${{ github.repository }}"
           }
 
-
       - name: Deploy to Azure Static Web App
         uses: Azure/static-web-apps-deploy@v1
         with:
