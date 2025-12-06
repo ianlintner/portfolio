@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { SiGithub, SiLinkedin } from "react-icons/si";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { ThemeSwitcher } from "./ThemeSwitcher";
+import { ThemeSwitcherNav } from "./ThemeSwitcherNav";
 
 export function Navigation() {
   const pathname = usePathname();
@@ -84,7 +84,7 @@ export function Navigation() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <ThemeSwitcher />
+            <ThemeSwitcherNav />
             <a
               href="https://github.com/ianlintner"
               target="_blank"
@@ -167,8 +167,9 @@ export function Navigation() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Projects
+              </Link>
               <div className="pt-3 border-t flex flex-col space-y-3">
-                <ThemeSwitcher />
+                <ThemeSwitcherNav />
                 <a
                   href="https://linkedin.com/in/ianlintner/"
                   target="_blank"
@@ -190,7 +191,6 @@ export function Navigation() {
                     <SiGithub className="h-5 w-5" />
                   </a>
                 </div>
-              </div>v>
               </div>
             </div>
           </div>
