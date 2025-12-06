@@ -7,9 +7,7 @@ export function ThemeSwitcher() {
   return (
     <select
       value={customTheme}
-      onChange={(e) =>
-        setCustomTheme(e.target.value as keyof typeof themes)
-      }
+      onChange={(e) => setCustomTheme(e.target.value as keyof typeof themes)}
       title="Select color theme"
       className="px-3 py-1 rounded-lg bg-glass border border-glass-light text-foreground text-sm cursor-pointer hover:border-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary"
     >
