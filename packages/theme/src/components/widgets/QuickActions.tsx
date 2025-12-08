@@ -6,14 +6,25 @@ export interface QuickAction {
   label: string;
   onClick: () => void;
   icon?: React.ReactNode;
-  variant?: "primary" | "secondary" | "outline" | "ghost" | "destructive" | "glass";
+  variant?:
+    | "primary"
+    | "secondary"
+    | "outline"
+    | "ghost"
+    | "destructive"
+    | "glass";
 }
 
-export interface QuickActionsProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface QuickActionsProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   actions: QuickAction[];
 }
 
-export function QuickActions({ className, actions, ...props }: QuickActionsProps) {
+export function QuickActions({
+  className,
+  actions,
+  ...props
+}: QuickActionsProps) {
   return (
     <div className={cn("flex flex-wrap gap-2", className)} {...props}>
       {actions.map((action, idx) => (

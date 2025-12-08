@@ -8,12 +8,18 @@ export interface ActivityItem {
   icon?: React.ReactNode;
 }
 
-export interface ActivityFeedProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ActivityFeedProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   items: ActivityItem[];
   emptyLabel?: React.ReactNode;
 }
 
-export function ActivityFeed({ className, items, emptyLabel = "No activity yet", ...props }: ActivityFeedProps) {
+export function ActivityFeed({
+  className,
+  items,
+  emptyLabel = "No activity yet",
+  ...props
+}: ActivityFeedProps) {
   return (
     <div className={cn("space-y-4", className)} {...props}>
       {items.length === 0 && (
@@ -22,14 +28,25 @@ export function ActivityFeed({ className, items, emptyLabel = "No activity yet",
         </div>
       )}
       {items.map((item, idx) => (
-        <div key={idx} className="flex gap-3 rounded-xl border border-border/60 bg-card/60 p-3">
+        <div
+          key={idx}
+          className="flex gap-3 rounded-xl border border-border/60 bg-card/60 p-3"
+        >
           <div className="mt-1 h-8 w-8 rounded-full bg-muted/50 text-center text-lg leading-8">
             {item.icon || "•"}
           </div>
           <div className="flex-1 space-y-1">
             <div className="text-sm font-semibold">{item.title}</div>
-            {item.description && <div className="text-sm text-muted-foreground">{item.description}</div>}
-            {item.timestamp && <div className="text-xs text-muted-foreground/80">{item.timestamp}</div>}
+            {item.description && (
+              <div className="text-sm text-muted-foreground">
+                {item.description}
+              </div>
+            )}
+            {item.timestamp && (
+              <div className="text-xs text-muted-foreground/80">
+                {item.timestamp}
+              </div>
+            )}
           </div>
         </div>
       ))}

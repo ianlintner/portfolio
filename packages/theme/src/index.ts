@@ -9,3 +9,8 @@ export * from "./components/code";
 export * from "./components/feedback";
 export * from "./hooks";
 export * from "./components/layout";
+export * from "./components/navigation";
+export * from "./components/overlay";
+export * from "./components/sidebar";
+export * from "./components/patterns";
+export * from "./components/widgets";
