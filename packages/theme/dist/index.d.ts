@@ -1,4 +1,4 @@
-import * as react_jsx_runtime from "react/jsx-runtime";
+import * as react_jsx_runtime from 'react/jsx-runtime';
 
 /**
  * Theme Configuration System
@@ -6,44 +6,33 @@ import * as react_jsx_runtime from "react/jsx-runtime";
  * This file defines all available themes for the application.
  * Each theme exports CSS custom properties that Tailwind consumes.
  */
-type ThemeName =
-  | "dark-glassy"
-  | "cyber-neon"
-  | "midnight"
-  | "dracula"
-  | "monokai-dark"
-  | "night-owl"
-  | "synthwave-84"
-  | "tokyo-night"
-  | "sublime-material"
-  | "cyberpunk-2077"
-  | "blade-runner";
+type ThemeName = "dark-glassy" | "cyber-neon" | "midnight" | "dracula" | "monokai-dark" | "night-owl" | "synthwave-84" | "tokyo-night" | "sublime-material" | "cyberpunk-2077" | "blade-runner";
 interface ThemeColors {
-  background: string;
-  foreground: string;
-  card: string;
-  cardForeground: string;
-  popover: string;
-  popoverForeground: string;
-  primary: string;
-  primaryForeground: string;
-  secondary: string;
-  secondaryForeground: string;
-  muted: string;
-  mutedForeground: string;
-  accent: string;
-  accentForeground: string;
-  destructive: string;
-  destructiveForeground: string;
-  border: string;
-  input: string;
-  ring: string;
-  glass: string;
-  glassLight: string;
-  glassDark: string;
-  glowPrimary: string;
-  glowSecondary: string;
-  glowAccent: string;
+    background: string;
+    foreground: string;
+    card: string;
+    cardForeground: string;
+    popover: string;
+    popoverForeground: string;
+    primary: string;
+    primaryForeground: string;
+    secondary: string;
+    secondaryForeground: string;
+    muted: string;
+    mutedForeground: string;
+    accent: string;
+    accentForeground: string;
+    destructive: string;
+    destructiveForeground: string;
+    border: string;
+    input: string;
+    ring: string;
+    glass: string;
+    glassLight: string;
+    glassDark: string;
+    glowPrimary: string;
+    glowSecondary: string;
+    glowAccent: string;
 }
 /**
  * Dark Glassy Theme - Modern 2025 Design
@@ -159,13 +148,11 @@ declare function themeToCSSVars(theme: ThemeColors): Record<string, string>;
 declare function getTheme(name: ThemeName): ThemeColors;
 
 interface ThemeContextValue {
-  customTheme: ThemeName;
-  setCustomTheme: (theme: ThemeName) => void;
+    customTheme: ThemeName;
+    setCustomTheme: (theme: ThemeName) => void;
 }
-declare function ThemeProvider({
-  children,
-}: {
-  children: React.ReactNode;
+declare function ThemeProvider({ children }: {
+    children: React.ReactNode;
 }): react_jsx_runtime.JSX.Element;
 declare function useTheme(): ThemeContextValue;
 
@@ -193,36 +180,33 @@ declare function getCSSVar(varName: string): string;
  *   "bg-card"
  * );
  */
-declare function useThemeClass(
-  themeClasses: Partial<Record<ThemeName, string>>,
-  defaultClass?: string,
-): string;
+declare function useThemeClass(themeClasses: Partial<Record<ThemeName, string>>, defaultClass?: string): string;
 /**
  * Predefined glass effect variants
  */
 declare const glassVariants: {
-  readonly standard: "glass";
-  readonly elevated: "glass-elevated";
-  readonly glow: "glass-glow";
+    readonly standard: "glass";
+    readonly elevated: "glass-elevated";
+    readonly glow: "glass-glow";
 };
 /**
  * Predefined glow effect variants
  */
 declare const glowVariants: {
-  readonly primary: "glow-primary";
-  readonly secondary: "glow-secondary";
-  readonly accent: "glow-accent";
-  readonly sm: "glow-sm";
-  readonly lg: "glow-lg";
+    readonly primary: "glow-primary";
+    readonly secondary: "glow-secondary";
+    readonly accent: "glow-accent";
+    readonly sm: "glow-sm";
+    readonly lg: "glow-lg";
 };
 /**
  * Predefined animation variants
  */
 declare const animationVariants: {
-  readonly fadeIn: "animate-fade-in";
-  readonly in: "animate-in";
-  readonly pulse: "animate-glow-pulse";
-  readonly float: "animate-float";
+    readonly fadeIn: "animate-fade-in";
+    readonly in: "animate-in";
+    readonly pulse: "animate-glow-pulse";
+    readonly float: "animate-float";
 };
 /**
  * Merge theme classes (useful for component composition)
@@ -243,37 +227,8 @@ declare function mergeThemeClasses(...classes: (string | undefined)[]): string;
  *   "dark-glassy": "glow-primary"
  * });
  */
-declare function createThemedComponent(
-  classes: {
+declare function createThemedComponent(classes: {
     base: string;
-  } & Partial<Record<ThemeName, string>>,
-): string;
+} & Partial<Record<ThemeName, string>>): string;
 
-export {
-  type ThemeColors,
-  type ThemeName,
-  ThemeProvider,
-  ThemeSwitcher,
-  animationVariants,
-  bladeRunnerTheme,
-  createThemedComponent,
-  cyberNeonTheme,
-  cyberpunk2077Theme,
-  darkGlassyTheme,
-  draculaTheme,
-  getCSSVar,
-  getTheme,
-  glassVariants,
-  glowVariants,
-  mergeThemeClasses,
-  midnightTheme,
-  monokaiDarkTheme,
-  nightOwlTheme,
-  sublimeMaterialTheme,
-  synthwave84Theme,
-  themeToCSSVars,
-  themes,
-  tokyoNightTheme,
-  useTheme,
-  useThemeClass,
-};
+export { type ThemeColors, type ThemeName, ThemeProvider, ThemeSwitcher, animationVariants, bladeRunnerTheme, createThemedComponent, cyberNeonTheme, cyberpunk2077Theme, darkGlassyTheme, draculaTheme, getCSSVar, getTheme, glassVariants, glowVariants, mergeThemeClasses, midnightTheme, monokaiDarkTheme, nightOwlTheme, sublimeMaterialTheme, synthwave84Theme, themeToCSSVars, themes, tokyoNightTheme, useTheme, useThemeClass };
