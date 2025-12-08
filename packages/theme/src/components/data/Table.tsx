@@ -26,7 +26,8 @@ const useTableContext = () => {
   return ctx;
 };
 
-export interface TableProps extends React.TableHTMLAttributes<HTMLTableElement> {
+export interface TableProps
+  extends React.TableHTMLAttributes<HTMLTableElement> {
   density?: Density;
   striped?: boolean;
   hoverable?: boolean;
@@ -35,7 +36,15 @@ export interface TableProps extends React.TableHTMLAttributes<HTMLTableElement> 
 
 export const Table = React.forwardRef<HTMLTableElement, TableProps>(
   (
-    { className, children, density = "comfortable", striped = false, hoverable = true, border = true, ...props },
+    {
+      className,
+      children,
+      density = "comfortable",
+      striped = false,
+      hoverable = true,
+      border = true,
+      ...props
+    },
     ref,
   ) => {
     const context: TableContextValue = {
@@ -51,7 +60,8 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps>(
             ref={ref}
             className={cn(
               "w-full border-collapse text-left text-foreground",
-              border && "[&_th]:border-b [&_td]:border-b [&_th]:border-border/60 [&_td]:border-border/40",
+              border &&
+                "[&_th]:border-b [&_td]:border-b [&_th]:border-border/60 [&_td]:border-border/40",
               className,
             )}
             {...props}
@@ -65,26 +75,42 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps>(
 );
 Table.displayName = "Table";
 
-export const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
-  ({ className, ...props }, ref) => (
-    <thead ref={ref} className={cn("bg-muted/40 text-sm uppercase tracking-wide text-muted-foreground", className)} {...props} />
-  ),
-);
+export const TableHeader = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <thead
+    ref={ref}
+    className={cn(
+      "bg-muted/40 text-sm uppercase tracking-wide text-muted-foreground",
+      className,
+    )}
+    {...props}
+  />
+));
 TableHeader.displayName = "TableHeader";
 
-export const TableBody = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
-  ({ className, ...props }, ref) => <tbody ref={ref} className={cn(className)} {...props} />,
-);
+export const TableBody = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <tbody ref={ref} className={cn(className)} {...props} />
+));
 TableBody.displayName = "TableBody";
 
-export const TableFooter = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
-  ({ className, ...props }, ref) => (
-    <tfoot ref={ref} className={cn("bg-muted/30 text-sm text-muted-foreground", className)} {...props} />
-  ),
-);
+export const TableFooter = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <tfoot
+    ref={ref}
+    className={cn("bg-muted/30 text-sm text-muted-foreground", className)}
+    {...props}
+  />
+));
 TableFooter.displayName = "TableFooter";
 
-export interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {}
+type TableRowProps = React.HTMLAttributes<HTMLTableRowElement>;
 
 export const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
   ({ className, ...props }, ref) => {
@@ -104,7 +130,7 @@ export const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
 );
 TableRow.displayName = "TableRow";
 
-export interface TableHeadProps extends React.ThHTMLAttributes<HTMLTableCellElement> {}
+type TableHeadProps = React.ThHTMLAttributes<HTMLTableCellElement>;
 
 export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
   ({ className, ...props }, ref) => {
@@ -112,7 +138,11 @@ export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
     return (
       <th
         ref={ref}
-        className={cn("font-semibold text-muted-foreground", padding, className)}
+        className={cn(
+          "font-semibold text-muted-foreground",
+          padding,
+          className,
+        )}
         {...props}
       />
     );
@@ -120,7 +150,7 @@ export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
 );
 TableHead.displayName = "TableHead";
 
-export interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {}
+type TableCellProps = React.TdHTMLAttributes<HTMLTableCellElement>;
 
 export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
   ({ className, ...props }, ref) => {
@@ -130,7 +160,7 @@ export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
 );
 TableCell.displayName = "TableCell";
 
-export interface TableCaptionProps extends React.TableHTMLAttributes<HTMLElement> {}
+type TableCaptionProps = React.TableHTMLAttributes<HTMLElement>;
 
 export const TableCaption = React.forwardRef<HTMLElement, TableCaptionProps>(
   ({ className, ...props }, ref) => (

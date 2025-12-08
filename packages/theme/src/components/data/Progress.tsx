@@ -38,7 +38,10 @@ export function Progress({
       )}
       <div className="h-2.5 w-full rounded-full bg-muted/40">
         <div
-          className={cn("h-full rounded-full transition-all duration-300", colorMap[color])}
+          className={cn(
+            "h-full rounded-full transition-all duration-300",
+            colorMap[color],
+          )}
           style={{ width: `${clamped}%` }}
           aria-valuenow={clamped}
           aria-valuemin={0}

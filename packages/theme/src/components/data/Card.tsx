@@ -25,7 +25,14 @@ const variantMap: Record<CardVariant, string> = {
  */
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   (
-    { className, variant = "default", padded = true, hoverable = false, elevated = false, ...props },
+    {
+      className,
+      variant = "default",
+      padded = true,
+      hoverable = false,
+      elevated = false,
+      ...props
+    },
     ref,
   ) => {
     return (
@@ -46,7 +53,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
 );
 Card.displayName = "Card";
 
-export interface CardSectionProps extends React.HTMLAttributes<HTMLDivElement> {}
+type CardSectionProps = React.HTMLAttributes<HTMLDivElement>;
 
 export const CardHeader = React.forwardRef<HTMLDivElement, CardSectionProps>(
   ({ className, ...props }, ref) => (
@@ -59,26 +66,28 @@ export const CardHeader = React.forwardRef<HTMLDivElement, CardSectionProps>(
 );
 CardHeader.displayName = "CardHeader";
 
-export const CardTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
-  ({ className, ...props }, ref) => (
-    <h3
-      ref={ref}
-      className={cn("text-xl font-semibold leading-tight", className)}
-      {...props}
-    />
-  ),
-);
+export const CardTitle = React.forwardRef<
+  HTMLHeadingElement,
+  React.HTMLAttributes<HTMLHeadingElement>
+>(({ className, ...props }, ref) => (
+  <h3
+    ref={ref}
+    className={cn("text-xl font-semibold leading-tight", className)}
+    {...props}
+  />
+));
 CardTitle.displayName = "CardTitle";
 
-export const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-  ({ className, ...props }, ref) => (
-    <p
-      ref={ref}
-      className={cn("text-sm text-muted-foreground", className)}
-      {...props}
-    />
-  ),
-);
+export const CardDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => (
+  <p
+    ref={ref}
+    className={cn("text-sm text-muted-foreground", className)}
+    {...props}
+  />
+));
 CardDescription.displayName = "CardDescription";
 
 export const CardContent = React.forwardRef<HTMLDivElement, CardSectionProps>(

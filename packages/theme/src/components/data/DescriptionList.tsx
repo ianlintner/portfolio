@@ -52,7 +52,12 @@ export function DescriptionList({
       {items
         ? items.map((item, idx) => (
             <div key={idx} className="flex flex-col gap-1">
-              <dt className={cn("text-sm font-medium", muted && "text-muted-foreground")}> 
+              <dt
+                className={cn(
+                  "text-sm font-medium",
+                  muted && "text-muted-foreground",
+                )}
+              >
                 {item.term}
               </dt>
               <dd className="text-sm text-foreground/90">{item.description}</dd>

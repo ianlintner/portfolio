@@ -43,11 +43,17 @@ export function List({
       {React.Children.map(children, (child, idx) => (
         <li className="flex items-start gap-3 py-1">
           {marker !== undefined ? (
-            <span className="mt-1 inline-flex h-2.5 w-2.5 shrink-0 items-center justify-center rounded-full bg-primary/70" aria-hidden>
+            <span
+              className="mt-1 inline-flex h-2.5 w-2.5 shrink-0 items-center justify-center rounded-full bg-primary/70"
+              aria-hidden
+            >
               {typeof marker === "function" ? (marker as any)(idx) : marker}
             </span>
           ) : (
-            <span className="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full bg-primary/70" aria-hidden />
+            <span
+              className="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full bg-primary/70"
+              aria-hidden
+            />
           )}
           <div className="min-w-0 flex-1">{child}</div>
         </li>

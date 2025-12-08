@@ -58,11 +58,14 @@ export function Stat({
       </div>
 
       <div className="flex flex-col items-end gap-1 text-right">
-        {helper && <span className="text-sm text-muted-foreground">{helper}</span>}
+        {helper && (
+          <span className="text-sm text-muted-foreground">{helper}</span>
+        )}
         <span className={cn("text-sm font-semibold", trendColor[trend])}>
           {trend === "up" && "▲"}
           {trend === "down" && "▼"}
-          {trend === "neutral" && "■"} {trend !== "neutral" ? helper ?? "" : ""}
+          {trend === "neutral" && "■"}{" "}
+          {trend !== "neutral" ? (helper ?? "") : ""}
         </span>
       </div>
     </div>
