@@ -55,7 +55,7 @@ export function Tabs({
   );
 }
 
-export interface TabListProps extends React.HTMLAttributes<HTMLDivElement> {}
+export type TabListProps = React.HTMLAttributes<HTMLDivElement>;
 export function TabList({ className, ...props }: TabListProps) {
   return (
     <div
@@ -106,7 +106,7 @@ export function Tab({
   );
 }
 
-export interface TabPanelsProps extends React.HTMLAttributes<HTMLDivElement> {}
+export type TabPanelsProps = React.HTMLAttributes<HTMLDivElement>;
 export function TabPanels({ className, ...props }: TabPanelsProps) {
   return <div className={cn("w-full", className)} {...props} />;
 }

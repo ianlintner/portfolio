@@ -32,8 +32,7 @@ export function Sidebar({
   );
 }
 
-export interface SidebarHeaderProps
-  extends React.HTMLAttributes<HTMLDivElement> {}
+export type SidebarHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 export function SidebarHeader({ className, ...props }: SidebarHeaderProps) {
   return (
     <div className={cn("flex items-center gap-3 px-2", className)} {...props} />
@@ -99,8 +98,7 @@ export function SidebarItem({
   );
 }
 
-export interface SidebarFooterProps
-  extends React.HTMLAttributes<HTMLDivElement> {}
+export type SidebarFooterProps = React.HTMLAttributes<HTMLDivElement>;
 export function SidebarFooter({ className, ...props }: SidebarFooterProps) {
   return <div className={cn("mt-auto px-2", className)} {...props} />;
 }
