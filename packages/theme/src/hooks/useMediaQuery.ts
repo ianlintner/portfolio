@@ -65,7 +65,9 @@ export function useIsLargeDesktop(): boolean {
 /**
  * Tailwind breakpoint hooks
  */
-export function useBreakpoint(breakpoint: "sm" | "md" | "lg" | "xl" | "2xl"): boolean {
+export function useBreakpoint(
+  breakpoint: "sm" | "md" | "lg" | "xl" | "2xl",
+): boolean {
   const breakpoints = {
     sm: "(min-width: 640px)",
     md: "(min-width: 768px)",

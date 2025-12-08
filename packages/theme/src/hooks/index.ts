@@ -4,10 +4,7 @@
  * Export all utility hooks for the theme package.
  */
 
-export {
-  useLocalStorage,
-  isLocalStorageAvailable,
-} from "./useLocalStorage";
+export { useLocalStorage, isLocalStorageAvailable } from "./useLocalStorage";
 
 export {
   useCookieStorage,

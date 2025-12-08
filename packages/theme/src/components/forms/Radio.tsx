@@ -3,7 +3,10 @@
 import React, { forwardRef } from "react";
 import { cn } from "../../utils/cn";
 
-export type RadioProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">;
+export type RadioProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "type"
+>;
 
 /**
  * Radio
@@ -23,12 +26,12 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
           "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           "disabled:cursor-not-allowed disabled:opacity-50",
           "accent-primary",
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 
 Radio.displayName = "Radio";

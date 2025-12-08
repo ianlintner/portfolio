@@ -34,37 +34,37 @@ const variantStyles: Record<NonNullable<ButtonProps["variant"]>, string> = {
     "bg-primary text-primary-foreground",
     "hover:bg-primary/90",
     "active:bg-primary/80",
-    "focus-visible:ring-primary"
+    "focus-visible:ring-primary",
   ),
   secondary: cn(
     "bg-secondary text-secondary-foreground",
     "hover:bg-secondary/80",
     "active:bg-secondary/70",
-    "focus-visible:ring-secondary"
+    "focus-visible:ring-secondary",
   ),
   outline: cn(
     "border border-border bg-transparent text-foreground",
     "hover:bg-accent/10 hover:border-accent",
     "active:bg-accent/20",
-    "focus-visible:ring-accent"
+    "focus-visible:ring-accent",
   ),
   ghost: cn(
     "bg-transparent text-foreground",
     "hover:bg-accent/10",
     "active:bg-accent/20",
-    "focus-visible:ring-accent"
+    "focus-visible:ring-accent",
   ),
   destructive: cn(
     "bg-destructive text-destructive-foreground",
     "hover:bg-destructive/90",
     "active:bg-destructive/80",
-    "focus-visible:ring-destructive"
+    "focus-visible:ring-destructive",
   ),
   glass: cn(
     "glass text-foreground",
     "hover:glass-elevated",
     "active:bg-glass-dark/60",
-    "focus-visible:ring-primary"
+    "focus-visible:ring-primary",
   ),
 };
 
@@ -118,7 +118,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const isDisabled = disabled || loading;
 
@@ -148,7 +148,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           // Disabled state
           isDisabled && "opacity-50 cursor-not-allowed pointer-events-none",
 
-          className
+          className,
         )}
         {...props}
       >
@@ -177,9 +177,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         )}
 
         {/* Left icon */}
-        {!loading && leftIcon && (
-          <span className="shrink-0">{leftIcon}</span>
-        )}
+        {!loading && leftIcon && <span className="shrink-0">{leftIcon}</span>}
 
         {/* Children */}
         {children}
@@ -188,7 +186,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {rightIcon && <span className="shrink-0">{rightIcon}</span>}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";
@@ -226,7 +224,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         {icon}
       </Button>
     );
-  }
+  },
 );
 
 IconButton.displayName = "IconButton";

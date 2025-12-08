@@ -47,7 +47,7 @@ export function FormField({
         className={cn(
           "flex w-full flex-col gap-2 rounded-lg border border-border/60 bg-card/40 p-4",
           "glass",
-          className
+          className,
         )}
       >
         <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:gap-3">

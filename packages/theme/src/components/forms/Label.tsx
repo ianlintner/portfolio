@@ -18,14 +18,8 @@ export interface LabelProps
  */
 export const Label = forwardRef<HTMLLabelElement, LabelProps>(
   (
-    {
-      className,
-      children,
-      requiredIndicator = false,
-      optionalText,
-      ...props
-    },
-    ref
+    { className, children, requiredIndicator = false, optionalText, ...props },
+    ref,
   ) => {
     const requiredMarkup =
       requiredIndicator === true ? (
@@ -43,7 +37,7 @@ export const Label = forwardRef<HTMLLabelElement, LabelProps>(
           "text-sm font-medium leading-none text-foreground",
           "flex items-center gap-2 select-none",
           "peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-          className
+          className,
         )}
         {...props}
       >
@@ -58,7 +52,7 @@ export const Label = forwardRef<HTMLLabelElement, LabelProps>(
         )}
       </label>
     );
-  }
+  },
 );
 
 Label.displayName = "Label";

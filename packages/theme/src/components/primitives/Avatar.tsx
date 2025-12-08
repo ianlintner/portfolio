@@ -80,7 +80,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
       glow = false,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [imageError, setImageError] = useState(false);
     const showFallback = !src || imageError;
@@ -98,7 +98,11 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
       typeof fallback === "string" ? getInitials(fallback) : fallback;
 
     return (
-      <div ref={ref} className={cn("relative inline-block", className)} {...props}>
+      <div
+        ref={ref}
+        className={cn("relative inline-block", className)}
+        {...props}
+      >
         {/* Avatar container */}
         <div
           className={cn(
@@ -113,10 +117,11 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
             sizeStyles[size],
 
             // Border
-            bordered && "ring-2 ring-border ring-offset-2 ring-offset-background",
+            bordered &&
+              "ring-2 ring-border ring-offset-2 ring-offset-background",
 
             // Glow
-            glow && "shadow-glow"
+            glow && "shadow-glow",
           )}
         >
           {/* Image */}
@@ -142,13 +147,13 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
               "absolute bottom-0 right-0",
               "rounded-full border-background",
               statusSizeStyles[size],
-              statusColors[status]
+              statusColors[status],
             )}
           />
         )}
       </div>
     );
-  }
+  },
 );
 
 Avatar.displayName = "Avatar";
@@ -185,11 +190,7 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
     return (
       <div
         ref={ref}
-        className={cn(
-          "flex items-center",
-          overlapStyles[size],
-          className
-        )}
+        className={cn("flex items-center", overlapStyles[size], className)}
         {...props}
       >
         {visibleChildren.map((child, index) => (
@@ -214,7 +215,7 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 AvatarGroup.displayName = "AvatarGroup";

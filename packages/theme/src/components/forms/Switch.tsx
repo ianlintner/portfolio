@@ -25,7 +25,10 @@ const thumbTranslations: Record<NonNullable<SwitchProps["size"]>, string> = {
   md: "translate-x-[6px]",
 };
 
-const thumbCheckedTranslations: Record<NonNullable<SwitchProps["size"]>, string> = {
+const thumbCheckedTranslations: Record<
+  NonNullable<SwitchProps["size"]>,
+  string
+> = {
   sm: "translate-x-[22px]",
   md: "translate-x-[26px]",
 };
@@ -38,7 +41,7 @@ const thumbCheckedTranslations: Record<NonNullable<SwitchProps["size"]>, string>
 export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
   (
     { className, checked, onCheckedChange, size = "md", disabled, ...props },
-    ref
+    ref,
   ) => {
     const handleToggle = () => {
       if (disabled) return;
@@ -61,7 +64,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
           "disabled:cursor-not-allowed disabled:opacity-50",
           trackSizes[size],
           checked ? "bg-primary/40 border-primary" : "bg-muted/50",
-          className
+          className,
         )}
         {...props}
       >
@@ -70,12 +73,12 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
             "pointer-events-none inline-block rounded-full bg-white shadow-sm",
             "transition-transform duration-200 ease-out",
             thumbSizes[size],
-            checked ? thumbCheckedTranslations[size] : thumbTranslations[size]
+            checked ? thumbCheckedTranslations[size] : thumbTranslations[size],
           )}
         />
       </button>
     );
-  }
+  },
 );
 
 Switch.displayName = "Switch";

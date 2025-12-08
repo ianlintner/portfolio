@@ -18,17 +18,20 @@ This document outlines a comprehensive plan to expand the `@ianlintner/theme` pa
 ## Current State Analysis
 
 ### Existing Components
+
 - `ThemeProvider` - Context provider for theme switching
 - `ThemeSwitcher` - Theme selection dropdown
 - `ThemeShowcase` - Demo component for theme features
 
 ### Existing Utilities
+
 - 11 theme variants (dark-glassy, cyber-neon, midnight, dracula, etc.)
 - Glass effect CSS utilities (`.glass`, `.glass-elevated`, `.glass-glow`)
 - Glow effect utilities (`.glow-primary`, `.glow-secondary`, `.glow-accent`)
 - Animation utilities (`.animate-fade-in`, `.animate-glow-pulse`, `.animate-float`)
 
 ### Tailwind Config Features
+
 - HSL-based CSS custom properties
 - Semantic color tokens (primary, secondary, muted, accent, destructive)
 - Typography plugin integration
@@ -160,10 +163,11 @@ packages/theme/src/
 ### 1.1 Utility Functions
 
 #### `cn.ts` - Class Name Merger
+
 ```typescript
 // Combines clsx + tailwind-merge for class composition
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -171,31 +175,42 @@ export function cn(...inputs: ClassValue[]) {
 ```
 
 **Dependencies to add:**
+
 - `clsx` - Conditional class construction
 - `tailwind-merge` - Intelligent Tailwind class merging
 
 ### 1.2 Storage Hooks
 
 #### `useLocalStorage.ts`
+
 ```typescript
 // Persistent storage with SSR safety
-export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void]
+export function useLocalStorage<T>(
+  key: string,
+  initialValue: T,
+): [T, (value: T) => void];
 ```
 
 #### `useCookieStorage.ts`
+
 ```typescript
 // Cookie-based storage for server-readable preferences
-export function useCookieStorage<T>(key: string, initialValue: T, options?: CookieOptions): [T, (value: T) => void]
+export function useCookieStorage<T>(
+  key: string,
+  initialValue: T,
+  options?: CookieOptions,
+): [T, (value: T) => void];
 ```
 
 #### `useCodeLanguage.ts`
+
 ```typescript
 // Manages preferred code language with persistence
 export function useCodeLanguage(): {
   language: string;
   setLanguage: (lang: string) => void;
   availableLanguages: string[];
-}
+};
 ```
 
 ---
@@ -206,8 +221,14 @@ export function useCodeLanguage(): {
 
 ```typescript
 interface ButtonProps {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'glass';
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  variant?:
+    | "primary"
+    | "secondary"
+    | "outline"
+    | "ghost"
+    | "destructive"
+    | "glass";
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
   glow?: boolean;
   loading?: boolean;
   disabled?: boolean;
@@ -219,6 +240,7 @@ interface ButtonProps {
 ```
 
 **Variants:**
+
 - `primary` - Solid primary color with hover glow
 - `secondary` - Muted background, subtle hover
 - `outline` - Border only, transparent background
@@ -230,8 +252,14 @@ interface ButtonProps {
 
 ```typescript
 interface BadgeProps {
-  variant?: 'default' | 'secondary' | 'outline' | 'success' | 'warning' | 'error';
-  size?: 'sm' | 'md' | 'lg';
+  variant?:
+    | "default"
+    | "secondary"
+    | "outline"
+    | "success"
+    | "warning"
+    | "error";
+  size?: "sm" | "md" | "lg";
   dot?: boolean; // Show status dot
   glow?: boolean;
 }
@@ -244,9 +272,9 @@ interface AvatarProps {
   src?: string;
   alt?: string;
   fallback?: string | React.ReactNode;
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  status?: 'online' | 'offline' | 'away' | 'busy';
-  shape?: 'circle' | 'square';
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  status?: "online" | "offline" | "away" | "busy";
+  shape?: "circle" | "square";
 }
 ```
 
@@ -254,7 +282,7 @@ interface AvatarProps {
 
 ```typescript
 interface SeparatorProps {
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
   decorative?: boolean;
   glow?: boolean;
 }
@@ -268,8 +296,8 @@ interface SeparatorProps {
 
 ```typescript
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  variant?: 'default' | 'glass' | 'filled';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "default" | "glass" | "filled";
+  size?: "sm" | "md" | "lg";
   error?: boolean;
   leftAddon?: React.ReactNode;
   rightAddon?: React.ReactNode;
@@ -281,9 +309,10 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 ### 3.2 Textarea Component
 
 ```typescript
-interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  variant?: 'default' | 'glass' | 'filled';
-  resize?: 'none' | 'vertical' | 'horizontal' | 'both';
+interface TextareaProps
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  variant?: "default" | "glass" | "filled";
+  resize?: "none" | "vertical" | "horizontal" | "both";
   autoGrow?: boolean;
   maxRows?: number;
 }
@@ -297,8 +326,8 @@ interface SelectProps {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
-  variant?: 'default' | 'glass';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "default" | "glass";
+  size?: "sm" | "md" | "lg";
   searchable?: boolean;
   multiple?: boolean;
 }
@@ -323,7 +352,7 @@ interface CheckboxProps {
 interface RadioGroupProps {
   value?: string;
   onChange?: (value: string) => void;
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
   children: React.ReactNode; // RadioGroupItem components
 }
 
@@ -341,7 +370,7 @@ interface RadioGroupItemProps {
 interface SwitchProps {
   checked?: boolean;
   onChange?: (checked: boolean) => void;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   label?: string;
   disabled?: boolean;
 }
@@ -382,20 +411,20 @@ interface FormFieldProps {
 
 ```typescript
 interface CardProps {
-  variant?: 'default' | 'glass' | 'glass-elevated' | 'glass-glow' | 'outline';
-  padding?: 'none' | 'sm' | 'md' | 'lg';
+  variant?: "default" | "glass" | "glass-elevated" | "glass-glow" | "outline";
+  padding?: "none" | "sm" | "md" | "lg";
   hoverable?: boolean;
   clickable?: boolean;
-  glow?: 'primary' | 'secondary' | 'accent';
+  glow?: "primary" | "secondary" | "accent";
 }
 
 // Compound components
-Card.Header
-Card.Body
-Card.Footer
-Card.Title
-Card.Description
-Card.Media
+Card.Header;
+Card.Body;
+Card.Footer;
+Card.Title;
+Card.Description;
+Card.Media;
 ```
 
 ### 4.2 Table Component
@@ -409,10 +438,10 @@ interface TableProps<T> {
     render?: (value: any, row: T) => React.ReactNode;
     sortable?: boolean;
     width?: string;
-    align?: 'left' | 'center' | 'right';
+    align?: "left" | "center" | "right";
   }>;
-  variant?: 'default' | 'glass' | 'striped';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "default" | "glass" | "striped";
+  size?: "sm" | "md" | "lg";
   hoverable?: boolean;
   selectable?: boolean;
   sticky?: boolean; // Sticky header
@@ -421,12 +450,12 @@ interface TableProps<T> {
 }
 
 // Compound components for custom usage
-Table.Root
-Table.Header
-Table.Body
-Table.Row
-Table.Head
-Table.Cell
+Table.Root;
+Table.Header;
+Table.Body;
+Table.Row;
+Table.Head;
+Table.Cell;
 ```
 
 ### 4.3 DataGrid Component (Advanced Table)
@@ -441,8 +470,8 @@ interface DataGridProps<T> extends TableProps<T> {
   };
   sorting?: {
     column: string;
-    direction: 'asc' | 'desc';
-    onSort: (column: string, direction: 'asc' | 'desc') => void;
+    direction: "asc" | "desc";
+    onSort: (column: string, direction: "asc" | "desc") => void;
   };
   filtering?: boolean;
   columnResizing?: boolean;
@@ -454,8 +483,8 @@ interface DataGridProps<T> extends TableProps<T> {
 
 ```typescript
 interface ListProps {
-  variant?: 'default' | 'glass' | 'divided';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "default" | "glass" | "divided";
+  size?: "sm" | "md" | "lg";
   children: React.ReactNode;
 }
 
@@ -479,8 +508,8 @@ interface DescriptionListProps {
     term: string;
     description: React.ReactNode;
   }>;
-  layout?: 'vertical' | 'horizontal';
-  variant?: 'default' | 'glass';
+  layout?: "vertical" | "horizontal";
+  variant?: "default" | "glass";
 }
 ```
 
@@ -492,11 +521,11 @@ interface StatProps {
   value: string | number;
   change?: {
     value: number;
-    type: 'increase' | 'decrease';
+    type: "increase" | "decrease";
   };
   icon?: React.ReactNode;
-  variant?: 'default' | 'glass';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "default" | "glass";
+  size?: "sm" | "md" | "lg";
 }
 ```
 
@@ -506,16 +535,16 @@ interface StatProps {
 interface ProgressProps {
   value: number;
   max?: number;
-  variant?: 'default' | 'gradient' | 'striped';
-  size?: 'xs' | 'sm' | 'md' | 'lg';
-  color?: 'primary' | 'secondary' | 'success' | 'warning' | 'error';
+  variant?: "default" | "gradient" | "striped";
+  size?: "xs" | "sm" | "md" | "lg";
+  color?: "primary" | "secondary" | "success" | "warning" | "error";
   showValue?: boolean;
   animated?: boolean;
   indeterminate?: boolean;
 }
 
 // Also: ProgressCircle for circular progress
-interface ProgressCircleProps extends Omit<ProgressProps, 'variant'> {
+interface ProgressCircleProps extends Omit<ProgressProps, "variant"> {
   strokeWidth?: number;
 }
 ```
@@ -535,11 +564,12 @@ interface CodeBlockProps {
   highlightLines?: number[];
   maxHeight?: string;
   copyable?: boolean;
-  variant?: 'default' | 'glass';
+  variant?: "default" | "glass";
 }
 ```
 
 **Features:**
+
 - Syntax highlighting via `shiki` or `highlight.js`
 - Copy to clipboard button
 - Line numbers (optional)
@@ -561,7 +591,7 @@ interface CodeTabsProps {
   storageKey?: string;
   showLineNumbers?: boolean;
   copyable?: boolean;
-  variant?: 'default' | 'glass';
+  variant?: "default" | "glass";
 }
 ```
 
@@ -569,11 +599,11 @@ interface CodeTabsProps {
 
 ```typescript
 // useCodeLanguage hook
-const STORAGE_KEY = 'preferred-code-language';
+const STORAGE_KEY = "preferred-code-language";
 
 export function useCodeLanguage() {
-  const [language, setLanguageState] = useState<string>('typescript');
-  
+  const [language, setLanguageState] = useState<string>("typescript");
+
   useEffect(() => {
     // Check cookie first (for SSR), then localStorage
     const cookieValue = getCookie(STORAGE_KEY);
@@ -581,18 +611,19 @@ export function useCodeLanguage() {
     const saved = cookieValue || storageValue;
     if (saved) setLanguageState(saved);
   }, []);
-  
+
   const setLanguage = (lang: string) => {
     setLanguageState(lang);
     localStorage.setItem(STORAGE_KEY, lang);
     setCookie(STORAGE_KEY, lang, { maxAge: 365 * 24 * 60 * 60 }); // 1 year
   };
-  
+
   return { language, setLanguage };
 }
 ```
 
 **Behavior:**
+
 1. User visits page → CodeTabs shows last-used language (from cookie/storage)
 2. User clicks different language tab → All CodeTabs on page switch to that language
 3. Preference persists across sessions via cookie (accessible server-side) and localStorage (fallback)
@@ -603,7 +634,7 @@ export function useCodeLanguage() {
 ```typescript
 interface InlineCodeProps {
   children: string;
-  variant?: 'default' | 'glass';
+  variant?: "default" | "glass";
 }
 ```
 
@@ -615,14 +646,15 @@ interface InlineCodeProps {
 
 ```typescript
 interface SpinnerProps {
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  variant?: 'default' | 'dots' | 'bars' | 'ring' | 'pulse';
-  color?: 'primary' | 'secondary' | 'current'; // 'current' inherits text color
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  variant?: "default" | "dots" | "bars" | "ring" | "pulse";
+  color?: "primary" | "secondary" | "current"; // 'current' inherits text color
   label?: string; // Accessibility label
 }
 ```
 
 **Variants:**
+
 - `default` - Classic spinning circle
 - `dots` - Three bouncing dots
 - `bars` - Audio-style bars
@@ -633,26 +665,26 @@ interface SpinnerProps {
 
 ```typescript
 interface SkeletonProps {
-  variant?: 'text' | 'circular' | 'rectangular' | 'rounded';
+  variant?: "text" | "circular" | "rectangular" | "rounded";
   width?: string | number;
   height?: string | number;
-  animation?: 'pulse' | 'wave' | 'none';
+  animation?: "pulse" | "wave" | "none";
   lines?: number; // For text variant
 }
 
 // Preset skeletons
-Skeleton.Avatar
-Skeleton.Text
-Skeleton.Button
-Skeleton.Card
-Skeleton.Image
+Skeleton.Avatar;
+Skeleton.Text;
+Skeleton.Button;
+Skeleton.Card;
+Skeleton.Image;
 ```
 
 ### 6.3 Alert Component
 
 ```typescript
 interface AlertProps {
-  variant?: 'info' | 'success' | 'warning' | 'error';
+  variant?: "info" | "success" | "warning" | "error";
   title?: string;
   description?: string;
   icon?: React.ReactNode | boolean; // true = default icon
@@ -669,7 +701,7 @@ interface AlertProps {
 
 ```typescript
 interface ToastProps {
-  variant?: 'info' | 'success' | 'warning' | 'error';
+  variant?: "info" | "success" | "warning" | "error";
   title: string;
   description?: string;
   duration?: number; // Auto-dismiss time in ms
@@ -694,10 +726,10 @@ export function useToast(): {
 interface TooltipProps {
   content: React.ReactNode;
   children: React.ReactNode;
-  side?: 'top' | 'right' | 'bottom' | 'left';
-  align?: 'start' | 'center' | 'end';
+  side?: "top" | "right" | "bottom" | "left";
+  align?: "start" | "center" | "end";
   delay?: number;
-  variant?: 'default' | 'glass';
+  variant?: "default" | "glass";
 }
 ```
 
@@ -715,14 +747,14 @@ interface DialogProps {
 }
 
 // Compound components
-Dialog.Trigger
-Dialog.Content
-Dialog.Header
-Dialog.Title
-Dialog.Description
-Dialog.Body
-Dialog.Footer
-Dialog.Close
+Dialog.Trigger;
+Dialog.Content;
+Dialog.Header;
+Dialog.Title;
+Dialog.Description;
+Dialog.Body;
+Dialog.Footer;
+Dialog.Close;
 ```
 
 ### 7.2 Drawer Component
@@ -731,8 +763,8 @@ Dialog.Close
 interface DrawerProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  side?: 'left' | 'right' | 'top' | 'bottom';
-  size?: 'sm' | 'md' | 'lg' | 'full';
+  side?: "left" | "right" | "top" | "bottom";
+  size?: "sm" | "md" | "lg" | "full";
   children: React.ReactNode;
 }
 
@@ -749,10 +781,10 @@ interface PopoverProps {
 }
 
 // Compound components
-Popover.Trigger
-Popover.Content
-Popover.Arrow
-Popover.Close
+Popover.Trigger;
+Popover.Content;
+Popover.Arrow;
+Popover.Close;
 ```
 
 ### 7.4 DropdownMenu Component
@@ -763,17 +795,17 @@ interface DropdownMenuProps {
 }
 
 // Compound components
-DropdownMenu.Trigger
-DropdownMenu.Content
-DropdownMenu.Item
-DropdownMenu.CheckboxItem
-DropdownMenu.RadioGroup
-DropdownMenu.RadioItem
-DropdownMenu.Separator
-DropdownMenu.Label
-DropdownMenu.Sub
-DropdownMenu.SubTrigger
-DropdownMenu.SubContent
+DropdownMenu.Trigger;
+DropdownMenu.Content;
+DropdownMenu.Item;
+DropdownMenu.CheckboxItem;
+DropdownMenu.RadioGroup;
+DropdownMenu.RadioItem;
+DropdownMenu.Separator;
+DropdownMenu.Label;
+DropdownMenu.Sub;
+DropdownMenu.SubTrigger;
+DropdownMenu.SubContent;
 ```
 
 ---
@@ -787,15 +819,15 @@ interface TabsProps {
   defaultValue?: string;
   value?: string;
   onValueChange?: (value: string) => void;
-  orientation?: 'horizontal' | 'vertical';
-  variant?: 'default' | 'pills' | 'underline' | 'glass';
-  size?: 'sm' | 'md' | 'lg';
+  orientation?: "horizontal" | "vertical";
+  variant?: "default" | "pills" | "underline" | "glass";
+  size?: "sm" | "md" | "lg";
 }
 
 // Compound components
-Tabs.List
-Tabs.Trigger
-Tabs.Content
+Tabs.List;
+Tabs.Trigger;
+Tabs.Content;
 ```
 
 ### 8.2 Breadcrumb Component
@@ -823,8 +855,8 @@ interface PaginationProps {
   boundaries?: number; // Pages to always show at start/end
   showFirst?: boolean;
   showLast?: boolean;
-  variant?: 'default' | 'glass';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "default" | "glass";
+  size?: "sm" | "md" | "lg";
 }
 ```
 
@@ -835,7 +867,7 @@ interface NavLinkProps {
   href: string;
   children: React.ReactNode;
   active?: boolean;
-  variant?: 'default' | 'pill' | 'underline';
+  variant?: "default" | "pill" | "underline";
   icon?: React.ReactNode;
 }
 ```
@@ -848,9 +880,9 @@ interface NavLinkProps {
 
 ```typescript
 interface ContainerProps {
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "full";
   center?: boolean;
-  padding?: 'none' | 'sm' | 'md' | 'lg';
+  padding?: "none" | "sm" | "md" | "lg";
   children: React.ReactNode;
 }
 ```
@@ -859,8 +891,8 @@ interface ContainerProps {
 
 ```typescript
 interface SectionProps {
-  variant?: 'default' | 'glass' | 'muted' | 'gradient';
-  padding?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: "default" | "glass" | "muted" | "gradient";
+  padding?: "sm" | "md" | "lg" | "xl";
   fullWidth?: boolean;
   children: React.ReactNode;
 }
@@ -871,7 +903,7 @@ interface SectionProps {
 ```typescript
 interface GridProps {
   columns?: number | { sm?: number; md?: number; lg?: number; xl?: number };
-  gap?: 'sm' | 'md' | 'lg' | 'xl';
+  gap?: "sm" | "md" | "lg" | "xl";
   children: React.ReactNode;
 }
 
@@ -886,10 +918,13 @@ interface GridItemProps {
 
 ```typescript
 interface StackProps {
-  direction?: 'row' | 'column' | { sm?: 'row' | 'column'; md?: 'row' | 'column' };
-  gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  align?: 'start' | 'center' | 'end' | 'stretch';
-  justify?: 'start' | 'center' | 'end' | 'between' | 'around';
+  direction?:
+    | "row"
+    | "column"
+    | { sm?: "row" | "column"; md?: "row" | "column" };
+  gap?: "xs" | "sm" | "md" | "lg" | "xl";
+  align?: "start" | "center" | "end" | "stretch";
+  justify?: "start" | "center" | "end" | "between" | "around";
   wrap?: boolean;
   children: React.ReactNode;
 }
@@ -899,8 +934,8 @@ interface StackProps {
 
 ```typescript
 interface DividerProps {
-  orientation?: 'horizontal' | 'vertical';
-  variant?: 'solid' | 'dashed' | 'dotted' | 'gradient';
+  orientation?: "horizontal" | "vertical";
+  variant?: "solid" | "dashed" | "dotted" | "gradient";
   label?: string; // Text in middle of divider
   glow?: boolean;
 }
@@ -914,21 +949,21 @@ interface SidebarProps {
   onOpenChange?: (open: boolean) => void;
   collapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
-  position?: 'left' | 'right';
-  variant?: 'default' | 'glass';
+  position?: "left" | "right";
+  variant?: "default" | "glass";
   width?: string;
   collapsedWidth?: string;
   children: React.ReactNode;
 }
 
 // Compound components
-Sidebar.Header
-Sidebar.Content
-Sidebar.Footer
-Sidebar.Nav
-Sidebar.NavItem
-Sidebar.NavGroup
-Sidebar.CollapseButton
+Sidebar.Header;
+Sidebar.Content;
+Sidebar.Footer;
+Sidebar.Nav;
+Sidebar.NavItem;
+Sidebar.NavGroup;
+Sidebar.CollapseButton;
 ```
 
 ---
@@ -941,10 +976,10 @@ Sidebar.CollapseButton
 interface PageHeaderProps {
   title: string;
   description?: string;
-  breadcrumbs?: BreadcrumbProps['items'];
+  breadcrumbs?: BreadcrumbProps["items"];
   actions?: React.ReactNode;
   tabs?: TabsProps;
-  variant?: 'default' | 'glass';
+  variant?: "default" | "glass";
 }
 ```
 
@@ -953,7 +988,7 @@ interface PageHeaderProps {
 ```typescript
 interface PageFooterProps {
   children: React.ReactNode;
-  variant?: 'default' | 'glass' | 'minimal';
+  variant?: "default" | "glass" | "minimal";
   sticky?: boolean;
 }
 ```
@@ -968,9 +1003,9 @@ interface EmptyStateProps {
   action?: {
     label: string;
     onClick: () => void;
-    variant?: ButtonProps['variant'];
+    variant?: ButtonProps["variant"];
   };
-  variant?: 'default' | 'glass';
+  variant?: "default" | "glass";
 }
 ```
 
@@ -979,7 +1014,9 @@ interface EmptyStateProps {
 ```typescript
 interface ErrorBoundaryProps {
   children: React.ReactNode;
-  fallback?: React.ReactNode | ((error: Error, reset: () => void) => React.ReactNode);
+  fallback?:
+    | React.ReactNode
+    | ((error: Error, reset: () => void) => React.ReactNode);
 }
 ```
 
@@ -999,8 +1036,8 @@ interface StatCardProps {
   };
   icon?: React.ReactNode;
   chart?: React.ReactNode; // Mini sparkline
-  variant?: 'default' | 'glass';
-  trend?: 'up' | 'down' | 'neutral';
+  variant?: "default" | "glass";
+  trend?: "up" | "down" | "neutral";
 }
 ```
 
@@ -1014,7 +1051,7 @@ interface ChartCardProps {
   actions?: React.ReactNode;
   loading?: boolean;
   error?: string;
-  variant?: 'default' | 'glass';
+  variant?: "default" | "glass";
 }
 ```
 
@@ -1034,7 +1071,7 @@ interface ActivityFeedProps {
   maxItems?: number;
   showViewAll?: boolean;
   onViewAll?: () => void;
-  variant?: 'default' | 'glass';
+  variant?: "default" | "glass";
 }
 ```
 
@@ -1046,10 +1083,10 @@ interface QuickActionsProps {
     icon: React.ReactNode;
     label: string;
     onClick: () => void;
-    variant?: 'default' | 'primary' | 'secondary';
+    variant?: "default" | "primary" | "secondary";
   }>;
   columns?: 2 | 3 | 4;
-  variant?: 'default' | 'glass';
+  variant?: "default" | "glass";
 }
 ```
 
@@ -1088,7 +1125,7 @@ Dashboard-specific layout with collapsible sidebar and header actions.
 ```typescript
 interface AuthLayoutProps {
   children: React.ReactNode;
-  variant?: 'centered' | 'split';
+  variant?: "centered" | "split";
   logo?: React.ReactNode;
   backgroundImage?: string;
 }
@@ -1117,30 +1154,48 @@ Marketing/landing page layout with floating navigation option.
 
 ```css
 /* Entrances */
-.animate-fade-in { }
-.animate-fade-in-up { }
-.animate-fade-in-down { }
-.animate-slide-in-left { }
-.animate-slide-in-right { }
-.animate-scale-in { }
-.animate-bounce-in { }
+.animate-fade-in {
+}
+.animate-fade-in-up {
+}
+.animate-fade-in-down {
+}
+.animate-slide-in-left {
+}
+.animate-slide-in-right {
+}
+.animate-scale-in {
+}
+.animate-bounce-in {
+}
 
 /* Attention */
-.animate-pulse { }
-.animate-bounce { }
-.animate-shake { }
-.animate-wiggle { }
+.animate-pulse {
+}
+.animate-bounce {
+}
+.animate-shake {
+}
+.animate-wiggle {
+}
 
 /* Special Effects */
-.animate-glow-pulse { } /* existing */
-.animate-float { } /* existing */
-.animate-shimmer { }
-.animate-gradient { }
+.animate-glow-pulse {
+} /* existing */
+.animate-float {
+} /* existing */
+.animate-shimmer {
+}
+.animate-gradient {
+}
 
 /* Spinners */
-.animate-spin { }
-.animate-spin-slow { }
-.animate-ping { }
+.animate-spin {
+}
+.animate-spin-slow {
+}
+.animate-ping {
+}
 ```
 
 ### Tailwind Animation Extensions
@@ -1172,6 +1227,7 @@ keyframes: {
 ## Implementation Priority Order
 
 ### Sprint 1 (Week 1-2): Foundation + Core
+
 1. ✅ Utility functions (`cn.ts`, storage hooks)
 2. ✅ Button, Badge, Avatar, Separator
 3. ✅ Input, Textarea, Select, Checkbox, Radio, Switch, Label
@@ -1179,29 +1235,34 @@ keyframes: {
 5. ✅ Container, Section, Stack, Grid
 
 ### Sprint 2 (Week 3-4): Data & Code
+
 1. ✅ Table (basic + compound)
 2. ✅ List, DescriptionList, Stat, Progress
 3. ✅ CodeBlock, CodeTabs (with language persistence)
 4. ✅ InlineCode
 
 ### Sprint 3 (Week 5-6): Feedback & Navigation
+
 1. ✅ Spinner, Skeleton, Alert
 2. ✅ Toast (with provider)
 3. ✅ Tooltip
 4. ✅ Tabs, Breadcrumb, Pagination
 
 ### Sprint 4 (Week 7-8): Overlays & Layout
+
 1. ✅ Dialog, Drawer
 2. ✅ Popover, DropdownMenu
 3. ✅ Sidebar
 4. ✅ Divider
 
 ### Sprint 5 (Week 9-10): Patterns & Widgets
+
 1. ✅ PageHeader, PageFooter, EmptyState
 2. ✅ StatCard, ChartCard, ActivityFeed, QuickActions
 3. ✅ Additional animations
 
 ### Sprint 6 (Week 11-12): Templates & Polish
+
 1. ✅ AppLayout, DashboardLayout, AuthLayout, MarketingLayout
 2. ✅ Documentation site/showcase
 3. ✅ Unit tests
@@ -1223,7 +1284,7 @@ keyframes: {
     "tailwindcss": "^3.0.0"
   },
   "optionalDependencies": {
-    "shiki": "^1.0.0"  // For advanced syntax highlighting
+    "shiki": "^1.0.0" // For advanced syntax highlighting
   }
 }
 ```
@@ -1236,52 +1297,52 @@ keyframes: {
 // packages/theme/src/index.ts
 
 // Config & Utils
-export * from './config/themes';
-export * from './utils/cn';
-export * from './utils/theme';
+export * from "./config/themes";
+export * from "./utils/cn";
+export * from "./utils/theme";
 
 // Hooks
-export * from './hooks/useCodeLanguage';
-export * from './hooks/useLocalStorage';
-export * from './hooks/useCookieStorage';
-export * from './hooks/useMediaQuery';
+export * from "./hooks/useCodeLanguage";
+export * from "./hooks/useLocalStorage";
+export * from "./hooks/useCookieStorage";
+export * from "./hooks/useMediaQuery";
 
 // Theme System
-export * from './components/ThemeProvider';
-export * from './components/ThemeSwitcher';
+export * from "./components/ThemeProvider";
+export * from "./components/ThemeSwitcher";
 
 // Primitives
-export * from './components/primitives';
+export * from "./components/primitives";
 
 // Forms
-export * from './components/forms';
+export * from "./components/forms";
 
 // Data Display
-export * from './components/data-display';
+export * from "./components/data-display";
 
 // Code
-export * from './components/code';
+export * from "./components/code";
 
 // Feedback
-export * from './components/feedback';
+export * from "./components/feedback";
 
 // Overlays
-export * from './components/overlays';
+export * from "./components/overlays";
 
 // Navigation
-export * from './components/navigation';
+export * from "./components/navigation";
 
 // Layout
-export * from './components/layout';
+export * from "./components/layout";
 
 // Patterns
-export * from './components/patterns';
+export * from "./components/patterns";
 
 // Widgets
-export * from './components/widgets';
+export * from "./components/widgets";
 
 // Templates
-export * from './components/templates';
+export * from "./components/templates";
 ```
 
 ---
@@ -1289,15 +1350,18 @@ export * from './components/templates';
 ## Testing Strategy
 
 ### Unit Tests (Jest + React Testing Library)
+
 - Each component has basic render test
 - Interactive components have user event tests
 - Accessibility tests with `jest-axe`
 
 ### Visual Regression (Optional)
+
 - Storybook + Chromatic for visual testing
 - Snapshot tests for static components
 
 ### Integration Tests
+
 - Theme switching affects all components
 - CodeTabs language persistence works across components
 - Toast system works with multiple toasts
@@ -1307,13 +1371,16 @@ export * from './components/templates';
 ## Documentation
 
 ### Component Documentation
+
 Each component should have:
+
 1. **Props table** with types and defaults
 2. **Usage examples** (basic, advanced, with other components)
 3. **Accessibility notes**
 4. **Theme customization examples**
 
 ### Showcase Page Updates
+
 Extend `ThemeShowcase.tsx` to demonstrate all new components organized by category.
 
 ---

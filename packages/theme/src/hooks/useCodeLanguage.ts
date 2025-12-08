@@ -113,7 +113,9 @@ interface CodeLanguageContextValue {
   getExtension: (lang: string) => string;
 }
 
-const CodeLanguageContext = createContext<CodeLanguageContextValue | null>(null);
+const CodeLanguageContext = createContext<CodeLanguageContextValue | null>(
+  null,
+);
 
 /**
  * CodeLanguageProvider
@@ -165,7 +167,7 @@ export function CodeLanguageProvider({
 
       // Dispatch custom event for cross-component sync
       window.dispatchEvent(
-        new CustomEvent("code-language-change", { detail: { language: lang } })
+        new CustomEvent("code-language-change", { detail: { language: lang } }),
       );
     }
   }, []);
@@ -189,7 +191,7 @@ export function CodeLanguageProvider({
         getExtension,
       },
     },
-    children
+    children,
   );
 }
 
@@ -215,7 +217,7 @@ export function useCodeLanguage(): CodeLanguageContextValue {
 
   if (!context) {
     throw new Error(
-      "useCodeLanguage must be used within a CodeLanguageProvider"
+      "useCodeLanguage must be used within a CodeLanguageProvider",
     );
   }
 
@@ -251,7 +253,8 @@ export function useCodeLanguageLocal(defaultLanguage = "typescript"): {
     };
 
     window.addEventListener("code-language-change", handleChange);
-    return () => window.removeEventListener("code-language-change", handleChange);
+    return () =>
+      window.removeEventListener("code-language-change", handleChange);
   }, []);
 
   const setLanguage = useCallback((lang: string) => {
@@ -266,7 +269,7 @@ export function useCodeLanguageLocal(defaultLanguage = "typescript"): {
     if (typeof window !== "undefined") {
       window.localStorage.setItem(STORAGE_KEY, lang);
       window.dispatchEvent(
-        new CustomEvent("code-language-change", { detail: { language: lang } })
+        new CustomEvent("code-language-change", { detail: { language: lang } }),
       );
     }
   }, []);

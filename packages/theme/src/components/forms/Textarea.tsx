@@ -22,7 +22,7 @@ const baseStyles = cn(
   "placeholder:text-muted-foreground",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
   "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-  "disabled:cursor-not-allowed disabled:opacity-50"
+  "disabled:cursor-not-allowed disabled:opacity-50",
 );
 
 const variantStyles: Record<FieldVariant, string> = {
@@ -53,7 +53,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       noResize = false,
       ...props
     },
-    ref
+    ref,
   ) => {
     const ariaInvalid = props["aria-invalid"];
     const computedState: FieldState =
@@ -68,12 +68,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           stateStyles[computedState],
           noResize && "resize-none",
           fullWidth && "w-full",
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 
 Textarea.displayName = "Textarea";

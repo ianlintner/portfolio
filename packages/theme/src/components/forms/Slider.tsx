@@ -28,7 +28,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
       step = 1,
       ...props
     },
-    ref
+    ref,
   ) => {
     const numericValue = typeof value === "number" ? value : undefined;
     const percentage =
@@ -60,7 +60,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
             "[&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4",
             "[&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-primary",
             "[&::-moz-range-thumb]:border-none [&::-moz-range-thumb]:shadow-glow-sm",
-            className
+            className,
           )}
           {...props}
         />
@@ -74,7 +74,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 Slider.displayName = "Slider";

@@ -15,6 +15,7 @@ This directory contains the extracted theme components and configuration, ready 
 To publish this package to npm (or a private registry):
 
 1.  **Login to npm:**
+
     ```bash
     npm login
     ```
@@ -30,6 +31,7 @@ To publish this package to npm (or a private registry):
 To test this package in another local app without publishing:
 
 1.  **In this directory:**
+
     ```bash
     pnpm link --global
     ```

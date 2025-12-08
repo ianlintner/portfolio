@@ -83,7 +83,7 @@ export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(
       label,
       ...props
     },
-    ref
+    ref,
   ) => {
     // If we have a label, render a different structure
     if (label && orientation === "horizontal") {
@@ -100,7 +100,7 @@ export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(
               "flex-1",
               sizeStyles[orientation][size],
               variantStyles[variant],
-              glow && "shadow-[0_0_8px_hsla(var(--glow-primary),0.3)]"
+              glow && "shadow-[0_0_8px_hsla(var(--glow-primary),0.3)]",
             )}
           />
           <span className="text-muted-foreground text-sm font-medium shrink-0">
@@ -111,7 +111,7 @@ export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(
               "flex-1",
               sizeStyles[orientation][size],
               variantStyles[variant],
-              glow && "shadow-[0_0_8px_hsla(var(--glow-primary),0.3)]"
+              glow && "shadow-[0_0_8px_hsla(var(--glow-primary),0.3)]",
             )}
           />
         </div>
@@ -138,12 +138,12 @@ export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(
           variantStyles[variant],
           borderStyles,
           glow && "shadow-[0_0_8px_hsla(var(--glow-primary),0.3)]",
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 
 Separator.displayName = "Separator";

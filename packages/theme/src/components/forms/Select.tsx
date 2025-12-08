@@ -21,7 +21,7 @@ const baseStyles = cn(
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
   "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
   "disabled:cursor-not-allowed disabled:opacity-50",
-  "appearance-none"
+  "appearance-none",
 );
 
 const variantStyles: Record<FieldVariant, string> = {
@@ -55,7 +55,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       style,
       ...props
     },
-    ref
+    ref,
   ) => {
     const ariaInvalid = props["aria-invalid"];
     const computedState: FieldState =
@@ -69,7 +69,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           variantStyles[variant],
           stateStyles[computedState],
           fullWidth && "w-full",
-          className
+          className,
         )}
         style={{
           backgroundImage: `url(${chevronDataUri})`,
@@ -81,7 +81,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {...props}
       />
     );
-  }
+  },
 );
 
 Select.displayName = "Select";

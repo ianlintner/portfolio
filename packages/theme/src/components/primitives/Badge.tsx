@@ -89,7 +89,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <span
@@ -111,7 +111,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
           // Glow effect
           glow && glowVariantColors[variant],
 
-          className
+          className,
         )}
         {...props}
       >
@@ -123,7 +123,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
               size === "sm" && "w-1.5 h-1.5",
               size === "md" && "w-2 h-2",
               size === "lg" && "w-2.5 h-2.5",
-              dotVariantColors[variant]
+              dotVariantColors[variant],
             )}
           />
         )}
@@ -131,7 +131,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
         {children}
       </span>
     );
-  }
+  },
 );
 
 Badge.displayName = "Badge";
@@ -164,8 +164,8 @@ export const NotificationBadge = forwardRef<
   const displayValue = dot
     ? null
     : count !== undefined && count > max
-    ? `${max}+`
-    : count;
+      ? `${max}+`
+      : count;
 
   const sizeClasses = {
     sm: dot ? "w-2 h-2" : "min-w-4 h-4 text-[10px] px-1",
@@ -181,7 +181,7 @@ export const NotificationBadge = forwardRef<
         "bg-destructive text-destructive-foreground font-medium",
         "rounded-full",
         sizeClasses[size],
-        className
+        className,
       )}
     >
       {displayValue}

@@ -1,6 +1,11 @@
 "use client";
 
-import React, { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from "react";
 import { cn } from "../../utils/cn";
 
 export interface CheckboxProps
@@ -37,12 +42,12 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           "disabled:cursor-not-allowed disabled:opacity-50",
           "accent-primary",
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 
 Checkbox.displayName = "Checkbox";

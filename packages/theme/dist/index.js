@@ -8,14 +8,18 @@ var __export = (target, all) => {
     __defProp(target, name, { get: all[name], enumerable: true });
 };
 var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
+  if ((from && typeof from === "object") || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
       if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+        __defProp(to, key, {
+          get: () => from[key],
+          enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable,
+        });
   }
   return to;
 };
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __toCommonJS = (mod) =>
+  __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // src/index.ts
 var index_exports = {};
@@ -43,7 +47,7 @@ __export(index_exports, {
   themes: () => themes,
   tokyoNightTheme: () => tokyoNightTheme,
   useTheme: () => useTheme,
-  useThemeClass: () => useThemeClass
+  useThemeClass: () => useThemeClass,
 });
 module.exports = __toCommonJS(index_exports);
 
@@ -96,7 +100,7 @@ var darkGlassyTheme = {
   // Electric blue
   glowSecondary: "270 100% 60%",
   // Purple
-  glowAccent: "190 100% 50%"
+  glowAccent: "190 100% 50%",
   // Cyan
 };
 var cyberNeonTheme = {
@@ -143,7 +147,7 @@ var cyberNeonTheme = {
   // Cyan
   glowSecondary: "320 100% 50%",
   // Pink
-  glowAccent: "120 100% 50%"
+  glowAccent: "120 100% 50%",
   // Green
 };
 var midnightTheme = {
@@ -190,7 +194,7 @@ var midnightTheme = {
   // Amber
   glowSecondary: "270 50% 45%",
   // Purple
-  glowAccent: "180 60% 50%"
+  glowAccent: "180 60% 50%",
   // Teal
 };
 var draculaTheme = {
@@ -224,7 +228,7 @@ var draculaTheme = {
   glassDark: "231 15% 20%",
   glowPrimary: "265 89% 78%",
   glowSecondary: "331 73% 70%",
-  glowAccent: "48 100% 66%"
+  glowAccent: "48 100% 66%",
 };
 var monokaiDarkTheme = {
   background: "0 0% 9%",
@@ -257,7 +261,7 @@ var monokaiDarkTheme = {
   glassDark: "0 0% 12%",
   glowPrimary: "180 100% 42%",
   glowSecondary: "290 100% 71%",
-  glowAccent: "60 100% 50%"
+  glowAccent: "60 100% 50%",
 };
 var nightOwlTheme = {
   background: "212 21% 14%",
@@ -290,7 +294,7 @@ var nightOwlTheme = {
   glassDark: "212 21% 16%",
   glowPrimary: "198 100% 50%",
   glowSecondary: "264 67% 68%",
-  glowAccent: "47 100% 67%"
+  glowAccent: "47 100% 67%",
 };
 var synthwave84Theme = {
   background: "280 40% 15%",
@@ -323,7 +327,7 @@ var synthwave84Theme = {
   glassDark: "280 40% 18%",
   glowPrimary: "300 100% 60%",
   glowSecondary: "182 100% 50%",
-  glowAccent: "72 100% 50%"
+  glowAccent: "72 100% 50%",
 };
 var tokyoNightTheme = {
   background: "210 16% 15%",
@@ -356,7 +360,7 @@ var tokyoNightTheme = {
   glassDark: "210 16% 17%",
   glowPrimary: "200 100% 62%",
   glowSecondary: "280 74% 65%",
-  glowAccent: "41 92% 62%"
+  glowAccent: "41 92% 62%",
 };
 var sublimeMaterialTheme = {
   background: "200 26% 15%",
@@ -389,7 +393,7 @@ var sublimeMaterialTheme = {
   glassDark: "200 26% 17%",
   glowPrimary: "200 100% 50%",
   glowSecondary: "260 100% 65%",
-  glowAccent: "45 100% 55%"
+  glowAccent: "45 100% 55%",
 };
 var cyberpunk2077Theme = {
   background: "0 0% 0%",
@@ -422,7 +426,7 @@ var cyberpunk2077Theme = {
   glassDark: "320 5% 8%",
   glowPrimary: "300 100% 50%",
   glowSecondary: "180 100% 50%",
-  glowAccent: "60 100% 50%"
+  glowAccent: "60 100% 50%",
 };
 var bladeRunnerTheme = {
   background: "90 40% 8%",
@@ -455,7 +459,7 @@ var bladeRunnerTheme = {
   glassDark: "90 40% 10%",
   glowPrimary: "90 100% 50%",
   glowSecondary: "40 100% 50%",
-  glowAccent: "40 100% 55%"
+  glowAccent: "40 100% 55%",
 };
 var themes = {
   "dark-glassy": darkGlassyTheme,
@@ -468,7 +472,7 @@ var themes = {
   "tokyo-night": tokyoNightTheme,
   "sublime-material": sublimeMaterialTheme,
   "cyberpunk-2077": cyberpunk2077Theme,
-  "blade-runner": bladeRunnerTheme
+  "blade-runner": bladeRunnerTheme,
 };
 function themeToCSSVars(theme) {
   return {
@@ -496,7 +500,7 @@ function themeToCSSVars(theme) {
     "--glass-dark": theme.glassDark,
     "--glow-primary": theme.glowPrimary,
     "--glow-secondary": theme.glowSecondary,
-    "--glow-accent": theme.glowAccent
+    "--glow-accent": theme.glowAccent,
   };
 }
 function getTheme(name) {
@@ -508,12 +512,12 @@ var import_react = require("react");
 var import_jsx_runtime = require("react/jsx-runtime");
 var ThemeContext = (0, import_react.createContext)(void 0);
 function ThemeProvider({ children }) {
-  const [customTheme, setCustomThemeState] = (0, import_react.useState)("dark-glassy");
+  const [customTheme, setCustomThemeState] = (0, import_react.useState)(
+    "dark-glassy",
+  );
   const [mounted, setMounted] = (0, import_react.useState)(false);
   (0, import_react.useEffect)(() => {
-    const storedCustomTheme = localStorage.getItem(
-      "custom-theme"
-    );
+    const storedCustomTheme = localStorage.getItem("custom-theme");
     if (storedCustomTheme) {
       setCustomThemeState(storedCustomTheme);
       applyCustomTheme(storedCustomTheme);
@@ -536,18 +540,18 @@ function ThemeProvider({ children }) {
     applyCustomTheme(themeName);
   };
   if (!mounted) {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, { children });
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+      import_jsx_runtime.Fragment,
+      { children },
+    );
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-    ThemeContext.Provider,
-    {
-      value: {
-        customTheme,
-        setCustomTheme
-      },
-      children
-    }
-  );
+  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ThemeContext.Provider, {
+    value: {
+      customTheme,
+      setCustomTheme,
+    },
+    children,
+  });
 }
 function useTheme() {
   const ctx = (0, import_react.useContext)(ThemeContext);
@@ -559,22 +563,34 @@ function useTheme() {
 var import_jsx_runtime2 = require("react/jsx-runtime");
 function ThemeSwitcher() {
   const { customTheme, setCustomTheme } = useTheme();
-  return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-    "select",
-    {
-      value: customTheme,
-      onChange: (e) => setCustomTheme(e.target.value),
-      title: "Select color theme",
-      className: "px-3 py-1 rounded-lg bg-glass border border-glass-light text-foreground text-sm cursor-pointer hover:border-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary",
-      children: Object.keys(themes).map((name) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("option", { value: name, children: name.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") }, name))
-    }
-  );
+  return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("select", {
+    value: customTheme,
+    onChange: (e) => setCustomTheme(e.target.value),
+    title: "Select color theme",
+    className:
+      "px-3 py-1 rounded-lg bg-glass border border-glass-light text-foreground text-sm cursor-pointer hover:border-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary",
+    children: Object.keys(themes).map((name) =>
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+        "option",
+        {
+          value: name,
+          children: name
+            .split("-")
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" "),
+        },
+        name,
+      ),
+    ),
+  });
 }
 
 // src/utils/theme.ts
 function getCSSVar(varName) {
   if (typeof window === "undefined") return "";
-  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(varName)
+    .trim();
 }
 function useThemeClass(themeClasses, defaultClass = "") {
   const { customTheme } = useTheme();
@@ -583,20 +599,20 @@ function useThemeClass(themeClasses, defaultClass = "") {
 var glassVariants = {
   standard: "glass",
   elevated: "glass-elevated",
-  glow: "glass-glow"
+  glow: "glass-glow",
 };
 var glowVariants = {
   primary: "glow-primary",
   secondary: "glow-secondary",
   accent: "glow-accent",
   sm: "glow-sm",
-  lg: "glow-lg"
+  lg: "glow-lg",
 };
 var animationVariants = {
   fadeIn: "animate-fade-in",
   in: "animate-in",
   pulse: "animate-glow-pulse",
-  float: "animate-float"
+  float: "animate-float",
 };
 function mergeThemeClasses(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -605,29 +621,30 @@ function createThemedComponent(classes) {
   return classes.base;
 }
 // Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {
-  ThemeProvider,
-  ThemeSwitcher,
-  animationVariants,
-  bladeRunnerTheme,
-  createThemedComponent,
-  cyberNeonTheme,
-  cyberpunk2077Theme,
-  darkGlassyTheme,
-  draculaTheme,
-  getCSSVar,
-  getTheme,
-  glassVariants,
-  glowVariants,
-  mergeThemeClasses,
-  midnightTheme,
-  monokaiDarkTheme,
-  nightOwlTheme,
-  sublimeMaterialTheme,
-  synthwave84Theme,
-  themeToCSSVars,
-  themes,
-  tokyoNightTheme,
-  useTheme,
-  useThemeClass
-});
+0 &&
+  (module.exports = {
+    ThemeProvider,
+    ThemeSwitcher,
+    animationVariants,
+    bladeRunnerTheme,
+    createThemedComponent,
+    cyberNeonTheme,
+    cyberpunk2077Theme,
+    darkGlassyTheme,
+    draculaTheme,
+    getCSSVar,
+    getTheme,
+    glassVariants,
+    glowVariants,
+    mergeThemeClasses,
+    midnightTheme,
+    monokaiDarkTheme,
+    nightOwlTheme,
+    sublimeMaterialTheme,
+    synthwave84Theme,
+    themeToCSSVars,
+    themes,
+    tokyoNightTheme,
+    useTheme,
+    useThemeClass,
+  });

@@ -21,7 +21,8 @@ const DEFAULT_OPTIONS: CookieOptions = {
   maxAge: 365 * 24 * 60 * 60, // 1 year
   path: "/",
   sameSite: "lax",
-  secure: typeof window !== "undefined" && window.location.protocol === "https:",
+  secure:
+    typeof window !== "undefined" && window.location.protocol === "https:",
 };
 
 /**
@@ -47,7 +48,11 @@ function getCookie(name: string): string | null {
 /**
  * Set a cookie with the given name, value, and options
  */
-function setCookie(name: string, value: string, options: CookieOptions = {}): void {
+function setCookie(
+  name: string,
+  value: string,
+  options: CookieOptions = {},
+): void {
   if (typeof document === "undefined") return;
 
   const opts = { ...DEFAULT_OPTIONS, ...options };
@@ -104,7 +109,7 @@ function deleteCookie(name: string, options: CookieOptions = {}): void {
 export function useCookieStorage<T>(
   key: string,
   initialValue: T,
-  options: CookieOptions = {}
+  options: CookieOptions = {},
 ): [T, (value: T | ((prev: T) => T)) => void, () => void] {
   const [storedValue, setStoredValue] = useState<T>(initialValue);
 
@@ -129,7 +134,7 @@ export function useCookieStorage<T>(
       setStoredValue(valueToStore);
       setCookie(key, JSON.stringify(valueToStore), options);
     },
-    [key, options, storedValue]
+    [key, options, storedValue],
   );
 
   const removeValue = useCallback(() => {

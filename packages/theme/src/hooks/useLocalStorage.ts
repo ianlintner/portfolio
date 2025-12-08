@@ -17,7 +17,7 @@ import { useState, useEffect, useCallback } from "react";
  */
 export function useLocalStorage<T>(
   key: string,
-  initialValue: T
+  initialValue: T,
 ): [T, (value: T | ((prev: T) => T)) => void, () => void] {
   // State to store our value
   const [storedValue, setStoredValue] = useState<T>(initialValue);
@@ -58,14 +58,14 @@ export function useLocalStorage<T>(
             new StorageEvent("storage", {
               key,
               newValue: JSON.stringify(valueToStore),
-            })
+            }),
           );
         }
       } catch (error) {
         console.warn(`Error setting localStorage key "${key}":`, error);
       }
     },
-    [key, storedValue]
+    [key, storedValue],
   );
 
   // Remove the value from localStorage
