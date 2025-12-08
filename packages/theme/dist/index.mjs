@@ -1897,6 +1897,206 @@ function useCodeLanguageLocal(defaultLanguage = "typescript") {
   }, []);
   return { language, setLanguage };
 }
+
+// src/components/layout/Container.tsx
+import { jsx as jsx16 } from "react/jsx-runtime";
+var widthClasses = {
+  sm: "max-w-screen-sm",
+  md: "max-w-screen-md",
+  lg: "max-w-screen-lg",
+  xl: "max-w-screen-xl",
+  "2xl": "max-w-screen-2xl",
+  full: "max-w-full"
+};
+function Container({
+  className,
+  maxWidth = "xl",
+  padded = true,
+  center = true,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx16(
+    "div",
+    {
+      className: cn(
+        "w-full",
+        widthClasses[maxWidth],
+        padded && "px-4 sm:px-6 lg:px-8",
+        center && "mx-auto",
+        className
+      ),
+      ...props
+    }
+  );
+}
+
+// src/components/layout/Section.tsx
+import { jsx as jsx17, jsxs as jsxs8 } from "react/jsx-runtime";
+var spacingMap = {
+  sm: "py-8",
+  md: "py-12",
+  lg: "py-16"
+};
+var backgroundMap = {
+  none: "",
+  card: "rounded-2xl border border-border/60 bg-card/60 shadow-glow-sm",
+  glass: "rounded-2xl glass shadow-glow"
+};
+function Section({
+  className,
+  title,
+  description,
+  eyebrow,
+  actions,
+  maxWidth = "xl",
+  padded = true,
+  background = "none",
+  spacing = "md",
+  children,
+  ...props
+}) {
+  const hasHeader = title || description || eyebrow || actions;
+  return /* @__PURE__ */ jsx17("section", { className: cn(spacingMap[spacing], className), ...props, children: /* @__PURE__ */ jsx17(Container, { maxWidth, padded, className: "w-full", children: /* @__PURE__ */ jsxs8("div", { className: cn("flex flex-col gap-6", backgroundMap[background]), children: [
+    hasHeader && /* @__PURE__ */ jsxs8("div", { className: cn(
+      "flex flex-col gap-3",
+      background !== "none" && "p-6"
+    ), children: [
+      eyebrow && /* @__PURE__ */ jsx17("p", { className: "text-xs font-semibold uppercase tracking-[0.2em] text-primary", children: eyebrow }),
+      /* @__PURE__ */ jsxs8("div", { className: "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4", children: [
+        /* @__PURE__ */ jsxs8("div", { className: "space-y-2", children: [
+          title && /* @__PURE__ */ jsx17("h2", { className: "text-2xl font-semibold leading-tight sm:text-3xl", children: title }),
+          description && /* @__PURE__ */ jsx17("p", { className: "text-base text-muted-foreground", children: description })
+        ] }),
+        actions && /* @__PURE__ */ jsx17("div", { className: "flex shrink-0 items-center gap-3", children: actions })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx17("div", { className: cn(background !== "none" && "p-6 pb-8"), children })
+  ] }) }) });
+}
+
+// src/components/layout/Stack.tsx
+import { jsx as jsx18 } from "react/jsx-runtime";
+function Stack({
+  className,
+  direction = "vertical",
+  gap = 3,
+  align,
+  justify,
+  wrap = false,
+  style,
+  ...props
+}) {
+  const gapClass = typeof gap === "number" ? `gap-${gap}` : void 0;
+  return /* @__PURE__ */ jsx18(
+    "div",
+    {
+      className: cn(
+        "flex",
+        direction === "vertical" ? "flex-col" : "flex-row",
+        gapClass,
+        wrap && "flex-wrap",
+        className
+      ),
+      style: {
+        alignItems: align,
+        justifyContent: justify,
+        gap: typeof gap === "string" ? gap : void 0,
+        ...style
+      },
+      ...props
+    }
+  );
+}
+
+// src/components/layout/Grid.tsx
+import { jsx as jsx19 } from "react/jsx-runtime";
+var spanClass = (prefix, value) => value ? `${prefix}grid-cols-${value}` : void 0;
+function Grid({
+  className,
+  cols = { base: 1, md: 2, lg: 3 },
+  gap = 4,
+  equalHeight = false,
+  style,
+  children,
+  ...props
+}) {
+  const config = typeof cols === "number" ? { base: cols } : cols;
+  const gapClass = typeof gap === "number" ? `gap-${gap}` : void 0;
+  return /* @__PURE__ */ jsx19(
+    "div",
+    {
+      className: cn(
+        "grid",
+        spanClass("", config.base ?? 1),
+        spanClass("sm:", config.sm),
+        spanClass("md:", config.md),
+        spanClass("lg:", config.lg),
+        spanClass("xl:", config.xl),
+        gapClass,
+        equalHeight && "[&>*]:h-full",
+        className
+      ),
+      style: { gap: typeof gap === "string" ? gap : void 0, ...style },
+      ...props,
+      children
+    }
+  );
+}
+
+// src/components/layout/Divider.tsx
+import { jsx as jsx20, jsxs as jsxs9 } from "react/jsx-runtime";
+var baseLine = "flex-1 bg-border/70";
+var variantMap = {
+  muted: baseLine,
+  strong: "flex-1 bg-foreground/40",
+  glow: "flex-1 bg-gradient-to-r from-primary/50 via-accent/50 to-primary/50 blur-[0.2px]"
+};
+function Divider({
+  className,
+  orientation = "horizontal",
+  label,
+  variant = "muted",
+  ...props
+}) {
+  if (orientation === "vertical") {
+    return /* @__PURE__ */ jsxs9(
+      "div",
+      {
+        role: "separator",
+        "aria-orientation": "vertical",
+        className: cn(
+          "flex h-full flex-col items-center",
+          label ? "gap-2 px-2" : "px-1",
+          className
+        ),
+        ...props,
+        children: [
+          /* @__PURE__ */ jsx20("span", { className: cn("w-px flex-1", variantMap[variant]) }),
+          label && /* @__PURE__ */ jsx20("span", { className: "text-xs font-medium text-muted-foreground", children: label }),
+          /* @__PURE__ */ jsx20("span", { className: cn("w-px flex-1", variantMap[variant]) })
+        ]
+      }
+    );
+  }
+  return /* @__PURE__ */ jsxs9(
+    "div",
+    {
+      role: "separator",
+      "aria-orientation": "horizontal",
+      className: cn(
+        "flex w-full items-center",
+        label ? "gap-3" : "gap-2",
+        className
+      ),
+      ...props,
+      children: [
+        /* @__PURE__ */ jsx20("span", { className: cn("h-px", variantMap[variant]) }),
+        label && /* @__PURE__ */ jsx20("span", { className: "text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground", children: label }),
+        /* @__PURE__ */ jsx20("span", { className: cn("h-px", variantMap[variant]) })
+      ]
+    }
+  );
+}
 export {
   Avatar,
   AvatarGroup,
@@ -1905,7 +2105,10 @@ export {
   CODE_LANGUAGES,
   Checkbox,
   CodeLanguageProvider,
+  Container,
+  Divider,
   FormField,
+  Grid,
   IconButton,
   Input,
   LANGUAGE_EXTENSIONS,
@@ -1913,9 +2116,11 @@ export {
   Label,
   NotificationBadge,
   Radio,
+  Section,
   Select,
   Separator,
   Slider,
+  Stack,
   Switch,
   Textarea,
   ThemeProvider,
