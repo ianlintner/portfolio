@@ -115,3 +115,4 @@ istio-1.27.1
 /public/docs
 /site
 packages/theme/dist
+dist
