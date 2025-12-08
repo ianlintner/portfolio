@@ -115,6 +115,3 @@ istio-1.27.1
 /public/docs
 /site
 packages/theme/dist
-dist/
-*.dist/index.js
-*.dist/index.mjs
