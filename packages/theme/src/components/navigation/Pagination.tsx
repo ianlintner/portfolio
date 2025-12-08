@@ -15,7 +15,11 @@ function createPageNumbers(current: number, total: number) {
   const pages: (number | "ellipsis")[] = [];
   const delta = 1;
   const range = [];
-  for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
+  for (
+    let i = Math.max(2, current - delta);
+    i <= Math.min(total - 1, current + delta);
+    i++
+  ) {
     range.push(i);
   }
   if (current - delta > 2) range.unshift("ellipsis");
@@ -50,27 +54,28 @@ export function Pagination({
         Prev
       </Button>
 
-      {showEdges && pages.map((p, idx) => (
-        <React.Fragment key={idx}>
-          {p === "ellipsis" ? (
-            <span className="px-2 text-muted-foreground">…</span>
-          ) : (
-            <button
-              type="button"
-              onClick={() => go(p)}
-              className={cn(
-                "min-w-[38px] rounded-lg px-3 py-2 text-sm font-medium transition",
-                p === page
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "bg-background text-foreground hover:bg-muted/50",
-              )}
-              aria-current={p === page ? "page" : undefined}
-            >
-              {p}
-            </button>
-          )}
-        </React.Fragment>
-      ))}
+      {showEdges &&
+        pages.map((p, idx) => (
+          <React.Fragment key={idx}>
+            {p === "ellipsis" ? (
+              <span className="px-2 text-muted-foreground">…</span>
+            ) : (
+              <button
+                type="button"
+                onClick={() => go(p)}
+                className={cn(
+                  "min-w-[38px] rounded-lg px-3 py-2 text-sm font-medium transition",
+                  p === page
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-background text-foreground hover:bg-muted/50",
+                )}
+                aria-current={p === page ? "page" : undefined}
+              >
+                {p}
+              </button>
+            )}
+          </React.Fragment>
+        ))}
 
       <Button
         variant="outline"

@@ -1,12 +1,19 @@
 import React from "react";
 import { cn } from "../../utils/cn";
 
-export interface NavLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+export interface NavLinkProps
+  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   active?: boolean;
   icon?: React.ReactNode;
 }
 
-export function NavLink({ className, active = false, icon, children, ...props }: NavLinkProps) {
+export function NavLink({
+  className,
+  active = false,
+  icon,
+  children,
+  ...props
+}: NavLinkProps) {
   return (
     <a
       className={cn(

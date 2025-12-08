@@ -48,7 +48,9 @@ export function Tabs({
 
   return (
     <TabsContext.Provider value={context}>
-      <div className={cn("flex w-full flex-col gap-3", className)}>{children}</div>
+      <div className={cn("flex w-full flex-col gap-3", className)}>
+        {children}
+      </div>
     </TabsContext.Provider>
   );
 }
@@ -67,12 +69,19 @@ export function TabList({ className, ...props }: TabListProps) {
   );
 }
 
-export interface TabProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface TabProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   value: string;
   leftIcon?: React.ReactNode;
 }
 
-export function Tab({ className, value, leftIcon, children, ...props }: TabProps) {
+export function Tab({
+  className,
+  value,
+  leftIcon,
+  children,
+  ...props
+}: TabProps) {
   const { value: active, onChange } = useTabsContext();
   const isActive = active === value;
   return (
