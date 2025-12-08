@@ -15,7 +15,8 @@ const variantStyles: Record<ToastVariant, string> = {
     "bg-destructive/15 text-destructive-foreground border border-destructive/60",
 };
 
-export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ToastProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   variant?: ToastVariant;
   title?: React.ReactNode;
   description?: React.ReactNode;

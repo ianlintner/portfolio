@@ -1,7 +1,8 @@
 import React from "react";
 import { cn } from "../../utils/cn";
 
-export interface AuthLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface AuthLayoutProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   illustration?: React.ReactNode;
