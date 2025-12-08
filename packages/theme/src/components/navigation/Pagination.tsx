@@ -62,7 +62,10 @@ export function Pagination({
         pages.map((p, idx) => {
           if (p === "ellipsis") {
             return (
-              <span key={`ellipsis-${idx}`} className="px-2 text-muted-foreground">
+              <span
+                key={`ellipsis-${idx}`}
+                className="px-2 text-muted-foreground"
+              >
                 …
               </span>
             );
