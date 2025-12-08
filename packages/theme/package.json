@@ -17,7 +17,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts && cp src/styles/globals.css dist/styles.css",
-    "lint": "pnpm exec eslint src/",
+    "lint": "../../node_modules/.bin/eslint src/",
     "prepublishOnly": "pnpm build"
   },
   "exports": {

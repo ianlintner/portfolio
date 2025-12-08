@@ -191,6 +191,7 @@ sequenceDiagram
     API-->>Auth: Validate JWT (cached JWKS)
     Auth-->>API: Signature + claims OK
     API-->>SPA: Profile JSON
+
 `}
 />
 
@@ -209,6 +210,7 @@ sequenceDiagram
     SvcB-->>Auth: Introspect / validate JWT (if opaque)
     Auth-->>SvcB: Active=true, scopes
     SvcB-->>Job: 200 OK
+
 `}
 />
 
@@ -230,6 +232,7 @@ sequenceDiagram
     GH-->>Auth: Authorization code
     Auth-->>Proxy: Tokens + ID token
     Proxy-->>User: Set session cookie, forward to app
+
 `}
 />
 
@@ -365,8 +368,13 @@ Check out the [full documentation](https://oauth2.cat-herding.net/docs/index.htm
 ## References
 
 [^rfc6749]: IETF RFC 6749: The OAuth 2.0 Authorization Framework — https://datatracker.ietf.org/doc/html/rfc6749
+
 [^pkce]: IETF RFC 7636: Proof Key for Code Exchange (PKCE) — https://datatracker.ietf.org/doc/html/rfc7636
+
 [^sas]: Spring Authorization Server Reference — https://docs.spring.io/spring-authorization-server/reference/
+
 [^oauth2proxy]: OAuth2 Proxy Docs — https://oauth2-proxy.github.io/oauth2-proxy/
+
 [^istio]: Istio RequestAuthentication / AuthorizationPolicy — https://istio.io/latest/docs/tasks/security/authorization/
+
 [^jwks]: OpenID Connect Discovery (JWKS endpoint) — https://openid.net/specs/openid-connect-discovery-1_0.html
