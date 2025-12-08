@@ -1612,7 +1612,6 @@ function FormField({
 var import_react14 = require("react");
 function useLocalStorage(key, initialValue) {
   const [storedValue, setStoredValue] = (0, import_react14.useState)(initialValue);
-  const [isInitialized, setIsInitialized] = (0, import_react14.useState)(false);
   (0, import_react14.useEffect)(() => {
     if (typeof window === "undefined") return;
     try {
@@ -1623,7 +1622,6 @@ function useLocalStorage(key, initialValue) {
     } catch (error) {
       console.warn(`Error reading localStorage key "${key}":`, error);
     }
-    setIsInitialized(true);
   }, [key]);
   const setValue = (0, import_react14.useCallback)(
     (value) => {
