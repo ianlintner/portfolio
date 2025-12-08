@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, createContext, useContext } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  createContext,
+  useContext,
+  createElement,
+} from "react";
 import { getCookie, setCookie } from "./useCookieStorage";
 
 const STORAGE_KEY = "preferred-code-language";
@@ -171,18 +178,18 @@ export function CodeLanguageProvider({
     return LANGUAGE_EXTENSIONS[lang as CodeLanguage] || "";
   }, []);
 
-  return (
-    <CodeLanguageContext.Provider
-      value={{
+  return createElement(
+    CodeLanguageContext.Provider,
+    {
+      value: {
         language,
         setLanguage,
         availableLanguages: CODE_LANGUAGES,
         getLabel,
         getExtension,
-      }}
-    >
-      {children}
-    </CodeLanguageContext.Provider>
+      },
+    },
+    children
   );
 }
 
