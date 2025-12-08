@@ -31,7 +31,9 @@ export function EmptyState({
       {icon && <div className="text-3xl">{icon}</div>}
       <h3 className="text-lg font-semibold">{title}</h3>
       {(description || children) && (
-        <p className="max-w-md text-sm text-muted-foreground">{description || children}</p>
+        <p className="max-w-md text-sm text-muted-foreground">
+          {description || children}
+        </p>
       )}
       {actionLabel && onAction && (
         <Button variant="primary" size="sm" onClick={onAction}>

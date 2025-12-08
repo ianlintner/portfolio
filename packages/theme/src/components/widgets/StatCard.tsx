@@ -36,9 +36,13 @@ export function StatCard({
         <div className="space-y-1">
           <div className="text-sm text-muted-foreground">{label}</div>
           <div className="text-2xl font-semibold leading-tight">{value}</div>
-          {helper && <div className="text-xs text-muted-foreground/80">{helper}</div>}
+          {helper && (
+            <div className="text-xs text-muted-foreground/80">{helper}</div>
+          )}
         </div>
-        {icon && <div className="rounded-xl bg-muted/50 p-3 text-primary">{icon}</div>}
+        {icon && (
+          <div className="rounded-xl bg-muted/50 p-3 text-primary">{icon}</div>
+        )}
       </div>
       <div className={cn("mt-3 text-xs font-medium", trendClasses[trend])}>
         {trend === "up" && "▲"}

@@ -10,7 +10,10 @@ export interface ErrorBoundaryProps {
   children: React.ReactNode;
 }
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   state: ErrorBoundaryState = { hasError: false };
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
@@ -30,7 +33,9 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         fallback || (
           <div className="rounded-xl border border-destructive/50 bg-destructive/10 p-4 text-destructive-foreground">
             <div className="text-sm font-semibold">Something went wrong.</div>
-            {error?.message && <div className="text-xs opacity-80">{error.message}</div>}
+            {error?.message && (
+              <div className="text-xs opacity-80">{error.message}</div>
+            )}
           </div>
         )
       );

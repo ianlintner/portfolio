@@ -29,12 +29,16 @@ export function ChartCard({
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="space-y-1">
           <div className="text-base font-semibold leading-tight">{title}</div>
-          {description && <div className="text-sm text-muted-foreground">{description}</div>}
+          {description && (
+            <div className="text-sm text-muted-foreground">{description}</div>
+          )}
         </div>
         {action && <div className="shrink-0">{action}</div>}
       </div>
       <div className="rounded-xl bg-muted/30 p-3">{children}</div>
-      {footer && <div className="mt-3 text-sm text-muted-foreground">{footer}</div>}
+      {footer && (
+        <div className="mt-3 text-sm text-muted-foreground">{footer}</div>
+      )}
     </div>
   );
 }
