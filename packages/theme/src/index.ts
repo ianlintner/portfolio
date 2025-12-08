@@ -5,3 +5,4 @@ export * from "./utils/theme";
 export * from "./components/primitives";
 export * from "./components/forms";
 export * from "./hooks";
+export * from "./components/layout";
