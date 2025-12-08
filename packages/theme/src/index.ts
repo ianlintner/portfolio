@@ -14,3 +14,4 @@ export * from "./components/overlay";
 export * from "./components/sidebar";
 export * from "./components/patterns";
 export * from "./components/widgets";
+export * from "./components/templates";
