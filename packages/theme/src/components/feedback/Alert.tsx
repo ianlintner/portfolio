@@ -13,7 +13,7 @@ const variantStyles: Record<AlertVariant, string> = {
     "border border-destructive/60 bg-destructive/10 text-destructive-foreground",
 };
 
-const iconMap: Record<AlertVariant, JSX.Element> = {
+const iconMap: Record<AlertVariant, React.ReactElement> = {
   info: (
     <svg
       className="h-4 w-4"
