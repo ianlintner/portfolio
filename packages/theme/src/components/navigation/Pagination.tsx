@@ -62,7 +62,7 @@ export function Pagination({
             ) : (
               <button
                 type="button"
-                onClick={() => go(p)}
+                onClick={() => go(p as number)}
                 className={cn(
                   "min-w-[38px] rounded-lg px-3 py-2 text-sm font-medium transition",
                   p === page

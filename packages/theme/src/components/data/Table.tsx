@@ -27,7 +27,7 @@ const useTableContext = () => {
 };
 
 export interface TableProps
-  extends React.TableHTMLAttributes<HTMLTableElement> {
+  extends Omit<React.TableHTMLAttributes<HTMLTableElement>, "border"> {
   density?: Density;
   striped?: boolean;
   hoverable?: boolean;
@@ -110,7 +110,7 @@ export const TableFooter = React.forwardRef<
 ));
 TableFooter.displayName = "TableFooter";
 
-type TableRowProps = React.HTMLAttributes<HTMLTableRowElement>;
+export type TableRowProps = React.HTMLAttributes<HTMLTableRowElement>;
 
 export const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
   ({ className, ...props }, ref) => {

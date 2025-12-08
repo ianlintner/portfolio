@@ -46,23 +46,23 @@ export function Tooltip({
     <span className="relative inline-flex">
       {React.cloneElement(children, {
         onMouseEnter: (e: React.MouseEvent) => {
-          children.props.onMouseEnter?.(e);
+          (children.props as any).onMouseEnter?.(e);
           show();
         },
         onMouseLeave: (e: React.MouseEvent) => {
-          children.props.onMouseLeave?.(e);
+          (children.props as any).onMouseLeave?.(e);
           hide();
         },
         onFocus: (e: React.FocusEvent) => {
-          children.props.onFocus?.(e);
+          (children.props as any).onFocus?.(e);
           show();
         },
         onBlur: (e: React.FocusEvent) => {
-          children.props.onBlur?.(e);
+          (children.props as any).onBlur?.(e);
           hide();
         },
         "aria-describedby": open ? id : undefined,
-      })}
+      } as any)}
 
       {open && (
         <span
