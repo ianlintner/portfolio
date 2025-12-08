@@ -708,4 +708,83 @@ declare function useCodeLanguageLocal(defaultLanguage?: string): {
     setLanguage: (lang: string) => void;
 };
 
-export { Avatar, AvatarGroup, type AvatarGroupProps, type AvatarProps, Badge, type BadgeProps, Button, type ButtonProps, CODE_LANGUAGES, Checkbox, type CheckboxProps, type CodeLanguage, CodeLanguageProvider, type CookieOptions, FormField, type FormFieldProps, IconButton, type IconButtonProps, Input, type InputProps, LANGUAGE_EXTENSIONS, LANGUAGE_LABELS, Label, type LabelProps, NotificationBadge, type NotificationBadgeProps, Radio, type RadioProps, Select, type SelectProps, Separator, type SeparatorProps, Slider, type SliderProps, Switch, type SwitchProps, Textarea, type TextareaProps, type ThemeColors, type ThemeName, ThemeProvider, ThemeSwitcher, animationVariants, bladeRunnerTheme, createThemedComponent, cyberNeonTheme, cyberpunk2077Theme, darkGlassyTheme, deleteCookie, draculaTheme, getCSSVar, getCookie, getTheme, glassVariants, glowVariants, isLocalStorageAvailable, mergeThemeClasses, midnightTheme, monokaiDarkTheme, nightOwlTheme, setCookie, sublimeMaterialTheme, synthwave84Theme, themeToCSSVars, themes, tokyoNightTheme, useBreakpoint, useCodeLanguage, useCodeLanguageLocal, useCookieStorage, useIsDesktop, useIsLargeDesktop, useIsMobile, useIsTablet, useLocalStorage, useMediaQuery, usePrefersDarkMode, usePrefersHighContrast, usePrefersReducedMotion, useTheme, useThemeClass };
+type ContainerWidth = "sm" | "md" | "lg" | "xl" | "2xl" | "full";
+interface ContainerProps extends React__default.HTMLAttributes<HTMLDivElement> {
+    /** Maximum width breakpoint */
+    maxWidth?: ContainerWidth;
+    /** Apply horizontal padding */
+    padded?: boolean;
+    /** Center the container (default true) */
+    center?: boolean;
+}
+/**
+ * Container
+ *
+ * Constrains content to a max width with optional padding and centering.
+ */
+declare function Container({ className, maxWidth, padded, center, ...props }: ContainerProps): react_jsx_runtime.JSX.Element;
+
+interface SectionProps extends Omit<React__default.HTMLAttributes<HTMLElement>, "title"> {
+    title?: React__default.ReactNode;
+    description?: React__default.ReactNode;
+    eyebrow?: React__default.ReactNode;
+    actions?: React__default.ReactNode;
+    maxWidth?: ContainerWidth;
+    padded?: boolean;
+    background?: "none" | "card" | "glass";
+    spacing?: "sm" | "md" | "lg";
+}
+/**
+ * Section
+ *
+ * A semantic section wrapper with optional heading, description, actions, and background.
+ */
+declare function Section({ className, title, description, eyebrow, actions, maxWidth, padded, background, spacing, children, ...props }: SectionProps): react_jsx_runtime.JSX.Element;
+
+interface StackProps extends React__default.HTMLAttributes<HTMLDivElement> {
+    direction?: "vertical" | "horizontal";
+    gap?: number | string;
+    align?: React__default.CSSProperties["alignItems"];
+    justify?: React__default.CSSProperties["justifyContent"];
+    wrap?: boolean;
+}
+/**
+ * Stack
+ *
+ * A simple flex stack with configurable direction, gap, alignment, and wrapping.
+ */
+declare function Stack({ className, direction, gap, align, justify, wrap, style, ...props }: StackProps): react_jsx_runtime.JSX.Element;
+
+type GridSpan = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+type ResponsiveCols = {
+    base?: GridSpan;
+    sm?: GridSpan;
+    md?: GridSpan;
+    lg?: GridSpan;
+    xl?: GridSpan;
+};
+interface GridProps extends React__default.HTMLAttributes<HTMLDivElement> {
+    cols?: ResponsiveCols | GridSpan;
+    gap?: number | string;
+    equalHeight?: boolean;
+}
+/**
+ * Grid
+ *
+ * Responsive CSS grid with shorthand for breakpoint column counts.
+ */
+declare function Grid({ className, cols, gap, equalHeight, style, children, ...props }: GridProps): react_jsx_runtime.JSX.Element;
+
+interface DividerProps extends React__default.HTMLAttributes<HTMLDivElement> {
+    orientation?: "horizontal" | "vertical";
+    label?: React__default.ReactNode;
+    variant?: "muted" | "strong" | "glow";
+}
+/**
+ * Divider
+ *
+ * A horizontal or vertical separator with optional centered label.
+ */
+declare function Divider({ className, orientation, label, variant, ...props }: DividerProps): react_jsx_runtime.JSX.Element;
+
+export { Avatar, AvatarGroup, type AvatarGroupProps, type AvatarProps, Badge, type BadgeProps, Button, type ButtonProps, CODE_LANGUAGES, Checkbox, type CheckboxProps, type CodeLanguage, CodeLanguageProvider, Container, type ContainerProps, type ContainerWidth, type CookieOptions, Divider, type DividerProps, FormField, type FormFieldProps, Grid, type GridProps, IconButton, type IconButtonProps, Input, type InputProps, LANGUAGE_EXTENSIONS, LANGUAGE_LABELS, Label, type LabelProps, NotificationBadge, type NotificationBadgeProps, Radio, type RadioProps, Section, type SectionProps, Select, type SelectProps, Separator, type SeparatorProps, Slider, type SliderProps, Stack, type StackProps, Switch, type SwitchProps, Textarea, type TextareaProps, type ThemeColors, type ThemeName, ThemeProvider, ThemeSwitcher, animationVariants, bladeRunnerTheme, createThemedComponent, cyberNeonTheme, cyberpunk2077Theme, darkGlassyTheme, deleteCookie, draculaTheme, getCSSVar, getCookie, getTheme, glassVariants, glowVariants, isLocalStorageAvailable, mergeThemeClasses, midnightTheme, monokaiDarkTheme, nightOwlTheme, setCookie, sublimeMaterialTheme, synthwave84Theme, themeToCSSVars, themes, tokyoNightTheme, useBreakpoint, useCodeLanguage, useCodeLanguageLocal, useCookieStorage, useIsDesktop, useIsLargeDesktop, useIsMobile, useIsTablet, useLocalStorage, useMediaQuery, usePrefersDarkMode, usePrefersHighContrast, usePrefersReducedMotion, useTheme, useThemeClass };
