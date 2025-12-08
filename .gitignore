@@ -114,3 +114,4 @@ istio-1.27.1
 # MkDocs build output
 /public/docs
 /site
+packages/theme/dist
