@@ -11,7 +11,8 @@ const variantStyles: Record<ToastVariant, string> = {
   info: "bg-background/90 text-foreground border border-border/60",
   success: "bg-emerald-600/10 text-emerald-50 border border-emerald-500/50",
   warning: "bg-amber-500/10 text-amber-50 border border-amber-400/60",
-  destructive: "bg-destructive/15 text-destructive-foreground border border-destructive/60",
+  destructive:
+    "bg-destructive/15 text-destructive-foreground border border-destructive/60",
 };
 
 export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -68,11 +69,15 @@ export function Toast({
     >
       {icon && <div className="mt-0.5 shrink-0 text-foreground/90">{icon}</div>}
       <div className="flex-1 space-y-1">
-        {title && <div className="text-sm font-semibold leading-5">{title}</div>}
-        {(description || children) && (
-          <div className="text-sm text-foreground/80">{description || children}</div>
+        {title && (
+          <div className="text-sm font-semibold leading-5">{title}</div>
         )}
-        {(actionLabel && onAction) && (
+        {(description || children) && (
+          <div className="text-sm text-foreground/80">
+            {description || children}
+          </div>
+        )}
+        {actionLabel && onAction && (
           <button
             type="button"
             onClick={onAction}

@@ -9,7 +9,8 @@ const variantStyles: Record<AlertVariant, string> = {
   info: "border border-border/60 bg-muted/40 text-foreground",
   success: "border border-emerald-500/50 bg-emerald-500/10 text-emerald-100",
   warning: "border border-amber-400/60 bg-amber-400/10 text-amber-50",
-  destructive: "border border-destructive/60 bg-destructive/10 text-destructive-foreground",
+  destructive:
+    "border border-destructive/60 bg-destructive/10 text-destructive-foreground",
 };
 
 const iconMap: Record<AlertVariant, JSX.Element> = {
@@ -87,7 +88,16 @@ export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
   (
-    { className, variant = "info", title, description, icon, action, children, ...props },
+    {
+      className,
+      variant = "info",
+      title,
+      description,
+      icon,
+      action,
+      children,
+      ...props
+    },
     ref,
   ) => {
     return (
@@ -107,7 +117,9 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         </div>
 
         <div className="flex-1 space-y-1">
-          {title && <div className="text-sm font-semibold leading-5">{title}</div>}
+          {title && (
+            <div className="text-sm font-semibold leading-5">{title}</div>
+          )}
           {(description || children) && (
             <div className="text-sm text-foreground/80">
               {description || children}

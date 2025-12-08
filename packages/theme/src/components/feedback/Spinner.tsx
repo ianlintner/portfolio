@@ -5,7 +5,13 @@ import { cn } from "../../utils/cn";
 
 export interface SpinnerProps extends React.SVGAttributes<SVGSVGElement> {
   size?: "xs" | "sm" | "md" | "lg" | "xl";
-  variant?: "primary" | "accent" | "muted" | "destructive" | "success" | "warning";
+  variant?:
+    | "primary"
+    | "accent"
+    | "muted"
+    | "destructive"
+    | "success"
+    | "warning";
   label?: string;
 }
 
@@ -37,7 +43,12 @@ export function Spinner({
     <span className="inline-flex items-center gap-2" aria-live="polite">
       <svg
         aria-hidden
-        className={cn("animate-spin", sizeMap[size], colorMap[variant], className)}
+        className={cn(
+          "animate-spin",
+          sizeMap[size],
+          colorMap[variant],
+          className,
+        )}
         viewBox="0 0 24 24"
         fill="none"
         {...props}
