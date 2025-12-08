@@ -2,7 +2,8 @@ import React from "react";
 import { cn } from "../../utils/cn";
 import { Button } from "../primitives/Button";
 
-export interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface EmptyStateProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   icon?: React.ReactNode;
   title: React.ReactNode;
   description?: React.ReactNode;

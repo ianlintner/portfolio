@@ -2,7 +2,7 @@ import React from "react";
 import { cn } from "../../utils/cn";
 
 export interface InlineCodeProps extends React.HTMLAttributes<HTMLElement> {
-  as?: keyof JSX.IntrinsicElements;
+  as?: React.ElementType;
 }
 
 /**

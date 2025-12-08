@@ -11,10 +11,12 @@ export interface PaginationProps extends React.HTMLAttributes<HTMLDivElement> {
   showEdges?: boolean;
 }
 
-function createPageNumbers(current: number, total: number) {
-  const pages: (number | "ellipsis")[] = [];
+const ELLIPSIS = "ellipsis" as const;
+type PageValue = number | typeof ELLIPSIS;
+
+function createPageNumbers(current: number, total: number): PageValue[] {
   const delta = 1;
-  const range = [];
+  const range: PageValue[] = [];
   for (
     let i = Math.max(2, current - delta);
     i <= Math.min(total - 1, current + delta);
@@ -22,8 +24,8 @@ function createPageNumbers(current: number, total: number) {
   ) {
     range.push(i);
   }
-  if (current - delta > 2) range.unshift("ellipsis");
-  if (current + delta < total - 1) range.push("ellipsis");
+  if (current - delta > 2) range.unshift(ELLIPSIS);
+  if (current + delta < total - 1) range.push(ELLIPSIS);
   return [1, ...range, total];
 }
 
@@ -37,7 +39,9 @@ export function Pagination({
 }: PaginationProps) {
   const pages = createPageNumbers(page, Math.max(totalPages, 1));
 
-  const go = (p: number) => {
+  const go = (p: PageValue) => {
+    if (p === ELLIPSIS) return;
+
     const clamped = Math.min(Math.max(1, p), totalPages);
     if (clamped !== page) onPageChange(clamped);
   };
@@ -55,27 +59,32 @@ export function Pagination({
       </Button>
 
       {showEdges &&
-        pages.map((p, idx) => (
-          <React.Fragment key={idx}>
-            {p === "ellipsis" ? (
-              <span className="px-2 text-muted-foreground">…</span>
-            ) : (
-              <button
-                type="button"
-                onClick={() => go(p)}
-                className={cn(
-                  "min-w-[38px] rounded-lg px-3 py-2 text-sm font-medium transition",
-                  p === page
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-background text-foreground hover:bg-muted/50",
-                )}
-                aria-current={p === page ? "page" : undefined}
-              >
-                {p}
-              </button>
-            )}
-          </React.Fragment>
-        ))}
+        pages.map((p, idx) => {
+          if (p === "ellipsis") {
+            return (
+              <span key={`ellipsis-${idx}`} className="px-2 text-muted-foreground">
+                …
+              </span>
+            );
+          }
+
+          return (
+            <button
+              key={p}
+              type="button"
+              onClick={() => go(p)}
+              className={cn(
+                "min-w-[38px] rounded-lg px-3 py-2 text-sm font-medium transition",
+                p === page
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-background text-foreground hover:bg-muted/50",
+              )}
+              aria-current={p === page ? "page" : undefined}
+            >
+              {p}
+            </button>
+          );
+        })}
 
       <Button
         variant="outline"
