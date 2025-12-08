@@ -48,7 +48,9 @@ export function DashboardLayout({
                 </p>
               )}
             </div>
-            {actions && <div className="flex items-center gap-3">{actions}</div>}
+            {actions && (
+              <div className="flex items-center gap-3">{actions}</div>
+            )}
           </div>
           {toolbar && (
             <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-border/60 bg-muted/40 p-3 text-sm text-muted-foreground">
@@ -57,7 +59,11 @@ export function DashboardLayout({
           )}
         </div>
 
-        {stats && <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">{stats}</div>}
+        {stats && (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {stats}
+          </div>
+        )}
 
         <div
           className={cn(

@@ -29,7 +29,9 @@ export function AuthLayout({
     >
       <div className="flex items-center justify-center px-6 py-10 sm:px-12">
         <div className="w-full max-w-md space-y-8">
-          {brand && <div className="text-sm text-muted-foreground">{brand}</div>}
+          {brand && (
+            <div className="text-sm text-muted-foreground">{brand}</div>
+          )}
           <div className="space-y-2">
             <h1 className="text-3xl font-semibold leading-tight text-foreground">
               {title}
@@ -58,7 +60,10 @@ export function AuthLayout({
                 className="mx-auto h-48 w-48 text-primary/70"
                 fill="currentColor"
               >
-                <path d="M47.4,-57.2C59.9,-46.9,67.1,-31.9,68.5,-17C69.8,-2.1,65.2,12.8,57.8,25.8C50.3,38.8,40,49.9,27.8,55.9C15.6,61.9,1.5,62.8,-12.7,64.2C-26.8,65.6,-40.9,67.4,-52.5,61.4C-64.1,55.4,-73.2,41.6,-74.7,27.2C-76.2,12.8,-70.1,-2.1,-64.6,-16C-59.2,-29.9,-54.3,-42.8,-44.4,-52.7C-34.5,-62.7,-19.7,-69.8,-3.2,-66.2C13.2,-62.7,26.5,-48.6,47.4,-57.2Z" transform="translate(100 100)" />
+                <path
+                  d="M47.4,-57.2C59.9,-46.9,67.1,-31.9,68.5,-17C69.8,-2.1,65.2,12.8,57.8,25.8C50.3,38.8,40,49.9,27.8,55.9C15.6,61.9,1.5,62.8,-12.7,64.2C-26.8,65.6,-40.9,67.4,-52.5,61.4C-64.1,55.4,-73.2,41.6,-74.7,27.2C-76.2,12.8,-70.1,-2.1,-64.6,-16C-59.2,-29.9,-54.3,-42.8,-44.4,-52.7C-34.5,-62.7,-19.7,-69.8,-3.2,-66.2C13.2,-62.7,26.5,-48.6,47.4,-57.2Z"
+                  transform="translate(100 100)"
+                />
               </svg>
             )}
             <div className="space-y-2 text-sm leading-relaxed text-slate-200/80">
