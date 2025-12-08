@@ -60,7 +60,9 @@ export function Dialog({
         {(title || description) && (
           <header className="mb-4 space-y-1">
             {title && <h3 className="text-lg font-semibold">{title}</h3>}
-            {description && <p className="text-sm text-muted-foreground">{description}</p>}
+            {description && (
+              <p className="text-sm text-muted-foreground">{description}</p>
+            )}
           </header>
         )}
         <div>{children}</div>

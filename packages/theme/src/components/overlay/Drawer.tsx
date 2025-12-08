@@ -41,7 +41,11 @@ export function Drawer({
 
   return (
     <div className="fixed inset-0 z-50" role="dialog" aria-modal="true">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} aria-hidden />
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+        aria-hidden
+      />
       <div
         className={cn(
           "absolute flex flex-col gap-4 border border-border/60 bg-card/90 p-6 shadow-2xl",
@@ -51,7 +55,9 @@ export function Drawer({
       >
         <header className="space-y-1">
           {title && <h3 className="text-lg font-semibold">{title}</h3>}
-          {description && <p className="text-sm text-muted-foreground">{description}</p>}
+          {description && (
+            <p className="text-sm text-muted-foreground">{description}</p>
+          )}
         </header>
         <div className="flex-1 overflow-auto pr-1">{children}</div>
         <div className="flex justify-end">
