@@ -6,5 +6,6 @@ export * from "./components/primitives";
 export * from "./components/forms";
 export * from "./components/data";
 export * from "./components/code";
+export * from "./components/feedback";
 export * from "./hooks";
 export * from "./components/layout";
