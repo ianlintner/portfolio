@@ -5,8 +5,7 @@ import { cn } from "../../utils/cn";
 
 export type ContainerWidth = "sm" | "md" | "lg" | "xl" | "2xl" | "full";
 
-export interface ContainerProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Maximum width breakpoint */
   maxWidth?: ContainerWidth;
   /** Apply horizontal padding */
@@ -43,7 +42,7 @@ export function Container({
         widthClasses[maxWidth],
         padded && "px-4 sm:px-6 lg:px-8",
         center && "mx-auto",
-        className
+        className,
       )}
       {...props}
     />

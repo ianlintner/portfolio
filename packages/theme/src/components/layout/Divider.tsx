@@ -36,7 +36,7 @@ export function Divider({
         className={cn(
           "flex h-full flex-col items-center",
           label ? "gap-2 px-2" : "px-1",
-          className
+          className,
         )}
         {...props}
       >
@@ -58,7 +58,7 @@ export function Divider({
       className={cn(
         "flex w-full items-center",
         label ? "gap-3" : "gap-2",
-        className
+        className,
       )}
       {...props}
     >

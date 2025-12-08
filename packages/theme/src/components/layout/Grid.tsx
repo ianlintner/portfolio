@@ -36,7 +36,8 @@ export function Grid({
   children,
   ...props
 }: GridProps) {
-  const config: ResponsiveCols = typeof cols === "number" ? { base: cols } : cols;
+  const config: ResponsiveCols =
+    typeof cols === "number" ? { base: cols } : cols;
 
   const gapClass = typeof gap === "number" ? `gap-${gap}` : undefined;
 
@@ -51,7 +52,7 @@ export function Grid({
         spanClass("xl:", config.xl),
         gapClass,
         equalHeight && "[&>*]:h-full",
-        className
+        className,
       )}
       style={{ gap: typeof gap === "string" ? gap : undefined, ...style }}
       {...props}

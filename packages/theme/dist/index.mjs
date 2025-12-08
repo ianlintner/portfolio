@@ -47,7 +47,7 @@ var darkGlassyTheme = {
   // Electric blue
   glowSecondary: "270 100% 60%",
   // Purple
-  glowAccent: "190 100% 50%"
+  glowAccent: "190 100% 50%",
   // Cyan
 };
 var cyberNeonTheme = {
@@ -94,7 +94,7 @@ var cyberNeonTheme = {
   // Cyan
   glowSecondary: "320 100% 50%",
   // Pink
-  glowAccent: "120 100% 50%"
+  glowAccent: "120 100% 50%",
   // Green
 };
 var midnightTheme = {
@@ -141,7 +141,7 @@ var midnightTheme = {
   // Amber
   glowSecondary: "270 50% 45%",
   // Purple
-  glowAccent: "180 60% 50%"
+  glowAccent: "180 60% 50%",
   // Teal
 };
 var draculaTheme = {
@@ -175,7 +175,7 @@ var draculaTheme = {
   glassDark: "231 15% 20%",
   glowPrimary: "265 89% 78%",
   glowSecondary: "331 73% 70%",
-  glowAccent: "48 100% 66%"
+  glowAccent: "48 100% 66%",
 };
 var monokaiDarkTheme = {
   background: "0 0% 9%",
@@ -208,7 +208,7 @@ var monokaiDarkTheme = {
   glassDark: "0 0% 12%",
   glowPrimary: "180 100% 42%",
   glowSecondary: "290 100% 71%",
-  glowAccent: "60 100% 50%"
+  glowAccent: "60 100% 50%",
 };
 var nightOwlTheme = {
   background: "212 21% 14%",
@@ -241,7 +241,7 @@ var nightOwlTheme = {
   glassDark: "212 21% 16%",
   glowPrimary: "198 100% 50%",
   glowSecondary: "264 67% 68%",
-  glowAccent: "47 100% 67%"
+  glowAccent: "47 100% 67%",
 };
 var synthwave84Theme = {
   background: "280 40% 15%",
@@ -274,7 +274,7 @@ var synthwave84Theme = {
   glassDark: "280 40% 18%",
   glowPrimary: "300 100% 60%",
   glowSecondary: "182 100% 50%",
-  glowAccent: "72 100% 50%"
+  glowAccent: "72 100% 50%",
 };
 var tokyoNightTheme = {
   background: "210 16% 15%",
@@ -307,7 +307,7 @@ var tokyoNightTheme = {
   glassDark: "210 16% 17%",
   glowPrimary: "200 100% 62%",
   glowSecondary: "280 74% 65%",
-  glowAccent: "41 92% 62%"
+  glowAccent: "41 92% 62%",
 };
 var sublimeMaterialTheme = {
   background: "200 26% 15%",
@@ -340,7 +340,7 @@ var sublimeMaterialTheme = {
   glassDark: "200 26% 17%",
   glowPrimary: "200 100% 50%",
   glowSecondary: "260 100% 65%",
-  glowAccent: "45 100% 55%"
+  glowAccent: "45 100% 55%",
 };
 var cyberpunk2077Theme = {
   background: "0 0% 0%",
@@ -373,7 +373,7 @@ var cyberpunk2077Theme = {
   glassDark: "320 5% 8%",
   glowPrimary: "300 100% 50%",
   glowSecondary: "180 100% 50%",
-  glowAccent: "60 100% 50%"
+  glowAccent: "60 100% 50%",
 };
 var bladeRunnerTheme = {
   background: "90 40% 8%",
@@ -406,7 +406,7 @@ var bladeRunnerTheme = {
   glassDark: "90 40% 10%",
   glowPrimary: "90 100% 50%",
   glowSecondary: "40 100% 50%",
-  glowAccent: "40 100% 55%"
+  glowAccent: "40 100% 55%",
 };
 var themes = {
   "dark-glassy": darkGlassyTheme,
@@ -419,7 +419,7 @@ var themes = {
   "tokyo-night": tokyoNightTheme,
   "sublime-material": sublimeMaterialTheme,
   "cyberpunk-2077": cyberpunk2077Theme,
-  "blade-runner": bladeRunnerTheme
+  "blade-runner": bladeRunnerTheme,
 };
 function themeToCSSVars(theme) {
   return {
@@ -447,7 +447,7 @@ function themeToCSSVars(theme) {
     "--glass-dark": theme.glassDark,
     "--glow-primary": theme.glowPrimary,
     "--glow-secondary": theme.glowSecondary,
-    "--glow-accent": theme.glowAccent
+    "--glow-accent": theme.glowAccent,
   };
 }
 function getTheme(name) {
@@ -462,9 +462,7 @@ function ThemeProvider({ children }) {
   const [customTheme, setCustomThemeState] = useState("dark-glassy");
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
-    const storedCustomTheme = localStorage.getItem(
-      "custom-theme"
-    );
+    const storedCustomTheme = localStorage.getItem("custom-theme");
     if (storedCustomTheme) {
       setCustomThemeState(storedCustomTheme);
       applyCustomTheme(storedCustomTheme);
@@ -489,16 +487,13 @@ function ThemeProvider({ children }) {
   if (!mounted) {
     return /* @__PURE__ */ jsx(Fragment, { children });
   }
-  return /* @__PURE__ */ jsx(
-    ThemeContext.Provider,
-    {
-      value: {
-        customTheme,
-        setCustomTheme
-      },
-      children
-    }
-  );
+  return /* @__PURE__ */ jsx(ThemeContext.Provider, {
+    value: {
+      customTheme,
+      setCustomTheme,
+    },
+    children,
+  });
 }
 function useTheme() {
   const ctx = useContext(ThemeContext);
@@ -510,22 +505,34 @@ function useTheme() {
 import { jsx as jsx2 } from "react/jsx-runtime";
 function ThemeSwitcher() {
   const { customTheme, setCustomTheme } = useTheme();
-  return /* @__PURE__ */ jsx2(
-    "select",
-    {
-      value: customTheme,
-      onChange: (e) => setCustomTheme(e.target.value),
-      title: "Select color theme",
-      className: "px-3 py-1 rounded-lg bg-glass border border-glass-light text-foreground text-sm cursor-pointer hover:border-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary",
-      children: Object.keys(themes).map((name) => /* @__PURE__ */ jsx2("option", { value: name, children: name.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") }, name))
-    }
-  );
+  return /* @__PURE__ */ jsx2("select", {
+    value: customTheme,
+    onChange: (e) => setCustomTheme(e.target.value),
+    title: "Select color theme",
+    className:
+      "px-3 py-1 rounded-lg bg-glass border border-glass-light text-foreground text-sm cursor-pointer hover:border-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary",
+    children: Object.keys(themes).map((name) =>
+      /* @__PURE__ */ jsx2(
+        "option",
+        {
+          value: name,
+          children: name
+            .split("-")
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" "),
+        },
+        name,
+      ),
+    ),
+  });
 }
 
 // src/utils/theme.ts
 function getCSSVar(varName) {
   if (typeof window === "undefined") return "";
-  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(varName)
+    .trim();
 }
 function useThemeClass(themeClasses, defaultClass = "") {
   const { customTheme } = useTheme();
@@ -534,20 +541,20 @@ function useThemeClass(themeClasses, defaultClass = "") {
 var glassVariants = {
   standard: "glass",
   elevated: "glass-elevated",
-  glow: "glass-glow"
+  glow: "glass-glow",
 };
 var glowVariants = {
   primary: "glow-primary",
   secondary: "glow-secondary",
   accent: "glow-accent",
   sm: "glow-sm",
-  lg: "glow-lg"
+  lg: "glow-lg",
 };
 var animationVariants = {
   fadeIn: "animate-fade-in",
   in: "animate-in",
   pulse: "animate-glow-pulse",
-  float: "animate-float"
+  float: "animate-float",
 };
 function mergeThemeClasses(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -573,130 +580,131 @@ var variantStyles = {
     "bg-primary text-primary-foreground",
     "hover:bg-primary/90",
     "active:bg-primary/80",
-    "focus-visible:ring-primary"
+    "focus-visible:ring-primary",
   ),
   secondary: cn(
     "bg-secondary text-secondary-foreground",
     "hover:bg-secondary/80",
     "active:bg-secondary/70",
-    "focus-visible:ring-secondary"
+    "focus-visible:ring-secondary",
   ),
   outline: cn(
     "border border-border bg-transparent text-foreground",
     "hover:bg-accent/10 hover:border-accent",
     "active:bg-accent/20",
-    "focus-visible:ring-accent"
+    "focus-visible:ring-accent",
   ),
   ghost: cn(
     "bg-transparent text-foreground",
     "hover:bg-accent/10",
     "active:bg-accent/20",
-    "focus-visible:ring-accent"
+    "focus-visible:ring-accent",
   ),
   destructive: cn(
     "bg-destructive text-destructive-foreground",
     "hover:bg-destructive/90",
     "active:bg-destructive/80",
-    "focus-visible:ring-destructive"
+    "focus-visible:ring-destructive",
   ),
   glass: cn(
     "glass text-foreground",
     "hover:glass-elevated",
     "active:bg-glass-dark/60",
-    "focus-visible:ring-primary"
-  )
+    "focus-visible:ring-primary",
+  ),
 };
 var sizeStyles = {
   xs: "h-7 px-2 text-xs gap-1 rounded",
   sm: "h-8 px-3 text-sm gap-1.5 rounded-md",
   md: "h-10 px-4 text-sm gap-2 rounded-lg",
   lg: "h-11 px-6 text-base gap-2 rounded-lg",
-  xl: "h-12 px-8 text-lg gap-3 rounded-xl"
+  xl: "h-12 px-8 text-lg gap-3 rounded-xl",
 };
 var iconSizeStyles = {
   xs: "[&_svg]:w-3 [&_svg]:h-3",
   sm: "[&_svg]:w-4 [&_svg]:h-4",
   md: "[&_svg]:w-4 [&_svg]:h-4",
   lg: "[&_svg]:w-5 [&_svg]:h-5",
-  xl: "[&_svg]:w-6 [&_svg]:h-6"
+  xl: "[&_svg]:w-6 [&_svg]:h-6",
 };
 var Button = forwardRef(
-  ({
-    className,
-    variant = "primary",
-    size = "md",
-    glow = false,
-    loading = false,
-    leftIcon,
-    rightIcon,
-    fullWidth = false,
-    disabled,
-    children,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      variant = "primary",
+      size = "md",
+      glow = false,
+      loading = false,
+      leftIcon,
+      rightIcon,
+      fullWidth = false,
+      disabled,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
     const isDisabled = disabled || loading;
-    return /* @__PURE__ */ jsxs(
-      "button",
-      {
-        ref,
-        disabled: isDisabled,
-        className: cn(
-          // Base styles
-          "inline-flex items-center justify-center font-medium",
-          "transition-all duration-200 ease-out",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          // Variant styles
-          variantStyles[variant],
-          // Size styles
-          sizeStyles[size],
-          iconSizeStyles[size],
-          // Glow effect
-          glow && "hover:shadow-glow",
-          // Full width
-          fullWidth && "w-full",
-          // Disabled state
-          isDisabled && "opacity-50 cursor-not-allowed pointer-events-none",
-          className
-        ),
-        ...props,
-        children: [
-          loading && /* @__PURE__ */ jsxs(
-            "svg",
-            {
-              className: "animate-spin -ml-1 mr-2",
-              xmlns: "http://www.w3.org/2000/svg",
-              fill: "none",
-              viewBox: "0 0 24 24",
-              children: [
-                /* @__PURE__ */ jsx3(
-                  "circle",
-                  {
-                    className: "opacity-25",
-                    cx: "12",
-                    cy: "12",
-                    r: "10",
-                    stroke: "currentColor",
-                    strokeWidth: "4"
-                  }
-                ),
-                /* @__PURE__ */ jsx3(
-                  "path",
-                  {
-                    className: "opacity-75",
-                    fill: "currentColor",
-                    d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  }
-                )
-              ]
-            }
-          ),
-          !loading && leftIcon && /* @__PURE__ */ jsx3("span", { className: "shrink-0", children: leftIcon }),
-          children,
-          rightIcon && /* @__PURE__ */ jsx3("span", { className: "shrink-0", children: rightIcon })
-        ]
-      }
-    );
-  }
+    return /* @__PURE__ */ jsxs("button", {
+      ref,
+      disabled: isDisabled,
+      className: cn(
+        // Base styles
+        "inline-flex items-center justify-center font-medium",
+        "transition-all duration-200 ease-out",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        // Variant styles
+        variantStyles[variant],
+        // Size styles
+        sizeStyles[size],
+        iconSizeStyles[size],
+        // Glow effect
+        glow && "hover:shadow-glow",
+        // Full width
+        fullWidth && "w-full",
+        // Disabled state
+        isDisabled && "opacity-50 cursor-not-allowed pointer-events-none",
+        className,
+      ),
+      ...props,
+      children: [
+        loading &&
+          /* @__PURE__ */ jsxs("svg", {
+            className: "animate-spin -ml-1 mr-2",
+            xmlns: "http://www.w3.org/2000/svg",
+            fill: "none",
+            viewBox: "0 0 24 24",
+            children: [
+              /* @__PURE__ */ jsx3("circle", {
+                className: "opacity-25",
+                cx: "12",
+                cy: "12",
+                r: "10",
+                stroke: "currentColor",
+                strokeWidth: "4",
+              }),
+              /* @__PURE__ */ jsx3("path", {
+                className: "opacity-75",
+                fill: "currentColor",
+                d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z",
+              }),
+            ],
+          }),
+        !loading &&
+          leftIcon &&
+          /* @__PURE__ */ jsx3("span", {
+            className: "shrink-0",
+            children: leftIcon,
+          }),
+        children,
+        rightIcon &&
+          /* @__PURE__ */ jsx3("span", {
+            className: "shrink-0",
+            children: rightIcon,
+          }),
+      ],
+    });
+  },
 );
 Button.displayName = "Button";
 var IconButton = forwardRef(
@@ -706,19 +714,16 @@ var IconButton = forwardRef(
       sm: "h-8 w-8",
       md: "h-10 w-10",
       lg: "h-11 w-11",
-      xl: "h-12 w-12"
+      xl: "h-12 w-12",
     };
-    return /* @__PURE__ */ jsx3(
-      Button,
-      {
-        ref,
-        size,
-        className: cn("!px-0", iconButtonSizes[size], className),
-        ...props,
-        children: icon
-      }
-    );
-  }
+    return /* @__PURE__ */ jsx3(Button, {
+      ref,
+      size,
+      className: cn("!px-0", iconButtonSizes[size], className),
+      ...props,
+      children: icon,
+    });
+  },
 );
 IconButton.displayName = "IconButton";
 
@@ -732,12 +737,12 @@ var variantStyles2 = {
   success: "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30",
   warning: "bg-amber-500/20 text-amber-400 border border-amber-500/30",
   error: "bg-red-500/20 text-red-400 border border-red-500/30",
-  info: "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+  info: "bg-blue-500/20 text-blue-400 border border-blue-500/30",
 };
 var sizeStyles2 = {
   sm: "text-[10px] px-1.5 py-0.5 gap-1",
   md: "text-xs px-2 py-0.5 gap-1.5",
-  lg: "text-sm px-2.5 py-1 gap-1.5"
+  lg: "text-sm px-2.5 py-1 gap-1.5",
 };
 var dotVariantColors = {
   default: "bg-primary-foreground",
@@ -746,7 +751,7 @@ var dotVariantColors = {
   success: "bg-emerald-400",
   warning: "bg-amber-400",
   error: "bg-red-400",
-  info: "bg-blue-400"
+  info: "bg-blue-400",
 };
 var glowVariantColors = {
   default: "shadow-[0_0_10px_hsla(var(--primary),0.5)]",
@@ -755,86 +760,90 @@ var glowVariantColors = {
   success: "shadow-[0_0_10px_rgba(16,185,129,0.5)]",
   warning: "shadow-[0_0_10px_rgba(245,158,11,0.5)]",
   error: "shadow-[0_0_10px_rgba(239,68,68,0.5)]",
-  info: "shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+  info: "shadow-[0_0_10px_rgba(59,130,246,0.5)]",
 };
 var Badge = forwardRef2(
-  ({
-    className,
-    variant = "default",
-    size = "md",
-    dot = false,
-    glow = false,
-    pill = false,
-    children,
-    ...props
-  }, ref) => {
-    return /* @__PURE__ */ jsxs2(
-      "span",
-      {
-        ref,
-        className: cn(
-          // Base styles
-          "inline-flex items-center font-medium leading-none",
-          "transition-all duration-200",
-          // Border radius
-          pill ? "rounded-full" : "rounded-md",
-          // Variant styles
-          variantStyles2[variant],
-          // Size styles
-          sizeStyles2[size],
-          // Glow effect
-          glow && glowVariantColors[variant],
-          className
-        ),
-        ...props,
-        children: [
-          dot && /* @__PURE__ */ jsx4(
-            "span",
-            {
-              className: cn(
-                "shrink-0 rounded-full animate-pulse",
-                size === "sm" && "w-1.5 h-1.5",
-                size === "md" && "w-2 h-2",
-                size === "lg" && "w-2.5 h-2.5",
-                dotVariantColors[variant]
-              )
-            }
-          ),
-          children
-        ]
-      }
-    );
-  }
+  (
+    {
+      className,
+      variant = "default",
+      size = "md",
+      dot = false,
+      glow = false,
+      pill = false,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    return /* @__PURE__ */ jsxs2("span", {
+      ref,
+      className: cn(
+        // Base styles
+        "inline-flex items-center font-medium leading-none",
+        "transition-all duration-200",
+        // Border radius
+        pill ? "rounded-full" : "rounded-md",
+        // Variant styles
+        variantStyles2[variant],
+        // Size styles
+        sizeStyles2[size],
+        // Glow effect
+        glow && glowVariantColors[variant],
+        className,
+      ),
+      ...props,
+      children: [
+        dot &&
+          /* @__PURE__ */ jsx4("span", {
+            className: cn(
+              "shrink-0 rounded-full animate-pulse",
+              size === "sm" && "w-1.5 h-1.5",
+              size === "md" && "w-2 h-2",
+              size === "lg" && "w-2.5 h-2.5",
+              dotVariantColors[variant],
+            ),
+          }),
+        children,
+      ],
+    });
+  },
 );
 Badge.displayName = "Badge";
-var NotificationBadge = forwardRef2(({ count, max = 99, dot = false, size = "md", className }, ref) => {
-  if (count === void 0 && !dot) return null;
-  if (count === 0 && !dot) return null;
-  const displayValue = dot ? null : count !== void 0 && count > max ? `${max}+` : count;
-  const sizeClasses = {
-    sm: dot ? "w-2 h-2" : "min-w-4 h-4 text-[10px] px-1",
-    md: dot ? "w-2.5 h-2.5" : "min-w-5 h-5 text-xs px-1.5",
-    lg: dot ? "w-3 h-3" : "min-w-6 h-6 text-sm px-2"
-  };
-  return /* @__PURE__ */ jsx4(
-    "span",
-    {
+var NotificationBadge = forwardRef2(
+  ({ count, max = 99, dot = false, size = "md", className }, ref) => {
+    if (count === void 0 && !dot) return null;
+    if (count === 0 && !dot) return null;
+    const displayValue = dot
+      ? null
+      : count !== void 0 && count > max
+        ? `${max}+`
+        : count;
+    const sizeClasses = {
+      sm: dot ? "w-2 h-2" : "min-w-4 h-4 text-[10px] px-1",
+      md: dot ? "w-2.5 h-2.5" : "min-w-5 h-5 text-xs px-1.5",
+      lg: dot ? "w-3 h-3" : "min-w-6 h-6 text-sm px-2",
+    };
+    return /* @__PURE__ */ jsx4("span", {
       ref,
       className: cn(
         "inline-flex items-center justify-center",
         "bg-destructive text-destructive-foreground font-medium",
         "rounded-full",
         sizeClasses[size],
-        className
+        className,
       ),
-      children: displayValue
-    }
-  );
-});
+      children: displayValue,
+    });
+  },
+);
 NotificationBadge.displayName = "NotificationBadge";
 
 // src/components/primitives/Avatar.tsx
-import React3, { forwardRef as forwardRef3, useState as useState2 } from "react";
+import React3, {
+  forwardRef as forwardRef3,
+  useState as useState2,
+} from "react";
 import { jsx as jsx5, jsxs as jsxs3 } from "react/jsx-runtime";
 var sizeStyles3 = {
   xs: "w-6 h-6 text-xs",
@@ -842,7 +851,7 @@ var sizeStyles3 = {
   md: "w-10 h-10 text-base",
   lg: "w-12 h-12 text-lg",
   xl: "w-16 h-16 text-xl",
-  "2xl": "w-20 h-20 text-2xl"
+  "2xl": "w-20 h-20 text-2xl",
 };
 var statusSizeStyles = {
   xs: "w-1.5 h-1.5 border",
@@ -850,27 +859,30 @@ var statusSizeStyles = {
   md: "w-2.5 h-2.5 border-2",
   lg: "w-3 h-3 border-2",
   xl: "w-4 h-4 border-2",
-  "2xl": "w-5 h-5 border-2"
+  "2xl": "w-5 h-5 border-2",
 };
 var statusColors = {
   online: "bg-emerald-500",
   offline: "bg-gray-400",
   away: "bg-amber-500",
-  busy: "bg-red-500"
+  busy: "bg-red-500",
 };
 var Avatar = forwardRef3(
-  ({
-    className,
-    src,
-    alt = "",
-    fallback,
-    size = "md",
-    shape = "circle",
-    status,
-    bordered = false,
-    glow = false,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      src,
+      alt = "",
+      fallback,
+      size = "md",
+      shape = "circle",
+      status,
+      bordered = false,
+      glow = false,
+      ...props
+    },
+    ref,
+  ) => {
     const [imageError, setImageError] = useState2(false);
     const showFallback = !src || imageError;
     const getInitials = (text) => {
@@ -880,59 +892,55 @@ var Avatar = forwardRef3(
       }
       return (words[0][0] + words[words.length - 1][0]).toUpperCase();
     };
-    const fallbackContent = typeof fallback === "string" ? getInitials(fallback) : fallback;
-    return /* @__PURE__ */ jsxs3(
-      "div",
-      {
-        ref,
-        className: cn("relative inline-block", className),
-        ...props,
-        children: [
-          /* @__PURE__ */ jsxs3(
-            "div",
-            {
-              className: cn(
-                // Base styles
-                "relative overflow-hidden flex items-center justify-center",
-                "bg-muted text-muted-foreground font-medium",
-                // Shape
-                shape === "circle" ? "rounded-full" : "rounded-lg",
-                // Size
-                sizeStyles3[size],
-                // Border
-                bordered && "ring-2 ring-border ring-offset-2 ring-offset-background",
-                // Glow
-                glow && "shadow-glow"
-              ),
-              children: [
-                !showFallback && /* @__PURE__ */ jsx5(
-                  "img",
-                  {
-                    src,
-                    alt,
-                    onError: () => setImageError(true),
-                    className: "w-full h-full object-cover"
-                  }
-                ),
-                showFallback && /* @__PURE__ */ jsx5("span", { className: "select-none", children: fallbackContent })
-              ]
-            }
+    const fallbackContent =
+      typeof fallback === "string" ? getInitials(fallback) : fallback;
+    return /* @__PURE__ */ jsxs3("div", {
+      ref,
+      className: cn("relative inline-block", className),
+      ...props,
+      children: [
+        /* @__PURE__ */ jsxs3("div", {
+          className: cn(
+            // Base styles
+            "relative overflow-hidden flex items-center justify-center",
+            "bg-muted text-muted-foreground font-medium",
+            // Shape
+            shape === "circle" ? "rounded-full" : "rounded-lg",
+            // Size
+            sizeStyles3[size],
+            // Border
+            bordered &&
+              "ring-2 ring-border ring-offset-2 ring-offset-background",
+            // Glow
+            glow && "shadow-glow",
           ),
-          status && /* @__PURE__ */ jsx5(
-            "span",
-            {
-              className: cn(
-                "absolute bottom-0 right-0",
-                "rounded-full border-background",
-                statusSizeStyles[size],
-                statusColors[status]
-              )
-            }
-          )
-        ]
-      }
-    );
-  }
+          children: [
+            !showFallback &&
+              /* @__PURE__ */ jsx5("img", {
+                src,
+                alt,
+                onError: () => setImageError(true),
+                className: "w-full h-full object-cover",
+              }),
+            showFallback &&
+              /* @__PURE__ */ jsx5("span", {
+                className: "select-none",
+                children: fallbackContent,
+              }),
+          ],
+        }),
+        status &&
+          /* @__PURE__ */ jsx5("span", {
+            className: cn(
+              "absolute bottom-0 right-0",
+              "rounded-full border-background",
+              statusSizeStyles[size],
+              statusColors[status],
+            ),
+          }),
+      ],
+    });
+  },
 );
 Avatar.displayName = "Avatar";
 var AvatarGroup = forwardRef3(
@@ -946,36 +954,38 @@ var AvatarGroup = forwardRef3(
       md: "-space-x-3",
       lg: "-space-x-4",
       xl: "-space-x-5",
-      "2xl": "-space-x-6"
+      "2xl": "-space-x-6",
     };
-    return /* @__PURE__ */ jsxs3(
-      "div",
-      {
-        ref,
-        className: cn("flex items-center", overlapStyles[size], className),
-        ...props,
-        children: [
-          visibleChildren.map((child, index) => /* @__PURE__ */ jsx5(
+    return /* @__PURE__ */ jsxs3("div", {
+      ref,
+      className: cn("flex items-center", overlapStyles[size], className),
+      ...props,
+      children: [
+        visibleChildren.map((child, index) =>
+          /* @__PURE__ */ jsx5(
             "div",
             {
               className: "ring-2 ring-background rounded-full",
               style: { zIndex: visibleChildren.length - index },
-              children: React3.isValidElement(child) ? React3.cloneElement(child, { size }) : child
+              children: React3.isValidElement(child)
+                ? React3.cloneElement(child, { size })
+                : child,
             },
-            index
-          )),
-          remainingCount > 0 && /* @__PURE__ */ jsx5(
-            "div",
-            {
-              className: "ring-2 ring-background rounded-full",
-              style: { zIndex: 0 },
-              children: /* @__PURE__ */ jsx5(Avatar, { size, fallback: `+${remainingCount}` })
-            }
-          )
-        ]
-      }
-    );
-  }
+            index,
+          ),
+        ),
+        remainingCount > 0 &&
+          /* @__PURE__ */ jsx5("div", {
+            className: "ring-2 ring-background rounded-full",
+            style: { zIndex: 0 },
+            children: /* @__PURE__ */ jsx5(Avatar, {
+              size,
+              fallback: `+${remainingCount}`,
+            }),
+          }),
+      ],
+    });
+  },
 );
 AvatarGroup.displayName = "AvatarGroup";
 
@@ -984,95 +994,94 @@ import { forwardRef as forwardRef4 } from "react";
 import { jsx as jsx6, jsxs as jsxs4 } from "react/jsx-runtime";
 var orientationStyles = {
   horizontal: "w-full",
-  vertical: "h-full self-stretch"
+  vertical: "h-full self-stretch",
 };
 var sizeStyles4 = {
   horizontal: {
     sm: "h-px",
     md: "h-0.5",
-    lg: "h-1"
+    lg: "h-1",
   },
   vertical: {
     sm: "w-px",
     md: "w-0.5",
-    lg: "w-1"
-  }
+    lg: "w-1",
+  },
 };
 var variantStyles3 = {
   default: "bg-border",
   dashed: "bg-transparent border-dashed",
   dotted: "bg-transparent border-dotted",
-  gradient: "bg-gradient-to-r from-transparent via-border to-transparent border-0"
+  gradient:
+    "bg-gradient-to-r from-transparent via-border to-transparent border-0",
 };
 var Separator = forwardRef4(
-  ({
-    className,
-    orientation = "horizontal",
-    decorative = true,
-    glow = false,
-    variant = "default",
-    size = "sm",
-    label,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      orientation = "horizontal",
+      decorative = true,
+      glow = false,
+      variant = "default",
+      size = "sm",
+      label,
+      ...props
+    },
+    ref,
+  ) => {
     if (label && orientation === "horizontal") {
-      return /* @__PURE__ */ jsxs4(
-        "div",
-        {
-          ref,
-          className: cn("flex items-center gap-4 w-full", className),
-          role: decorative ? "none" : "separator",
-          "aria-orientation": orientation,
-          ...props,
-          children: [
-            /* @__PURE__ */ jsx6(
-              "div",
-              {
-                className: cn(
-                  "flex-1",
-                  sizeStyles4[orientation][size],
-                  variantStyles3[variant],
-                  glow && "shadow-[0_0_8px_hsla(var(--glow-primary),0.3)]"
-                )
-              }
-            ),
-            /* @__PURE__ */ jsx6("span", { className: "text-muted-foreground text-sm font-medium shrink-0", children: label }),
-            /* @__PURE__ */ jsx6(
-              "div",
-              {
-                className: cn(
-                  "flex-1",
-                  sizeStyles4[orientation][size],
-                  variantStyles3[variant],
-                  glow && "shadow-[0_0_8px_hsla(var(--glow-primary),0.3)]"
-                )
-              }
-            )
-          ]
-        }
-      );
-    }
-    const isDashedOrDotted = variant === "dashed" || variant === "dotted";
-    const borderStyles = isDashedOrDotted ? orientation === "horizontal" ? "border-t border-border" : "border-l border-border" : "";
-    return /* @__PURE__ */ jsx6(
-      "div",
-      {
+      return /* @__PURE__ */ jsxs4("div", {
         ref,
+        className: cn("flex items-center gap-4 w-full", className),
         role: decorative ? "none" : "separator",
         "aria-orientation": orientation,
-        className: cn(
-          "shrink-0",
-          orientationStyles[orientation],
-          sizeStyles4[orientation][size],
-          variantStyles3[variant],
-          borderStyles,
-          glow && "shadow-[0_0_8px_hsla(var(--glow-primary),0.3)]",
-          className
-        ),
-        ...props
-      }
-    );
-  }
+        ...props,
+        children: [
+          /* @__PURE__ */ jsx6("div", {
+            className: cn(
+              "flex-1",
+              sizeStyles4[orientation][size],
+              variantStyles3[variant],
+              glow && "shadow-[0_0_8px_hsla(var(--glow-primary),0.3)]",
+            ),
+          }),
+          /* @__PURE__ */ jsx6("span", {
+            className: "text-muted-foreground text-sm font-medium shrink-0",
+            children: label,
+          }),
+          /* @__PURE__ */ jsx6("div", {
+            className: cn(
+              "flex-1",
+              sizeStyles4[orientation][size],
+              variantStyles3[variant],
+              glow && "shadow-[0_0_8px_hsla(var(--glow-primary),0.3)]",
+            ),
+          }),
+        ],
+      });
+    }
+    const isDashedOrDotted = variant === "dashed" || variant === "dotted";
+    const borderStyles = isDashedOrDotted
+      ? orientation === "horizontal"
+        ? "border-t border-border"
+        : "border-l border-border"
+      : "";
+    return /* @__PURE__ */ jsx6("div", {
+      ref,
+      role: decorative ? "none" : "separator",
+      "aria-orientation": orientation,
+      className: cn(
+        "shrink-0",
+        orientationStyles[orientation],
+        sizeStyles4[orientation][size],
+        variantStyles3[variant],
+        borderStyles,
+        glow && "shadow-[0_0_8px_hsla(var(--glow-primary),0.3)]",
+        className,
+      ),
+      ...props,
+    });
+  },
 );
 Separator.displayName = "Separator";
 
@@ -1080,29 +1089,45 @@ Separator.displayName = "Separator";
 import { forwardRef as forwardRef5 } from "react";
 import { jsx as jsx7, jsxs as jsxs5 } from "react/jsx-runtime";
 var Label = forwardRef5(
-  ({ className, children, requiredIndicator = false, optionalText, ...props }, ref) => {
-    const requiredMarkup = requiredIndicator === true ? /* @__PURE__ */ jsx7("span", { "aria-hidden": "true", className: "text-destructive", children: "*" }) : requiredIndicator ? /* @__PURE__ */ jsx7("span", { "aria-hidden": "true", children: requiredIndicator }) : null;
-    return /* @__PURE__ */ jsxs5(
-      "label",
-      {
-        ref,
-        className: cn(
-          "text-sm font-medium leading-none text-foreground",
-          "flex items-center gap-2 select-none",
-          "peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-          className
-        ),
-        ...props,
-        children: [
-          /* @__PURE__ */ jsxs5("span", { className: "inline-flex items-center gap-1", children: [
-            children,
-            requiredMarkup
-          ] }),
-          optionalText && /* @__PURE__ */ jsx7("span", { className: "text-xs font-normal text-muted-foreground", children: optionalText })
-        ]
-      }
-    );
-  }
+  (
+    { className, children, requiredIndicator = false, optionalText, ...props },
+    ref,
+  ) => {
+    const requiredMarkup =
+      requiredIndicator === true
+        ? /* @__PURE__ */ jsx7("span", {
+            "aria-hidden": "true",
+            className: "text-destructive",
+            children: "*",
+          })
+        : requiredIndicator
+          ? /* @__PURE__ */ jsx7("span", {
+              "aria-hidden": "true",
+              children: requiredIndicator,
+            })
+          : null;
+    return /* @__PURE__ */ jsxs5("label", {
+      ref,
+      className: cn(
+        "text-sm font-medium leading-none text-foreground",
+        "flex items-center gap-2 select-none",
+        "peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+        className,
+      ),
+      ...props,
+      children: [
+        /* @__PURE__ */ jsxs5("span", {
+          className: "inline-flex items-center gap-1",
+          children: [children, requiredMarkup],
+        }),
+        optionalText &&
+          /* @__PURE__ */ jsx7("span", {
+            className: "text-xs font-normal text-muted-foreground",
+            children: optionalText,
+          }),
+      ],
+    });
+  },
 );
 Label.displayName = "Label";
 
@@ -1116,46 +1141,47 @@ var baseStyles = cn(
   "placeholder:text-muted-foreground",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
   "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-  "disabled:cursor-not-allowed disabled:opacity-50"
+  "disabled:cursor-not-allowed disabled:opacity-50",
 );
 var variantStyles4 = {
   default: "",
   ghost: "border-transparent bg-transparent hover:bg-muted/20",
-  glass: "glass border-transparent focus-visible:ring-primary/70"
+  glass: "glass border-transparent focus-visible:ring-primary/70",
 };
 var stateStyles = {
   default: "",
   error: "border-destructive focus-visible:ring-destructive/80",
   success: "border-emerald-500 focus-visible:ring-emerald-500",
-  warning: "border-amber-400 focus-visible:ring-amber-400"
+  warning: "border-amber-400 focus-visible:ring-amber-400",
 };
 var Input = forwardRef6(
-  ({
-    className,
-    type = "text",
-    state = "default",
-    variant = "default",
-    fullWidth = true,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      type = "text",
+      state = "default",
+      variant = "default",
+      fullWidth = true,
+      ...props
+    },
+    ref,
+  ) => {
     const ariaInvalid = props["aria-invalid"];
-    const computedState = ariaInvalid === true || ariaInvalid === "true" ? "error" : state;
-    return /* @__PURE__ */ jsx8(
-      "input",
-      {
-        ref,
-        type,
-        className: cn(
-          baseStyles,
-          variantStyles4[variant],
-          stateStyles[computedState],
-          fullWidth && "w-full",
-          className
-        ),
-        ...props
-      }
-    );
-  }
+    const computedState =
+      ariaInvalid === true || ariaInvalid === "true" ? "error" : state;
+    return /* @__PURE__ */ jsx8("input", {
+      ref,
+      type,
+      className: cn(
+        baseStyles,
+        variantStyles4[variant],
+        stateStyles[computedState],
+        fullWidth && "w-full",
+        className,
+      ),
+      ...props,
+    });
+  },
 );
 Input.displayName = "Input";
 
@@ -1169,46 +1195,47 @@ var baseStyles2 = cn(
   "placeholder:text-muted-foreground",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
   "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-  "disabled:cursor-not-allowed disabled:opacity-50"
+  "disabled:cursor-not-allowed disabled:opacity-50",
 );
 var variantStyles5 = {
   default: "",
   ghost: "border-transparent bg-transparent hover:bg-muted/20",
-  glass: "glass border-transparent focus-visible:ring-primary/70"
+  glass: "glass border-transparent focus-visible:ring-primary/70",
 };
 var stateStyles2 = {
   default: "",
   error: "border-destructive focus-visible:ring-destructive/80",
   success: "border-emerald-500 focus-visible:ring-emerald-500",
-  warning: "border-amber-400 focus-visible:ring-amber-400"
+  warning: "border-amber-400 focus-visible:ring-amber-400",
 };
 var Textarea = forwardRef7(
-  ({
-    className,
-    state = "default",
-    variant = "default",
-    fullWidth = true,
-    noResize = false,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      state = "default",
+      variant = "default",
+      fullWidth = true,
+      noResize = false,
+      ...props
+    },
+    ref,
+  ) => {
     const ariaInvalid = props["aria-invalid"];
-    const computedState = ariaInvalid === true || ariaInvalid === "true" ? "error" : state;
-    return /* @__PURE__ */ jsx9(
-      "textarea",
-      {
-        ref,
-        className: cn(
-          baseStyles2,
-          variantStyles5[variant],
-          stateStyles2[computedState],
-          noResize && "resize-none",
-          fullWidth && "w-full",
-          className
-        ),
-        ...props
-      }
-    );
-  }
+    const computedState =
+      ariaInvalid === true || ariaInvalid === "true" ? "error" : state;
+    return /* @__PURE__ */ jsx9("textarea", {
+      ref,
+      className: cn(
+        baseStyles2,
+        variantStyles5[variant],
+        stateStyles2[computedState],
+        noResize && "resize-none",
+        fullWidth && "w-full",
+        className,
+      ),
+      ...props,
+    });
+  },
 );
 Textarea.displayName = "Textarea";
 
@@ -1223,53 +1250,55 @@ var baseStyles3 = cn(
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
   "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
   "disabled:cursor-not-allowed disabled:opacity-50",
-  "appearance-none"
+  "appearance-none",
 );
 var variantStyles6 = {
   default: "",
   ghost: "border-transparent bg-transparent hover:bg-muted/20",
-  glass: "glass border-transparent focus-visible:ring-primary/70"
+  glass: "glass border-transparent focus-visible:ring-primary/70",
 };
 var stateStyles3 = {
   default: "",
   error: "border-destructive focus-visible:ring-destructive/80",
   success: "border-emerald-500 focus-visible:ring-emerald-500",
-  warning: "border-amber-400 focus-visible:ring-amber-400"
+  warning: "border-amber-400 focus-visible:ring-amber-400",
 };
-var chevronDataUri = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E";
+var chevronDataUri =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E";
 var Select = forwardRef8(
-  ({
-    className,
-    state = "default",
-    variant = "default",
-    fullWidth = true,
-    style,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      state = "default",
+      variant = "default",
+      fullWidth = true,
+      style,
+      ...props
+    },
+    ref,
+  ) => {
     const ariaInvalid = props["aria-invalid"];
-    const computedState = ariaInvalid === true || ariaInvalid === "true" ? "error" : state;
-    return /* @__PURE__ */ jsx10(
-      "select",
-      {
-        ref,
-        className: cn(
-          baseStyles3,
-          variantStyles6[variant],
-          stateStyles3[computedState],
-          fullWidth && "w-full",
-          className
-        ),
-        style: {
-          backgroundImage: `url(${chevronDataUri})`,
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "right 0.75rem center",
-          backgroundSize: "1rem 1rem",
-          ...style ?? {}
-        },
-        ...props
-      }
-    );
-  }
+    const computedState =
+      ariaInvalid === true || ariaInvalid === "true" ? "error" : state;
+    return /* @__PURE__ */ jsx10("select", {
+      ref,
+      className: cn(
+        baseStyles3,
+        variantStyles6[variant],
+        stateStyles3[computedState],
+        fullWidth && "w-full",
+        className,
+      ),
+      style: {
+        backgroundImage: `url(${chevronDataUri})`,
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "right 0.75rem center",
+        backgroundSize: "1rem 1rem",
+        ...(style ?? {}),
+      },
+      ...props,
+    });
+  },
 );
 Select.displayName = "Select";
 
@@ -1278,7 +1307,7 @@ import {
   forwardRef as forwardRef9,
   useEffect as useEffect2,
   useImperativeHandle,
-  useRef
+  useRef,
 } from "react";
 import { jsx as jsx11 } from "react/jsx-runtime";
 var Checkbox = forwardRef9(
@@ -1290,51 +1319,43 @@ var Checkbox = forwardRef9(
         internalRef.current.indeterminate = indeterminate && !props.checked;
       }
     }, [indeterminate, props.checked]);
-    return /* @__PURE__ */ jsx11(
-      "input",
-      {
-        ref: internalRef,
-        type: "checkbox",
-        className: cn(
-          "h-4 w-4 shrink-0 rounded-sm border border-input bg-background/80",
-          "text-primary shadow-sm transition-all",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-          "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          "disabled:cursor-not-allowed disabled:opacity-50",
-          "accent-primary",
-          className
-        ),
-        ...props
-      }
-    );
-  }
+    return /* @__PURE__ */ jsx11("input", {
+      ref: internalRef,
+      type: "checkbox",
+      className: cn(
+        "h-4 w-4 shrink-0 rounded-sm border border-input bg-background/80",
+        "text-primary shadow-sm transition-all",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+        "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "disabled:cursor-not-allowed disabled:opacity-50",
+        "accent-primary",
+        className,
+      ),
+      ...props,
+    });
+  },
 );
 Checkbox.displayName = "Checkbox";
 
 // src/components/forms/Radio.tsx
 import { forwardRef as forwardRef10 } from "react";
 import { jsx as jsx12 } from "react/jsx-runtime";
-var Radio = forwardRef10(
-  ({ className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx12(
-      "input",
-      {
-        ref,
-        type: "radio",
-        className: cn(
-          "h-4 w-4 shrink-0 rounded-full border border-input bg-background/80",
-          "text-primary shadow-sm transition-all",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-          "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          "disabled:cursor-not-allowed disabled:opacity-50",
-          "accent-primary",
-          className
-        ),
-        ...props
-      }
-    );
-  }
-);
+var Radio = forwardRef10(({ className, ...props }, ref) => {
+  return /* @__PURE__ */ jsx12("input", {
+    ref,
+    type: "radio",
+    className: cn(
+      "h-4 w-4 shrink-0 rounded-full border border-input bg-background/80",
+      "text-primary shadow-sm transition-all",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+      "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+      "disabled:cursor-not-allowed disabled:opacity-50",
+      "accent-primary",
+      className,
+    ),
+    ...props,
+  });
+});
 Radio.displayName = "Radio";
 
 // src/components/forms/Switch.tsx
@@ -1342,60 +1363,57 @@ import { forwardRef as forwardRef11 } from "react";
 import { jsx as jsx13 } from "react/jsx-runtime";
 var trackSizes = {
   sm: "h-6 w-10",
-  md: "h-7 w-12"
+  md: "h-7 w-12",
 };
 var thumbSizes = {
   sm: "h-4 w-4",
-  md: "h-[18px] w-[18px]"
+  md: "h-[18px] w-[18px]",
 };
 var thumbTranslations = {
   sm: "translate-x-1",
-  md: "translate-x-[6px]"
+  md: "translate-x-[6px]",
 };
 var thumbCheckedTranslations = {
   sm: "translate-x-[22px]",
-  md: "translate-x-[26px]"
+  md: "translate-x-[26px]",
 };
 var Switch = forwardRef11(
-  ({ className, checked, onCheckedChange, size = "md", disabled, ...props }, ref) => {
+  (
+    { className, checked, onCheckedChange, size = "md", disabled, ...props },
+    ref,
+  ) => {
     const handleToggle = () => {
       if (disabled) return;
       onCheckedChange(!checked);
     };
-    return /* @__PURE__ */ jsx13(
-      "button",
-      {
-        ref,
-        type: "button",
-        role: "switch",
-        "aria-checked": checked,
-        disabled,
-        onClick: handleToggle,
+    return /* @__PURE__ */ jsx13("button", {
+      ref,
+      type: "button",
+      role: "switch",
+      "aria-checked": checked,
+      disabled,
+      onClick: handleToggle,
+      className: cn(
+        "relative inline-flex items-center rounded-full border border-input",
+        "transition-all duration-200 ease-out",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+        "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "disabled:cursor-not-allowed disabled:opacity-50",
+        trackSizes[size],
+        checked ? "bg-primary/40 border-primary" : "bg-muted/50",
+        className,
+      ),
+      ...props,
+      children: /* @__PURE__ */ jsx13("span", {
         className: cn(
-          "relative inline-flex items-center rounded-full border border-input",
-          "transition-all duration-200 ease-out",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-          "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          "disabled:cursor-not-allowed disabled:opacity-50",
-          trackSizes[size],
-          checked ? "bg-primary/40 border-primary" : "bg-muted/50",
-          className
+          "pointer-events-none inline-block rounded-full bg-white shadow-sm",
+          "transition-transform duration-200 ease-out",
+          thumbSizes[size],
+          checked ? thumbCheckedTranslations[size] : thumbTranslations[size],
         ),
-        ...props,
-        children: /* @__PURE__ */ jsx13(
-          "span",
-          {
-            className: cn(
-              "pointer-events-none inline-block rounded-full bg-white shadow-sm",
-              "transition-transform duration-200 ease-out",
-              thumbSizes[size],
-              checked ? thumbCheckedTranslations[size] : thumbTranslations[size]
-            )
-          }
-        )
-      }
-    );
-  }
+      }),
+    });
+  },
 );
 Switch.displayName = "Switch";
 
@@ -1403,22 +1421,28 @@ Switch.displayName = "Switch";
 import { forwardRef as forwardRef12 } from "react";
 import { jsx as jsx14, jsxs as jsxs6 } from "react/jsx-runtime";
 var Slider = forwardRef12(
-  ({
-    className,
-    showValue = false,
-    formatValue = (v) => v.toString(),
-    value,
-    min = 0,
-    max = 100,
-    step = 1,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      showValue = false,
+      formatValue = (v) => v.toString(),
+      value,
+      min = 0,
+      max = 100,
+      step = 1,
+      ...props
+    },
+    ref,
+  ) => {
     const numericValue = typeof value === "number" ? value : void 0;
-    const percentage = numericValue === void 0 ? void 0 : (numericValue - Number(min)) / (Number(max) - Number(min)) * 100;
-    return /* @__PURE__ */ jsxs6("div", { className: "flex w-full flex-col gap-1", children: [
-      /* @__PURE__ */ jsx14(
-        "input",
-        {
+    const percentage =
+      numericValue === void 0
+        ? void 0
+        : ((numericValue - Number(min)) / (Number(max) - Number(min))) * 100;
+    return /* @__PURE__ */ jsxs6("div", {
+      className: "flex w-full flex-col gap-1",
+      children: [
+        /* @__PURE__ */ jsx14("input", {
           ref,
           type: "range",
           value,
@@ -1440,20 +1464,29 @@ var Slider = forwardRef12(
             "[&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4",
             "[&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-primary",
             "[&::-moz-range-thumb]:border-none [&::-moz-range-thumb]:shadow-glow-sm",
-            className
+            className,
           ),
-          ...props
-        }
-      ),
-      showValue && numericValue !== void 0 && /* @__PURE__ */ jsxs6("div", { className: "flex items-center justify-between text-xs text-muted-foreground", children: [
-        /* @__PURE__ */ jsx14("span", { children: formatValue(numericValue) }),
-        percentage !== void 0 && /* @__PURE__ */ jsxs6("span", { "aria-hidden": true, children: [
-          Math.round(percentage),
-          "%"
-        ] })
-      ] })
-    ] });
-  }
+          ...props,
+        }),
+        showValue &&
+          numericValue !== void 0 &&
+          /* @__PURE__ */ jsxs6("div", {
+            className:
+              "flex items-center justify-between text-xs text-muted-foreground",
+            children: [
+              /* @__PURE__ */ jsx14("span", {
+                children: formatValue(numericValue),
+              }),
+              percentage !== void 0 &&
+                /* @__PURE__ */ jsxs6("span", {
+                  "aria-hidden": true,
+                  children: [Math.round(percentage), "%"],
+                }),
+            ],
+          }),
+      ],
+    });
+  },
 );
 Slider.displayName = "Slider";
 
@@ -1469,56 +1502,133 @@ function FormField({
   layout = "vertical",
   labelAside,
   children,
-  className
+  className,
 }) {
   const hasLabelMeta = label || description;
   const hasFeedback = hint || error;
   if (layout === "horizontal") {
-    return /* @__PURE__ */ jsx15(
-      "div",
-      {
-        className: cn(
-          "flex w-full flex-col gap-2 rounded-lg border border-border/60 bg-card/40 p-4",
-          "glass",
-          className
-        ),
-        children: /* @__PURE__ */ jsxs7("div", { className: "flex flex-col gap-1 sm:flex-row sm:items-start sm:gap-3", children: [
-          hasLabelMeta && /* @__PURE__ */ jsxs7("div", { className: "flex min-w-[200px] flex-1 flex-col gap-1 sm:flex-none", children: [
-            label && /* @__PURE__ */ jsxs7("div", { className: "flex items-center gap-2", children: [
-              /* @__PURE__ */ jsx15(Label, { htmlFor, requiredIndicator: required, children: label }),
-              labelAside && /* @__PURE__ */ jsx15("div", { className: "text-xs text-muted-foreground", children: labelAside })
-            ] }),
-            description && /* @__PURE__ */ jsx15("p", { className: "text-sm text-muted-foreground", children: description })
-          ] }),
-          /* @__PURE__ */ jsxs7("div", { className: "flex-1 space-y-2", children: [
-            children,
-            hasFeedback && /* @__PURE__ */ jsxs7("div", { className: "space-y-1 text-sm", children: [
-              error && /* @__PURE__ */ jsx15("p", { className: "text-destructive", children: error }),
-              !error && hint && /* @__PURE__ */ jsx15("p", { className: "text-muted-foreground", children: hint })
-            ] })
-          ] })
-        ] })
-      }
-    );
+    return /* @__PURE__ */ jsx15("div", {
+      className: cn(
+        "flex w-full flex-col gap-2 rounded-lg border border-border/60 bg-card/40 p-4",
+        "glass",
+        className,
+      ),
+      children: /* @__PURE__ */ jsxs7("div", {
+        className: "flex flex-col gap-1 sm:flex-row sm:items-start sm:gap-3",
+        children: [
+          hasLabelMeta &&
+            /* @__PURE__ */ jsxs7("div", {
+              className:
+                "flex min-w-[200px] flex-1 flex-col gap-1 sm:flex-none",
+              children: [
+                label &&
+                  /* @__PURE__ */ jsxs7("div", {
+                    className: "flex items-center gap-2",
+                    children: [
+                      /* @__PURE__ */ jsx15(Label, {
+                        htmlFor,
+                        requiredIndicator: required,
+                        children: label,
+                      }),
+                      labelAside &&
+                        /* @__PURE__ */ jsx15("div", {
+                          className: "text-xs text-muted-foreground",
+                          children: labelAside,
+                        }),
+                    ],
+                  }),
+                description &&
+                  /* @__PURE__ */ jsx15("p", {
+                    className: "text-sm text-muted-foreground",
+                    children: description,
+                  }),
+              ],
+            }),
+          /* @__PURE__ */ jsxs7("div", {
+            className: "flex-1 space-y-2",
+            children: [
+              children,
+              hasFeedback &&
+                /* @__PURE__ */ jsxs7("div", {
+                  className: "space-y-1 text-sm",
+                  children: [
+                    error &&
+                      /* @__PURE__ */ jsx15("p", {
+                        className: "text-destructive",
+                        children: error,
+                      }),
+                    !error &&
+                      hint &&
+                      /* @__PURE__ */ jsx15("p", {
+                        className: "text-muted-foreground",
+                        children: hint,
+                      }),
+                  ],
+                }),
+            ],
+          }),
+        ],
+      }),
+    });
   }
-  return /* @__PURE__ */ jsxs7("div", { className: cn("flex w-full flex-col gap-2", className), children: [
-    hasLabelMeta && /* @__PURE__ */ jsxs7("div", { className: "flex flex-col gap-1", children: [
-      /* @__PURE__ */ jsxs7("div", { className: "flex items-center gap-2", children: [
-        label && /* @__PURE__ */ jsx15(Label, { htmlFor, requiredIndicator: required, children: label }),
-        labelAside && /* @__PURE__ */ jsx15("div", { className: "text-xs text-muted-foreground", children: labelAside })
-      ] }),
-      description && /* @__PURE__ */ jsx15("p", { className: "text-sm text-muted-foreground", children: description })
-    ] }),
-    children,
-    hasFeedback && /* @__PURE__ */ jsxs7("div", { className: "space-y-1 text-sm", children: [
-      error && /* @__PURE__ */ jsx15("p", { className: "text-destructive", children: error }),
-      !error && hint && /* @__PURE__ */ jsx15("p", { className: "text-muted-foreground", children: hint })
-    ] })
-  ] });
+  return /* @__PURE__ */ jsxs7("div", {
+    className: cn("flex w-full flex-col gap-2", className),
+    children: [
+      hasLabelMeta &&
+        /* @__PURE__ */ jsxs7("div", {
+          className: "flex flex-col gap-1",
+          children: [
+            /* @__PURE__ */ jsxs7("div", {
+              className: "flex items-center gap-2",
+              children: [
+                label &&
+                  /* @__PURE__ */ jsx15(Label, {
+                    htmlFor,
+                    requiredIndicator: required,
+                    children: label,
+                  }),
+                labelAside &&
+                  /* @__PURE__ */ jsx15("div", {
+                    className: "text-xs text-muted-foreground",
+                    children: labelAside,
+                  }),
+              ],
+            }),
+            description &&
+              /* @__PURE__ */ jsx15("p", {
+                className: "text-sm text-muted-foreground",
+                children: description,
+              }),
+          ],
+        }),
+      children,
+      hasFeedback &&
+        /* @__PURE__ */ jsxs7("div", {
+          className: "space-y-1 text-sm",
+          children: [
+            error &&
+              /* @__PURE__ */ jsx15("p", {
+                className: "text-destructive",
+                children: error,
+              }),
+            !error &&
+              hint &&
+              /* @__PURE__ */ jsx15("p", {
+                className: "text-muted-foreground",
+                children: hint,
+              }),
+          ],
+        }),
+    ],
+  });
 }
 
 // src/hooks/useLocalStorage.ts
-import { useState as useState3, useEffect as useEffect3, useCallback } from "react";
+import {
+  useState as useState3,
+  useEffect as useEffect3,
+  useCallback,
+} from "react";
 function useLocalStorage(key, initialValue) {
   const [storedValue, setStoredValue] = useState3(initialValue);
   useEffect3(() => {
@@ -1535,22 +1645,23 @@ function useLocalStorage(key, initialValue) {
   const setValue = useCallback(
     (value) => {
       try {
-        const valueToStore = value instanceof Function ? value(storedValue) : value;
+        const valueToStore =
+          value instanceof Function ? value(storedValue) : value;
         setStoredValue(valueToStore);
         if (typeof window !== "undefined") {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
           window.dispatchEvent(
             new StorageEvent("storage", {
               key,
-              newValue: JSON.stringify(valueToStore)
-            })
+              newValue: JSON.stringify(valueToStore),
+            }),
           );
         }
       } catch (error) {
         console.warn(`Error setting localStorage key "${key}":`, error);
       }
     },
-    [key, storedValue]
+    [key, storedValue],
   );
   const removeValue = useCallback(() => {
     try {
@@ -1568,8 +1679,7 @@ function useLocalStorage(key, initialValue) {
       if (e.key === key && e.newValue !== null) {
         try {
           setStoredValue(JSON.parse(e.newValue));
-        } catch {
-        }
+        } catch {}
       } else if (e.key === key && e.newValue === null) {
         setStoredValue(initialValue);
       }
@@ -1592,13 +1702,18 @@ function isLocalStorageAvailable() {
 }
 
 // src/hooks/useCookieStorage.ts
-import { useState as useState4, useEffect as useEffect4, useCallback as useCallback2 } from "react";
+import {
+  useState as useState4,
+  useEffect as useEffect4,
+  useCallback as useCallback2,
+} from "react";
 var DEFAULT_OPTIONS = {
   maxAge: 365 * 24 * 60 * 60,
   // 1 year
   path: "/",
   sameSite: "lax",
-  secure: typeof window !== "undefined" && window.location.protocol === "https:"
+  secure:
+    typeof window !== "undefined" && window.location.protocol === "https:",
 };
 function getCookie(name) {
   if (typeof document === "undefined") return null;
@@ -1656,11 +1771,12 @@ function useCookieStorage(key, initialValue, options = {}) {
   }, [key]);
   const setValue = useCallback2(
     (value) => {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      const valueToStore =
+        value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
       setCookie(key, JSON.stringify(valueToStore), options);
     },
-    [key, options, storedValue]
+    [key, options, storedValue],
   );
   const removeValue = useCallback2(() => {
     setStoredValue(initialValue);
@@ -1703,7 +1819,7 @@ function useBreakpoint(breakpoint) {
     md: "(min-width: 768px)",
     lg: "(min-width: 1024px)",
     xl: "(min-width: 1280px)",
-    "2xl": "(min-width: 1536px)"
+    "2xl": "(min-width: 1536px)",
   };
   return useMediaQuery(breakpoints[breakpoint]);
 }
@@ -1724,7 +1840,7 @@ import {
   useCallback as useCallback3,
   createContext as createContext2,
   useContext as useContext2,
-  createElement
+  createElement,
 } from "react";
 var STORAGE_KEY = "preferred-code-language";
 var COOKIE_MAX_AGE = 365 * 24 * 60 * 60;
@@ -1752,7 +1868,7 @@ var CODE_LANGUAGES = [
   "json",
   "yaml",
   "markdown",
-  "graphql"
+  "graphql",
 ];
 var LANGUAGE_LABELS = {
   typescript: "TypeScript",
@@ -1778,7 +1894,7 @@ var LANGUAGE_LABELS = {
   json: "JSON",
   yaml: "YAML",
   markdown: "Markdown",
-  graphql: "GraphQL"
+  graphql: "GraphQL",
 };
 var LANGUAGE_EXTENSIONS = {
   typescript: ".ts",
@@ -1804,19 +1920,17 @@ var LANGUAGE_EXTENSIONS = {
   json: ".json",
   yaml: ".yml",
   markdown: ".md",
-  graphql: ".graphql"
+  graphql: ".graphql",
 };
-var CodeLanguageContext = createContext2(
-  null
-);
-function CodeLanguageProvider({
-  children,
-  defaultLanguage = "typescript"
-}) {
+var CodeLanguageContext = createContext2(null);
+function CodeLanguageProvider({ children, defaultLanguage = "typescript" }) {
   const [language, setLanguageState] = useState6(defaultLanguage);
   useEffect6(() => {
     const cookieValue = getCookie(STORAGE_KEY);
-    const localValue = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
+    const localValue =
+      typeof window !== "undefined"
+        ? window.localStorage.getItem(STORAGE_KEY)
+        : null;
     const savedLanguage = cookieValue || localValue;
     if (savedLanguage) {
       setLanguageState(savedLanguage);
@@ -1827,12 +1941,12 @@ function CodeLanguageProvider({
     setCookie(STORAGE_KEY, lang, {
       maxAge: COOKIE_MAX_AGE,
       path: "/",
-      sameSite: "lax"
+      sameSite: "lax",
     });
     if (typeof window !== "undefined") {
       window.localStorage.setItem(STORAGE_KEY, lang);
       window.dispatchEvent(
-        new CustomEvent("code-language-change", { detail: { language: lang } })
+        new CustomEvent("code-language-change", { detail: { language: lang } }),
       );
     }
   }, []);
@@ -1850,17 +1964,17 @@ function CodeLanguageProvider({
         setLanguage,
         availableLanguages: CODE_LANGUAGES,
         getLabel,
-        getExtension
-      }
+        getExtension,
+      },
     },
-    children
+    children,
   );
 }
 function useCodeLanguage() {
   const context = useContext2(CodeLanguageContext);
   if (!context) {
     throw new Error(
-      "useCodeLanguage must be used within a CodeLanguageProvider"
+      "useCodeLanguage must be used within a CodeLanguageProvider",
     );
   }
   return context;
@@ -1869,7 +1983,10 @@ function useCodeLanguageLocal(defaultLanguage = "typescript") {
   const [language, setLanguageState] = useState6(defaultLanguage);
   useEffect6(() => {
     const cookieValue = getCookie(STORAGE_KEY);
-    const localValue = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
+    const localValue =
+      typeof window !== "undefined"
+        ? window.localStorage.getItem(STORAGE_KEY)
+        : null;
     const saved = cookieValue || localValue;
     if (saved) {
       setLanguageState(saved);
@@ -1879,19 +1996,20 @@ function useCodeLanguageLocal(defaultLanguage = "typescript") {
       setLanguageState(customEvent.detail.language);
     };
     window.addEventListener("code-language-change", handleChange);
-    return () => window.removeEventListener("code-language-change", handleChange);
+    return () =>
+      window.removeEventListener("code-language-change", handleChange);
   }, []);
   const setLanguage = useCallback3((lang) => {
     setLanguageState(lang);
     setCookie(STORAGE_KEY, lang, {
       maxAge: COOKIE_MAX_AGE,
       path: "/",
-      sameSite: "lax"
+      sameSite: "lax",
     });
     if (typeof window !== "undefined") {
       window.localStorage.setItem(STORAGE_KEY, lang);
       window.dispatchEvent(
-        new CustomEvent("code-language-change", { detail: { language: lang } })
+        new CustomEvent("code-language-change", { detail: { language: lang } }),
       );
     }
   }, []);
@@ -1906,7 +2024,7 @@ var widthClasses = {
   lg: "max-w-screen-lg",
   xl: "max-w-screen-xl",
   "2xl": "max-w-screen-2xl",
-  full: "max-w-full"
+  full: "max-w-full",
 };
 function Container({
   className,
@@ -1915,19 +2033,16 @@ function Container({
   center = true,
   ...props
 }) {
-  return /* @__PURE__ */ jsx16(
-    "div",
-    {
-      className: cn(
-        "w-full",
-        widthClasses[maxWidth],
-        padded && "px-4 sm:px-6 lg:px-8",
-        center && "mx-auto",
-        className
-      ),
-      ...props
-    }
-  );
+  return /* @__PURE__ */ jsx16("div", {
+    className: cn(
+      "w-full",
+      widthClasses[maxWidth],
+      padded && "px-4 sm:px-6 lg:px-8",
+      center && "mx-auto",
+      className,
+    ),
+    ...props,
+  });
 }
 
 // src/components/layout/Section.tsx
@@ -1935,12 +2050,12 @@ import { jsx as jsx17, jsxs as jsxs8 } from "react/jsx-runtime";
 var spacingMap = {
   sm: "py-8",
   md: "py-12",
-  lg: "py-16"
+  lg: "py-16",
 };
 var backgroundMap = {
   none: "",
   card: "rounded-2xl border border-border/60 bg-card/60 shadow-glow-sm",
-  glass: "rounded-2xl glass shadow-glow"
+  glass: "rounded-2xl glass shadow-glow",
 };
 function Section({
   className,
@@ -1956,22 +2071,66 @@ function Section({
   ...props
 }) {
   const hasHeader = title || description || eyebrow || actions;
-  return /* @__PURE__ */ jsx17("section", { className: cn(spacingMap[spacing], className), ...props, children: /* @__PURE__ */ jsx17(Container, { maxWidth, padded, className: "w-full", children: /* @__PURE__ */ jsxs8("div", { className: cn("flex flex-col gap-6", backgroundMap[background]), children: [
-    hasHeader && /* @__PURE__ */ jsxs8("div", { className: cn(
-      "flex flex-col gap-3",
-      background !== "none" && "p-6"
-    ), children: [
-      eyebrow && /* @__PURE__ */ jsx17("p", { className: "text-xs font-semibold uppercase tracking-[0.2em] text-primary", children: eyebrow }),
-      /* @__PURE__ */ jsxs8("div", { className: "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4", children: [
-        /* @__PURE__ */ jsxs8("div", { className: "space-y-2", children: [
-          title && /* @__PURE__ */ jsx17("h2", { className: "text-2xl font-semibold leading-tight sm:text-3xl", children: title }),
-          description && /* @__PURE__ */ jsx17("p", { className: "text-base text-muted-foreground", children: description })
-        ] }),
-        actions && /* @__PURE__ */ jsx17("div", { className: "flex shrink-0 items-center gap-3", children: actions })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsx17("div", { className: cn(background !== "none" && "p-6 pb-8"), children })
-  ] }) }) });
+  return /* @__PURE__ */ jsx17("section", {
+    className: cn(spacingMap[spacing], className),
+    ...props,
+    children: /* @__PURE__ */ jsx17(Container, {
+      maxWidth,
+      padded,
+      className: "w-full",
+      children: /* @__PURE__ */ jsxs8("div", {
+        className: cn("flex flex-col gap-6", backgroundMap[background]),
+        children: [
+          hasHeader &&
+            /* @__PURE__ */ jsxs8("div", {
+              className: cn(
+                "flex flex-col gap-3",
+                background !== "none" && "p-6",
+              ),
+              children: [
+                eyebrow &&
+                  /* @__PURE__ */ jsx17("p", {
+                    className:
+                      "text-xs font-semibold uppercase tracking-[0.2em] text-primary",
+                    children: eyebrow,
+                  }),
+                /* @__PURE__ */ jsxs8("div", {
+                  className:
+                    "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
+                  children: [
+                    /* @__PURE__ */ jsxs8("div", {
+                      className: "space-y-2",
+                      children: [
+                        title &&
+                          /* @__PURE__ */ jsx17("h2", {
+                            className:
+                              "text-2xl font-semibold leading-tight sm:text-3xl",
+                            children: title,
+                          }),
+                        description &&
+                          /* @__PURE__ */ jsx17("p", {
+                            className: "text-base text-muted-foreground",
+                            children: description,
+                          }),
+                      ],
+                    }),
+                    actions &&
+                      /* @__PURE__ */ jsx17("div", {
+                        className: "flex shrink-0 items-center gap-3",
+                        children: actions,
+                      }),
+                  ],
+                }),
+              ],
+            }),
+          /* @__PURE__ */ jsx17("div", {
+            className: cn(background !== "none" && "p-6 pb-8"),
+            children,
+          }),
+        ],
+      }),
+    }),
+  });
 }
 
 // src/components/layout/Stack.tsx
@@ -1987,30 +2146,28 @@ function Stack({
   ...props
 }) {
   const gapClass = typeof gap === "number" ? `gap-${gap}` : void 0;
-  return /* @__PURE__ */ jsx18(
-    "div",
-    {
-      className: cn(
-        "flex",
-        direction === "vertical" ? "flex-col" : "flex-row",
-        gapClass,
-        wrap && "flex-wrap",
-        className
-      ),
-      style: {
-        alignItems: align,
-        justifyContent: justify,
-        gap: typeof gap === "string" ? gap : void 0,
-        ...style
-      },
-      ...props
-    }
-  );
+  return /* @__PURE__ */ jsx18("div", {
+    className: cn(
+      "flex",
+      direction === "vertical" ? "flex-col" : "flex-row",
+      gapClass,
+      wrap && "flex-wrap",
+      className,
+    ),
+    style: {
+      alignItems: align,
+      justifyContent: justify,
+      gap: typeof gap === "string" ? gap : void 0,
+      ...style,
+    },
+    ...props,
+  });
 }
 
 // src/components/layout/Grid.tsx
 import { jsx as jsx19 } from "react/jsx-runtime";
-var spanClass = (prefix, value) => value ? `${prefix}grid-cols-${value}` : void 0;
+var spanClass = (prefix, value) =>
+  value ? `${prefix}grid-cols-${value}` : void 0;
 function Grid({
   className,
   cols = { base: 1, md: 2, lg: 3 },
@@ -2022,25 +2179,22 @@ function Grid({
 }) {
   const config = typeof cols === "number" ? { base: cols } : cols;
   const gapClass = typeof gap === "number" ? `gap-${gap}` : void 0;
-  return /* @__PURE__ */ jsx19(
-    "div",
-    {
-      className: cn(
-        "grid",
-        spanClass("", config.base ?? 1),
-        spanClass("sm:", config.sm),
-        spanClass("md:", config.md),
-        spanClass("lg:", config.lg),
-        spanClass("xl:", config.xl),
-        gapClass,
-        equalHeight && "[&>*]:h-full",
-        className
-      ),
-      style: { gap: typeof gap === "string" ? gap : void 0, ...style },
-      ...props,
-      children
-    }
-  );
+  return /* @__PURE__ */ jsx19("div", {
+    className: cn(
+      "grid",
+      spanClass("", config.base ?? 1),
+      spanClass("sm:", config.sm),
+      spanClass("md:", config.md),
+      spanClass("lg:", config.lg),
+      spanClass("xl:", config.xl),
+      gapClass,
+      equalHeight && "[&>*]:h-full",
+      className,
+    ),
+    style: { gap: typeof gap === "string" ? gap : void 0, ...style },
+    ...props,
+    children,
+  });
 }
 
 // src/components/layout/Divider.tsx
@@ -2049,7 +2203,7 @@ var baseLine = "flex-1 bg-border/70";
 var variantMap = {
   muted: baseLine,
   strong: "flex-1 bg-foreground/40",
-  glow: "flex-1 bg-gradient-to-r from-primary/50 via-accent/50 to-primary/50 blur-[0.2px]"
+  glow: "flex-1 bg-gradient-to-r from-primary/50 via-accent/50 to-primary/50 blur-[0.2px]",
 };
 function Divider({
   className,
@@ -2059,43 +2213,54 @@ function Divider({
   ...props
 }) {
   if (orientation === "vertical") {
-    return /* @__PURE__ */ jsxs9(
-      "div",
-      {
-        role: "separator",
-        "aria-orientation": "vertical",
-        className: cn(
-          "flex h-full flex-col items-center",
-          label ? "gap-2 px-2" : "px-1",
-          className
-        ),
-        ...props,
-        children: [
-          /* @__PURE__ */ jsx20("span", { className: cn("w-px flex-1", variantMap[variant]) }),
-          label && /* @__PURE__ */ jsx20("span", { className: "text-xs font-medium text-muted-foreground", children: label }),
-          /* @__PURE__ */ jsx20("span", { className: cn("w-px flex-1", variantMap[variant]) })
-        ]
-      }
-    );
-  }
-  return /* @__PURE__ */ jsxs9(
-    "div",
-    {
+    return /* @__PURE__ */ jsxs9("div", {
       role: "separator",
-      "aria-orientation": "horizontal",
+      "aria-orientation": "vertical",
       className: cn(
-        "flex w-full items-center",
-        label ? "gap-3" : "gap-2",
-        className
+        "flex h-full flex-col items-center",
+        label ? "gap-2 px-2" : "px-1",
+        className,
       ),
       ...props,
       children: [
-        /* @__PURE__ */ jsx20("span", { className: cn("h-px", variantMap[variant]) }),
-        label && /* @__PURE__ */ jsx20("span", { className: "text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground", children: label }),
-        /* @__PURE__ */ jsx20("span", { className: cn("h-px", variantMap[variant]) })
-      ]
-    }
-  );
+        /* @__PURE__ */ jsx20("span", {
+          className: cn("w-px flex-1", variantMap[variant]),
+        }),
+        label &&
+          /* @__PURE__ */ jsx20("span", {
+            className: "text-xs font-medium text-muted-foreground",
+            children: label,
+          }),
+        /* @__PURE__ */ jsx20("span", {
+          className: cn("w-px flex-1", variantMap[variant]),
+        }),
+      ],
+    });
+  }
+  return /* @__PURE__ */ jsxs9("div", {
+    role: "separator",
+    "aria-orientation": "horizontal",
+    className: cn(
+      "flex w-full items-center",
+      label ? "gap-3" : "gap-2",
+      className,
+    ),
+    ...props,
+    children: [
+      /* @__PURE__ */ jsx20("span", {
+        className: cn("h-px", variantMap[variant]),
+      }),
+      label &&
+        /* @__PURE__ */ jsx20("span", {
+          className:
+            "text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground",
+          children: label,
+        }),
+      /* @__PURE__ */ jsx20("span", {
+        className: cn("h-px", variantMap[variant]),
+      }),
+    ],
+  });
 }
 export {
   Avatar,
@@ -2163,5 +2328,5 @@ export {
   usePrefersHighContrast,
   usePrefersReducedMotion,
   useTheme,
-  useThemeClass
+  useThemeClass,
 };

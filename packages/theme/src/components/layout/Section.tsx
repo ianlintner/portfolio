@@ -53,10 +53,12 @@ export function Section({
       <Container maxWidth={maxWidth} padded={padded} className="w-full">
         <div className={cn("flex flex-col gap-6", backgroundMap[background])}>
           {hasHeader && (
-            <div className={cn(
-              "flex flex-col gap-3",
-              background !== "none" && "p-6"
-            )}>
+            <div
+              className={cn(
+                "flex flex-col gap-3",
+                background !== "none" && "p-6",
+              )}
+            >
               {eyebrow && (
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
                   {eyebrow}
@@ -70,15 +72,23 @@ export function Section({
                     </h2>
                   )}
                   {description && (
-                    <p className="text-base text-muted-foreground">{description}</p>
+                    <p className="text-base text-muted-foreground">
+                      {description}
+                    </p>
                   )}
                 </div>
-                {actions && <div className="flex shrink-0 items-center gap-3">{actions}</div>}
+                {actions && (
+                  <div className="flex shrink-0 items-center gap-3">
+                    {actions}
+                  </div>
+                )}
               </div>
             </div>
           )}
 
-          <div className={cn(background !== "none" && "p-6 pb-8")}>{children}</div>
+          <div className={cn(background !== "none" && "p-6 pb-8")}>
+            {children}
+          </div>
         </div>
       </Container>
     </section>

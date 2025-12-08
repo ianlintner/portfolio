@@ -35,7 +35,7 @@ export function Stack({
         direction === "vertical" ? "flex-col" : "flex-row",
         gapClass,
         wrap && "flex-wrap",
-        className
+        className,
       )}
       style={{
         alignItems: align,
