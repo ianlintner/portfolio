@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { SiGithub, SiLinkedin } from "react-icons/si";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { Button, NavLink, Container } from "@ianlintner/theme";
 import { ThemeSwitcherNav } from "./ThemeSwitcherNav";
 
 export function Navigation() {
@@ -12,10 +13,11 @@ export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => pathname === path;
+  const isActivePrefix = (prefix: string) => pathname?.startsWith(prefix);
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75 transition-colors shadow-sm">
-      <div className="container mx-auto px-4">
+      <Container>
         <div className="flex h-16 items-center justify-between">
           {/* Logo/Brand */}
           <div className="flex items-center space-x-8">
@@ -26,89 +28,62 @@ export function Navigation() {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-6 text-sm font-medium">
-              <Link
-                href="/"
-                className={`transition-colors hover:text-primary relative ${
-                  isActive("/")
-                    ? "text-primary font-semibold"
-                    : "text-foreground/70"
-                }`}
-              >
-                Home
-                {isActive("/") && (
-                  <span className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-primary"></span>
-                )}
-              </Link>
-              <Link
-                href="/blog"
-                className={`transition-colors hover:text-primary relative ${
-                  pathname?.startsWith("/blog")
-                    ? "text-primary font-semibold"
-                    : "text-foreground/70"
-                }`}
-              >
-                Blog
-                {pathname?.startsWith("/blog") && (
-                  <span className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-primary"></span>
-                )}
-              </Link>
-              <Link
-                href="/docs"
-                className={`transition-colors hover:text-primary relative ${
-                  pathname?.startsWith("/docs")
-                    ? "text-primary font-semibold"
-                    : "text-foreground/70"
-                }`}
-              >
-                Docs
-                {pathname?.startsWith("/docs") && (
-                  <span className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-primary"></span>
-                )}
-              </Link>
-              <Link
-                href="/demos"
-                className={`transition-colors hover:text-primary relative ${
-                  pathname?.startsWith("/demos")
-                    ? "text-primary font-semibold"
-                    : "text-foreground/70"
-                }`}
-              >
-                Projects
-                {pathname?.startsWith("/demos") && (
-                  <span className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-primary"></span>
-                )}
-              </Link>
+            <div className="hidden md:flex items-center space-x-1">
+              <NavLink href="/" active={isActive("/")} asChild>
+                <Link href="/">Home</Link>
+              </NavLink>
+              <NavLink href="/blog" active={isActivePrefix("/blog")} asChild>
+                <Link href="/blog">Blog</Link>
+              </NavLink>
+              <NavLink href="/docs" active={isActivePrefix("/docs")} asChild>
+                <Link href="/docs">Docs</Link>
+              </NavLink>
+              <NavLink href="/demos" active={isActivePrefix("/demos")} asChild>
+                <Link href="/demos">Projects</Link>
+              </NavLink>
             </div>
           </div>
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
             <ThemeSwitcherNav />
-            <a
-              href="https://github.com/ianlintner"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-lg hover:bg-accent transition-colors"
+            <Button
+              variant="ghost"
+              size="sm"
+              asChild
               aria-label="GitHub"
             >
-              <SiGithub className="h-5 w-5" />
-            </a>
-            <a
-              href="https://linkedin.com/in/ianlintner/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 hover:scale-105"
-              aria-label="Connect on LinkedIn"
+              <a
+                href="https://github.com/ianlintner"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <SiGithub className="h-5 w-5" />
+              </a>
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              asChild
+              glow
             >
-              <SiLinkedin className="h-4 w-4" />
-              <span>Connect</span>
-            </a>
+              <a
+                href="https://linkedin.com/in/ianlintner/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2"
+              >
+                <SiLinkedin className="h-4 w-4" />
+                <span>Connect</span>
+              </a>
+            </Button>
           </div>
 
           {/* Mobile menu button */}
-          <button
-            className="md:hidden p-2 rounded-lg hover:bg-accent transition-colors"
+          <Button
+            variant="ghost"
+            size="sm"
+            className="md:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -117,85 +92,65 @@ export function Navigation() {
             ) : (
               <Menu className="h-6 w-6" />
             )}
-          </button>
+          </Button>
         </div>
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t animate-in slide-in-from-top">
             <div className="flex flex-col space-y-3">
-              <Link
-                href="/"
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  isActive("/")
-                    ? "bg-primary/10 text-primary font-semibold"
-                    : "text-foreground/70 hover:bg-accent"
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link
-                href="/blog"
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  pathname?.startsWith("/blog")
-                    ? "bg-primary/10 text-primary font-semibold"
-                    : "text-foreground/70 hover:bg-accent"
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Blog
-              </Link>
-              <Link
-                href="/docs"
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  pathname?.startsWith("/docs")
-                    ? "bg-primary/10 text-primary font-semibold"
-                    : "text-foreground/70 hover:bg-accent"
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Docs
-              </Link>
-              <Link
-                href="/demos"
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  pathname?.startsWith("/demos")
-                    ? "bg-primary/10 text-primary font-semibold"
-                    : "text-foreground/70 hover:bg-accent"
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Projects
-              </Link>
+              <NavLink href="/" active={isActive("/")} asChild onClick={() => setMobileMenuOpen(false)}>
+                <Link href="/">Home</Link>
+              </NavLink>
+              <NavLink href="/blog" active={isActivePrefix("/blog")} asChild onClick={() => setMobileMenuOpen(false)}>
+                <Link href="/blog">Blog</Link>
+              </NavLink>
+              <NavLink href="/docs" active={isActivePrefix("/docs")} asChild onClick={() => setMobileMenuOpen(false)}>
+                <Link href="/docs">Docs</Link>
+              </NavLink>
+              <NavLink href="/demos" active={isActivePrefix("/demos")} asChild onClick={() => setMobileMenuOpen(false)}>
+                <Link href="/demos">Projects</Link>
+              </NavLink>
               <div className="pt-3 border-t flex flex-col space-y-3">
                 <ThemeSwitcherNav />
-                <a
-                  href="https://linkedin.com/in/ianlintner/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg font-medium text-sm bg-primary text-primary-foreground hover:bg-primary/90"
+                <Button
+                  variant="primary"
+                  size="md"
+                  fullWidth
+                  asChild
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <SiLinkedin className="h-4 w-4" />
-                  <span>Connect on LinkedIn</span>
-                </a>
-                <div className="flex items-center justify-center gap-4">
                   <a
-                    href="https://github.com/ianlintner"
+                    href="https://linkedin.com/in/ianlintner/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-lg hover:bg-accent transition-colors"
+                    className="inline-flex items-center justify-center gap-2"
+                  >
+                    <SiLinkedin className="h-4 w-4" />
+                    <span>Connect on LinkedIn</span>
+                  </a>
+                </Button>
+                <div className="flex items-center justify-center gap-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
                     aria-label="GitHub"
                   >
-                    <SiGithub className="h-5 w-5" />
-                  </a>
+                    <a
+                      href="https://github.com/ianlintner"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <SiGithub className="h-5 w-5" />
+                    </a>
+                  </Button>
                 </div>
               </div>
             </div>
           </div>
         )}
-      </div>
+      </Container>
     </nav>
   );
 }
