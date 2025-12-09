@@ -64,7 +64,7 @@ export function Navigation() {
             >
               <SiGithub className="h-5 w-5" />
             </a>
-            <Link
+            <a
               href="https://linkedin.com/in/ianlintner/"
               target="_blank"
               rel="noopener noreferrer"
@@ -73,7 +73,7 @@ export function Navigation() {
             >
               <SiLinkedin className="h-4 w-4" />
               <span>Connect</span>
-            </Link>
+            </a>
           </div>
 
           {/* Mobile menu button */}
