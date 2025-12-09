@@ -29,61 +29,58 @@ export function Navigation() {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-1">
-              <NavLink href="/" active={isActive("/")} onClick={() => window.location.href = "/"}>
-                Home
-              </NavLink>
-              <NavLink href="/blog" active={isActivePrefix("/blog")} onClick={() => window.location.href = "/blog"}>
-                Blog
-              </NavLink>
-              <NavLink href="/docs" active={isActivePrefix("/docs")} onClick={() => window.location.href = "/docs"}>
-                Docs
-              </NavLink>
-              <NavLink href="/demos" active={isActivePrefix("/demos")} onClick={() => window.location.href = "/demos"}>
-                Projects
-              </NavLink>
+              <Link href="/" className="block">
+                <NavLink active={isActive("/")} onClick={(e) => e.preventDefault()}>
+                  Home
+                </NavLink>
+              </Link>
+              <Link href="/blog" className="block">
+                <NavLink active={isActivePrefix("/blog")} onClick={(e) => e.preventDefault()}>
+                  Blog
+                </NavLink>
+              </Link>
+              <Link href="/docs" className="block">
+                <NavLink active={isActivePrefix("/docs")} onClick={(e) => e.preventDefault()}>
+                  Docs
+                </NavLink>
+              </Link>
+              <Link href="/demos" className="block">
+                <NavLink active={isActivePrefix("/demos")} onClick={(e) => e.preventDefault()}>
+                  Projects
+                </NavLink>
+              </Link>
             </div>
           </div>
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
             <ThemeSwitcherNav />
-            <Button
-              variant="ghost"
-              size="sm"
-              asChild
+            <a
+              href="https://github.com/ianlintner"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-lg hover:bg-accent transition-colors"
               aria-label="GitHub"
             >
-              <a
-                href="https://github.com/ianlintner"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <SiGithub className="h-5 w-5" />
-              </a>
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              asChild
-              glow
+              <SiGithub className="h-5 w-5" />
+            </a>
+            <Link
+              href="https://linkedin.com/in/ianlintner/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 hover:scale-105"
+              aria-label="Connect on LinkedIn"
             >
-              <a
-                href="https://linkedin.com/in/ianlintner/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2"
-              >
-                <SiLinkedin className="h-4 w-4" />
-                <span>Connect</span>
-              </a>
-            </Button>
+              <SiLinkedin className="h-4 w-4" />
+              <span>Connect</span>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
           <Button
             variant="ghost"
             size="sm"
-            className="md:hidden"
+            className="md:hidden p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -99,25 +96,32 @@ export function Navigation() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t animate-in slide-in-from-top">
             <div className="flex flex-col space-y-3">
-              <NavLink href="/" active={isActive("/")} onClick={() => { setMobileMenuOpen(false); window.location.href = "/"; }}>
-                Home
-              </NavLink>
-              <NavLink href="/blog" active={isActivePrefix("/blog")} onClick={() => { setMobileMenuOpen(false); window.location.href = "/blog"; }}>
-                Blog
-              </NavLink>
-              <NavLink href="/docs" active={isActivePrefix("/docs")} onClick={() => { setMobileMenuOpen(false); window.location.href = "/docs"; }}>
-                Docs
-              </NavLink>
-              <NavLink href="/demos" active={isActivePrefix("/demos")} onClick={() => { setMobileMenuOpen(false); window.location.href = "/demos"; }}>
-                Projects
-              </NavLink>
+              <Link href="/" className="block" onClick={() => setMobileMenuOpen(false)}>
+                <NavLink active={isActive("/")} onClick={(e) => e.preventDefault()}>
+                  Home
+                </NavLink>
+              </Link>
+              <Link href="/blog" className="block" onClick={() => setMobileMenuOpen(false)}>
+                <NavLink active={isActivePrefix("/blog")} onClick={(e) => e.preventDefault()}>
+                  Blog
+                </NavLink>
+              </Link>
+              <Link href="/docs" className="block" onClick={() => setMobileMenuOpen(false)}>
+                <NavLink active={isActivePrefix("/docs")} onClick={(e) => e.preventDefault()}>
+                  Docs
+                </NavLink>
+              </Link>
+              <Link href="/demos" className="block" onClick={() => setMobileMenuOpen(false)}>
+                <NavLink active={isActivePrefix("/demos")} onClick={(e) => e.preventDefault()}>
+                  Projects
+                </NavLink>
+              </Link>
               <div className="pt-3 border-t flex flex-col space-y-3">
                 <ThemeSwitcherNav />
                 <Button
                   variant="primary"
                   size="md"
                   fullWidth
-                  asChild
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <a
@@ -134,13 +138,14 @@ export function Navigation() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    asChild
+                    className="p-2"
                     aria-label="GitHub"
                   >
                     <a
                       href="https://github.com/ianlintner"
                       target="_blank"
                       rel="noopener noreferrer"
+                      className="flex items-center justify-center"
                     >
                       <SiGithub className="h-5 w-5" />
                     </a>
