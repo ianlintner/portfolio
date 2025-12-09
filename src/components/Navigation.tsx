@@ -29,17 +29,17 @@ export function Navigation() {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-1">
-              <NavLink href="/" active={isActive("/")} asChild>
-                <Link href="/">Home</Link>
+              <NavLink href="/" active={isActive("/")} onClick={() => window.location.href = "/"}>
+                Home
               </NavLink>
-              <NavLink href="/blog" active={isActivePrefix("/blog")} asChild>
-                <Link href="/blog">Blog</Link>
+              <NavLink href="/blog" active={isActivePrefix("/blog")} onClick={() => window.location.href = "/blog"}>
+                Blog
               </NavLink>
-              <NavLink href="/docs" active={isActivePrefix("/docs")} asChild>
-                <Link href="/docs">Docs</Link>
+              <NavLink href="/docs" active={isActivePrefix("/docs")} onClick={() => window.location.href = "/docs"}>
+                Docs
               </NavLink>
-              <NavLink href="/demos" active={isActivePrefix("/demos")} asChild>
-                <Link href="/demos">Projects</Link>
+              <NavLink href="/demos" active={isActivePrefix("/demos")} onClick={() => window.location.href = "/demos"}>
+                Projects
               </NavLink>
             </div>
           </div>
@@ -99,17 +99,17 @@ export function Navigation() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t animate-in slide-in-from-top">
             <div className="flex flex-col space-y-3">
-              <NavLink href="/" active={isActive("/")} asChild onClick={() => setMobileMenuOpen(false)}>
-                <Link href="/">Home</Link>
+              <NavLink href="/" active={isActive("/")} onClick={() => { setMobileMenuOpen(false); window.location.href = "/"; }}>
+                Home
               </NavLink>
-              <NavLink href="/blog" active={isActivePrefix("/blog")} asChild onClick={() => setMobileMenuOpen(false)}>
-                <Link href="/blog">Blog</Link>
+              <NavLink href="/blog" active={isActivePrefix("/blog")} onClick={() => { setMobileMenuOpen(false); window.location.href = "/blog"; }}>
+                Blog
               </NavLink>
-              <NavLink href="/docs" active={isActivePrefix("/docs")} asChild onClick={() => setMobileMenuOpen(false)}>
-                <Link href="/docs">Docs</Link>
+              <NavLink href="/docs" active={isActivePrefix("/docs")} onClick={() => { setMobileMenuOpen(false); window.location.href = "/docs"; }}>
+                Docs
               </NavLink>
-              <NavLink href="/demos" active={isActivePrefix("/demos")} asChild onClick={() => setMobileMenuOpen(false)}>
-                <Link href="/demos">Projects</Link>
+              <NavLink href="/demos" active={isActivePrefix("/demos")} onClick={() => { setMobileMenuOpen(false); window.location.href = "/demos"; }}>
+                Projects
               </NavLink>
               <div className="pt-3 border-t flex flex-col space-y-3">
                 <ThemeSwitcherNav />
