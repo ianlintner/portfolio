@@ -40,13 +40,13 @@ The CI/CD pipeline has been successfully configured to automatically build, push
 
 ## GitHub Configuration
 
-### Secrets (configured by `scripts/setup-github-cicd.sh`)
+### Secrets (configured by [`scripts/setup-github-cicd.sh`](https://github.com/ianlintner/portfolio/blob/main/scripts/setup-github-cicd.sh))
 
 - `AZURE_CLIENT_ID` - Service principal application ID
 - `AZURE_TENANT_ID` - Azure AD tenant ID
 - `AZURE_SUBSCRIPTION_ID` - Azure subscription ID
 
-### Variables (configured by `scripts/setup-github-cicd.sh`)
+### Variables (configured by [`scripts/setup-github-cicd.sh`](https://github.com/ianlintner/portfolio/blob/main/scripts/setup-github-cicd.sh))
 
 - `AZURE_REGISTRY_NAME` = `gabby`
 - `AKS_CLUSTER_NAME` = `bigboy`
@@ -248,7 +248,7 @@ kubectl describe deployment portfolio -n default
 
 ## Reference Links
 
-- [GitHub Actions workflow](./.github/workflows/ci.yml)
-- [Setup script](../scripts/setup-github-cicd.sh)
+- [GitHub Actions workflow](https://github.com/ianlintner/portfolio/blob/main/.github/workflows/ci.yml)
+- [Setup script](https://github.com/ianlintner/portfolio/blob/main/scripts/setup-github-cicd.sh)
 - [Azure Container Registry](https://portal.azure.com/#@42ddc44e-97dd-4c3b-bf8a-31c785e24c67/resource/subscriptions/79307c77-54c3-4738-be2a-dc96da7464d9/resourceGroups/nekoc/providers/Microsoft.ContainerRegistry/registries/gabby)
 - [AKS Cluster](https://portal.azure.com/#@42ddc44e-97dd-4c3b-bf8a-31c785e24c67/resource/subscriptions/79307c77-54c3-4738-be2a-dc96da7464d9/resourceGroups/nekoc/providers/Microsoft.ContainerService/managedClusters/bigboy)

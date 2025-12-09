@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import type { ThemeName } from "../config/themes";
 import { getTheme, themeToCSSVars } from "../config/themes";
 
@@ -11,7 +17,7 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const [customTheme, setCustomThemeState] = useState<ThemeName>("dark-glassy");
   const [mounted, setMounted] = useState(false);
 
