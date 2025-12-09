@@ -77,10 +77,8 @@ export function Navigation() {
           </div>
 
           {/* Mobile menu button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="md:hidden p-2"
+          <button
+            className="md:hidden p-2 rounded-lg hover:bg-accent transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -89,7 +87,7 @@ export function Navigation() {
             ) : (
               <Menu className="h-6 w-6" />
             )}
-          </Button>
+          </button>
         </div>
 
         {/* Mobile Navigation */}
