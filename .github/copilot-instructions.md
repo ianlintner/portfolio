@@ -21,6 +21,8 @@
 - Jest + React Testing Library power unit/UI tests (`jest.config.js`, `jest.setup.js`); co-locate specs next to components or under `__tests__`.
 - Docs in `docs/` are also statically exported to `public/docs` for the documentation microsite—update both when changing guides.
 
+Tasks are not done until tests pass, linting is clean, and the build succeeds and will pass ci.
+
 ## Patterns & conventions
 
 - Always import via the path aliases in `tsconfig.json` (`@/server/db`, `@/components/Footer`, etc.) instead of long relative paths.

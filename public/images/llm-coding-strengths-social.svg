@@ -1,0 +1,112 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Grid pattern -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="1"/>
+    </pattern>
+    
+    <!-- Gradient overlay -->
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:0.15"/>
+    </linearGradient>
+    
+    <!-- Glow filter -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Drop shadow -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="4" stdDeviation="4" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0f172a"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#gradient)"/>
+  
+  <!-- Decorative elements - strength meter bars -->
+  <g transform="translate(800, 100)" filter="url(#shadow)">
+    <!-- Model comparison bars -->
+    <rect x="0" y="0" width="300" height="35" rx="4" fill="#1e293b" opacity="0.8"/>
+    <rect x="0" y="0" width="270" height="35" rx="4" fill="#10b981"/>
+    <text x="10" y="23" font-family="Arial, sans-serif" font-size="14" fill="white" font-weight="bold">Code Generation</text>
+    
+    <rect x="0" y="50" width="300" height="35" rx="4" fill="#1e293b" opacity="0.8"/>
+    <rect x="0" y="50" width="290" height="35" rx="4" fill="#8b5cf6"/>
+    <text x="10" y="73" font-family="Arial, sans-serif" font-size="14" fill="white" font-weight="bold">Documentation</text>
+    
+    <rect x="0" y="100" width="300" height="35" rx="4" fill="#1e293b" opacity="0.8"/>
+    <rect x="0" y="100" width="250" height="35" rx="4" fill="#3b82f6"/>
+    <text x="10" y="123" font-family="Arial, sans-serif" font-size="14" fill="white" font-weight="bold">Refactoring</text>
+    
+    <rect x="0" y="150" width="300" height="35" rx="4" fill="#1e293b" opacity="0.8"/>
+    <rect x="0" y="150" width="280" height="35" rx="4" fill="#f97316"/>
+    <text x="10" y="173" font-family="Arial, sans-serif" font-size="14" fill="white" font-weight="bold">Test Generation</text>
+    
+    <rect x="0" y="200" width="300" height="35" rx="4" fill="#1e293b" opacity="0.8"/>
+    <rect x="0" y="200" width="260" height="35" rx="4" fill="#ec4899"/>
+    <text x="10" y="223" font-family="Arial, sans-serif" font-size="14" fill="white" font-weight="bold">Bug Detection</text>
+  </g>
+  
+  <!-- Model icons/nodes -->
+  <g transform="translate(100, 120)" filter="url(#glow)">
+    <!-- GPT node -->
+    <circle cx="50" cy="50" r="35" fill="#10b981" opacity="0.9"/>
+    <text x="50" y="55" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" font-weight="bold">GPT-5</text>
+    
+    <!-- Claude node -->
+    <circle cx="170" cy="30" r="40" fill="#8b5cf6" opacity="0.9"/>
+    <text x="170" y="35" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" font-weight="bold">Claude</text>
+    
+    <!-- Gemini node -->
+    <circle cx="130" cy="130" r="30" fill="#3b82f6" opacity="0.9"/>
+    <text x="130" y="135" font-family="Arial, sans-serif" font-size="11" fill="white" text-anchor="middle" font-weight="bold">Gemini</text>
+    
+    <!-- Grok node -->
+    <circle cx="250" cy="90" r="28" fill="#f97316" opacity="0.9"/>
+    <text x="250" y="95" font-family="Arial, sans-serif" font-size="11" fill="white" text-anchor="middle" font-weight="bold">Grok</text>
+    
+    <!-- Connection lines -->
+    <line x1="85" y1="50" x2="130" y2="35" stroke="#64748b" stroke-width="2" opacity="0.5"/>
+    <line x1="150" y1="65" x2="130" y2="100" stroke="#64748b" stroke-width="2" opacity="0.5"/>
+    <line x1="200" y1="55" x2="225" y2="75" stroke="#64748b" stroke-width="2" opacity="0.5"/>
+    <line x1="155" y1="120" x2="225" y2="100" stroke="#64748b" stroke-width="2" opacity="0.5"/>
+  </g>
+  
+  <!-- Code bracket decorations -->
+  <g transform="translate(50, 350)" fill="#3b82f6" opacity="0.6">
+    <text font-family="monospace" font-size="80" font-weight="bold">{</text>
+  </g>
+  <g transform="translate(350, 350)" fill="#10b981" opacity="0.6">
+    <text font-family="monospace" font-size="80" font-weight="bold">}</text>
+  </g>
+  
+  <!-- Checkmark icon -->
+  <g transform="translate(680, 380)" filter="url(#shadow)">
+    <circle cx="30" cy="30" r="25" fill="#10b981"/>
+    <path d="M 18 30 L 26 38 L 44 20" stroke="white" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  
+  <!-- Main title -->
+  <text x="60" y="450" font-family="Arial, sans-serif" font-size="52" font-weight="bold" fill="white">
+    What LLM Coding Agents
+  </text>
+  <text x="60" y="510" font-family="Arial, sans-serif" font-size="52" font-weight="bold" fill="white">
+    <tspan fill="#10b981">Actually Excel At</tspan>
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="60" y="560" font-family="Arial, sans-serif" font-size="24" fill="#94a3b8">
+    A Practical Guide to Model Strengths &amp; Best Practices
+  </text>
+  
+  <!-- Author -->
+  <text x="1000" y="580" font-family="Arial, sans-serif" font-size="20" fill="#64748b">by Ian Lintner</text>
+</svg>
