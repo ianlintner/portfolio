@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React, { forwardRef, useState } from "react";
 import { cn } from "../../utils/cn";
 
@@ -126,11 +127,14 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
         >
           {/* Image */}
           {!showFallback && (
-            <img
-              src={src}
+            <Image
+              src={src as string}
               alt={alt}
+              fill
+              sizes="100vw"
+              className="object-cover"
               onError={() => setImageError(true)}
-              className="w-full h-full object-cover"
+              unoptimized
             />
           )}
 
