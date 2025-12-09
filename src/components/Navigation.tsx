@@ -30,22 +30,34 @@ export function Navigation() {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-1">
               <Link href="/" className="block">
-                <NavLink active={isActive("/")} onClick={(e) => e.preventDefault()}>
+                <NavLink
+                  active={isActive("/")}
+                  onClick={(e) => e.preventDefault()}
+                >
                   Home
                 </NavLink>
               </Link>
               <Link href="/blog" className="block">
-                <NavLink active={isActivePrefix("/blog")} onClick={(e) => e.preventDefault()}>
+                <NavLink
+                  active={isActivePrefix("/blog")}
+                  onClick={(e) => e.preventDefault()}
+                >
                   Blog
                 </NavLink>
               </Link>
               <Link href="/docs" className="block">
-                <NavLink active={isActivePrefix("/docs")} onClick={(e) => e.preventDefault()}>
+                <NavLink
+                  active={isActivePrefix("/docs")}
+                  onClick={(e) => e.preventDefault()}
+                >
                   Docs
                 </NavLink>
               </Link>
               <Link href="/demos" className="block">
-                <NavLink active={isActivePrefix("/demos")} onClick={(e) => e.preventDefault()}>
+                <NavLink
+                  active={isActivePrefix("/demos")}
+                  onClick={(e) => e.preventDefault()}
+                >
                   Projects
                 </NavLink>
               </Link>
@@ -94,23 +106,51 @@ export function Navigation() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t animate-in slide-in-from-top">
             <div className="flex flex-col space-y-3">
-              <Link href="/" className="block" onClick={() => setMobileMenuOpen(false)}>
-                <NavLink active={isActive("/")} onClick={(e) => e.preventDefault()}>
+              <Link
+                href="/"
+                className="block"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <NavLink
+                  active={isActive("/")}
+                  onClick={(e) => e.preventDefault()}
+                >
                   Home
                 </NavLink>
               </Link>
-              <Link href="/blog" className="block" onClick={() => setMobileMenuOpen(false)}>
-                <NavLink active={isActivePrefix("/blog")} onClick={(e) => e.preventDefault()}>
+              <Link
+                href="/blog"
+                className="block"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <NavLink
+                  active={isActivePrefix("/blog")}
+                  onClick={(e) => e.preventDefault()}
+                >
                   Blog
                 </NavLink>
               </Link>
-              <Link href="/docs" className="block" onClick={() => setMobileMenuOpen(false)}>
-                <NavLink active={isActivePrefix("/docs")} onClick={(e) => e.preventDefault()}>
+              <Link
+                href="/docs"
+                className="block"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <NavLink
+                  active={isActivePrefix("/docs")}
+                  onClick={(e) => e.preventDefault()}
+                >
                   Docs
                 </NavLink>
               </Link>
-              <Link href="/demos" className="block" onClick={() => setMobileMenuOpen(false)}>
-                <NavLink active={isActivePrefix("/demos")} onClick={(e) => e.preventDefault()}>
+              <Link
+                href="/demos"
+                className="block"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <NavLink
+                  active={isActivePrefix("/demos")}
+                  onClick={(e) => e.preventDefault()}
+                >
                   Projects
                 </NavLink>
               </Link>

@@ -23,12 +23,7 @@ export function Footer() {
                 mentoring teams and integrating AI into modern workflows.
               </p>
               <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  asChild
-                  aria-label="GitHub"
-                >
+                <Button variant="outline" size="sm" asChild aria-label="GitHub">
                   <a
                     href="https://github.com/ianlintner"
                     target="_blank"
@@ -51,12 +46,7 @@ export function Footer() {
                     <SiLinkedin className="h-5 w-5" />
                   </a>
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  asChild
-                  aria-label="Email"
-                >
+                <Button variant="outline" size="sm" asChild aria-label="Email">
                   <a href="mailto:lintner.ian@gmail.com">
                     <Mail className="h-5 w-5" />
                   </a>
