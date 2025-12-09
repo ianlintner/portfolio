@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { SiGithub, SiLinkedin } from "react-icons/si";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { Button, NavLink, Container } from "@ianlintner/theme";
+import { NavLink, Container } from "@ianlintner/theme";
 import { ThemeSwitcherNav } from "./ThemeSwitcherNav";
 
 export function Navigation() {
@@ -118,38 +118,26 @@ export function Navigation() {
               </Link>
               <div className="pt-3 border-t flex flex-col space-y-3">
                 <ThemeSwitcherNav />
-                <Button
-                  variant="primary"
-                  size="md"
-                  fullWidth
+                <a
+                  href="https://linkedin.com/in/ianlintner/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg font-medium text-sm bg-primary text-primary-foreground hover:bg-primary/90 w-full transition-all"
                   onClick={() => setMobileMenuOpen(false)}
                 >
+                  <SiLinkedin className="h-4 w-4" />
+                  <span>Connect on LinkedIn</span>
+                </a>
+                <div className="flex items-center justify-center gap-4">
                   <a
-                    href="https://linkedin.com/in/ianlintner/"
+                    href="https://github.com/ianlintner"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2"
-                  >
-                    <SiLinkedin className="h-4 w-4" />
-                    <span>Connect on LinkedIn</span>
-                  </a>
-                </Button>
-                <div className="flex items-center justify-center gap-4">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="p-2"
+                    className="p-2 rounded-lg hover:bg-accent transition-colors"
                     aria-label="GitHub"
                   >
-                    <a
-                      href="https://github.com/ianlintner"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center"
-                    >
-                      <SiGithub className="h-5 w-5" />
-                    </a>
-                  </Button>
+                    <SiGithub className="h-5 w-5" />
+                  </a>
                 </div>
               </div>
             </div>
