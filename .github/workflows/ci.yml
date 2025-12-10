@@ -63,6 +63,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
 
+      - name: Build theme package
+        run: pnpm --filter @ianlintner/theme run build
+
       - name: Install mkdocs tooling
         run: |
           python -m pip install --upgrade pip
