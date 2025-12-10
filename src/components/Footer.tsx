@@ -11,7 +11,7 @@ export function Footer() {
       <Container>
         <Section className="py-12">
           {/* Main Footer Content */}
-          <Grid columns={{ base: 1, md: 4 }} gap="lg" className="mb-8">
+          <Grid cols={{ base: 1, md: 4 }} gap={8} className="mb-8">
             {/* About */}
             <div className="md:col-span-2">
               <h3 className="font-bold text-lg mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
