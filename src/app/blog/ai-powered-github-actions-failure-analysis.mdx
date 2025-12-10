@@ -20,7 +20,7 @@ That's exactly what I built: an intelligent GitHub Action that automatically ana
 
 ## Why This Matters
 
-Traditional CI failure notifications tell you *what* failed, but not *why* or *how to fix it*. You still need to:
+Traditional CI failure notifications tell you _what_ failed, but not _why_ or _how to fix it_. You still need to:
 
 1. Open the failed workflow run
 2. Find the failed job
@@ -51,6 +51,7 @@ sequenceDiagram
     A->>GH: Post to Actions Summary
     A->>I: Create Issue
     I-->>W: Link Issue to Run
+
 `} />
 
 ### The Architecture
@@ -70,23 +71,28 @@ Here's what a typical AI analysis looks like:
 ## 🔍 AI Workflow Failure Analysis
 
 ### Summary
+
 The workflow failed due to a missing environment variable in the test job.
 
 ### Root Cause
-The test suite expects `DATABASE_URL` to be defined but it was not set 
+
+The test suite expects `DATABASE_URL` to be defined but it was not set
 in the workflow environment.
 
 ### Error Details
+
 - **Location**: test/integration/db.test.js:15
 - **Error**: `Error: DATABASE_URL is not defined`
 
 ### Recommended Actions
+
 1. Add `DATABASE_URL` to your workflow environment variables
 2. Or add it to repository secrets and reference as `${{ secrets.DATABASE_URL }}`
 3. Ensure the test database is accessible from GitHub Actions runners
 
 ### Additional Context
-The error occurred in all test jobs, suggesting this is a configuration 
+
+The error occurred in all test jobs, suggesting this is a configuration
 issue rather than a code problem.
 ```
 
@@ -100,18 +106,18 @@ analyze-failure:
   runs-on: ubuntu-latest
   if: failure()
   needs: [quality, static-deploy]
-  
+
   steps:
     - name: Analyze Failed Workflow
       uses: ianlintner/ai_summary_action@v1
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        llm-provider: 'openai'
+        llm-provider: "openai"
         openai-api-key: ${{ secrets.OPENAI_API_KEY }}
-        openai-model: 'gpt-4o-mini'
-        max-log-lines: '500'
-        create-issue: 'true'
-        issue-label: 'ci-failure'
+        openai-model: "gpt-4o-mini"
+        max-log-lines: "500"
+        create-issue: "true"
+        issue-label: "ci-failure"
         custom-system-prompt: |
           You are a senior full-stack engineer specializing in Next.js, 
           TypeScript, and CI/CD. Focus on Next.js 15 App Router issues, 
@@ -121,6 +127,7 @@ analyze-failure:
 ### Key Features Used
 
 **Custom System Prompts**: Tailored the AI to understand our specific tech stack:
+
 - Next.js 15 App Router patterns
 - TypeScript/TSX compilation
 - tRPC API structure
@@ -138,13 +145,14 @@ analyze-failure:
 The action can remember past failures to identify recurring issues:
 
 ```yaml
-enable-memory: 'true'
-cache-strategy: 'actions-cache'
-memory-scope: 'branch'
-max-historical-runs: '10'
+enable-memory: "true"
+cache-strategy: "actions-cache"
+memory-scope: "branch"
+max-historical-runs: "10"
 ```
 
 This enables the AI to:
+
 - Detect patterns across multiple runs
 - Reference previous failures and fixes
 - Identify recurring issues
@@ -165,7 +173,9 @@ Store prompt templates in `.github/prompts/` for team-specific analysis:
 
 ```markdown
 <!-- .github/prompts/system-prompt.md -->
+
 You are a Python/Django expert. Focus on:
+
 - Database migration issues
 - Django ORM errors
 - pytest failures
@@ -201,12 +211,14 @@ Provide beginner-friendly explanations.
 ### Best Practices
 
 ✅ **Do:**
+
 - Use repository secrets for API keys
 - Review logs before enabling in production
 - Sanitize sensitive data if needed
 - Use private repositories for sensitive projects
 
 ❌ **Don't:**
+
 - Expose API keys in workflow files
 - Send logs containing secrets
 - Use in public repos with sensitive data
@@ -231,7 +243,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: npm test
-  
+
   analyze-failure:
     if: failure()
     needs: [test]
@@ -264,7 +276,7 @@ Combine with PR commenting:
 ```yaml
 - id: analyze
   uses: ianlintner/ai_summary_action@v1
-  
+
 - uses: actions/github-script@v7
   with:
     script: |

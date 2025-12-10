@@ -41,13 +41,13 @@ graph TD
     User["User / Client"] -->|HTTPS| Ingress["Istio Ingress Gateway"]
     Ingress -->|Routing| AuthServer["Spring Auth Server"]
     Ingress -->|Routing| App["Protected App"]
-    
+
     subgraph Cluster
         AuthServer -->|Persist| DB[("PostgreSQL")]
         AuthServer -->|Cache| Redis[("Redis")]
         App -->|Validate Token| AuthServer
     end
-    
+
     subgraph External
         AuthServer -.->|Federate| GitHub["GitHub OAuth"]
         AuthServer -.->|Federate| Google["Google OAuth"]
