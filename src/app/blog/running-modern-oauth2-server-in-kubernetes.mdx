@@ -39,8 +39,7 @@ Senior platform engineers usually mix two options: a self-hosted control plane f
 We're building a system that fits naturally into a Kubernetes cluster. It's not just a monolithic "auth box"; it's a composed service.
 
 <Mermaid
-  chart={`
-graph TD
+  chart={`graph TD
     User[User / Client] -->|HTTPS| Ingress[Istio Ingress Gateway]
     Ingress -->|Routing| AuthServer[Spring Auth Server]
     Ingress -->|Routing| App[Protected App]
@@ -48,15 +47,13 @@ graph TD
     subgraph Cluster
         AuthServer -->|Persist| DB[(PostgreSQL)]
         AuthServer -->|Cache| Redis[(Redis)]
-        
         App -->|Validate Token| AuthServer
     end
     
     subgraph External
         AuthServer -.->|Federate| GitHub[GitHub OAuth]
         AuthServer -.->|Federate| Google[Google OAuth]
-    end
-`}
+    end`}
 />
 
 ### The Stack
