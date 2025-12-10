@@ -1,8 +1,7 @@
 import React from "react";
 import { cn } from "../../utils/cn";
 
-export interface NavLinkProps
-  extends React.HTMLAttributes<HTMLElement> {
+export interface NavLinkProps extends React.HTMLAttributes<HTMLElement> {
   active?: boolean;
   icon?: React.ReactNode;
   /** Render as a different element (use "span" when wrapped in Next.js Link) */

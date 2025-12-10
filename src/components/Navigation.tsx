@@ -30,34 +30,22 @@ export function Navigation() {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-1">
               <Link href="/" className="block">
-                <NavLink
-                  as="span"
-                  active={isActive("/")}
-                >
+                <NavLink as="span" active={isActive("/")}>
                   Home
                 </NavLink>
               </Link>
               <Link href="/blog" className="block">
-                <NavLink
-                  as="span"
-                  active={isActivePrefix("/blog")}
-                >
+                <NavLink as="span" active={isActivePrefix("/blog")}>
                   Blog
                 </NavLink>
               </Link>
               <Link href="/docs" className="block">
-                <NavLink
-                  as="span"
-                  active={isActivePrefix("/docs")}
-                >
+                <NavLink as="span" active={isActivePrefix("/docs")}>
                   Docs
                 </NavLink>
               </Link>
               <Link href="/demos" className="block">
-                <NavLink
-                  as="span"
-                  active={isActivePrefix("/demos")}
-                >
+                <NavLink as="span" active={isActivePrefix("/demos")}>
                   Projects
                 </NavLink>
               </Link>
@@ -111,10 +99,7 @@ export function Navigation() {
                 className="block"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <NavLink
-                  as="span"
-                  active={isActive("/")}
-                >
+                <NavLink as="span" active={isActive("/")}>
                   Home
                 </NavLink>
               </Link>
@@ -123,10 +108,7 @@ export function Navigation() {
                 className="block"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <NavLink
-                  as="span"
-                  active={isActivePrefix("/blog")}
-                >
+                <NavLink as="span" active={isActivePrefix("/blog")}>
                   Blog
                 </NavLink>
               </Link>
@@ -135,10 +117,7 @@ export function Navigation() {
                 className="block"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <NavLink
-                  as="span"
-                  active={isActivePrefix("/docs")}
-                >
+                <NavLink as="span" active={isActivePrefix("/docs")}>
                   Docs
                 </NavLink>
               </Link>
@@ -147,10 +126,7 @@ export function Navigation() {
                 className="block"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <NavLink
-                  as="span"
-                  active={isActivePrefix("/demos")}
-                >
+                <NavLink as="span" active={isActivePrefix("/demos")}>
                   Projects
                 </NavLink>
               </Link>
