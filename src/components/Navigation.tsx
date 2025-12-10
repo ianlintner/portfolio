@@ -31,32 +31,32 @@ export function Navigation() {
             <div className="hidden md:flex items-center space-x-1">
               <Link href="/" className="block">
                 <NavLink
+                  as="span"
                   active={isActive("/")}
-                  onClick={(e) => e.preventDefault()}
                 >
                   Home
                 </NavLink>
               </Link>
               <Link href="/blog" className="block">
                 <NavLink
+                  as="span"
                   active={isActivePrefix("/blog")}
-                  onClick={(e) => e.preventDefault()}
                 >
                   Blog
                 </NavLink>
               </Link>
               <Link href="/docs" className="block">
                 <NavLink
+                  as="span"
                   active={isActivePrefix("/docs")}
-                  onClick={(e) => e.preventDefault()}
                 >
                   Docs
                 </NavLink>
               </Link>
               <Link href="/demos" className="block">
                 <NavLink
+                  as="span"
                   active={isActivePrefix("/demos")}
-                  onClick={(e) => e.preventDefault()}
                 >
                   Projects
                 </NavLink>
@@ -112,8 +112,8 @@ export function Navigation() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <NavLink
+                  as="span"
                   active={isActive("/")}
-                  onClick={(e) => e.preventDefault()}
                 >
                   Home
                 </NavLink>
@@ -124,8 +124,8 @@ export function Navigation() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <NavLink
+                  as="span"
                   active={isActivePrefix("/blog")}
-                  onClick={(e) => e.preventDefault()}
                 >
                   Blog
                 </NavLink>
@@ -136,8 +136,8 @@ export function Navigation() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <NavLink
+                  as="span"
                   active={isActivePrefix("/docs")}
-                  onClick={(e) => e.preventDefault()}
                 >
                   Docs
                 </NavLink>
@@ -148,8 +148,8 @@ export function Navigation() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <NavLink
+                  as="span"
                   active={isActivePrefix("/demos")}
-                  onClick={(e) => e.preventDefault()}
                 >
                   Projects
                 </NavLink>

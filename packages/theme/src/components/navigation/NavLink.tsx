@@ -2,9 +2,12 @@ import React from "react";
 import { cn } from "../../utils/cn";
 
 export interface NavLinkProps
-  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  extends React.HTMLAttributes<HTMLElement> {
   active?: boolean;
   icon?: React.ReactNode;
+  /** Render as a different element (use "span" when wrapped in Next.js Link) */
+  as?: "a" | "span" | "button";
+  href?: string;
 }
 
 export function NavLink({
@@ -12,10 +15,11 @@ export function NavLink({
   active = false,
   icon,
   children,
+  as: Component = "a",
   ...props
 }: NavLinkProps) {
   return (
-    <a
+    <Component
       className={cn(
         "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
         active
@@ -27,6 +31,6 @@ export function NavLink({
     >
       {icon && <span className="shrink-0">{icon}</span>}
       {children}
-    </a>
+    </Component>
   );
 }
