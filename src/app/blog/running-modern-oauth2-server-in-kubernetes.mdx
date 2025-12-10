@@ -8,8 +8,6 @@ image: /images/modern-oauth2-k8s-social.svg
 imageAlt: Abstract representation of an OAuth2 server in a Kubernetes cluster
 ---
 
-import { Mermaid } from "@/components/Mermaid";
-
 In 2025, the "paved path" for platform engineering has evolved. We're no longer just deploying stateless microservices; we're owning the entire vertical slice of our infrastructure, including the identity layer. While SaaS providers like Auth0 and Okta are fantastic for getting started, there comes a tipping point—driven by cost, data sovereignty, or the need for deep customization—where running your own Authorization Server becomes the right engineering choice.
 
 This post explores how to run a modern, production-ready OAuth2 Authorization Server in Kubernetes, leveraging **Spring Boot 3.2** and **Spring Authorization Server**[^sas], and how to integrate it with the cloud-native ecosystem like **Istio**[^istio] and **OAuth2 Proxy**[^oauth2proxy].
@@ -38,23 +36,23 @@ Senior platform engineers usually mix two options: a self-hosted control plane f
 
 We're building a system that fits naturally into a Kubernetes cluster. It's not just a monolithic "auth box"; it's a composed service.
 
-<Mermaid
-  chart={`graph TD
-    User[User / Client] -->|HTTPS| Ingress[Istio Ingress Gateway]
-    Ingress -->|Routing| AuthServer[Spring Auth Server]
-    Ingress -->|Routing| App[Protected App]
+```mermaid
+graph TD
+    User["User / Client"] -->|HTTPS| Ingress["Istio Ingress Gateway"]
+    Ingress -->|Routing| AuthServer["Spring Auth Server"]
+    Ingress -->|Routing| App["Protected App"]
     
     subgraph Cluster
-        AuthServer -->|Persist| DB[(PostgreSQL)]
-        AuthServer -->|Cache| Redis[(Redis)]
+        AuthServer -->|Persist| DB[("PostgreSQL")]
+        AuthServer -->|Cache| Redis[("Redis")]
         App -->|Validate Token| AuthServer
     end
     
     subgraph External
-        AuthServer -.->|Federate| GitHub[GitHub OAuth]
-        AuthServer -.->|Federate| Google[Google OAuth]
-    end`}
-/>
+        AuthServer -.->|Federate| GitHub["GitHub OAuth"]
+        AuthServer -.->|Federate| Google["Google OAuth"]
+    end
+```
 
 ### The Stack
 
@@ -169,14 +167,12 @@ The magic happens when you link that upstream identity to your local user model.
 
 ### Authorization Code + PKCE (SPA)
 
-<Mermaid
-  chart={`
+```mermaid
 sequenceDiagram
     participant User as User Agent
     participant SPA as SPA Client
     participant Auth as Auth Server
     participant API as Resource Server
-
     User->>SPA: Navigate to app
     SPA-->>Auth: /authorize + code_challenge (S256)
     Auth-->>User: Login + consent
@@ -188,39 +184,31 @@ sequenceDiagram
     API-->>Auth: Validate JWT (cached JWKS)
     Auth-->>API: Signature + claims OK
     API-->>SPA: Profile JSON
-
-`}
-/>
+```
 
 ### Client Credentials (Service-to-Service)
 
-<Mermaid
-  chart={`
+```mermaid
 sequenceDiagram
     participant Job as Cron / Service A
     participant Auth as Auth Server
     participant SvcB as Service B (resource)
-
     Job-->>Auth: POST /oauth2/token (client_credentials)
     Auth-->>Job: access_token (aud=ServiceB)
     Job-->>SvcB: Call API with Bearer token
     SvcB-->>Auth: Introspect / validate JWT (if opaque)
     Auth-->>SvcB: Active=true, scopes
     SvcB-->>Job: 200 OK
-
-`}
-/>
+```
 
 ### OIDC SSO via GitHub + OAuth2 Proxy
 
-<Mermaid
-  chart={`
+```mermaid
 sequenceDiagram
     participant User
     participant Proxy as OAuth2 Proxy
     participant Auth as Auth Server
     participant GH as GitHub
-
     User->>Proxy: GET https://app.example.com
     Proxy-->>User: 302 to Auth (OIDC)
     User->>Auth: /authorize
@@ -229,9 +217,7 @@ sequenceDiagram
     GH-->>Auth: Authorization code
     Auth-->>Proxy: Tokens + ID token
     Proxy-->>User: Set session cookie, forward to app
-
-`}
-/>
+```
 
 ## State, Storage, and Session Management
 
@@ -244,7 +230,7 @@ Want to inspect your data plane? Use `kubectl exec -n identity deploy/auth-serve
 
 To visualize the full flow, here's the federated login sequence with OAuth2 Proxy sitting in front of a workload:
 
-<Mermaid chart={`
+```mermaid
 sequenceDiagram
     participant Client
     participant Proxy as OAuth2 Proxy / Istio AuthN
@@ -252,7 +238,6 @@ sequenceDiagram
     participant GitHub
     participant Redis
     participant Postgres
-
     Client->>Proxy: GET https://app.example.com
     Proxy-->>Client: 302 to Auth (PKCE challenge)
     Client->>Auth: /authorize?code_challenge=...
@@ -266,8 +251,7 @@ sequenceDiagram
     Proxy->>Auth: Token exchange via client credentials
     Auth-->>Proxy: JWT access token + refresh token
     Proxy-->>Client: Set session cookie, forward request to workload
-
-`} />
+```
 
 ## Integration Patterns in Kubernetes
 
@@ -309,16 +293,14 @@ spec:
       jwksUri: "https://auth.example.com/oauth2/jwks"
 ```
 
-<Mermaid
-  chart={`
+```mermaid
 flowchart LR
     Client --> Gateway[Istio Ingress Gateway]
     Gateway -->|validates JWT| RequestAuth[RequestAuthentication]
     RequestAuth --> AuthzPolicy[AuthorizationPolicy]
     AuthzPolicy --> Workload[my-service pod]
     Workload -->|introspect/metadata| AuthServer[Spring Auth Server]
-`}
-/>
+```
 
 ### 3. Gateway / Cloud-Managed Patterns
 
