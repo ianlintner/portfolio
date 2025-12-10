@@ -184,3 +184,39 @@ jobs:
           action: upload
           skip_app_build: true
           app_location: out
+
+  analyze-failure:
+    name: AI Failure Analysis
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: [quality, static-deploy]
+    permissions:
+      actions: read
+      contents: read
+      issues: write
+    
+    steps:
+      - name: Analyze Failed Workflow
+        uses: ianlintner/ai_summary_action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          llm-provider: 'openai'
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          openai-model: 'gpt-4o-mini'
+          max-log-lines: '500'
+          create-issue: 'true'
+          issue-label: 'ci-failure'
+          custom-system-prompt: |
+            You are a senior full-stack engineer specializing in Next.js, TypeScript, and CI/CD.
+            Focus on:
+            - Next.js 15 App Router issues
+            - TypeScript compilation errors
+            - tRPC API failures
+            - Database connection issues (PostgreSQL/Drizzle ORM)
+            - GitHub Actions workflow problems
+            - Docker build failures
+            - Kubernetes deployment issues
+            - Azure Static Web Apps deployment issues
+            
+            Provide detailed, actionable recommendations with specific file paths and code examples.
+
