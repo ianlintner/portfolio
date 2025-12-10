@@ -197,7 +197,7 @@ jobs:
     
     steps:
       - name: Analyze Failed Workflow
-        uses: ianlintner/ai_summary_action@v1
+        uses: ianlintner/ai_summary_action@v0.0.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           llm-provider: 'openai'
