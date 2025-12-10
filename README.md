@@ -1,4 +1,7 @@
-# Portfolio & Blog — Next.js + GKE
+# Portfolio & Blog
+
+<img width="991" height="651" alt="Screenshot 2025-12-10 at 14 14 25" src="https://github.com/user-attachments/assets/dfd34e4c-10c8-4d5e-8461-a1612bd5c4b5" />
+
 
 A modern full‑stack portfolio and technical blog powered by:
 
