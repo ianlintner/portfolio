@@ -5,12 +5,9 @@
 
 A modern full‑stack portfolio and technical blog powered by:
 
-- Next.js App Router (React 19, TypeScript)
-- tRPC for type‑safe server APIs
-- Drizzle ORM + PostgreSQL (Cloud SQL in production)
-- NextAuth.js for authentication
+- Next.js
 - Tailwind CSS for styling
-- GKE (Google Kubernetes Engine) with Istio, Cloud SQL Auth Proxy, and GitOps via Flux CD
+- Azure Static Site
 
 ## Quick Start
 
@@ -29,18 +26,7 @@ Environment variables are defined in `.env.example`. For local development set v
 
 ## Architecture
 
-- App: `src/app` (App Router), shared server logic under `src/server`; DB schema in `src/server/db/schema.ts` (Drizzle ORM).
-- API: tRPC routers in `src/server/api/routers`, composed in `src/server/api/root.ts`.
-- Auth: NextAuth route at `src/app/api/auth/[...nextauth]/route.ts` with Credentials provider.
-- DB: Drizzle ORM client in `src/server/db.ts`.
-- Styling: Tailwind with a custom config in `tailwind.config.ts`.
-
-## Kubernetes (GKE) Overview
-
-- Manifests: `k8s/apps/portfolio` with `base/` and environment overlays.
-- Ingress: Istio IngressGateway + `VirtualService` with a static IP and Google ManagedCertificate.
-- Database: Cloud SQL for PostgreSQL via sidecar Cloud SQL Auth Proxy and Workload Identity.
-- GitOps: Flux CD updates image tags and reconciles manifests. See Flux docs below.
+- Static Next JS Published Website Hosted at Azure
 
 ## CI/CD
 
