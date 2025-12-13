@@ -341,7 +341,13 @@ select {
 
 .footer-cat__mode {
   position: absolute;
-  inset: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.footer-cat--chaser {
+  width: 96px;
+  height: 96px;
 }
 
 @keyframes footer-cat-mode-toggle {
