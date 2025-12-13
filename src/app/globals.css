@@ -413,7 +413,7 @@ select {
 
 .footer-cat {
   position: absolute;
-  bottom: 10px;
+  bottom: 6px;
   left: 0;
   pointer-events: none;
   -webkit-user-select: none;
@@ -425,8 +425,8 @@ select {
 
 .footer-cat__body {
   position: relative;
-  width: 96px;
-  height: 96px;
+  width: 128px;
+  height: 128px;
   animation:
     footer-cat-bob 1.1s ease-in-out infinite,
     footer-cat-meet-wiggle 32s ease-in-out infinite;
@@ -481,10 +481,10 @@ select {
 .footer-cat::after {
   content: "";
   position: absolute;
-  top: 8px;
-  left: 26px;
-  width: 6px;
-  height: 6px;
+  top: 12px;
+  left: 36px;
+  width: 8px;
+  height: 8px;
   border: 2px solid hsla(var(--foreground), 0.55);
   border-radius: 9999px;
   opacity: 0;
@@ -493,8 +493,8 @@ select {
 
 .footer-cat__sprite {
   image-rendering: pixelated;
-  width: 96px;
-  height: 96px;
+  width: 128px;
+  height: 128px;
 }
 
 .footer-cat__mode {
@@ -504,8 +504,8 @@ select {
 }
 
 .footer-cat--chaser {
-  width: 96px;
-  height: 96px;
+  width: 128px;
+  height: 128px;
 }
 
 @keyframes footer-cat-mode-toggle {
@@ -596,7 +596,7 @@ select {
 }
 
 .footer-cat--r2l {
-  bottom: 16px;
+  bottom: 12px;
   animation: footer-cat-move-r2l 32s linear infinite;
   animation-delay: -16s;
 }
@@ -619,8 +619,8 @@ select {
 
 .footer-yarn__sprite {
   image-rendering: pixelated;
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
 }
 
 @keyframes footer-yarn-roll-r2l {
@@ -660,7 +660,7 @@ select {
 .footer-heart {
   position: absolute;
   left: 50%;
-  bottom: 46px;
+  bottom: 66px;
   translate: -50% 0;
   pointer-events: none;
   -webkit-user-select: none;
@@ -679,7 +679,7 @@ select {
 /* Laser dot + sparkles */
 .footer-laser {
   position: absolute;
-  bottom: 14px;
+  bottom: 18px;
   left: 0;
   pointer-events: none;
   -webkit-user-select: none;
@@ -733,14 +733,14 @@ select {
 
 .footer-sparkle--meet {
   left: calc(50% + 26px);
-  bottom: 44px;
+  bottom: 66px;
   translate: -50% 0;
   animation: footer-sparkle-pop 32s ease-in-out infinite;
 }
 
 .footer-sparkle--pounce {
   right: 20vw;
-  bottom: 54px;
+  bottom: 76px;
   animation: footer-sparkle-pounce 16s ease-in-out infinite;
 }
 
@@ -786,8 +786,10 @@ select {
   .footer-cat__frame--a,
   .footer-cat__frame--b,
   .footer-cat__frame--c,
+  .footer-cat__frame--d,
   .footer-cat__mode--walk,
   .footer-cat__mode--loaf,
+  .footer-cat__mode--sit,
   .footer-yarn,
   .footer-yarn__body,
   .footer-heart,
