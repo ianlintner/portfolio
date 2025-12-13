@@ -179,20 +179,20 @@ export default function ResumePage() {
           <CardContent>
             <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
               <li>
-                Lead Engineer with 20+ years building cloud-native,
-                event-driven systems and secure APIs.
+                Lead Engineer with 20+ years building cloud-native, event-driven
+                systems and secure APIs.
               </li>
               <li>
                 Recent focus: AI communications platform (LLM chat/routing,
                 orchestration, summarization).
               </li>
               <li>
-                Strong in Scala (ZIO/Akka), Kafka, Kubernetes, Terraform,
-                and OpenTelemetry end-to-end tracing.
+                Strong in Scala (ZIO/Akka), Kafka, Kubernetes, Terraform, and
+                OpenTelemetry end-to-end tracing.
               </li>
               <li>
-                Track record: performance + reliability wins, migrations,
-                and mentoring teams.
+                Track record: performance + reliability wins, migrations, and
+                mentoring teams.
               </li>
             </ul>
           </CardContent>
@@ -247,32 +247,6 @@ export default function ResumePage() {
                 </span>
               </ExternalA>
               <ExternalA href={LINKS.portfolio}>Portfolio</ExternalA>
-            </div>
-
-            <div className="rounded-xl border border-border bg-card/60 p-4 shadow-sm">
-              <h3 className="font-semibold mb-3">
-                Executive Summary
-              </h3>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>
-                    Lead Engineer with 20+ years building cloud-native,
-                    event-driven systems and secure APIs.
-                  </li>
-                  <li>
-                    Recent focus: AI communications platform (LLM chat/routing,
-                    orchestration, summarization).
-                  </li>
-                  <li>
-                    Strong in Scala (ZIO/Akka), Kafka, Kubernetes, Terraform,
-                    and OpenTelemetry end-to-end tracing.
-                  </li>
-                  <li>
-                    Track record: performance + reliability wins, migrations,
-                    and mentoring teams.
-                  </li>
-                </ul>
-              </div>
             </div>
           </div>
 
