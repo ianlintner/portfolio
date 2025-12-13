@@ -226,15 +226,15 @@ select {
   0% {
     transform: translateX(-20vw) scaleX(-1);
   }
-  35% {
-    transform: translateX(35vw) scaleX(-1);
+  45% {
+    transform: translateX(48vw) scaleX(-1);
   }
-  /* pause to sniff */
-  42% {
-    transform: translateX(35vw) scaleX(-1);
+  /* meet + pause */
+  50% {
+    transform: translateX(48vw) scaleX(-1);
   }
-  48% {
-    transform: translateX(35vw) scaleX(-1);
+  56% {
+    transform: translateX(48vw) scaleX(-1);
   }
   100% {
     transform: translateX(120vw) scaleX(-1);
@@ -245,15 +245,15 @@ select {
   0% {
     transform: translateX(120vw);
   }
-  32% {
-    transform: translateX(55vw);
+  45% {
+    transform: translateX(52vw);
   }
-  /* playful pause */
-  38% {
-    transform: translateX(55vw);
+  /* meet + pause */
+  50% {
+    transform: translateX(52vw);
   }
-  44% {
-    transform: translateX(55vw);
+  56% {
+    transform: translateX(52vw);
   }
   100% {
     transform: translateX(-20vw);
@@ -267,6 +267,33 @@ select {
   }
   50% {
     translate: 0 -2px;
+  }
+}
+
+@keyframes footer-cat-pounce {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  /* little hop during chase */
+  22% {
+    translate: 0 0;
+  }
+  26% {
+    translate: 0 -8px;
+  }
+  30% {
+    translate: 0 0;
+  }
+  /* tiny hop after meeting */
+  60% {
+    translate: 0 0;
+  }
+  64% {
+    translate: 0 -6px;
+  }
+  68% {
+    translate: 0 0;
   }
 }
 
@@ -289,10 +316,10 @@ select {
 
 @keyframes footer-cat-frame-a {
   0%,
-  49% {
+  33% {
     opacity: 1;
   }
-  50%,
+  34%,
   100% {
     opacity: 0;
   }
@@ -300,12 +327,48 @@ select {
 
 @keyframes footer-cat-frame-b {
   0%,
-  49% {
+  33% {
     opacity: 0;
   }
-  50%,
+  34%,
+  66% {
+    opacity: 1;
+  }
+  67%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes footer-cat-frame-c {
+  0%,
+  66% {
+    opacity: 0;
+  }
+  67%,
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes footer-heart-pop {
+  0%,
+  46% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+  58% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.05);
+  }
+  62%,
+  100% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.9);
   }
 }
 
@@ -318,6 +381,19 @@ select {
   filter: drop-shadow(0 6px 10px hsla(var(--glow-primary), 0.15));
   /* Keep transform animations on the compositor */
   will-change: transform;
+}
+
+.footer-cat__body {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  animation: footer-cat-bob 1.1s ease-in-out infinite;
+}
+
+.footer-cat__body--pounce {
+  animation:
+    footer-cat-bob 1.0s ease-in-out infinite,
+    footer-cat-pounce 16s ease-in-out infinite;
 }
 
 .footer-cat::after {
@@ -394,25 +470,25 @@ select {
 }
 
 .footer-cat__frame--a {
-  animation: footer-cat-frame-a 0.55s steps(1) infinite;
+  animation: footer-cat-frame-a 0.66s steps(1) infinite;
 }
 
 .footer-cat__frame--b {
-  animation: footer-cat-frame-b 0.55s steps(1) infinite;
+  animation: footer-cat-frame-b 0.66s steps(1) infinite;
+}
+
+.footer-cat__frame--c {
+  animation: footer-cat-frame-c 0.66s steps(1) infinite;
 }
 
 .footer-cat--l2r {
-  animation:
-    footer-cat-move-l2r 26s linear infinite,
-    footer-cat-bob 0.9s ease-in-out infinite;
+  animation: footer-cat-move-l2r 32s linear infinite;
 }
 
 .footer-cat--r2l {
   bottom: 16px;
-  animation:
-    footer-cat-move-r2l 31s linear infinite,
-    footer-cat-bob 0.8s ease-in-out infinite;
-  animation-delay: -11s;
+  animation: footer-cat-move-r2l 32s linear infinite;
+  animation-delay: -16s;
 }
 
 /* Yarn ball that the orange cat "chases" */
@@ -426,6 +502,10 @@ select {
   will-change: transform;
 }
 
+.footer-yarn__body {
+  animation: footer-yarn-bounce 0.75s ease-in-out infinite;
+}
+
 .footer-yarn__sprite {
   image-rendering: pixelated;
   width: 64px;
@@ -436,14 +516,15 @@ select {
   0% {
     transform: translateX(125vw) rotate(0deg);
   }
-  32% {
-    transform: translateX(60vw) rotate(-260deg);
+  45% {
+    transform: translateX(58vw) rotate(-420deg);
   }
-  38% {
-    transform: translateX(60vw) rotate(-310deg);
+  /* meet + pause */
+  50% {
+    transform: translateX(58vw) rotate(-480deg);
   }
-  44% {
-    transform: translateX(60vw) rotate(-360deg);
+  56% {
+    transform: translateX(58vw) rotate(-540deg);
   }
   100% {
     transform: translateX(-25vw) rotate(-980deg);
@@ -461,19 +542,39 @@ select {
 }
 
 .footer-yarn--r2l {
-  animation:
-    footer-yarn-roll-r2l 30s linear infinite,
-    footer-yarn-bounce 0.7s ease-in-out infinite;
-  animation-delay: -11s;
+  animation: footer-yarn-roll-r2l 32s linear infinite;
+  animation-delay: -16s;
+}
+
+.footer-heart {
+  position: absolute;
+  left: 50%;
+  bottom: 46px;
+  translate: -50% 0;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  animation: footer-heart-pop 32s ease-in-out infinite;
+}
+
+.footer-heart__sprite {
+  image-rendering: pixelated;
+  width: 44px;
+  height: 44px;
+  filter: drop-shadow(0 10px 18px hsla(var(--glow-accent), 0.15));
 }
 
 @media (prefers-reduced-motion: reduce) {
   .footer-cat,
+  .footer-cat__body,
   .footer-cat__frame--a,
   .footer-cat__frame--b,
+  .footer-cat__frame--c,
   .footer-cat__mode--walk,
   .footer-cat__mode--loaf,
-  .footer-yarn {
+  .footer-yarn,
+  .footer-yarn__body,
+  .footer-heart {
     animation: none !important;
   }
   .footer-cat::after {
