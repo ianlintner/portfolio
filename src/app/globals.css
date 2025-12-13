@@ -370,6 +370,74 @@ select {
   }
 }
 
+/* Sprite-sheet cats (PNG) */
+
+.footer-cat__sprite-sheet {
+  /* Defaults; can be overridden via CSS variables from inline styles */
+  --frame: 64px;
+  --scale: 2;
+  --frames-x: 14;
+  --frames-y: 72;
+  --row: 0;
+
+  --frame-scaled: calc(var(--frame) * var(--scale));
+  --sheet-w: calc(var(--frame) * var(--frames-x));
+  --sheet-h: calc(var(--frame) * var(--frames-y));
+  --sheet-w-scaled: calc(var(--sheet-w) * var(--scale));
+  --sheet-h-scaled: calc(var(--sheet-h) * var(--scale));
+
+  display: block;
+  width: var(--frame-scaled);
+  height: var(--frame-scaled);
+  background-image: var(--sprite-url);
+  background-repeat: no-repeat;
+  background-size: var(--sheet-w-scaled) var(--sheet-h-scaled);
+  background-position-x: 0px;
+  background-position-y: calc(var(--row) * var(--frame-scaled) * -1);
+  image-rendering: pixelated;
+}
+
+/* Sprite URL mapping (kept in CSS to avoid inline styles) */
+.footer-cat__sprite-sheet[data-cat="1"] {
+  --sprite-url: url("/images/cats/cat 1 (64х64).png");
+}
+
+.footer-cat__sprite-sheet[data-cat="2"] {
+  --sprite-url: url("/images/cats/cat 2 (64х64).png");
+}
+
+.footer-cat__sprite-sheet[data-cat="3"] {
+  --sprite-url: url("/images/cats/cat 3 (64х64).png");
+}
+
+/* State -> row mapping.
+   NOTE: The sheets are 14 columns x 72 rows of 64x64 tiles.
+   If a pose looks wrong, tweak these row values. */
+.footer-cat__sprite-sheet[data-state="walk"] {
+  --row: 0;
+}
+
+.footer-cat__sprite-sheet[data-state="sit"] {
+  --row: 1;
+}
+
+.footer-cat__sprite-sheet[data-state="loaf"] {
+  --row: 2;
+}
+
+.footer-cat__sprite-sheet--walk {
+  animation: footer-cat-sprite-walk 0.85s steps(var(--frames-x)) infinite;
+}
+
+@keyframes footer-cat-sprite-walk {
+  from {
+    background-position-x: 0px;
+  }
+  to {
+    background-position-x: calc((var(--frames-x) - 1) * var(--frame-scaled) * -1);
+  }
+}
+
 @keyframes footer-cat-meet-wiggle {
   0%,
   46%,

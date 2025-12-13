@@ -1,7 +1,11 @@
 export function FooterCats() {
+  // Flip this to false if you ever want to fall back to the old SVG pixel cats.
+  // (Kept around so we can iterate on sprite row indices without stress.)
+  const USE_SPRITE_CATS = true;
+
   /**
-   * Quick style switcher for the cat pixel art (no CSS changes required).
-   * Try: "round" (cuter), "sleek" (sharper), "classic" (current-ish).
+   * Style switcher for the legacy SVG pixel cats.
+   * (Only used when USE_SPRITE_CATS === false)
    */
   const catStyle: CatStyle = "kawaii";
 
@@ -17,10 +21,18 @@ export function FooterCats() {
       <div className="footer-cat footer-cat--l2r">
         <div className="footer-cat__body footer-cat__body--wiggle">
           <div className="footer-cat__mode footer-cat__mode--walk footer-cat__mode--walk-slate">
-            <PixelCat style={catStyle} />
+            {USE_SPRITE_CATS ? (
+              <SpriteCat catId={1} state="walk" />
+            ) : (
+              <PixelCat style={catStyle} />
+            )}
           </div>
           <div className="footer-cat__mode footer-cat__mode--sit">
-            <PixelCatSit style={catStyle} />
+            {USE_SPRITE_CATS ? (
+              <SpriteCat catId={1} state="sit" />
+            ) : (
+              <PixelCatSit style={catStyle} />
+            )}
           </div>
         </div>
       </div>
@@ -29,10 +41,18 @@ export function FooterCats() {
       <div className="footer-cat footer-cat--r2l footer-cat--chaser">
         <div className="footer-cat__body footer-cat__body--pounce">
           <div className="footer-cat__mode footer-cat__mode--walk">
-            <PixelCat variant="orange" style={catStyle} />
+            {USE_SPRITE_CATS ? (
+              <SpriteCat catId={2} state="walk" />
+            ) : (
+              <PixelCat variant="orange" style={catStyle} />
+            )}
           </div>
           <div className="footer-cat__mode footer-cat__mode--loaf">
-            <PixelCatLoaf variant="orange" style={catStyle} />
+            {USE_SPRITE_CATS ? (
+              <SpriteCat catId={2} state="loaf" />
+            ) : (
+              <PixelCatLoaf variant="orange" style={catStyle} />
+            )}
           </div>
         </div>
       </div>
@@ -66,6 +86,28 @@ export function FooterCats() {
 
 type Pixel = [x: number, y: number, fill: string];
 type CatStyle = "classic" | "round" | "sleek" | "kawaii";
+
+type SpriteCatId = 1 | 2 | 3;
+type SpriteCatState = "walk" | "sit" | "loaf";
+
+function SpriteCat({
+  catId,
+  state,
+}: {
+  catId: SpriteCatId;
+  state: SpriteCatState;
+}) {
+  const isWalk = state === "walk";
+
+  return (
+    <span
+      aria-hidden
+      data-cat={catId}
+      data-state={state}
+      className={`footer-cat__sprite-sheet${isWalk ? " footer-cat__sprite-sheet--walk" : ""}`}
+    />
+  );
+}
 
 function Pixels({ pixels }: { pixels: Pixel[] }) {
   return (
