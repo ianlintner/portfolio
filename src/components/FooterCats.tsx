@@ -1,4 +1,10 @@
 export function FooterCats() {
+  /**
+   * Quick style switcher for the cat pixel art (no CSS changes required).
+   * Try: "round" (cuter), "sleek" (sharper), "classic" (current-ish).
+   */
+  const catStyle: CatStyle = "round";
+
   return (
     <div
       aria-hidden
@@ -11,7 +17,7 @@ export function FooterCats() {
       <div className="footer-cat footer-cat--l2r">
         <div className="footer-cat__body footer-cat__body--wiggle">
           <div className="footer-cat__mode footer-cat__mode--walk footer-cat__mode--walk-slate">
-            <PixelCat />
+            <PixelCat style={catStyle} />
           </div>
           <div className="footer-cat__mode footer-cat__mode--sit">
             <PixelCatSit />
@@ -23,7 +29,7 @@ export function FooterCats() {
       <div className="footer-cat footer-cat--r2l footer-cat--chaser">
         <div className="footer-cat__body footer-cat__body--pounce">
           <div className="footer-cat__mode footer-cat__mode--walk">
-            <PixelCat variant="orange" />
+            <PixelCat variant="orange" style={catStyle} />
           </div>
           <div className="footer-cat__mode footer-cat__mode--loaf">
             <PixelCatLoaf variant="orange" />
@@ -59,6 +65,7 @@ export function FooterCats() {
 }
 
 type Pixel = [x: number, y: number, fill: string];
+type CatStyle = "classic" | "round" | "sleek";
 
 function Pixels({ pixels }: { pixels: Pixel[] }) {
   return (
@@ -70,7 +77,13 @@ function Pixels({ pixels }: { pixels: Pixel[] }) {
   );
 }
 
-function PixelCat({ variant }: { variant?: "slate" | "orange" }) {
+function PixelCat({
+  variant,
+  style = "classic",
+}: {
+  variant?: "slate" | "orange";
+  style?: CatStyle;
+}) {
   // Three-frame pixel cat. We swap frames via CSS (opacity) to simulate a walk cycle.
   // Built from 1x1 rect pixels for crisp edges.
   const isOrange = variant === "orange";
@@ -92,7 +105,7 @@ function PixelCat({ variant }: { variant?: "slate" | "orange" }) {
       ] satisfies Pixel[])
     : ([] satisfies Pixel[]);
 
-  const frameBase: Pixel[] = [
+  const classicBase: Pixel[] = [
     // Ears
     [4, 4, outline],
     [5, 4, outline],
@@ -183,30 +196,235 @@ function PixelCat({ variant }: { variant?: "slate" | "orange" }) {
     [9, 12, fur2],
   ];
 
-  const tailUp: Pixel[] = [
-    [13, 10, outline],
-    [14, 9, outline],
-    [14, 10, outline],
-    [13, 11, outline],
-    [13, 10, fur],
-    [14, 10, fur],
+  const roundBase: Pixel[] = [
+    // Rounder head + bigger eyes
+    [4, 5, outline],
+    [5, 5, outline],
+    [7, 5, outline],
+    [8, 5, outline],
+    [5, 5, fur],
+    [7, 5, fur],
+    [4, 6, outline],
+    [8, 6, outline],
+    [3, 7, outline],
+    [9, 7, outline],
+    [3, 8, outline],
+    [9, 8, outline],
+    [4, 9, outline],
+    [5, 9, outline],
+    [6, 9, outline],
+    [7, 9, outline],
+    [8, 9, outline],
+    [4, 7, fur],
+    [5, 7, fur],
+    [6, 7, fur],
+    [7, 7, fur],
+    [8, 7, fur],
+    [4, 8, fur],
+    [5, 8, fur],
+    [6, 8, fur],
+    [7, 8, fur],
+    [8, 8, fur],
+    // cheeks highlight
+    [4, 8, fur2],
+    [8, 8, fur2],
+    // eyes (bigger, closer)
+    [5, 8, eye],
+    [7, 8, eye],
+    [6, 8, fur2],
+    [6, 9, nose],
+    // whiskers shorter
+    [2, 8, outline],
+    [10, 8, outline],
+    // collar
+    [5, 10, collar],
+    [6, 10, collar],
+    [7, 10, collar],
+    [6, 11, bell],
+    // Chonkier body
+    [6, 11, outline],
+    [7, 11, outline],
+    [8, 11, outline],
+    [9, 11, outline],
+    [10, 11, outline],
+    [5, 12, outline],
+    [11, 12, outline],
+    [5, 13, outline],
+    [11, 13, outline],
+    [6, 14, outline],
+    [7, 14, outline],
+    [8, 14, outline],
+    [9, 14, outline],
+    [10, 14, outline],
+    [6, 12, fur],
+    [7, 12, fur],
+    [8, 12, fur],
+    [9, 12, fur],
+    [10, 12, fur],
+    [6, 13, fur],
+    [7, 13, fur],
+    [8, 13, fur],
+    [9, 13, fur],
+    [10, 13, fur],
+    [7, 12, fur2],
+    [8, 12, fur2],
   ];
 
-  const tailMid: Pixel[] = [
+  const sleekBase: Pixel[] = [
+    // Pointier ears, narrower face
+    [4, 4, outline],
+    [5, 4, outline],
+    [7, 4, outline],
+    [8, 4, outline],
+    [5, 5, fur2],
+    [7, 5, fur2],
+    [4, 6, outline],
+    [5, 6, outline],
+    [6, 6, outline],
+    [7, 6, outline],
+    [8, 6, outline],
+    [4, 7, outline],
+    [8, 7, outline],
+    [5, 8, outline],
+    [7, 8, outline],
+    [6, 9, outline],
+    [5, 7, fur],
+    [6, 7, fur],
+    [7, 7, fur],
+    [6, 8, fur],
+    // eyes slightly narrower
+    [5, 7, eye],
+    [7, 7, eye],
+    [6, 8, nose],
+    // whiskers angled
+    [3, 7, outline],
+    [9, 7, outline],
+    [2, 8, outline],
+    [10, 8, outline],
+    // collar
+    [5, 10, collar],
+    [6, 10, collar],
+    [7, 10, collar],
+    [6, 11, bell],
+    // Longer body
+    [6, 11, outline],
+    [7, 11, outline],
+    [8, 11, outline],
+    [9, 11, outline],
+    [10, 11, outline],
+    [11, 11, outline],
+    [12, 11, outline],
+    [5, 12, outline],
     [13, 12, outline],
-    [14, 12, outline],
-    [15, 11, outline],
-    [13, 12, fur],
-    [14, 12, fur],
+    [5, 13, outline],
+    [13, 13, outline],
+    [6, 14, outline],
+    [7, 14, outline],
+    [8, 14, outline],
+    [9, 14, outline],
+    [10, 14, outline],
+    [11, 14, outline],
+    [12, 14, outline],
+    [6, 12, fur],
+    [7, 12, fur],
+    [8, 12, fur],
+    [9, 12, fur],
+    [10, 12, fur],
+    [11, 12, fur],
+    [12, 12, fur],
+    [6, 13, fur],
+    [7, 13, fur],
+    [8, 13, fur],
+    [9, 13, fur],
+    [10, 13, fur],
+    [11, 13, fur],
+    [12, 13, fur],
+    [8, 12, fur2],
+    [9, 12, fur2],
   ];
 
-  const tailDown: Pixel[] = [
-    [13, 13, outline],
-    [14, 13, outline],
-    [15, 13, outline],
-    [13, 13, fur],
-    [14, 13, fur],
-  ];
+  const frameBase: Pixel[] =
+    style === "round" ? roundBase : style === "sleek" ? sleekBase : classicBase;
+
+  const tailUp: Pixel[] =
+    style === "round"
+      ? [
+          // curlier tail
+          [11, 10, outline],
+          [12, 10, outline],
+          [13, 9, outline],
+          [13, 10, outline],
+          [11, 10, fur],
+          [12, 10, fur],
+          [13, 10, fur],
+        ]
+      : style === "sleek"
+        ? [
+            // longer tail up
+            [13, 9, outline],
+            [14, 8, outline],
+            [14, 9, outline],
+            [15, 8, outline],
+            [13, 9, fur],
+            [14, 9, fur],
+          ]
+        : [
+            [13, 10, outline],
+            [14, 9, outline],
+            [14, 10, outline],
+            [13, 11, outline],
+            [13, 10, fur],
+            [14, 10, fur],
+          ];
+
+  const tailMid: Pixel[] =
+    style === "round"
+      ? [
+          [11, 12, outline],
+          [12, 12, outline],
+          [13, 12, outline],
+          [11, 12, fur],
+          [12, 12, fur],
+        ]
+      : style === "sleek"
+        ? [
+            [13, 12, outline],
+            [14, 11, outline],
+            [15, 10, outline],
+            [13, 12, fur],
+            [14, 11, fur],
+          ]
+        : [
+            [13, 12, outline],
+            [14, 12, outline],
+            [15, 11, outline],
+            [13, 12, fur],
+            [14, 12, fur],
+          ];
+
+  const tailDown: Pixel[] =
+    style === "round"
+      ? [
+          [11, 13, outline],
+          [12, 13, outline],
+          [11, 13, fur],
+          [12, 13, fur],
+        ]
+      : style === "sleek"
+        ? [
+            [13, 13, outline],
+            [14, 13, outline],
+            [15, 13, outline],
+            [13, 13, fur],
+            [14, 13, fur],
+          ]
+        : [
+            [13, 13, outline],
+            [14, 13, outline],
+            [15, 13, outline],
+            [13, 13, fur],
+            [14, 13, fur],
+          ];
 
   const legsA: Pixel[] = [
     // stepping
