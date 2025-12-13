@@ -20,7 +20,8 @@ const siteUrl = getAbsoluteUrl("/resume");
 const imageUrl = getDefaultSocialImage();
 
 export const metadata: Metadata = {
-  title: "Resume | Ian Lintner — Lead Engineer (Distributed Systems, AI Platforms)",
+  title:
+    "Resume | Ian Lintner — Lead Engineer (Distributed Systems, AI Platforms)",
   description:
     "Software engineering resume for Ian Lintner — Lead Engineer focused on distributed systems, cloud platforms, and LLM-enabled products.",
   keywords: [
@@ -84,7 +85,10 @@ const LINKS = {
 
 const COMPANIES = {
   carvana: { name: "Carvana", url: "https://www.carvana.com" },
-  smartthings: { name: "Samsung SmartThings", url: "https://www.smartthings.com" },
+  smartthings: {
+    name: "Samsung SmartThings",
+    url: "https://www.smartthings.com",
+  },
   workiva: { name: "Workiva", url: "https://www.workiva.com" },
   twoRivers: {
     name: "Two Rivers Marketing",
@@ -93,7 +97,13 @@ const COMPANIES = {
   drake: { name: "Drake University", url: "https://www.drake.edu" },
 } as const;
 
-function ExternalA({ href, children }: { href: string; children: React.ReactNode }) {
+function ExternalA({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
   return (
     <a
       href={href}
@@ -159,7 +169,8 @@ export default function ResumePage() {
           }
           description={
             <span>
-              Lead Engineer · Full Stack · Distributed Systems · AI Platforms · Functional Programming
+              Lead Engineer · Full Stack · Distributed Systems · AI Platforms ·
+              Functional Programming
             </span>
           }
           actions={<ResumeActions />}
@@ -168,31 +179,54 @@ export default function ResumePage() {
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
           <div className="space-y-4">
             <p className="text-base leading-relaxed text-muted-foreground">
-              Senior software engineer and team lead with <strong>20+ years</strong> designing and delivering
-              secure, event-driven, cloud-native platforms. Deep expertise in
-              <strong> Scala (ZIO/Akka)</strong>, <strong>LLM-enabled systems</strong>, and
-              <strong> observability at scale</strong>. Known for driving technical strategy,
-              mentoring peers, and executing large migrations while remaining hands-on.
+              Senior software engineer and team lead with{" "}
+              <strong>20+ years</strong> designing and delivering secure,
+              event-driven, cloud-native platforms. Deep expertise in
+              <strong> Scala (ZIO/Akka)</strong>,{" "}
+              <strong>LLM-enabled systems</strong>, and
+              <strong> observability at scale</strong>. Known for driving
+              technical strategy, mentoring peers, and executing large
+              migrations while remaining hands-on.
             </p>
 
             <div className="flex flex-wrap gap-2">
-              <Badge pill variant="info">Distributed Systems</Badge>
-              <Badge pill variant="info">Event-Driven</Badge>
-              <Badge pill variant="info">AI / LLM Products</Badge>
-              <Badge pill variant="info">Platform + Security</Badge>
-              <Badge pill variant="secondary">Scala</Badge>
-              <Badge pill variant="secondary">Kubernetes</Badge>
-              <Badge pill variant="secondary">OpenTelemetry</Badge>
+              <Badge pill variant="info">
+                Distributed Systems
+              </Badge>
+              <Badge pill variant="info">
+                Event-Driven
+              </Badge>
+              <Badge pill variant="info">
+                AI / LLM Products
+              </Badge>
+              <Badge pill variant="info">
+                Platform + Security
+              </Badge>
+              <Badge pill variant="secondary">
+                Scala
+              </Badge>
+              <Badge pill variant="secondary">
+                Kubernetes
+              </Badge>
+              <Badge pill variant="secondary">
+                OpenTelemetry
+              </Badge>
             </div>
 
             <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
               <span className="inline-flex items-center gap-2">
                 <MapPin className="h-4 w-4" /> Minneapolis, MN
               </span>
-              <a className="inline-flex items-center gap-2 hover:text-foreground" href={LINKS.email}>
+              <a
+                className="inline-flex items-center gap-2 hover:text-foreground"
+                href={LINKS.email}
+              >
                 <Mail className="h-4 w-4" /> lintner.ian@gmail.com
               </a>
-              <a className="inline-flex items-center gap-2 hover:text-foreground" href={LINKS.phone}>
+              <a
+                className="inline-flex items-center gap-2 hover:text-foreground"
+                href={LINKS.phone}
+              >
                 <Phone className="h-4 w-4" /> 515-360-4655
               </a>
             </div>
@@ -218,16 +252,20 @@ export default function ResumePage() {
               <div className="mt-3 space-y-2 text-sm text-muted-foreground">
                 <ul className="list-disc pl-5 space-y-1">
                   <li>
-                    Lead Engineer with 20+ years building cloud-native, event-driven systems and secure APIs.
+                    Lead Engineer with 20+ years building cloud-native,
+                    event-driven systems and secure APIs.
                   </li>
                   <li>
-                    Recent focus: AI communications platform (LLM chat/routing, orchestration, summarization).
+                    Recent focus: AI communications platform (LLM chat/routing,
+                    orchestration, summarization).
                   </li>
                   <li>
-                    Strong in Scala (ZIO/Akka), Kafka, Kubernetes, Terraform, and OpenTelemetry end-to-end tracing.
+                    Strong in Scala (ZIO/Akka), Kafka, Kubernetes, Terraform,
+                    and OpenTelemetry end-to-end tracing.
                   </li>
                   <li>
-                    Track record: performance + reliability wins, migrations, and mentoring teams.
+                    Track record: performance + reliability wins, migrations,
+                    and mentoring teams.
                   </li>
                 </ul>
               </div>
@@ -264,13 +302,15 @@ export default function ResumePage() {
                   <div>
                     <p className="text-sm font-semibold">Cloud & Infra</p>
                     <p className="text-sm text-muted-foreground">
-                      AWS, GCP, Kubernetes, Terraform, CI/CD, serverless, containers, IaC
+                      AWS, GCP, Kubernetes, Terraform, CI/CD, serverless,
+                      containers, IaC
                     </p>
                   </div>
                   <div>
                     <p className="text-sm font-semibold">Distributed systems</p>
                     <p className="text-sm text-muted-foreground">
-                      Event-driven architecture, microservices, secure APIs, data pipelines, messaging
+                      Event-driven architecture, microservices, secure APIs,
+                      data pipelines, messaging
                     </p>
                   </div>
                   <div>
@@ -282,11 +322,14 @@ export default function ResumePage() {
                   <div>
                     <p className="text-sm font-semibold">AI / LLM systems</p>
                     <p className="text-sm text-muted-foreground">
-                      LLM chat + routing, summarization pipelines, human-in-the-loop workflows, AI-assisted engineering
+                      LLM chat + routing, summarization pipelines,
+                      human-in-the-loop workflows, AI-assisted engineering
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold">Reliability & Observability</p>
+                    <p className="text-sm font-semibold">
+                      Reliability & Observability
+                    </p>
                     <p className="text-sm text-muted-foreground">
                       Kafka, ZIO, Akka, OpenTelemetry, Datadog, Grafana
                     </p>
@@ -294,7 +337,8 @@ export default function ResumePage() {
                   <div>
                     <p className="text-sm font-semibold">Leadership</p>
                     <p className="text-sm text-muted-foreground">
-                      Architecture reviews, RFCs, mentoring, cross-stack collaboration, execution ownership
+                      Architecture reviews, RFCs, mentoring, cross-stack
+                      collaboration, execution ownership
                     </p>
                   </div>
                 </div>
@@ -308,20 +352,33 @@ export default function ResumePage() {
               <CardContent>
                 <ul className="space-y-3 text-sm text-muted-foreground">
                   <li>
-                    <span className="font-semibold text-foreground">Carvana — AI Chat Platform:</span> Helped architect an
-                    LLM-based communications platform; led platform team delivery of new features to production.
+                    <span className="font-semibold text-foreground">
+                      Carvana — AI Chat Platform:
+                    </span>{" "}
+                    Helped architect an LLM-based communications platform; led
+                    platform team delivery of new features to production.
                   </li>
                   <li>
-                    <span className="font-semibold text-foreground">Carvana — Performance:</span> Reduced a critical chat backend span
-                    by <strong>~10×</strong> (from 1s+ to ~90ms) using caching and pooled Twilio identities.
+                    <span className="font-semibold text-foreground">
+                      Carvana — Performance:
+                    </span>{" "}
+                    Reduced a critical chat backend span by{" "}
+                    <strong>~10×</strong> (from 1s+ to ~90ms) using caching and
+                    pooled Twilio identities.
                   </li>
                   <li>
-                    <span className="font-semibold text-foreground">Observability at scale:</span> Implemented end-to-end tracing across
-                    UI → gateways → microservices → AI flows with OpenTelemetry.
+                    <span className="font-semibold text-foreground">
+                      Observability at scale:
+                    </span>{" "}
+                    Implemented end-to-end tracing across UI → gateways →
+                    microservices → AI flows with OpenTelemetry.
                   </li>
                   <li>
-                    <span className="font-semibold text-foreground">Workiva — Serverless + SSO:</span> Built SSO/SAML/OIDC gateways and
-                    serverless integrations on AWS.
+                    <span className="font-semibold text-foreground">
+                      Workiva — Serverless + SSO:
+                    </span>{" "}
+                    Built SSO/SAML/OIDC gateways and serverless integrations on
+                    AWS.
                   </li>
                 </ul>
               </CardContent>
@@ -330,10 +387,15 @@ export default function ResumePage() {
         </Container>
       </Section>
 
-      <Section spacing="lg" className="bg-gradient-to-b from-background to-accent/10">
+      <Section
+        spacing="lg"
+        className="bg-gradient-to-b from-background to-accent/10"
+      >
         <Container>
           <div className="flex items-end justify-between gap-4 flex-wrap">
-            <h2 className="text-2xl font-semibold tracking-tight">Experience</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Experience
+            </h2>
             <p className="text-sm text-muted-foreground">
               Prefer a 1-page view? Use Print / Save PDF.
             </p>
@@ -345,35 +407,48 @@ export default function ResumePage() {
               <CardHeader>
                 <CardTitle>
                   <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <ExternalA href={COMPANIES.carvana.url}>{COMPANIES.carvana.name}</ExternalA>
-                    <span className="text-muted-foreground">— Senior Engineer II → Team Lead (AI Communications Platform)</span>
+                    <ExternalA href={COMPANIES.carvana.url}>
+                      {COMPANIES.carvana.name}
+                    </ExternalA>
+                    <span className="text-muted-foreground">
+                      — Senior Engineer II → Team Lead (AI Communications
+                      Platform)
+                    </span>
                   </span>
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">Aug 2022 – Jun 2025 · Remote</p>
+                <p className="text-sm text-muted-foreground">
+                  Aug 2022 – Jun 2025 · Remote
+                </p>
               </CardHeader>
               <CardContent>
                 <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
                   <li>
-                    Led backend transformation of customer communications: AI-driven chat, routing, and orchestration between
-                    LLMs and human agents.
+                    Led backend transformation of customer communications:
+                    AI-driven chat, routing, and orchestration between LLMs and
+                    human agents.
                   </li>
                   <li>
-                    Architected event-driven systems with <strong>Scala/ZIO/Akka</strong>; migrated Kafka workloads to
+                    Architected event-driven systems with{" "}
+                    <strong>Scala/ZIO/Akka</strong>; migrated Kafka workloads to
                     <strong> Confluent Cloud</strong>.
                   </li>
                   <li>
-                    Designed LLM summarization pipelines and secure messaging infrastructure (privacy-aware data handling,
-                    safe API design).
+                    Designed LLM summarization pipelines and secure messaging
+                    infrastructure (privacy-aware data handling, safe API
+                    design).
                   </li>
                   <li>
-                    Implemented distributed tracing across UI → gateways → microservices → AI flows via
+                    Implemented distributed tracing across UI → gateways →
+                    microservices → AI flows via
                     <strong> OpenTelemetry</strong>.
                   </li>
                   <li>
-                    Achieved a ~10× latency reduction on a critical backend span through caching and pooled Twilio identities.
+                    Achieved a ~10× latency reduction on a critical backend span
+                    through caching and pooled Twilio identities.
                   </li>
                   <li>
-                    Advanced AI-first engineering workflows (Copilot, agentic tools) to improve team throughput and feedback loops.
+                    Advanced AI-first engineering workflows (Copilot, agentic
+                    tools) to improve team throughput and feedback loops.
                   </li>
                 </ul>
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -402,9 +477,11 @@ export default function ResumePage() {
                   </summary>
                   <div className="mt-3 text-sm text-muted-foreground space-y-2">
                     <p>
-                      Focus areas included event-driven orchestration, safe fallbacks for human escalation, and reliability
-                      guardrails (timeouts, backpressure, and tracing-based troubleshooting). Emphasis on security and
-                      observability to keep AI flows debuggable in production.
+                      Focus areas included event-driven orchestration, safe
+                      fallbacks for human escalation, and reliability guardrails
+                      (timeouts, backpressure, and tracing-based
+                      troubleshooting). Emphasis on security and observability
+                      to keep AI flows debuggable in production.
                     </p>
                   </div>
                 </details>
@@ -415,21 +492,46 @@ export default function ResumePage() {
               <CardHeader>
                 <CardTitle>
                   <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <ExternalA href={COMPANIES.smartthings.url}>{COMPANIES.smartthings.name}</ExternalA>
-                    <span className="text-muted-foreground">— Senior Software Engineer</span>
+                    <ExternalA href={COMPANIES.smartthings.url}>
+                      {COMPANIES.smartthings.name}
+                    </ExternalA>
+                    <span className="text-muted-foreground">
+                      — Senior Software Engineer
+                    </span>
                   </span>
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">Jun 2021 – Aug 2022 · Minneapolis, MN</p>
+                <p className="text-sm text-muted-foreground">
+                  Jun 2021 – Aug 2022 · Minneapolis, MN
+                </p>
               </CardHeader>
               <CardContent>
                 <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
-                  <li>Designed identity and access services for a global IoT platform.</li>
-                  <li>Built high-throughput Scala/Groovy services with Akka and Spring Security.</li>
-                  <li>Managed AWS infrastructure with Terraform; improved operability with Datadog + Sumo Logic.</li>
-                  <li>Supported mission-critical 24/7 platform spanning US and Korea.</li>
+                  <li>
+                    Designed identity and access services for a global IoT
+                    platform.
+                  </li>
+                  <li>
+                    Built high-throughput Scala/Groovy services with Akka and
+                    Spring Security.
+                  </li>
+                  <li>
+                    Managed AWS infrastructure with Terraform; improved
+                    operability with Datadog + Sumo Logic.
+                  </li>
+                  <li>
+                    Supported mission-critical 24/7 platform spanning US and
+                    Korea.
+                  </li>
                 </ul>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {["Scala", "Akka", "Spring Security", "AWS", "Terraform", "Datadog"].map((t) => (
+                  {[
+                    "Scala",
+                    "Akka",
+                    "Spring Security",
+                    "AWS",
+                    "Terraform",
+                    "Datadog",
+                  ].map((t) => (
                     <Badge key={t} variant="outline" pill>
                       {t}
                     </Badge>
@@ -442,21 +544,40 @@ export default function ResumePage() {
               <CardHeader>
                 <CardTitle>
                   <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <ExternalA href={COMPANIES.workiva.url}>{COMPANIES.workiva.name}</ExternalA>
-                    <span className="text-muted-foreground">— Senior Software Engineer</span>
+                    <ExternalA href={COMPANIES.workiva.url}>
+                      {COMPANIES.workiva.name}
+                    </ExternalA>
+                    <span className="text-muted-foreground">
+                      — Senior Software Engineer
+                    </span>
                   </span>
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">Dec 2013 – Jun 2021 · Ames, IA</p>
+                <p className="text-sm text-muted-foreground">
+                  Dec 2013 – Jun 2021 · Ames, IA
+                </p>
               </CardHeader>
               <CardContent>
                 <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
-                  <li>Drove platform and IAM initiatives across internal tools and customer-facing systems.</li>
-                  <li>Built SSO/SAML/OIDC gateways (Python/Flask on AWS Lambda) for SaaS integrations.</li>
                   <li>
-                    Developed an internal video streaming platform that scaled to <strong>2,000 users</strong> within minutes.
+                    Drove platform and IAM initiatives across internal tools and
+                    customer-facing systems.
                   </li>
-                  <li>Delivered backend services with AWS Lambda, Kinesis, Redshift, and relational databases.</li>
-                  <li>Mentored engineers and reviewed designs across multiple backend teams.</li>
+                  <li>
+                    Built SSO/SAML/OIDC gateways (Python/Flask on AWS Lambda)
+                    for SaaS integrations.
+                  </li>
+                  <li>
+                    Developed an internal video streaming platform that scaled
+                    to <strong>2,000 users</strong> within minutes.
+                  </li>
+                  <li>
+                    Delivered backend services with AWS Lambda, Kinesis,
+                    Redshift, and relational databases.
+                  </li>
+                  <li>
+                    Mentored engineers and reviewed designs across multiple
+                    backend teams.
+                  </li>
                 </ul>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {[
@@ -482,16 +603,28 @@ export default function ResumePage() {
               <CardHeader>
                 <CardTitle>
                   <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <ExternalA href={COMPANIES.twoRivers.url}>{COMPANIES.twoRivers.name}</ExternalA>
-                    <span className="text-muted-foreground">— Senior Web Developer / Architect</span>
+                    <ExternalA href={COMPANIES.twoRivers.url}>
+                      {COMPANIES.twoRivers.name}
+                    </ExternalA>
+                    <span className="text-muted-foreground">
+                      — Senior Web Developer / Architect
+                    </span>
                   </span>
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">Nov 2007 – Nov 2013 · Des Moines, IA</p>
+                <p className="text-sm text-muted-foreground">
+                  Nov 2007 – Nov 2013 · Des Moines, IA
+                </p>
               </CardHeader>
               <CardContent>
                 <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
-                  <li>Built enterprise web applications and CMS-backed platforms for Fortune 500 clients.</li>
-                  <li>Led migration from proprietary frameworks to open-source CMS, improving developer efficiency.</li>
+                  <li>
+                    Built enterprise web applications and CMS-backed platforms
+                    for Fortune 500 clients.
+                  </li>
+                  <li>
+                    Led migration from proprietary frameworks to open-source
+                    CMS, improving developer efficiency.
+                  </li>
                 </ul>
               </CardContent>
             </Card>
@@ -502,8 +635,14 @@ export default function ResumePage() {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Vodaci Technologies — Software Engineer (C#, VB, SQL Server, infra support)</li>
-                  <li>• Customer Ease — Director of Technical Service (startup generalist, full-stack & infra)</li>
+                  <li>
+                    • Vodaci Technologies — Software Engineer (C#, VB, SQL
+                    Server, infra support)
+                  </li>
+                  <li>
+                    • Customer Ease — Director of Technical Service (startup
+                    generalist, full-stack & infra)
+                  </li>
                 </ul>
               </CardContent>
             </Card>
@@ -520,7 +659,10 @@ export default function ResumePage() {
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
                 <p>
-                  <ExternalA href={COMPANIES.drake.url}>{COMPANIES.drake.name}</ExternalA> — B.A. Computer Science, Biology
+                  <ExternalA href={COMPANIES.drake.url}>
+                    {COMPANIES.drake.name}
+                  </ExternalA>{" "}
+                  — B.A. Computer Science, Biology
                 </p>
               </CardContent>
             </Card>
@@ -542,14 +684,19 @@ export default function ResumePage() {
           <div className="mt-8 rounded-2xl border border-border bg-card/60 p-6 shadow-sm">
             <h2 className="text-lg font-semibold">Links</h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Prefer a PDF? Click <span className="font-semibold">Print / Save PDF</span>.
-              For recruiters: this page is intentionally structured for ATS parsing and quick scanning.
+              Prefer a PDF? Click{" "}
+              <span className="font-semibold">Print / Save PDF</span>. For
+              recruiters: this page is intentionally structured for ATS parsing
+              and quick scanning.
             </p>
             <div className="mt-4 flex flex-wrap gap-3 text-sm">
               <ExternalA href={LINKS.linkedin}>LinkedIn</ExternalA>
               <ExternalA href={LINKS.github}>GitHub</ExternalA>
               <ExternalA href={LINKS.portfolio}>Portfolio</ExternalA>
-              <a className="text-primary underline underline-offset-4" href={LINKS.email}>
+              <a
+                className="text-primary underline underline-offset-4"
+                href={LINKS.email}
+              >
                 Email
               </a>
             </div>
@@ -557,13 +704,17 @@ export default function ResumePage() {
         </Container>
       </Section>
 
-      <Section spacing="lg" className="bg-gradient-to-b from-background to-accent/10">
+      <Section
+        spacing="lg"
+        className="bg-gradient-to-b from-background to-accent/10"
+      >
         <Container>
           <Card id="resume-plain-text" className="scroll-mt-24">
             <CardHeader>
               <CardTitle>Plain text (copy/paste for applications)</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Some ATS systems still love plain text. This mirrors the structured sections above.
+                Some ATS systems still love plain text. This mirrors the
+                structured sections above.
               </p>
             </CardHeader>
             <CardContent>
@@ -571,39 +722,47 @@ export default function ResumePage() {
                 <h3>Ian Lintner — Lead Engineer</h3>
                 <p>
                   Minneapolis, MN · lintner.ian@gmail.com · 515-360-4655\n
-                  LinkedIn: {LINKS.linkedin}\n
-                  GitHub: {LINKS.github}\n
+                  LinkedIn: {LINKS.linkedin}\n GitHub: {LINKS.github}\n
                   Portfolio: {LINKS.portfolio}
                 </p>
                 <h4>Summary</h4>
                 <p>
-                  Lead Engineer with 20+ years building secure, event-driven, cloud-native systems. Strengths in Scala (ZIO/Akka),
-                  Kafka, Kubernetes, Terraform, OpenTelemetry, and LLM-enabled products.
+                  Lead Engineer with 20+ years building secure, event-driven,
+                  cloud-native systems. Strengths in Scala (ZIO/Akka), Kafka,
+                  Kubernetes, Terraform, OpenTelemetry, and LLM-enabled
+                  products.
                 </p>
                 <h4>Core Skills</h4>
                 <p>
-                  Distributed Systems; Event-driven Architecture; Microservices; Secure APIs; IAM; SSO/OIDC/SAML; Observability;
-                  OpenTelemetry; Datadog; Grafana; Kafka; Kubernetes; Terraform; AWS; GCP; Scala; ZIO; Akka; Python; TypeScript; SQL.
+                  Distributed Systems; Event-driven Architecture; Microservices;
+                  Secure APIs; IAM; SSO/OIDC/SAML; Observability; OpenTelemetry;
+                  Datadog; Grafana; Kafka; Kubernetes; Terraform; AWS; GCP;
+                  Scala; ZIO; Akka; Python; TypeScript; SQL.
                 </p>
                 <h4>Experience</h4>
                 <p>
-                  Carvana — Senior Engineer II → Team Lead (AI Communications Platform), Aug 2022 – Jun 2025\n
-                  Samsung SmartThings — Senior Software Engineer, Jun 2021 – Aug 2022\n
-                  Workiva — Senior Software Engineer, Dec 2013 – Jun 2021\n
-                  Two Rivers Marketing — Senior Web Developer / Architect, Nov 2007 – Nov 2013
+                  Carvana — Senior Engineer II → Team Lead (AI Communications
+                  Platform), Aug 2022 – Jun 2025\n Samsung SmartThings — Senior
+                  Software Engineer, Jun 2021 – Aug 2022\n Workiva — Senior
+                  Software Engineer, Dec 2013 – Jun 2021\n Two Rivers Marketing
+                  — Senior Web Developer / Architect, Nov 2007 – Nov 2013
                 </p>
                 <h4>Education</h4>
                 <p>Drake University — B.A. Computer Science, Biology</p>
               </div>
               <p className="mt-4 text-xs text-muted-foreground">
-                Looking for a shorter version? See the “Phone screen version” section near the top.
-                Want more detail? Expand the deep-dive sections under roles.
+                Looking for a shorter version? See the “Phone screen version”
+                section near the top. Want more detail? Expand the deep-dive
+                sections under roles.
               </p>
             </CardContent>
           </Card>
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
-            <Link href="/" className="hover:text-primary underline underline-offset-4">
+            <Link
+              href="/"
+              className="hover:text-primary underline underline-offset-4"
+            >
               Back to home
             </Link>
           </p>
