@@ -34,6 +34,11 @@ export function Navigation() {
                   Home
                 </NavLink>
               </Link>
+              <Link href="/resume" className="block">
+                <NavLink as="span" active={isActivePrefix("/resume")}>
+                  Resume
+                </NavLink>
+              </Link>
               <Link href="/blog" className="block">
                 <NavLink as="span" active={isActivePrefix("/blog")}>
                   Blog
@@ -101,6 +106,15 @@ export function Navigation() {
               >
                 <NavLink as="span" active={isActive("/")}>
                   Home
+                </NavLink>
+              </Link>
+              <Link
+                href="/resume"
+                className="block"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <NavLink as="span" active={isActivePrefix("/resume")}>
+                  Resume
                 </NavLink>
               </Link>
               <Link

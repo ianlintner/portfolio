@@ -28,6 +28,8 @@ export function Footer() {
                     href="https://github.com/ianlintner"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="GitHub"
+                    title="GitHub"
                   >
                     <SiGithub className="h-5 w-5" />
                   </a>
@@ -42,12 +44,18 @@ export function Footer() {
                     href="https://linkedin.com/in/ianlintner/"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="LinkedIn"
+                    title="LinkedIn"
                   >
                     <SiLinkedin className="h-5 w-5" />
                   </a>
                 </Button>
                 <Button variant="outline" size="sm" asChild aria-label="Email">
-                  <a href="mailto:lintner.ian@gmail.com">
+                  <a
+                    href="mailto:lintner.ian@gmail.com"
+                    aria-label="Email"
+                    title="Email"
+                  >
                     <Mail className="h-5 w-5" />
                   </a>
                 </Button>
@@ -67,6 +75,17 @@ export function Footer() {
                       →
                     </span>
                     Home
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/resume"
+                    className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1 group"
+                  >
+                    <span className="group-hover:translate-x-1 transition-transform inline-block">
+                      →
+                    </span>
+                    Resume
                   </Link>
                 </li>
                 <li>
