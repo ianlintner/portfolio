@@ -9,8 +9,13 @@ export function FooterCats() {
 
       {/* Cat 1: left -> right */}
       <div className="footer-cat footer-cat--l2r">
-        <div className="footer-cat__body">
-          <PixelCat />
+        <div className="footer-cat__body footer-cat__body--wiggle">
+          <div className="footer-cat__mode footer-cat__mode--walk footer-cat__mode--walk-slate">
+            <PixelCat />
+          </div>
+          <div className="footer-cat__mode footer-cat__mode--sit">
+            <PixelCatSit />
+          </div>
         </div>
       </div>
 
@@ -30,6 +35,19 @@ export function FooterCats() {
         <div className="footer-yarn__body">
           <YarnBall />
         </div>
+      </div>
+
+      {/* A mischievous laser dot distracts the chase */}
+      <div className="footer-laser">
+        <LaserDot />
+      </div>
+
+      {/* Sparkles during pounce + meeting */}
+      <div className="footer-sparkle footer-sparkle--meet">
+        <PixelSparkle />
+      </div>
+      <div className="footer-sparkle footer-sparkle--pounce">
+        <PixelSparkle />
       </div>
 
       {/* When they meet in the middle: a tiny heart moment */}
@@ -63,6 +81,16 @@ function PixelCat({ variant }: { variant?: "slate" | "orange" }) {
   const nose = "#fb7185"; // rose-400
   const collar = isOrange ? "#0ea5e9" : "#a78bfa"; // sky/purple
   const bell = "#facc15"; // yellow
+
+  const stripes = isOrange
+    ? ([
+        [9, 12, outline],
+        [10, 12, outline],
+        [11, 12, outline],
+        [10, 13, outline],
+        [11, 13, outline],
+      ] satisfies Pixel[])
+    : ([] satisfies Pixel[]);
 
   const frameBase: Pixel[] = [
     // Ears
@@ -102,29 +130,37 @@ function PixelCat({ variant }: { variant?: "slate" | "orange" }) {
     [5, 8, eye],
     [7, 8, eye],
 
+    // Whiskers
+    [3, 8, outline],
+    [2, 8, outline],
+    [9, 8, outline],
+    [10, 8, outline],
+
     // Collar + bell (tiny)
     [5, 10, collar],
     [6, 10, collar],
     [7, 10, collar],
     [6, 11, bell],
 
-    // Body outline
+    // Body outline (slightly longer)
     [6, 11, outline],
     [7, 11, outline],
     [8, 11, outline],
     [9, 11, outline],
     [10, 11, outline],
     [11, 11, outline],
+    [12, 11, outline],
     [5, 12, outline],
-    [12, 12, outline],
+    [13, 12, outline],
     [5, 13, outline],
-    [12, 13, outline],
+    [13, 13, outline],
     [6, 14, outline],
     [7, 14, outline],
     [8, 14, outline],
     [9, 14, outline],
     [10, 14, outline],
     [11, 14, outline],
+    [12, 14, outline],
 
     // Body fill
     [6, 12, fur],
@@ -133,12 +169,14 @@ function PixelCat({ variant }: { variant?: "slate" | "orange" }) {
     [9, 12, fur],
     [10, 12, fur],
     [11, 12, fur],
+    [12, 12, fur],
     [6, 13, fur],
     [7, 13, fur],
     [8, 13, fur],
     [9, 13, fur],
     [10, 13, fur],
     [11, 13, fur],
+    [12, 13, fur],
     // Body highlight
     [7, 12, fur2],
     [8, 12, fur2],
@@ -146,28 +184,28 @@ function PixelCat({ variant }: { variant?: "slate" | "orange" }) {
   ];
 
   const tailUp: Pixel[] = [
-    [12, 10, outline],
-    [13, 9, outline],
     [13, 10, outline],
-    [12, 11, outline],
-    [12, 10, fur],
+    [14, 9, outline],
+    [14, 10, outline],
+    [13, 11, outline],
     [13, 10, fur],
+    [14, 10, fur],
   ];
 
   const tailMid: Pixel[] = [
-    [12, 12, outline],
     [13, 12, outline],
-    [14, 11, outline],
-    [12, 12, fur],
+    [14, 12, outline],
+    [15, 11, outline],
     [13, 12, fur],
+    [14, 12, fur],
   ];
 
   const tailDown: Pixel[] = [
-    [12, 13, outline],
     [13, 13, outline],
     [14, 13, outline],
-    [12, 13, fur],
+    [15, 13, outline],
     [13, 13, fur],
+    [14, 13, fur],
   ];
 
   const legsA: Pixel[] = [
@@ -198,6 +236,15 @@ function PixelCat({ variant }: { variant?: "slate" | "orange" }) {
     [10, 15, fur],
   ];
 
+  const legsD: Pixel[] = [
+    [6, 15, outline],
+    [9, 15, outline],
+    [12, 15, outline],
+    [6, 15, fur],
+    [9, 15, fur],
+    [12, 15, fur],
+  ];
+
   return (
     <svg
       className="footer-cat__sprite"
@@ -211,17 +258,111 @@ function PixelCat({ variant }: { variant?: "slate" | "orange" }) {
     >
       {/* Frame A */}
       <g className="footer-cat__frame footer-cat__frame--a">
-        <Pixels pixels={[...frameBase, ...tailUp, ...legsA]} />
+        <Pixels pixels={[...frameBase, ...stripes, ...tailUp, ...legsA]} />
       </g>
 
       {/* Frame B */}
       <g className="footer-cat__frame footer-cat__frame--b">
-        <Pixels pixels={[...frameBase, ...tailMid, ...legsB]} />
+        <Pixels pixels={[...frameBase, ...stripes, ...tailMid, ...legsB]} />
       </g>
 
       {/* Frame C */}
       <g className="footer-cat__frame footer-cat__frame--c">
-        <Pixels pixels={[...frameBase, ...tailDown, ...legsC]} />
+        <Pixels pixels={[...frameBase, ...stripes, ...tailDown, ...legsC]} />
+      </g>
+
+      <g className="footer-cat__frame footer-cat__frame--d">
+        <Pixels pixels={[...frameBase, ...stripes, ...tailMid, ...legsD]} />
+      </g>
+    </svg>
+  );
+}
+
+function PixelCatSit() {
+  const outline = "#0b1220";
+  const fur = "#334155";
+  const fur2 = "#64748b";
+  const eye = "#38bdf8";
+  const nose = "#fb7185";
+  const collar = "#a78bfa";
+
+  return (
+    <svg
+      className="footer-cat__sprite"
+      width="72"
+      height="72"
+      viewBox="0 0 16 16"
+      role="img"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+      shapeRendering="crispEdges"
+    >
+      <g className="footer-cat__sit">
+        <Pixels
+          pixels={[
+            // head
+            [4, 6, outline],
+            [5, 6, outline],
+            [6, 6, outline],
+            [7, 6, outline],
+            [8, 6, outline],
+            [4, 7, outline],
+            [8, 7, outline],
+            [4, 8, outline],
+            [8, 8, outline],
+            [5, 9, outline],
+            [6, 9, outline],
+            [7, 9, outline],
+            [5, 7, fur],
+            [6, 7, fur],
+            [7, 7, fur],
+            [5, 8, fur],
+            [6, 8, fur],
+            [7, 8, fur],
+            [5, 8, eye],
+            [7, 8, eye],
+            [6, 9, nose],
+
+            // ears
+            [4, 5, outline],
+            [5, 5, outline],
+            [7, 5, outline],
+            [8, 5, outline],
+            [5, 6, fur2],
+            [7, 6, fur2],
+
+            // collar
+            [5, 10, collar],
+            [6, 10, collar],
+            [7, 10, collar],
+
+            // body (sitting)
+            [6, 11, outline],
+            [7, 11, outline],
+            [8, 11, outline],
+            [5, 12, outline],
+            [9, 12, outline],
+            [5, 13, outline],
+            [9, 13, outline],
+            [6, 14, outline],
+            [7, 14, outline],
+            [8, 14, outline],
+            [6, 12, fur],
+            [7, 12, fur],
+            [8, 12, fur],
+            [6, 13, fur],
+            [7, 13, fur],
+            [8, 13, fur],
+            [7, 12, fur2],
+
+            // tail curl
+            [9, 11, outline],
+            [10, 11, outline],
+            [10, 12, outline],
+            [9, 12, fur],
+            [10, 12, fur],
+          ]}
+        />
       </g>
     </svg>
   );
@@ -434,6 +575,68 @@ function PixelHeart() {
           [9, 9, c1],
           [7, 10, c1],
           [8, 10, c1],
+        ]}
+      />
+    </svg>
+  );
+}
+
+function LaserDot() {
+  const dot = "#ef4444";
+  const glow = "#fca5a5";
+
+  return (
+    <svg
+      className="footer-laser__sprite"
+      width="24"
+      height="24"
+      viewBox="0 0 16 16"
+      role="img"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+      shapeRendering="crispEdges"
+    >
+      <Pixels
+        pixels={[
+          [8, 12, dot],
+          [7, 12, glow],
+          [9, 12, glow],
+          [8, 11, glow],
+          [8, 13, glow],
+        ]}
+      />
+    </svg>
+  );
+}
+
+function PixelSparkle() {
+  const s1 = "#facc15";
+  const s2 = "#fde68a";
+  const o = "#0b1220";
+
+  return (
+    <svg
+      className="footer-sparkle__sprite"
+      width="32"
+      height="32"
+      viewBox="0 0 16 16"
+      role="img"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+      shapeRendering="crispEdges"
+    >
+      <Pixels
+        pixels={[
+          [8, 4, o],
+          [8, 5, s1],
+          [8, 6, s2],
+          [7, 6, s1],
+          [9, 6, s1],
+          [8, 7, s1],
+          [8, 8, s2],
+          [8, 9, s1],
+          [7, 8, s1],
+          [9, 8, s1],
         ]}
       />
     </svg>
