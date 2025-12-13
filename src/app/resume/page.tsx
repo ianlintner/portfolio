@@ -234,11 +234,11 @@ export default function ResumePage() {
               <ExternalA href={LINKS.portfolio}>Portfolio</ExternalA>
             </div>
 
-            <details className="rounded-xl border border-border bg-card/60 p-4 shadow-sm">
-              <summary className="cursor-pointer font-semibold">
-                Phone screen version (60 seconds)
-              </summary>
-              <div className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <div className="rounded-xl border border-border bg-card/60 p-4 shadow-sm">
+              <h3 className="font-semibold mb-3">
+                Executive Summary
+              </h3>
+              <div className="space-y-2 text-sm text-muted-foreground">
                 <ul className="list-disc pl-5 space-y-1">
                   <li>
                     Lead Engineer with 20+ years building cloud-native,
@@ -258,12 +258,12 @@ export default function ResumePage() {
                   </li>
                 </ul>
               </div>
-            </details>
+            </div>
           </div>
 
           <Card className="print:shadow-none">
             <CardHeader>
-              <CardTitle>Recruiter snapshot</CardTitle>
+              <CardTitle>Key Highlights</CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm text-muted-foreground">
@@ -284,7 +284,7 @@ export default function ResumePage() {
           <div className="grid gap-6 lg:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>Core strengths (ATS-friendly)</CardTitle>
+                <CardTitle>Technical Expertise</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -658,7 +658,7 @@ export default function ResumePage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Interests (human section)</CardTitle>
+                <CardTitle>Interests</CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm text-muted-foreground">
