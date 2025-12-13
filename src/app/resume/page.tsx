@@ -172,19 +172,34 @@ export default function ResumePage() {
           actions={<ResumeActions />}
         />
 
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Executive Summary</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+              <li>
+                Lead Engineer with 20+ years building cloud-native,
+                event-driven systems and secure APIs.
+              </li>
+              <li>
+                Recent focus: AI communications platform (LLM chat/routing,
+                orchestration, summarization).
+              </li>
+              <li>
+                Strong in Scala (ZIO/Akka), Kafka, Kubernetes, Terraform,
+                and OpenTelemetry end-to-end tracing.
+              </li>
+              <li>
+                Track record: performance + reliability wins, migrations,
+                and mentoring teams.
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
           <div className="space-y-4">
-            <p className="text-base leading-relaxed text-muted-foreground">
-              Senior software engineer and team lead with{" "}
-              <strong>20+ years</strong> designing and delivering secure,
-              event-driven, cloud-native platforms. Deep expertise in
-              <strong> Scala (ZIO/Akka)</strong>,{" "}
-              <strong>LLM-enabled systems</strong>, and
-              <strong> observability at scale</strong>. Known for driving
-              technical strategy, mentoring peers, and executing large
-              migrations while remaining hands-on.
-            </p>
-
             <div className="flex flex-wrap gap-2">
               <Badge pill variant="info">
                 Distributed Systems
