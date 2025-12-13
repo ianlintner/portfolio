@@ -434,7 +434,9 @@ select {
     background-position-x: 0px;
   }
   to {
-    background-position-x: calc((var(--frames-x) - 1) * var(--frame-scaled) * -1);
+    background-position-x: calc(
+      (var(--frames-x) - 1) * var(--frame-scaled) * -1
+    );
   }
 }
 
