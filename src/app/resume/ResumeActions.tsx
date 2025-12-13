@@ -7,7 +7,7 @@ export function ResumeActions() {
   return (
     <div className="flex flex-wrap gap-2 print:hidden">
       <Button
-        variant="default"
+        variant="primary"
         size="sm"
         onClick={() => window.print()}
         aria-label="Print or save as PDF"

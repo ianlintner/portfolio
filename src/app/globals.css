@@ -219,3 +219,100 @@ select {
 .delay-1000 {
   animation-delay: 1s;
 }
+
+/* --- Footer pixel cats (whimsy, but keep it lightweight) --- */
+
+@keyframes footer-cat-move-l2r {
+  from {
+    transform: translateX(-15vw);
+  }
+  to {
+    transform: translateX(115vw);
+  }
+}
+
+@keyframes footer-cat-move-r2l {
+  from {
+    transform: translateX(115vw) scaleX(-1);
+  }
+  to {
+    transform: translateX(-15vw) scaleX(-1);
+  }
+}
+
+@keyframes footer-cat-bob {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -2px;
+  }
+}
+
+@keyframes footer-cat-frame-a {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes footer-cat-frame-b {
+  0%,
+  49% {
+    opacity: 0;
+  }
+  50%,
+  100% {
+    opacity: 1;
+  }
+}
+
+.footer-cat {
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 6px 10px hsla(var(--glow-primary), 0.15));
+  /* Keep transform animations on the compositor */
+  will-change: transform;
+}
+
+.footer-cat__sprite {
+  image-rendering: pixelated;
+}
+
+.footer-cat__frame--a {
+  animation: footer-cat-frame-a 0.55s steps(1) infinite;
+}
+
+.footer-cat__frame--b {
+  animation: footer-cat-frame-b 0.55s steps(1) infinite;
+}
+
+.footer-cat--l2r {
+  animation:
+    footer-cat-move-l2r 24s linear infinite,
+    footer-cat-bob 0.9s ease-in-out infinite;
+}
+
+.footer-cat--r2l {
+  bottom: 10px;
+  animation:
+    footer-cat-move-r2l 29s linear infinite,
+    footer-cat-bob 0.8s ease-in-out infinite;
+  animation-delay: -9s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-cat,
+  .footer-cat__frame--a,
+  .footer-cat__frame--b {
+    animation: none !important;
+  }
+}

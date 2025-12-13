@@ -11,7 +11,7 @@ import {
   PageHeader,
   Section,
 } from "@ianlintner/theme";
-import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
+import { ExternalLink, MapPin } from "lucide-react";
 import { SiGithub, SiLinkedin } from "react-icons/si";
 import { getAbsoluteUrl, getDefaultSocialImage } from "@/lib/metadata";
 import { ResumeActions } from "./ResumeActions";
@@ -76,8 +76,6 @@ export const metadata: Metadata = {
 };
 
 const LINKS = {
-  email: "mailto:lintner.ian@gmail.com",
-  phone: "tel:+15153604655",
   github: "https://github.com/ianlintner",
   linkedin: "https://linkedin.com/in/ianlintner/",
   portfolio: "https://portfolio.hugecat.net",
@@ -128,8 +126,6 @@ export default function ResumePage() {
       addressRegion: "MN",
       addressCountry: "US",
     },
-    email: "lintner.ian@gmail.com",
-    telephone: "+1-515-360-4655",
     url: LINKS.portfolio,
     sameAs: [LINKS.github, LINKS.linkedin],
     knowsAbout: [
@@ -217,18 +213,11 @@ export default function ResumePage() {
               <span className="inline-flex items-center gap-2">
                 <MapPin className="h-4 w-4" /> Minneapolis, MN
               </span>
-              <a
-                className="inline-flex items-center gap-2 hover:text-foreground"
-                href={LINKS.email}
-              >
-                <Mail className="h-4 w-4" /> lintner.ian@gmail.com
-              </a>
-              <a
-                className="inline-flex items-center gap-2 hover:text-foreground"
-                href={LINKS.phone}
-              >
-                <Phone className="h-4 w-4" /> 515-360-4655
-              </a>
+              <ExternalA href={LINKS.linkedin}>
+                <span className="inline-flex items-center gap-2">
+                  <SiLinkedin className="h-4 w-4" /> LinkedIn (preferred)
+                </span>
+              </ExternalA>
             </div>
 
             <div className="flex flex-wrap gap-3 text-sm">
@@ -693,12 +682,6 @@ export default function ResumePage() {
               <ExternalA href={LINKS.linkedin}>LinkedIn</ExternalA>
               <ExternalA href={LINKS.github}>GitHub</ExternalA>
               <ExternalA href={LINKS.portfolio}>Portfolio</ExternalA>
-              <a
-                className="text-primary underline underline-offset-4"
-                href={LINKS.email}
-              >
-                Email
-              </a>
             </div>
           </div>
         </Container>
@@ -721,9 +704,8 @@ export default function ResumePage() {
               <div className="prose prose-invert max-w-none">
                 <h3>Ian Lintner — Lead Engineer</h3>
                 <p>
-                  Minneapolis, MN · lintner.ian@gmail.com · 515-360-4655\n
-                  LinkedIn: {LINKS.linkedin}\n GitHub: {LINKS.github}\n
-                  Portfolio: {LINKS.portfolio}
+                  Minneapolis, MN\n LinkedIn: {LINKS.linkedin}\n GitHub:{" "}
+                  {LINKS.github}\n Portfolio: {LINKS.portfolio}
                 </p>
                 <h4>Summary</h4>
                 <p>
