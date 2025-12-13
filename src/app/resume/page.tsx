@@ -462,7 +462,7 @@ export default function ResumePage() {
 
                 <details className="mt-4 rounded-lg border border-border/60 bg-background/40 p-4">
                   <summary className="cursor-pointer text-sm font-semibold">
-                    Hiring manager / systems deep-dive
+                    Technical Deep Dive & Leadership
                   </summary>
                   <div className="mt-3 text-sm text-muted-foreground space-y-2">
                     <p>
