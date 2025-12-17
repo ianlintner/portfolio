@@ -1,698 +1,216 @@
 @tailwind base;
 @tailwind components;
-@tailwind utilities;
+/* --- Footer sprite cats (simple 64x64 sprites) --- */
 
-@layer base {
-  /* Dark Glassy Theme - Modern 2025 Design */
-  :root {
-    --background: 210 40% 4%;
-    --foreground: 210 40% 98%;
-    --card: 210 40% 8%;
-    --card-foreground: 210 40% 98%;
-    --popover: 210 40% 10%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217 100% 60%;
-    --primary-foreground: 210 40% 4%;
-    --secondary: 215 32% 20%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 215 32% 18%;
-    --muted-foreground: 210 40% 70%;
-    --accent: 270 100% 60%;
-    --accent-foreground: 210 40% 4%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 215 32% 18%;
-    --input: 215 32% 16%;
-    --ring: 217 100% 60%;
-    --glass: 210 40% 15%;
-    --glass-light: 210 40% 20%;
-    --glass-dark: 210 40% 8%;
-    --glow-primary: 217 100% 60%;
-    --glow-secondary: 270 100% 60%;
-    --glow-accent: 190 100% 50%;
-    --radius: 0.75rem;
-  }
+.footer-sprite-cats {
+  position: relative;
+  height: 96px;
+  overflow: hidden;
+  border-top: 1px solid hsla(var(--border), 0.4);
+  background: hsla(var(--background), 0.3);
+  pointer-events: none;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  html {
-    /* Enable smooth scrolling */
-    scroll-behavior: smooth;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-    /* Subtle background gradient */
-    background: linear-gradient(
-      135deg,
-      hsl(var(--background)),
-      hsl(210, 40%, 6%)
-    );
-    min-height: 100vh;
-  }
+.footer-sprite-cats__ground {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 8px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsla(var(--border), 0.8),
+    transparent
+  );
+  opacity: 0.6;
 }
 
-/* Custom scrollbar - modern glassy style */
-::-webkit-scrollbar {
-  width: 8px;
+.footer-sprite-cats__cat {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  will-change: transform;
 }
 
-::-webkit-scrollbar-track {
-  @apply bg-transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply rounded-full;
-  background: hsl(var(--glass));
-  box-shadow: inset 0 0 6px hsla(var(--glow-primary), 0.3);
-  transition: all 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-opacity-80;
-  box-shadow: inset 0 0 10px hsla(var(--glow-primary), 0.5);
-}
-
-/* Glass effect utility classes */
-.glass {
-  background: hsla(var(--glass) / 0.5);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
-  border: 1px solid hsla(var(--glass-light) / 0.3);
-}
-
-.glass-elevated {
-  background: hsla(var(--glass) / 0.6);
-  -webkit-backdrop-filter: blur(30px);
-  backdrop-filter: blur(30px);
-  border: 1px solid hsla(var(--glass-light) / 0.4);
-  box-shadow: 0 8px 32px hsla(var(--glow-primary), 0.1);
-}
-
-.glass-glow {
-  background: hsla(var(--glass) / 0.5);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
-  border: 1px solid hsla(var(--glow-primary) / 0.3);
-  box-shadow: 0 0 20px hsla(var(--glow-primary), 0.15);
-}
-
-/* Glow effect utility classes */
-.glow-primary {
-  box-shadow: 0 0 30px hsla(var(--glow-primary), 0.4);
-}
-
-.glow-secondary {
-  box-shadow: 0 0 30px hsla(var(--glow-secondary), 0.4);
-}
-
-.glow-accent {
-  box-shadow: 0 0 30px hsla(var(--glow-accent), 0.4);
-}
-
-.glow-sm {
-  box-shadow: 0 0 15px hsla(var(--glow-primary), 0.2);
-}
-
-.glow-lg {
-  box-shadow:
-    0 0 40px hsla(var(--glow-primary), 0.3),
-    0 0 60px hsla(var(--glow-secondary), 0.15);
-}
-
-/* Code block styling - glassmorphic */
-.prose pre {
-  @apply glass border-border rounded-xl p-4;
-  background: hsla(var(--glass-dark) / 0.8);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-}
-
-.prose code {
-  @apply px-2 py-1 rounded;
-  background: hsla(var(--primary) / 0.15);
-  color: hsl(var(--primary));
-  font-size: 0.875rem;
-}
-
-.prose code::before,
-.prose code::after {
-  content: "";
-}
-
-/* Focus styles - modern */
-.focus-visible {
-  @apply outline-none;
-  box-shadow:
-    0 0 0 2px hsl(var(--background)),
-    0 0 0 4px hsl(var(--ring));
-}
-
-/* Interactive elements */
-button,
-a,
-input,
-textarea,
-select {
-  transition: all 0.3s ease;
-}
-
-/* Smooth animations */
-@keyframes fade-in {
+@keyframes footer-sprite-cats-pan-l2r {
   from {
-    opacity: 0;
-    transform: translateY(10px);
+    transform: translateX(-10vw);
   }
   to {
-    opacity: 1;
-    transform: translateY(0);
+    transform: translateX(110vw);
   }
 }
 
-@keyframes slide-in-from-top {
+@keyframes footer-sprite-cats-pan-r2l {
   from {
-    opacity: 0;
-    transform: translateY(-10px);
+    transform: translateX(110vw);
   }
   to {
-    opacity: 1;
-    transform: translateY(0);
+    transform: translateX(-10vw);
   }
 }
 
-@keyframes glow-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 20px hsla(var(--glow-primary), 0.3);
-  }
-  50% {
-    box-shadow: 0 0 40px hsla(var(--glow-primary), 0.6);
-  }
+.footer-sprite-cats__cat--l2r {
+  animation: footer-sprite-cats-pan-l2r 14s linear infinite;
 }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
+.footer-sprite-cats__cat--r2l {
+  animation: footer-sprite-cats-pan-r2l 16s linear infinite;
+  animation-delay: -8s;
 }
 
-.animate-fade-in {
-  animation: fade-in 0.6s ease-out forwards;
-}
-
-.animate-in {
-  animation: slide-in-from-top 0.3s ease-out;
-}
-
-.animate-glow-pulse {
-  animation: glow-pulse 3s ease-in-out infinite;
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.delay-1000 {
-  animation-delay: 1s;
-}
-
-/* --- Footer pixel cats (whimsy, but keep it lightweight) --- */
-
-@keyframes footer-cat-move-l2r {
-  0% {
-    transform: translateX(-20vw) scaleX(-1);
-  }
-  45% {
-    transform: translateX(48vw) scaleX(-1);
-  }
-  /* meet + pause */
-  50% {
-    transform: translateX(48vw) scaleX(-1);
-  }
-  56% {
-    transform: translateX(48vw) scaleX(-1);
-  }
-  100% {
-    transform: translateX(120vw) scaleX(-1);
-  }
-}
-
-@keyframes footer-cat-move-r2l {
-  0% {
-    transform: translateX(120vw);
-  }
-  45% {
-    transform: translateX(52vw);
-  }
-  /* meet + pause */
-  50% {
-    transform: translateX(52vw);
-  }
-  56% {
-    transform: translateX(52vw);
-  }
-  100% {
-    transform: translateX(-20vw);
-  }
-}
-
-@keyframes footer-cat-bob {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: 0 -1px;
-  }
-}
-
-@keyframes footer-cat-pounce {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  /* little hop during chase */
-  22% {
-    translate: 0 0;
-  }
-  26% {
-    translate: 0 -4px;
-  }
-  30% {
-    translate: 0 0;
-  }
-  /* tiny hop after meeting */
-  60% {
-    translate: 0 0;
-  }
-  64% {
-    translate: 0 -3px;
-  }
-  68% {
-    translate: 0 0;
-  }
-}
-
-@keyframes footer-cat-sniff {
-  0%,
-  48%,
-  100% {
-    opacity: 0;
-    transform: translate(3px, -3px) scale(0.8);
-  }
-  51% {
-    opacity: 1;
-    transform: translate(5px, -5px) scale(1);
-  }
-  55% {
-    opacity: 0;
-    transform: translate(7px, -6px) scale(1.05);
-  }
-}
-
-@keyframes footer-cat-frame-a {
-  0%,
-  24% {
-    opacity: 1;
-  }
-  25%,
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes footer-cat-frame-b {
-  0%,
-  24% {
-    opacity: 0;
-  }
-  25%,
-  49% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes footer-cat-frame-c {
-  0%,
-  49% {
-    opacity: 0;
-  }
-  50%,
-  74% {
-    opacity: 1;
-  }
-  75%,
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes footer-cat-frame-d {
-  0%,
-  74% {
-    opacity: 0;
-  }
-  75%,
-  100% {
-    opacity: 1;
-  }
-}
-
-/* Sprite-sheet cats (PNG) */
-
-.footer-cat__sprite-sheet {
-  /* Defaults; can be overridden via CSS variables from inline styles */
+.footer-sprite-cats__sprite {
+  /* Sheet: 14 columns x 72 rows of 64x64 tiles */
   --frame: 64px;
-  /* Scale up uniformly (keep in sync with .footer-cat --cat-size) */
-  --scale: 1.5;
-  --frames-x: 14;
-  --frames-y: 72;
+  --scale: 1;
+  --sheet-cols: 14;
+  --sheet-rows: 72;
 
-  /* Sprite row indices (0-based).
-     Provided sheet mapping (1-based):
-       - walk left-facing: row 5  -> 4
-       - walk right-facing: row 6 -> 5
-       - loaf: row 15 -> 14
-  */
-  --walk-row-left: 4;
-  --walk-row-right: 5;
-  --sit-row: 1;
-  --loaf-row: 14;
+  /* Default animation frame-count (many rows only use the first 6 frames). */
+  --anim-frames: 6;
+  --anim-ms: 900ms;
+
+  /* Direction column for single-frame rows (sit/stand): down/up/right/left */
+  --dir-col: 0;
+
+  /* Row index (0-based) */
   --row: 0;
 
-  --frame-scaled: calc(var(--frame) * var(--scale));
-  --sheet-w: calc(var(--frame) * var(--frames-x));
-  --sheet-h: calc(var(--frame) * var(--frames-y));
-  --sheet-w-scaled: calc(var(--sheet-w) * var(--scale));
-  --sheet-h-scaled: calc(var(--sheet-h) * var(--scale));
-
   display: block;
-  width: var(--frame-scaled);
-  height: var(--frame-scaled);
+  width: calc(var(--frame) * var(--scale));
+  height: calc(var(--frame) * var(--scale));
   background-image: var(--sprite-url);
   background-repeat: no-repeat;
-  background-size: var(--sheet-w-scaled) var(--sheet-h-scaled);
+  background-size: calc(var(--sheet-cols) * var(--frame) * var(--scale))
+    calc(var(--sheet-rows) * var(--frame) * var(--scale));
   background-position-x: 0px;
-  background-position-y: calc(var(--row) * var(--frame-scaled) * -1);
+  background-position-y: calc(var(--row) * var(--frame) * var(--scale) * -1);
   image-rendering: pixelated;
 }
 
-/* Sprite URL mapping (kept in CSS to avoid inline styles) */
-.footer-cat__sprite-sheet[data-cat="1"] {
+/* Sprite URL mapping */
+.footer-sprite-cats__sprite[data-cat="1"] {
   --sprite-url: url("/images/cats/cat 1 (64х64).png");
 }
 
-.footer-cat__sprite-sheet[data-cat="2"] {
+.footer-sprite-cats__sprite[data-cat="2"] {
   --sprite-url: url("/images/cats/cat 2 (64х64).png");
 }
 
-.footer-cat__sprite-sheet[data-cat="3"] {
+.footer-sprite-cats__sprite[data-cat="3"] {
   --sprite-url: url("/images/cats/cat 3 (64х64).png");
 }
 
-/* State -> row mapping.
-   NOTE: The sheets are 14 columns x 72 rows of 64x64 tiles.
-   If a pose looks wrong, tweak these row values. */
-.footer-cat__sprite-sheet[data-state="walk"] {
-  /* Default to right-facing walk; overridden per direction below. */
-  --row: var(--walk-row-right);
+/* Direction -> column mapping for 4-direction single-frame rows */
+.footer-sprite-cats__sprite[data-dir="down"] {
+  --dir-col: 0;
 }
 
-.footer-cat__sprite-sheet[data-state="sit"] {
-  --row: var(--sit-row);
+.footer-sprite-cats__sprite[data-dir="up"] {
+  --dir-col: 1;
 }
 
-.footer-cat__sprite-sheet[data-state="loaf"] {
-  --row: var(--loaf-row);
+.footer-sprite-cats__sprite[data-dir="right"] {
+  --dir-col: 2;
 }
 
-/* Directional walk rows.
-   Provided mapping (1-based): row 5 = left-facing walk, row 6 = right-facing walk.
-   Our CSS variables are 0-based row indices, so we subtract 1.
+.footer-sprite-cats__sprite[data-dir="left"] {
+  --dir-col: 3;
+}
+
+/* Row mapping (1-based in your sheet description; converted to 0-based here)
+   Row 1: sit (4 dirs)
+   Row 2: stand (4 dirs)
+   Row 3: walk down
+   Row 4: walk up
+   Row 5: walk right
+   Row 6: walk left
+   Row 7-8: sleeping/rolling
+   Row 9-12: run down/up/right/left
 */
-.footer-cat--r2l .footer-cat__sprite-sheet[data-state="walk"] {
-  /* Moving right-to-left: face left */
-  --row: var(--walk-row-left);
+.footer-sprite-cats__sprite[data-action="sit"] {
+  --row: 0;
+  background-position-x: calc(var(--dir-col) * var(--frame) * var(--scale) * -1);
 }
 
-.footer-cat--l2r .footer-cat__sprite-sheet[data-state="walk"] {
-  /* Moving left-to-right: face right */
-  --row: var(--walk-row-right);
+.footer-sprite-cats__sprite[data-action="stand"] {
+  --row: 1;
+  background-position-x: calc(var(--dir-col) * var(--frame) * var(--scale) * -1);
 }
 
-/* The L2R cat container is flipped (scaleX(-1)) for the legacy SVG cats.
-   Cancel that flip for the sprite sheets so we can use the correct facing rows.
-*/
-.footer-cat--l2r .footer-cat__sprite-sheet {
-  transform: scaleX(-1);
+.footer-sprite-cats__sprite[data-action="walk"][data-dir="down"] {
+  --row: 2;
 }
 
-.footer-cat__sprite-sheet--walk {
-  /* 14-frame sheet: slower cadence reads more "walk" than "scurry" */
-  /* Faster cadence so the feet don’t look like they’re sliding while traversing */
-  animation: footer-cat-sprite-walk 2.6s steps(var(--frames-x)) infinite;
+.footer-sprite-cats__sprite[data-action="walk"][data-dir="up"] {
+  --row: 3;
 }
 
-@keyframes footer-cat-sprite-walk {
+.footer-sprite-cats__sprite[data-action="walk"][data-dir="right"] {
+  --row: 4;
+}
+
+.footer-sprite-cats__sprite[data-action="walk"][data-dir="left"] {
+  --row: 5;
+}
+
+.footer-sprite-cats__sprite[data-action="sleep"] {
+  --row: 6;
+  --anim-frames: 8;
+  --anim-ms: 1100ms;
+}
+
+.footer-sprite-cats__sprite[data-action="run"][data-dir="down"] {
+  --row: 8;
+  --anim-frames: 6;
+  --anim-ms: 520ms;
+}
+
+.footer-sprite-cats__sprite[data-action="run"][data-dir="up"] {
+  --row: 9;
+  --anim-frames: 6;
+  --anim-ms: 520ms;
+}
+
+.footer-sprite-cats__sprite[data-action="run"][data-dir="right"] {
+  --row: 10;
+  --anim-frames: 6;
+  --anim-ms: 520ms;
+}
+
+.footer-sprite-cats__sprite[data-action="run"][data-dir="left"] {
+  --row: 11;
+  --anim-frames: 6;
+  --anim-ms: 520ms;
+}
+
+@keyframes footer-sprite-cats-walk {
   from {
     background-position-x: 0px;
   }
   to {
-    /* Stop at the last valid frame to avoid a 1-frame "blank"/flicker at loop. */
     background-position-x: calc(
-      (var(--frames-x) - 1) * var(--frame-scaled) * -1
+      (var(--anim-frames) - 1) * var(--frame) * var(--scale) * -1
     );
   }
 }
 
-@keyframes footer-cat-meet-wiggle {
-  0%,
-  46%,
-  100% {
-    rotate: 0deg;
-  }
-  50% {
-    rotate: 2deg;
-  }
-  53% {
-    rotate: -2deg;
-  }
-  56% {
-    rotate: 1deg;
-  }
-  60% {
-    rotate: 0deg;
-  }
+/* Only animate rows that are meant to be animated */
+.footer-sprite-cats__sprite[data-animated="true"] {
+  animation: footer-sprite-cats-walk var(--anim-ms)
+    steps(var(--anim-frames)) infinite;
 }
 
-@keyframes footer-heart-pop {
-  0%,
-  46% {
-    opacity: 0;
-    transform: translateY(6px) scale(0.8);
+@media (prefers-reduced-motion: reduce) {
+  .footer-sprite-cats__cat,
+  .footer-sprite-cats__sprite[data-animated="true"] {
+    animation: none !important;
   }
-  50% {
-    opacity: 1;
-    transform: translateY(0px) scale(1);
-  }
-  58% {
-    opacity: 1;
-    transform: translateY(-6px) scale(1.05);
-  }
-  62%,
-  100% {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.9);
+
+  .footer-sprite-cats__sprite {
+    background-position-x: 0px !important;
   }
 }
-
-.footer-cat {
-  position: absolute;
-  bottom: 6px;
-  left: 0;
-  /* Single source of truth for cat footprint */
-  --cat-size: 96px;
-  pointer-events: none;
-  -webkit-user-select: none;
-  user-select: none;
-  filter: drop-shadow(0 6px 10px hsla(var(--glow-primary), 0.15));
-  /* Keep transform animations on the compositor */
-  will-change: transform;
-}
-
-.footer-cat__body {
-  position: relative;
-  width: var(--cat-size);
-  height: var(--cat-size);
-  animation:
-    footer-cat-bob 1.8s ease-in-out infinite,
-    footer-cat-meet-wiggle 32s ease-in-out infinite;
-}
-
-.footer-cat__body--pounce {
-  animation:
-    footer-cat-bob 1.7s ease-in-out infinite,
-    footer-cat-pounce 16s ease-in-out infinite,
-    footer-cat-meet-wiggle 32s ease-in-out infinite;
-}
-
-.footer-cat__body--wiggle {
-  animation:
-    footer-cat-bob 1.8s ease-in-out infinite,
-    footer-cat-meet-wiggle 32s ease-in-out infinite;
-}
-
-/* little swipe arc for the chaser */
-.footer-cat--chaser .footer-cat__body::before {
-  content: "";
-  position: absolute;
-  right: -3px;
-  bottom: 11px;
-  width: 12px;
-  height: 7px;
-  border: 2px solid hsla(var(--glow-accent), 0.45);
-  border-left: 0;
-  border-radius: 0 9999px 9999px 0;
-  opacity: 0;
-  filter: drop-shadow(0 10px 16px hsla(var(--glow-accent), 0.12));
-  animation: footer-cat-swipe 16s ease-in-out infinite;
-}
-
-@keyframes footer-cat-swipe {
-  0%,
-  20%,
-  100% {
-    opacity: 0;
-    transform: translateX(0);
-  }
-  26% {
-    opacity: 1;
-    transform: translateX(2px);
-  }
-  30% {
-    opacity: 0;
-    transform: translateX(5px);
-  }
-}
-
-.footer-cat::after {
-  content: "";
-  position: absolute;
-  top: 6px;
-  left: 18px;
-  width: 6px;
-  height: 6px;
-  border: 2px solid hsla(var(--foreground), 0.55);
-  border-radius: 9999px;
-  opacity: 0;
-  animation: footer-cat-sniff 12s ease-in-out infinite;
-}
-
-.footer-cat__sprite {
-  image-rendering: pixelated;
-  width: var(--cat-size);
-  height: var(--cat-size);
-}
-
-.footer-cat__mode {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-}
-
-.footer-cat--chaser {
-  width: var(--cat-size);
-  height: var(--cat-size);
-}
-
-@keyframes footer-cat-mode-toggle {
-  /* walk most of the time, loaf during the meet pause */
-  0%,
-  49% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  56% {
-    opacity: 0;
-  }
-  57%,
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes footer-cat-mode-toggle-invert {
-  0%,
-  49% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  56% {
-    opacity: 1;
-  }
-  57%,
-  100% {
-    opacity: 0;
-  }
-}
-
-.footer-cat__mode--walk {
-  animation: footer-cat-mode-toggle 12s ease-in-out infinite;
-}
-
-.footer-cat__mode--loaf {
-  animation: footer-cat-mode-toggle-invert 12s ease-in-out infinite;
-}
-
-/* Slate cat sits for a beat at the meet */
-@keyframes footer-cat-mode-sit {
-  0%,
-  49% {
-    opacity: 0;
-  }
-  50%,
-  56% {
-    opacity: 1;
-  }
-  57%,
-  100% {
-    opacity: 0;
-  }
-}
-
-.footer-cat__mode--sit {
-  animation: footer-cat-mode-sit 32s ease-in-out infinite;
-}
-
-.footer-cat__mode--walk-slate {
-  animation: footer-cat-mode-toggle 32s ease-in-out infinite;
-}
-
-.footer-cat__frame--a {
-  animation: footer-cat-frame-a 0.8s steps(1) infinite;
-}
-
-.footer-cat__frame--b {
-  animation: footer-cat-frame-b 0.8s steps(1) infinite;
-}
-
-.footer-cat__frame--c {
   animation: footer-cat-frame-c 0.8s steps(1) infinite;
 }
 
