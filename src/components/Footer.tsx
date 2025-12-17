@@ -4,7 +4,7 @@ import Link from "next/link";
 import { SiGithub, SiLinkedin } from "react-icons/si";
 import { Mail } from "lucide-react";
 import { Button, Container, Grid, Section, Divider } from "@ianlintner/theme";
-import { FooterCats } from "@/components/FooterCats";
+import { FooterSpriteCats } from "@/components/FooterSpriteCats";
 
 export function Footer() {
   return (
@@ -149,8 +149,8 @@ export function Footer() {
         </Section>
       </Container>
 
-      {/* Pixel-cat parade (pure CSS animation; hidden for print/reduced motion) */}
-      <FooterCats />
+      {/* Simple 64x64 sprite cats (decorative; hidden for print/reduced motion) */}
+      <FooterSpriteCats />
     </footer>
   );
 }

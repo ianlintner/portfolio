@@ -270,7 +270,7 @@ select {
     translate: 0 0;
   }
   50% {
-    translate: 0 -2px;
+    translate: 0 -1px;
   }
 }
 
@@ -284,7 +284,7 @@ select {
     translate: 0 0;
   }
   26% {
-    translate: 0 -8px;
+    translate: 0 -4px;
   }
   30% {
     translate: 0 0;
@@ -294,7 +294,7 @@ select {
     translate: 0 0;
   }
   64% {
-    translate: 0 -6px;
+    translate: 0 -3px;
   }
   68% {
     translate: 0 0;
@@ -306,15 +306,15 @@ select {
   48%,
   100% {
     opacity: 0;
-    transform: translate(6px, -6px) scale(0.8);
+    transform: translate(3px, -3px) scale(0.8);
   }
   51% {
     opacity: 1;
-    transform: translate(10px, -10px) scale(1);
+    transform: translate(5px, -5px) scale(1);
   }
   55% {
     opacity: 0;
-    transform: translate(14px, -12px) scale(1.05);
+    transform: translate(7px, -6px) scale(1.05);
   }
 }
 
@@ -375,9 +375,21 @@ select {
 .footer-cat__sprite-sheet {
   /* Defaults; can be overridden via CSS variables from inline styles */
   --frame: 64px;
-  --scale: 2;
+  /* Scale up uniformly (keep in sync with .footer-cat --cat-size) */
+  --scale: 1.5;
   --frames-x: 14;
   --frames-y: 72;
+
+  /* Sprite row indices (0-based).
+     Provided sheet mapping (1-based):
+       - walk left-facing: row 5  -> 4
+       - walk right-facing: row 6 -> 5
+       - loaf: row 15 -> 14
+  */
+  --walk-row-left: 4;
+  --walk-row-right: 5;
+  --sit-row: 1;
+  --loaf-row: 14;
   --row: 0;
 
   --frame-scaled: calc(var(--frame) * var(--scale));
@@ -414,19 +426,43 @@ select {
    NOTE: The sheets are 14 columns x 72 rows of 64x64 tiles.
    If a pose looks wrong, tweak these row values. */
 .footer-cat__sprite-sheet[data-state="walk"] {
-  --row: 0;
+  /* Default to right-facing walk; overridden per direction below. */
+  --row: var(--walk-row-right);
 }
 
 .footer-cat__sprite-sheet[data-state="sit"] {
-  --row: 1;
+  --row: var(--sit-row);
 }
 
 .footer-cat__sprite-sheet[data-state="loaf"] {
-  --row: 2;
+  --row: var(--loaf-row);
+}
+
+/* Directional walk rows.
+   Provided mapping (1-based): row 5 = left-facing walk, row 6 = right-facing walk.
+   Our CSS variables are 0-based row indices, so we subtract 1.
+*/
+.footer-cat--r2l .footer-cat__sprite-sheet[data-state="walk"] {
+  /* Moving right-to-left: face left */
+  --row: var(--walk-row-left);
+}
+
+.footer-cat--l2r .footer-cat__sprite-sheet[data-state="walk"] {
+  /* Moving left-to-right: face right */
+  --row: var(--walk-row-right);
+}
+
+/* The L2R cat container is flipped (scaleX(-1)) for the legacy SVG cats.
+   Cancel that flip for the sprite sheets so we can use the correct facing rows.
+*/
+.footer-cat--l2r .footer-cat__sprite-sheet {
+  transform: scaleX(-1);
 }
 
 .footer-cat__sprite-sheet--walk {
-  animation: footer-cat-sprite-walk 0.85s steps(var(--frames-x)) infinite;
+  /* 14-frame sheet: slower cadence reads more "walk" than "scurry" */
+  /* Faster cadence so the feet don’t look like they’re sliding while traversing */
+  animation: footer-cat-sprite-walk 2.6s steps(var(--frames-x)) infinite;
 }
 
 @keyframes footer-cat-sprite-walk {
@@ -486,6 +522,8 @@ select {
   position: absolute;
   bottom: 6px;
   left: 0;
+  /* Single source of truth for cat footprint */
+  --cat-size: 96px;
   pointer-events: none;
   -webkit-user-select: none;
   user-select: none;
@@ -496,23 +534,23 @@ select {
 
 .footer-cat__body {
   position: relative;
-  width: 128px;
-  height: 128px;
+  width: var(--cat-size);
+  height: var(--cat-size);
   animation:
-    footer-cat-bob 1.1s ease-in-out infinite,
+    footer-cat-bob 1.8s ease-in-out infinite,
     footer-cat-meet-wiggle 32s ease-in-out infinite;
 }
 
 .footer-cat__body--pounce {
   animation:
-    footer-cat-bob 1s ease-in-out infinite,
+    footer-cat-bob 1.7s ease-in-out infinite,
     footer-cat-pounce 16s ease-in-out infinite,
     footer-cat-meet-wiggle 32s ease-in-out infinite;
 }
 
 .footer-cat__body--wiggle {
   animation:
-    footer-cat-bob 1.1s ease-in-out infinite,
+    footer-cat-bob 1.8s ease-in-out infinite,
     footer-cat-meet-wiggle 32s ease-in-out infinite;
 }
 
@@ -520,10 +558,10 @@ select {
 .footer-cat--chaser .footer-cat__body::before {
   content: "";
   position: absolute;
-  right: -6px;
-  bottom: 22px;
-  width: 18px;
-  height: 10px;
+  right: -3px;
+  bottom: 11px;
+  width: 12px;
+  height: 7px;
   border: 2px solid hsla(var(--glow-accent), 0.45);
   border-left: 0;
   border-radius: 0 9999px 9999px 0;
@@ -541,31 +579,31 @@ select {
   }
   26% {
     opacity: 1;
-    transform: translateX(4px);
+    transform: translateX(2px);
   }
   30% {
     opacity: 0;
-    transform: translateX(10px);
+    transform: translateX(5px);
   }
 }
 
 .footer-cat::after {
   content: "";
   position: absolute;
-  top: 12px;
-  left: 36px;
-  width: 8px;
-  height: 8px;
+  top: 6px;
+  left: 18px;
+  width: 6px;
+  height: 6px;
   border: 2px solid hsla(var(--foreground), 0.55);
   border-radius: 9999px;
   opacity: 0;
-  animation: footer-cat-sniff 7.5s ease-in-out infinite;
+  animation: footer-cat-sniff 12s ease-in-out infinite;
 }
 
 .footer-cat__sprite {
   image-rendering: pixelated;
-  width: 128px;
-  height: 128px;
+  width: var(--cat-size);
+  height: var(--cat-size);
 }
 
 .footer-cat__mode {
@@ -575,8 +613,8 @@ select {
 }
 
 .footer-cat--chaser {
-  width: 128px;
-  height: 128px;
+  width: var(--cat-size);
+  height: var(--cat-size);
 }
 
 @keyframes footer-cat-mode-toggle {
@@ -692,7 +730,7 @@ select {
 }
 
 .footer-yarn__body {
-  animation: footer-yarn-bounce 0.75s ease-in-out infinite;
+  animation: footer-yarn-bounce 1.4s ease-in-out infinite;
 }
 
 .footer-yarn__sprite {
