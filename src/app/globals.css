@@ -1,5 +1,6 @@
 @tailwind base;
 @tailwind components;
+@tailwind utilities;
 /* --- Footer sprite cats (simple 64x64 sprites) --- */
 
 .footer-sprite-cats {
@@ -130,12 +131,16 @@
 */
 .footer-sprite-cats__sprite[data-action="sit"] {
   --row: 0;
-  background-position-x: calc(var(--dir-col) * var(--frame) * var(--scale) * -1);
+  background-position-x: calc(
+    var(--dir-col) * var(--frame) * var(--scale) * -1
+  );
 }
 
 .footer-sprite-cats__sprite[data-action="stand"] {
   --row: 1;
-  background-position-x: calc(var(--dir-col) * var(--frame) * var(--scale) * -1);
+  background-position-x: calc(
+    var(--dir-col) * var(--frame) * var(--scale) * -1
+  );
 }
 
 .footer-sprite-cats__sprite[data-action="walk"][data-dir="down"] {
@@ -197,8 +202,8 @@
 
 /* Only animate rows that are meant to be animated */
 .footer-sprite-cats__sprite[data-animated="true"] {
-  animation: footer-sprite-cats-walk var(--anim-ms)
-    steps(var(--anim-frames)) infinite;
+  animation: footer-sprite-cats-walk var(--anim-ms) steps(var(--anim-frames))
+    infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -209,238 +214,5 @@
 
   .footer-sprite-cats__sprite {
     background-position-x: 0px !important;
-  }
-}
-  animation: footer-cat-frame-c 0.8s steps(1) infinite;
-}
-
-.footer-cat__frame--d {
-  animation: footer-cat-frame-d 0.8s steps(1) infinite;
-}
-
-.footer-cat--l2r {
-  animation: footer-cat-move-l2r 32s linear infinite;
-}
-
-.footer-cat--r2l {
-  bottom: 12px;
-  animation: footer-cat-move-r2l 32s linear infinite;
-  animation-delay: -16s;
-}
-
-/* Keep the chaser cat's walk/loaf modes in-phase with its delayed path */
-.footer-cat--r2l .footer-cat__mode--walk,
-.footer-cat--r2l .footer-cat__mode--loaf {
-  animation-duration: 32s;
-  animation-delay: -16s;
-}
-
-/* Yarn ball that the orange cat "chases" */
-.footer-yarn {
-  position: absolute;
-  bottom: 12px;
-  left: 0;
-  pointer-events: none;
-  -webkit-user-select: none;
-  user-select: none;
-  filter: drop-shadow(0 8px 12px hsla(var(--glow-secondary), 0.12));
-  will-change: transform;
-}
-
-.footer-yarn__body {
-  animation: footer-yarn-bounce 1.4s ease-in-out infinite;
-}
-
-.footer-yarn__sprite {
-  image-rendering: pixelated;
-  width: 80px;
-  height: 80px;
-}
-
-@keyframes footer-yarn-roll-r2l {
-  0% {
-    transform: translateX(125vw) rotate(0deg);
-  }
-  45% {
-    transform: translateX(58vw) rotate(-420deg);
-  }
-  /* meet + pause */
-  50% {
-    transform: translateX(58vw) rotate(-480deg);
-  }
-  56% {
-    transform: translateX(58vw) rotate(-540deg);
-  }
-  100% {
-    transform: translateX(-25vw) rotate(-980deg);
-  }
-}
-
-@keyframes footer-yarn-bounce {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: 0 -3px;
-  }
-}
-
-.footer-yarn--r2l {
-  animation: footer-yarn-roll-r2l 32s linear infinite;
-  animation-delay: -16s;
-}
-
-.footer-heart {
-  position: absolute;
-  left: 50%;
-  bottom: 66px;
-  translate: -50% 0;
-  pointer-events: none;
-  -webkit-user-select: none;
-  user-select: none;
-  opacity: 0;
-  animation: footer-heart-pop 32s ease-in-out infinite;
-}
-
-.footer-heart__sprite {
-  image-rendering: pixelated;
-  width: 44px;
-  height: 44px;
-  filter: drop-shadow(0 10px 18px hsla(var(--glow-accent), 0.15));
-}
-
-/* Laser dot + sparkles */
-.footer-laser {
-  position: absolute;
-  bottom: 18px;
-  left: 0;
-  pointer-events: none;
-  -webkit-user-select: none;
-  user-select: none;
-  opacity: 0;
-  animation: footer-laser-show 16s ease-in-out infinite;
-}
-
-.footer-laser__sprite {
-  image-rendering: pixelated;
-  width: 28px;
-  height: 28px;
-  filter: drop-shadow(0 10px 18px hsla(var(--glow-accent), 0.25));
-}
-
-@keyframes footer-laser-show {
-  0%,
-  18%,
-  100% {
-    opacity: 0;
-    transform: translateX(60vw);
-  }
-  22% {
-    opacity: 1;
-    transform: translateX(70vw);
-  }
-  30% {
-    opacity: 1;
-    transform: translateX(40vw);
-  }
-  34% {
-    opacity: 0;
-    transform: translateX(30vw);
-  }
-}
-
-.footer-sparkle {
-  position: absolute;
-  pointer-events: none;
-  -webkit-user-select: none;
-  user-select: none;
-  opacity: 0;
-}
-
-.footer-sparkle__sprite {
-  image-rendering: pixelated;
-  width: 36px;
-  height: 36px;
-  filter: drop-shadow(0 10px 18px hsla(var(--glow-secondary), 0.12));
-}
-
-.footer-sparkle--meet {
-  left: calc(50% + 26px);
-  bottom: 66px;
-  translate: -50% 0;
-  animation: footer-sparkle-pop 32s ease-in-out infinite;
-}
-
-.footer-sparkle--pounce {
-  right: 20vw;
-  bottom: 76px;
-  animation: footer-sparkle-pounce 16s ease-in-out infinite;
-}
-
-@keyframes footer-sparkle-pop {
-  0%,
-  46% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  52% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  60% {
-    opacity: 0;
-    transform: scale(1.1);
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes footer-sparkle-pounce {
-  0%,
-  22%,
-  100% {
-    opacity: 0;
-    transform: translateY(0) scale(0.7);
-  }
-  26% {
-    opacity: 1;
-    transform: translateY(-6px) scale(1);
-  }
-  32% {
-    opacity: 0;
-    transform: translateY(-10px) scale(1.1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .footer-cat,
-  .footer-cat__body,
-  .footer-cat__sprite-sheet--walk,
-  .footer-cat__frame--a,
-  .footer-cat__frame--b,
-  .footer-cat__frame--c,
-  .footer-cat__frame--d,
-  .footer-cat__mode--walk,
-  .footer-cat__mode--loaf,
-  .footer-cat__mode--sit,
-  .footer-yarn,
-  .footer-yarn__body,
-  .footer-heart,
-  .footer-laser,
-  .footer-sparkle {
-    animation: none !important;
-  }
-
-  /* Ensure the sprite sheet stays on its first frame when motion is reduced. */
-  .footer-cat__sprite-sheet {
-    background-position-x: 0px !important;
-  }
-  .footer-cat::after {
-    display: none;
-  }
-  .footer-cat--chaser .footer-cat__body::before {
-    display: none;
   }
 }
