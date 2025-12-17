@@ -434,8 +434,9 @@ select {
     background-position-x: 0px;
   }
   to {
+    /* Stop at the last valid frame to avoid a 1-frame "blank"/flicker at loop. */
     background-position-x: calc(
-      var(--frames-x) * var(--frame-scaled) * -1
+      (var(--frames-x) - 1) * var(--frame-scaled) * -1
     );
   }
 }
@@ -671,6 +672,13 @@ select {
   animation-delay: -16s;
 }
 
+/* Keep the chaser cat's walk/loaf modes in-phase with its delayed path */
+.footer-cat--r2l .footer-cat__mode--walk,
+.footer-cat--r2l .footer-cat__mode--loaf {
+  animation-duration: 32s;
+  animation-delay: -16s;
+}
+
 /* Yarn ball that the orange cat "chases" */
 .footer-yarn {
   position: absolute;
@@ -853,6 +861,7 @@ select {
 @media (prefers-reduced-motion: reduce) {
   .footer-cat,
   .footer-cat__body,
+  .footer-cat__sprite-sheet--walk,
   .footer-cat__frame--a,
   .footer-cat__frame--b,
   .footer-cat__frame--c,
@@ -866,6 +875,11 @@ select {
   .footer-laser,
   .footer-sparkle {
     animation: none !important;
+  }
+
+  /* Ensure the sprite sheet stays on its first frame when motion is reduced. */
+  .footer-cat__sprite-sheet {
+    background-position-x: 0px !important;
   }
   .footer-cat::after {
     display: none;
