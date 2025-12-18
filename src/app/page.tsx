@@ -442,17 +442,6 @@ export default function HomePage() {
                   key={demo.id}
                   className="group bg-card border border-border rounded-xl overflow-hidden hover:shadow-xl hover:border-primary/20 transition-all duration-300 hover:-translate-y-1"
                 >
-                  <div className="aspect-video bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-primary/20 flex items-center justify-center">
-                        <Code className="h-6 w-6 text-primary" />
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Demo Preview
-                      </p>
-                    </div>
-                  </div>
-
                   <div className="p-6">
                     <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors line-clamp-2">
                       {demo.title}
