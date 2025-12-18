@@ -158,11 +158,13 @@
 }
 
 .footer-sprite-cats__sprite[data-action="walk"][data-dir="right"] {
-  --row: 4;
+  /* The sheet's fifth row faces left; swap to keep right-facing visuals correct. */
+  --row: 5;
 }
 
 .footer-sprite-cats__sprite[data-action="walk"][data-dir="left"] {
-  --row: 5;
+  /* The sheet's sixth row faces right; swap to keep left-facing visuals correct. */
+  --row: 4;
 }
 
 .footer-sprite-cats__sprite[data-action="sleep"] {

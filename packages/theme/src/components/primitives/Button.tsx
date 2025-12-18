@@ -116,42 +116,53 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       fullWidth = false,
       disabled,
       children,
+      asChild,
       ...props
     },
     ref,
   ) => {
     const isDisabled = disabled || loading;
+    const classes = cn(
+      // Base styles
+      "inline-flex items-center justify-center font-medium",
+      "transition-all duration-200 ease-out",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+
+      // Variant styles
+      variantStyles[variant],
+
+      // Size styles
+      sizeStyles[size],
+      iconSizeStyles[size],
+
+      // Glow effect
+      glow && "hover:shadow-glow",
+
+      // Full width
+      fullWidth && "w-full",
+
+      // Disabled state
+      isDisabled && "opacity-50 cursor-not-allowed pointer-events-none",
+
+      className,
+    );
+
+    // If asChild is true, render the child element as the root and merge styles/props.
+    if (asChild && React.isValidElement(children)) {
+      const childProps: Record<string, unknown> = {
+        className: cn(
+          classes,
+          (children as React.ReactElement).props.className,
+        ),
+        ...(isDisabled && { "aria-disabled": true, tabIndex: -1 }),
+        ...props,
+      };
+
+      return React.cloneElement(children as React.ReactElement, childProps);
+    }
 
     return (
-      <button
-        ref={ref}
-        disabled={isDisabled}
-        className={cn(
-          // Base styles
-          "inline-flex items-center justify-center font-medium",
-          "transition-all duration-200 ease-out",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-
-          // Variant styles
-          variantStyles[variant],
-
-          // Size styles
-          sizeStyles[size],
-          iconSizeStyles[size],
-
-          // Glow effect
-          glow && "hover:shadow-glow",
-
-          // Full width
-          fullWidth && "w-full",
-
-          // Disabled state
-          isDisabled && "opacity-50 cursor-not-allowed pointer-events-none",
-
-          className,
-        )}
-        {...props}
-      >
+      <button ref={ref} disabled={isDisabled} className={classes} {...props}>
         {/* Loading spinner */}
         {loading && (
           <svg
