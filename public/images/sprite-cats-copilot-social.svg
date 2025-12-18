@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="1" />
+    </pattern>
+
+    <linearGradient id="glow" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8b5cf6" stop-opacity="0.18" />
+      <stop offset="1" stop-color="#3b82f6" stop-opacity="0.18" />
+    </linearGradient>
+
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="10" result="blur" />
+      <feColorMatrix
+        in="blur"
+        type="matrix"
+        values="1 0 0 0 0
+                0 1 0 0 0
+                0 0 1 0 0
+                0 0 0 0.35 0"
+        result="colored"
+      />
+      <feMerge>
+        <feMergeNode in="colored" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0f172a" />
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.55" />
+  <rect width="1200" height="630" fill="url(#glow)" />
+
+  <!-- Decorative "sprite sheet" tiles -->
+  <g opacity="0.9" filter="url(#softGlow)">
+    <rect x="80" y="120" width="420" height="240" rx="18" fill="#0b1220" stroke="#334155" />
+
+    <!-- 64x64-ish tiles (scaled) -->
+    <g transform="translate(110 150)">
+      <!-- 6 columns x 3 rows of tiles -->
+      <g fill="#111c2f" stroke="#243247" stroke-width="2">
+        <rect x="0" y="0" width="60" height="60" rx="10" />
+        <rect x="70" y="0" width="60" height="60" rx="10" />
+        <rect x="140" y="0" width="60" height="60" rx="10" />
+        <rect x="210" y="0" width="60" height="60" rx="10" />
+        <rect x="280" y="0" width="60" height="60" rx="10" />
+        <rect x="350" y="0" width="60" height="60" rx="10" />
+
+        <rect x="0" y="70" width="60" height="60" rx="10" />
+        <rect x="70" y="70" width="60" height="60" rx="10" />
+        <rect x="140" y="70" width="60" height="60" rx="10" />
+        <rect x="210" y="70" width="60" height="60" rx="10" />
+        <rect x="280" y="70" width="60" height="60" rx="10" />
+        <rect x="350" y="70" width="60" height="60" rx="10" />
+
+        <rect x="0" y="140" width="60" height="60" rx="10" />
+        <rect x="70" y="140" width="60" height="60" rx="10" />
+        <rect x="140" y="140" width="60" height="60" rx="10" />
+        <rect x="210" y="140" width="60" height="60" rx="10" />
+        <rect x="280" y="140" width="60" height="60" rx="10" />
+        <rect x="350" y="140" width="60" height="60" rx="10" />
+      </g>
+
+      <!-- "cat" markers in a couple tiles -->
+      <g>
+        <circle cx="30" cy="30" r="14" fill="#22c55e" opacity="0.9" />
+        <circle cx="30" cy="30" r="6" fill="#0f172a" opacity="0.85" />
+
+        <circle cx="240" cy="100" r="14" fill="#f97316" opacity="0.9" />
+        <circle cx="240" cy="100" r="6" fill="#0f172a" opacity="0.85" />
+      </g>
+
+      <!-- "frame stepping" arrows -->
+      <path d="M 30 215 C 90 215, 140 215, 200 215" stroke="#60a5fa" stroke-width="5" fill="none" opacity="0.8" />
+      <path d="M 200 215 L 188 206" stroke="#60a5fa" stroke-width="5" stroke-linecap="round" />
+      <path d="M 200 215 L 188 224" stroke="#60a5fa" stroke-width="5" stroke-linecap="round" />
+    </g>
+  </g>
+
+  <!-- Title + subtitle -->
+  <text x="560" y="260" font-family="Arial, sans-serif" font-size="56" font-weight="700" fill="white">
+    Sprite Sheets &amp; Bugs AI Can’t See
+  </text>
+
+  <text x="560" y="320" font-family="Arial, sans-serif" font-size="30" fill="#94a3b8">
+    Cat walk cycles, zoetrope drift, and the limits of text-only QA
+  </text>
+
+  <!-- Footer author -->
+  <text x="980" y="580" font-family="Arial, sans-serif" font-size="24" fill="#64748b">
+    by Ian Lintner
+  </text>
+</svg>

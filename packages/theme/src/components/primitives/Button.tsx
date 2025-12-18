@@ -149,16 +149,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     // If asChild is true, render the child element as the root and merge styles/props.
     if (asChild && React.isValidElement(children)) {
-      const childProps: Record<string, unknown> = {
-        className: cn(
-          classes,
-          (children as React.ReactElement).props.className,
-        ),
-        ...(isDisabled && { "aria-disabled": true, tabIndex: -1 }),
+      // React's type for ReactElement props is `unknown` by default; for `asChild` we intentionally
+      // accept any valid element and forward common props (e.g., aria-label) + className.
+      const child = children as React.ReactElement<any>;
+      const childProps: any = {
         ...props,
+        className: cn(classes, child.props?.className),
+        ...(isDisabled && { "aria-disabled": true, tabIndex: -1 }),
       };
 
-      return React.cloneElement(children as React.ReactElement, childProps);
+      return React.cloneElement(child, childProps);
     }
 
     return (
