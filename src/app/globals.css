@@ -67,9 +67,15 @@
   --sheet-cols: 14;
   --sheet-rows: 72;
 
+  /* Nudge to keep the cat centered within the wrapper */
+  --x-offset: -8px;
+
   /* Default animation frame-count (many rows only use the first 6 frames). */
   --anim-frames: 6;
   --anim-ms: 900ms;
+
+  /* Cached start positions for animations */
+  --x-start: calc(var(--x-offset));
 
   /* Direction column for single-frame rows (sit/stand): down/up/right/left */
   --dir-col: 0;
@@ -84,7 +90,7 @@
   background-repeat: no-repeat;
   background-size: calc(var(--sheet-cols) * var(--frame) * var(--scale))
     calc(var(--sheet-rows) * var(--frame) * var(--scale));
-  background-position-x: 0px;
+  background-position-x: var(--x-start);
   background-position-y: calc(var(--row) * var(--frame) * var(--scale) * -1);
   image-rendering: pixelated;
 }
@@ -132,14 +138,14 @@
 .footer-sprite-cats__sprite[data-action="sit"] {
   --row: 0;
   background-position-x: calc(
-    var(--dir-col) * var(--frame) * var(--scale) * -1
+    var(--x-offset) + var(--dir-col) * var(--frame) * var(--scale) * -1
   );
 }
 
 .footer-sprite-cats__sprite[data-action="stand"] {
   --row: 1;
   background-position-x: calc(
-    var(--dir-col) * var(--frame) * var(--scale) * -1
+    var(--x-offset) + var(--dir-col) * var(--frame) * var(--scale) * -1
   );
 }
 
@@ -191,11 +197,12 @@
 
 @keyframes footer-sprite-cats-walk {
   from {
-    background-position-x: 0px;
+    background-position-x: var(--x-start);
   }
   to {
+    /* Move exactly N frames * width; steps(N) keeps jumps aligned to frame width. */
     background-position-x: calc(
-      (var(--anim-frames) - 1) * var(--frame) * var(--scale) * -1
+      var(--x-start) + var(--anim-frames) * var(--frame) * var(--scale) * -1
     );
   }
 }
