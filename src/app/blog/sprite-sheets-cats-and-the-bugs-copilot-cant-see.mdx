@@ -192,8 +192,7 @@ graph TD
   B --> C[Observe motion / alignment]
   C --> D{Is visual state aligned
 with intended mapping?}
-  D -- No --> E[Adjust: row/col mapping,
-steps(), offsets]
+  D -- No --> E["Adjust: row/col mapping<br/>steps(), offsets"]
   E --> A
   D -- Yes --> F[Lock invariants + ship]
 
