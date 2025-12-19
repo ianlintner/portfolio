@@ -18,6 +18,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   public isPoweredUp: boolean = false;
   private lastShotTime: number = 0;
+  private lastDirection: "left" | "right" = "right";
 
   constructor(scene: Scene, x: number, y: number) {
     super(scene, x, y, "cat");
