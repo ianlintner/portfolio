@@ -16,10 +16,7 @@ export class Level1 extends BaseLevel {
     for (let r = 0; r < ROWS; r++) {
       const row: number[] = [];
       for (let c = 0; c < COLS; c++) {
-        let tileIndex = -1; // Empty (Phaser uses -1 for empty in some contexts, or 0 if 0 is a tile. User said 0 is first tile. Let's use -1 for empty if we map it right, or just 0 for empty if 0 is a sky tile. User example used 0 for empty space.)
-        // User example: [0,0,0...] and [5,5,5...] for ground. So 0 is empty/sky.
-
-        tileIndex = 0;
+        let tileIndex = -1;
 
         // Ground
         if (r === ROWS - 1) {
