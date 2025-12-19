@@ -64,14 +64,21 @@ export class Preloader extends Scene {
 
     this.anims.create({
       key: "idle",
-      frames: this.anims.generateFrameNumbers("cat", { start: 0, end: 3 }), // Using first 4 frames of Row 0
+      frames: this.anims.generateFrameNumbers("cat", { start: 210, end: 212 }), // Row 15 (Tail Wag)
       frameRate: 5,
       repeat: -1,
     });
 
     this.anims.create({
-      key: "jump",
-      frames: this.anims.generateFrameNumbers("cat", { start: 28, end: 28 }), // Using first frame of Row 2
+      key: "jump-left",
+      frames: this.anims.generateFrameNumbers("cat", { start: 154, end: 157 }), // Row 11
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "jump-right",
+      frames: this.anims.generateFrameNumbers("cat", { start: 140, end: 143 }), // Row 10
       frameRate: 10,
       repeat: -1,
     });

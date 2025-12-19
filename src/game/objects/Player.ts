@@ -32,7 +32,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     // Adjust hitbox if needed (64x64 might be too big if the cat is small in the frame)
     this.body?.setSize(32, 32);
-    this.body?.setOffset(16, 32);
+    this.body?.setOffset(16, 16);
 
     if (scene.input.keyboard) {
       this.cursors = scene.input.keyboard.createCursorKeys();
@@ -61,7 +61,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (!this.body) return;
 
     const speed = 200;
-    const jumpForce = -400;
+    const jumpForce = -550;
 
     // Movement
     if (
@@ -70,8 +70,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.wasd.a.isDown
     ) {
       this.setVelocityX(-speed);
-      this.setFlipX(true);
-      this.anims.play("walk", true);
+      this.setFlipX(false);
+      this.anims.play("walk-left", true);
+      this.lastDirection = "left";
     } else if (
       this.cursors.right.isDown ||
       this.wasd.right.isDown ||
@@ -79,10 +80,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     ) {
       this.setVelocityX(speed);
       this.setFlipX(false);
-      this.anims.play("walk", true);
+      this.anims.play("walk-right", true);
+      this.lastDirection = "right";
     } else {
       this.setVelocityX(0);
       this.anims.play("idle", true);
+      this.setFlipX(this.lastDirection === "left");
     }
 
     // Jump
@@ -95,7 +98,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       isGrounded
     ) {
       this.setVelocityY(jumpForce);
-      this.anims.play("jump", true);
+    }
+
+    // Air animation (Jump/Fall)
+    if (!isGrounded) {
+      if (this.lastDirection === "left") {
+        this.anims.play("jump-left", true);
+        this.setFlipX(false);
+      } else {
+        this.anims.play("jump-right", true);
+        this.setFlipX(false);
+      }
     }
 
     // Shoot
