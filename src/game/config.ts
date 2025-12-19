@@ -30,6 +30,8 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
         Preloader,
         MainMenu,
         Level1,
+        Level2,
+        Level3,
         UIScene,
         GameOver,
         Victory
