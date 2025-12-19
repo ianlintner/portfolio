@@ -23,18 +23,18 @@ export class Level1 extends BaseLevel {
 
         // Ground
         if (r === ROWS - 1) {
-          tileIndex = 5; // Pavement/Ground
+          tileIndex = 10; // Pavement/Ground
         }
 
         // Platforms
         // (400, 400) -> col ~12, row ~12
-        if (r === 12 && c >= 12 && c <= 16) tileIndex = 5;
+        if (r === 12 && c >= 12 && c <= 16) tileIndex = 10;
 
         // (600, 300) -> col ~18, row ~9
-        if (r === 9 && c >= 18 && c <= 20) tileIndex = 5;
+        if (r === 9 && c >= 18 && c <= 20) tileIndex = 10;
 
         // (800, 450) -> col ~25, row ~14
-        if (r === 14 && c >= 25 && c <= 28) tileIndex = 5;
+        if (r === 14 && c >= 25 && c <= 28) tileIndex = 10;
 
         row.push(tileIndex);
       }
@@ -51,7 +51,7 @@ export class Level1 extends BaseLevel {
     const tileset = map.addTilesetImage("alleyTiles", undefined, TILE_SIZE, TILE_SIZE);
     if (tileset) {
         this.layer = map.createLayer(0, tileset, 0, 0)!;
-        this.layer.setCollision([5]);
+        this.layer.setCollision([10]);
     }
 
     // Enemies
