@@ -7,15 +7,52 @@ export class Level1 extends BaseLevel {
   }
 
   protected createLevel() {
-    // Ground
-    for (let x = 0; x < 2000; x += 32) {
-      this.platforms.create(x, 584, "platform").setOrigin(0, 0).refreshBody();
+    const TILE_SIZE = 32;
+    const COLS = 100; // Wider world
+    const ROWS = 20;
+
+    // Generate level data
+    const levelData: number[][] = [];
+    for (let r = 0; r < ROWS; r++) {
+      const row: number[] = [];
+      for (let c = 0; c < COLS; c++) {
+        let tileIndex = -1; // Empty (Phaser uses -1 for empty in some contexts, or 0 if 0 is a tile. User said 0 is first tile. Let's use -1 for empty if we map it right, or just 0 for empty if 0 is a sky tile. User example used 0 for empty space.)
+        // User example: [0,0,0...] and [5,5,5...] for ground. So 0 is empty/sky.
+
+        tileIndex = 0;
+
+        // Ground
+        if (r === ROWS - 1) {
+          tileIndex = 5; // Pavement/Ground
+        }
+
+        // Platforms
+        // (400, 400) -> col ~12, row ~12
+        if (r === 12 && c >= 12 && c <= 16) tileIndex = 5;
+
+        // (600, 300) -> col ~18, row ~9
+        if (r === 9 && c >= 18 && c <= 20) tileIndex = 5;
+
+        // (800, 450) -> col ~25, row ~14
+        if (r === 14 && c >= 25 && c <= 28) tileIndex = 5;
+
+        row.push(tileIndex);
+      }
+      levelData.push(row);
     }
 
-    // Platforms
-    this.platforms.create(400, 400, "platform").setScale(4, 1).refreshBody();
-    this.platforms.create(600, 300, "platform").setScale(2, 1).refreshBody();
-    this.platforms.create(800, 450, "platform").setScale(3, 1).refreshBody();
+    // Create Map
+    const map = this.make.tilemap({
+      data: levelData,
+      tileWidth: TILE_SIZE,
+      tileHeight: TILE_SIZE,
+    });
+
+    const tileset = map.addTilesetImage("alleyTiles", undefined, TILE_SIZE, TILE_SIZE);
+    if (tileset) {
+        this.layer = map.createLayer(0, tileset, 0, 0)!;
+        this.layer.setCollision([5]);
+    }
 
     // Enemies
     const mouse = new Enemy(this, 500, 350, "mouse");
