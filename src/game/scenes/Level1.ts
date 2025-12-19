@@ -2,7 +2,7 @@ import { BaseLevel } from './BaseLevel';
 
 export class Level1 extends BaseLevel {
     constructor() {
-        super('Level1', 'Victory'); // For now go to Victory, later Level2
+        super('Level1', 'Level2');
     }
 
     protected createLevel() {

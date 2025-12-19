@@ -2,6 +2,8 @@ import { BootScene } from './scenes/BootScene';
 import { Preloader } from './scenes/Preloader';
 import { MainMenu } from './scenes/MainMenu';
 import { Level1 } from './scenes/Level1';
+import { Level2 } from './scenes/Level2';
+import { Level3 } from './scenes/Level3';
 import { UIScene } from './scenes/UIScene';
 import { GameOver } from './scenes/GameOver';
 import { Victory } from './scenes/Victory';
