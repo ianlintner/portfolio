@@ -1,8 +1,10 @@
 import React from "react";
 import { cn } from "../../utils/cn";
 
-export interface DashboardLayoutProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+export interface DashboardLayoutProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "title"
+> {
   title: React.ReactNode;
   description?: React.ReactNode;
   actions?: React.ReactNode;

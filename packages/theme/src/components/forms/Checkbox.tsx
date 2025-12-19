@@ -8,8 +8,10 @@ import React, {
 } from "react";
 import { cn } from "../../utils/cn";
 
-export interface CheckboxProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
+export interface CheckboxProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "type"
+> {
   /** Render an indeterminate state (visually a dash). */
   indeterminate?: boolean;
 }

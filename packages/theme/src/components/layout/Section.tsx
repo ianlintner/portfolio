@@ -4,8 +4,10 @@ import React from "react";
 import { cn } from "../../utils/cn";
 import { Container, type ContainerWidth } from "./Container";
 
-export interface SectionProps
-  extends Omit<React.HTMLAttributes<HTMLElement>, "title"> {
+export interface SectionProps extends Omit<
+  React.HTMLAttributes<HTMLElement>,
+  "title"
+> {
   title?: React.ReactNode;
   description?: React.ReactNode;
   eyebrow?: React.ReactNode;

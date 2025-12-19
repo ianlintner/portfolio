@@ -1,8 +1,7 @@
 import React from "react";
 import { cn } from "../../utils/cn";
 
-export interface MarketingLayoutProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface MarketingLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
   navigation?: React.ReactNode;
   hero?: React.ReactNode;
   eyebrow?: React.ReactNode;

@@ -3,8 +3,10 @@
 import React, { forwardRef } from "react";
 import { cn } from "../../utils/cn";
 
-export interface SwitchProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onChange"> {
+export interface SwitchProps extends Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  "onChange"
+> {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
   size?: "sm" | "md";

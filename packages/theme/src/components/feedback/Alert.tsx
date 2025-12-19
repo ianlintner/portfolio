@@ -78,8 +78,10 @@ const iconMap: Record<AlertVariant, React.ReactElement> = {
   ),
 };
 
-export interface AlertProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+export interface AlertProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "title"
+> {
   variant?: AlertVariant;
   title?: React.ReactNode;
   description?: React.ReactNode;

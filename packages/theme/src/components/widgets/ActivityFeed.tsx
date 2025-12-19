@@ -8,8 +8,7 @@ export interface ActivityItem {
   icon?: React.ReactNode;
 }
 
-export interface ActivityFeedProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface ActivityFeedProps extends React.HTMLAttributes<HTMLDivElement> {
   items: ActivityItem[];
   emptyLabel?: React.ReactNode;
 }

@@ -3,8 +3,10 @@
 import React, { forwardRef } from "react";
 import { cn } from "../../utils/cn";
 
-export interface SliderProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
+export interface SliderProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "type"
+> {
   /** Show a value bubble above the thumb */
   showValue?: boolean;
   /** Optional formatter for the displayed value */

@@ -3,8 +3,7 @@
 import React, { forwardRef } from "react";
 import { cn } from "../../utils/cn";
 
-export interface LabelProps
-  extends React.LabelHTMLAttributes<HTMLLabelElement> {
+export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   /** Show a required indicator. If you pass a React node, it will render that instead of the default asterisk. */
   requiredIndicator?: boolean | React.ReactNode;
   /** Optional helper text to show alongside the label (e.g., "Optional"). */

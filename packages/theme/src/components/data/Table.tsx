@@ -26,8 +26,10 @@ const useTableContext = () => {
   return ctx;
 };
 
-export interface TableProps
-  extends Omit<React.TableHTMLAttributes<HTMLTableElement>, "border"> {
+export interface TableProps extends Omit<
+  React.TableHTMLAttributes<HTMLTableElement>,
+  "border"
+> {
   density?: Density;
   striped?: boolean;
   hoverable?: boolean;

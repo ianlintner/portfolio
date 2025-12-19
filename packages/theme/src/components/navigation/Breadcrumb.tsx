@@ -7,8 +7,7 @@ export interface BreadcrumbItem {
   active?: boolean;
 }
 
-export interface BreadcrumbProps
-  extends React.OlHTMLAttributes<HTMLOListElement> {
+export interface BreadcrumbProps extends React.OlHTMLAttributes<HTMLOListElement> {
   items: BreadcrumbItem[];
   separator?: React.ReactNode;
 }

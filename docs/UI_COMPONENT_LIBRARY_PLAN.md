@@ -309,8 +309,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 ### 3.2 Textarea Component
 
 ```typescript
-interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   variant?: "default" | "glass" | "filled";
   resize?: "none" | "vertical" | "horizontal" | "both";
   autoGrow?: boolean;

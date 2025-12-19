@@ -3,8 +3,7 @@
 import React, { forwardRef } from "react";
 import { cn } from "../../utils/cn";
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Visual style variant */
   variant?:
     | "primary"
@@ -207,8 +206,10 @@ Button.displayName = "Button";
  *
  * A square button designed for icon-only usage.
  */
-export interface IconButtonProps
-  extends Omit<ButtonProps, "leftIcon" | "rightIcon" | "children"> {
+export interface IconButtonProps extends Omit<
+  ButtonProps,
+  "leftIcon" | "rightIcon" | "children"
+> {
   /** The icon to display */
   icon: React.ReactNode;
   /** Accessible label for screen readers */

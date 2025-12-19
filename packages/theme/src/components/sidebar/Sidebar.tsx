@@ -39,8 +39,10 @@ export function SidebarHeader({ className, ...props }: SidebarHeaderProps) {
   );
 }
 
-export interface SidebarSectionProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+export interface SidebarSectionProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "title"
+> {
   title?: React.ReactNode;
 }
 
@@ -62,8 +64,7 @@ export function SidebarSection({
   );
 }
 
-export interface SidebarItemProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface SidebarItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.ReactNode;
   active?: boolean;
   badge?: React.ReactNode;

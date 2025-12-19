@@ -6,8 +6,7 @@ import { cn } from "../../utils/cn";
 type FieldState = "default" | "error" | "success" | "warning";
 type FieldVariant = "default" | "ghost" | "glass";
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   /** Visual state to communicate validation */
   state?: FieldState;
   /** Styling variant */

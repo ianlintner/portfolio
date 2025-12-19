@@ -15,8 +15,7 @@ export interface QuickAction {
     | "glass";
 }
 
-export interface QuickActionsProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface QuickActionsProps extends React.HTMLAttributes<HTMLDivElement> {
   actions: QuickAction[];
 }
 

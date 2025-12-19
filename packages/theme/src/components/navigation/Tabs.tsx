@@ -69,8 +69,7 @@ export function TabList({ className, ...props }: TabListProps) {
   );
 }
 
-export interface TabProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface TabProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   value: string;
   leftIcon?: React.ReactNode;
 }

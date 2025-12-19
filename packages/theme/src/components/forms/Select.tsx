@@ -6,8 +6,7 @@ import { cn } from "../../utils/cn";
 type FieldState = "default" | "error" | "success" | "warning";
 type FieldVariant = "default" | "ghost" | "glass";
 
-export interface SelectProps
-  extends React.SelectHTMLAttributes<HTMLSelectElement> {
+export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   state?: FieldState;
   variant?: FieldVariant;
   fullWidth?: boolean;

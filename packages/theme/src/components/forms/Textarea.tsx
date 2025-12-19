@@ -6,8 +6,7 @@ import { cn } from "../../utils/cn";
 type FieldState = "default" | "error" | "success" | "warning";
 type FieldVariant = "default" | "ghost" | "glass";
 
-export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   state?: FieldState;
   variant?: FieldVariant;
   fullWidth?: boolean;

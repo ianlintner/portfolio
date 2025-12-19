@@ -10,8 +10,7 @@ export interface DescriptionListItem {
   description: React.ReactNode;
 }
 
-export interface DescriptionListProps
-  extends React.HTMLAttributes<HTMLDListElement> {
+export interface DescriptionListProps extends React.HTMLAttributes<HTMLDListElement> {
   items?: DescriptionListItem[];
   columns?: ColumnCount;
   muted?: boolean;
