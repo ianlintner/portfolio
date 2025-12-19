@@ -1,4 +1,5 @@
 import { BaseLevel } from "./BaseLevel";
+import { Enemy } from "../objects/Enemy";
 
 export class Level1 extends BaseLevel {
   constructor() {
@@ -17,15 +18,16 @@ export class Level1 extends BaseLevel {
     this.platforms.create(800, 450, "platform").setScale(3, 1).refreshBody();
 
     // Enemies
-    const mouse = this.enemies.create(500, 350, "enemy");
-    mouse.setVelocityX(-100);
-    mouse.setCollideWorldBounds(true);
-    mouse.setBounce(1);
+    const mouse = new Enemy(this, 500, 350, "mouse");
+    this.enemies.add(mouse);
+
+    const rat = new Enemy(this, 700, 250, "rat");
+    this.enemies.add(rat);
 
     // Items
-    this.items.create(650, 250, "hairball").setTint(0x00ff00); // Catnip
+    this.items.create(650, 250, "items", 2); // Catnip (Frame 2)
 
     // Goal
-    this.goal = this.physics.add.staticSprite(1800, 550, "bowl");
+    this.goal = this.physics.add.staticSprite(1800, 550, "items", 0); // Golden Bowl (Frame 0)
   }
 }

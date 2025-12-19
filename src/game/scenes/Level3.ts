@@ -1,4 +1,5 @@
 import { BaseLevel } from "./BaseLevel";
+import { Enemy } from "../objects/Enemy";
 
 export class Level3 extends BaseLevel {
   constructor() {
@@ -20,17 +21,14 @@ export class Level3 extends BaseLevel {
     this.platforms.create(700, 250, "platform").setScale(2, 1).refreshBody();
     this.platforms.create(900, 150, "platform").setScale(2, 1).refreshBody();
 
-    // Enemies (Piranha/Snake placeholders)
-    const snake = this.enemies.create(500, 300, "enemy");
-    snake.setTint(0x00ff00); // Green snake
-    snake.setVelocityX(-200);
-    snake.setCollideWorldBounds(true);
-    snake.setBounce(1);
+    // Enemies (Snake)
+    const snake = new Enemy(this, 500, 300, "snake");
+    this.enemies.add(snake);
 
     // Items
-    this.items.create(900, 100, "hairball").setTint(0x00ff00); // Catnip
+    this.items.create(900, 100, "items", 2); // Catnip
 
     // Goal
-    this.goal = this.physics.add.staticSprite(1900, 550, "bowl");
+    this.goal = this.physics.add.staticSprite(1900, 550, "items", 0); // Golden Bowl
   }
 }

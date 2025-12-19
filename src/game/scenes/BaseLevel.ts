@@ -4,6 +4,7 @@ import { Player } from "../objects/Player";
 export class BaseLevel extends Scene {
   protected player!: Player;
   protected platforms!: Phaser.Physics.Arcade.StaticGroup;
+  protected layer?: Phaser.Tilemaps.TilemapLayer;
   protected enemies!: Phaser.Physics.Arcade.Group;
   protected items!: Phaser.Physics.Arcade.Group;
   protected hairballs!: Phaser.Physics.Arcade.Group;
@@ -36,6 +37,16 @@ export class BaseLevel extends Scene {
     this.physics.add.collider(this.enemies, this.platforms);
     this.physics.add.collider(this.items, this.platforms);
     this.physics.add.collider(this.goal, this.platforms);
+
+    if (this.layer) {
+      this.physics.add.collider(this.player, this.layer);
+      this.physics.add.collider(this.enemies, this.layer);
+      this.physics.add.collider(this.items, this.layer);
+      this.physics.add.collider(this.goal, this.layer);
+      this.physics.add.collider(this.hairballs, this.layer, (ball) =>
+        ball.destroy(),
+      );
+    }
 
     // Overlaps
     this.physics.add.overlap(
@@ -82,14 +93,10 @@ export class BaseLevel extends Scene {
   update() {
     this.player.update();
 
-    // Simple enemy patrol
+    // Update enemies
     this.enemies.getChildren().forEach((enemy: any) => {
-      if (enemy.body.blocked.left) {
-        enemy.setVelocityX(100);
-        enemy.setFlipX(true);
-      } else if (enemy.body.blocked.right) {
-        enemy.setVelocityX(-100);
-        enemy.setFlipX(false);
+      if (enemy.update) {
+        enemy.update();
       }
     });
   }
