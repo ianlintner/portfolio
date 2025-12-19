@@ -49,6 +49,11 @@ export function Navigation() {
                   Docs
                 </NavLink>
               </Link>
+              <Link href="/game" className="block">
+                <NavLink as="span" active={isActivePrefix("/game")}>
+                  Game
+                </NavLink>
+              </Link>
               <Link href="/demos" className="block">
                 <NavLink as="span" active={isActivePrefix("/demos")}>
                   Projects
@@ -133,6 +138,15 @@ export function Navigation() {
               >
                 <NavLink as="span" active={isActivePrefix("/docs")}>
                   Docs
+                </NavLink>
+              </Link>
+              <Link
+                href="/game"
+                className="block"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <NavLink as="span" active={isActivePrefix("/game")}>
+                  Game
                 </NavLink>
               </Link>
               <Link
