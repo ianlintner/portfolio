@@ -49,8 +49,15 @@ export class Preloader extends Scene {
     // Row 3: Jump (Frames 42-55)
 
     this.anims.create({
-      key: "walk",
-      frames: this.anims.generateFrameNumbers("cat", { start: 14, end: 17 }), // Using first 4 frames of Row 1
+      key: "walk-left",
+      frames: this.anims.generateFrameNumbers("cat", { start: 56, end: 59 }), // Row 4
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "walk-right",
+      frames: this.anims.generateFrameNumbers("cat", { start: 70, end: 73 }), // Row 5
       frameRate: 10,
       repeat: -1,
     });
