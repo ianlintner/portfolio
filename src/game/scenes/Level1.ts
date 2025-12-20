@@ -18,20 +18,17 @@ export class Level1 extends BaseLevel {
       for (let c = 0; c < COLS; c++) {
         let tileIndex = -1;
 
-        // Ground
+        // Ground: use a visible pavement tile from the sheet (index 124)
         if (r >= ROWS - 2) {
-          tileIndex = 1; // Use index 1 (likely visible) instead of 10 just to be sure
+          tileIndex = 124;
         }
 
-        // Platforms
-        // (400, 400) -> col ~12, row ~12
-        if (r === 12 && c >= 12 && c <= 16) tileIndex = 1;
+        // Platforms lowered to make jumps reachable
+        if (r === ROWS - 5 && c >= 12 && c <= 16) tileIndex = 125; // was row 12
 
-        // (600, 300) -> col ~18, row ~9
-        if (r === 9 && c >= 18 && c <= 20) tileIndex = 1;
+        if (r === ROWS - 7 && c >= 18 && c <= 20) tileIndex = 125; // was row 9
 
-        // (800, 450) -> col ~25, row ~14
-        if (r === 14 && c >= 25 && c <= 28) tileIndex = 1;
+        if (r === ROWS - 6 && c >= 25 && c <= 28) tileIndex = 125; // was row 14
 
         row.push(tileIndex);
       }
@@ -51,7 +48,7 @@ export class Level1 extends BaseLevel {
     if (tileset) {
         this.layer = map.createLayer(0, tileset, 0, 0)!;
         // Collide with all non-empty tiles for now to be safe
-        this.layer.setCollisionByExclusion([-1, 0]); 
+        this.layer.setCollisionByExclusion([-1]); 
     } else {
         console.error("Failed to load tileset 'alleyTiles'");
     }

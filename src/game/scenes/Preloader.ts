@@ -17,7 +17,7 @@ export class Preloader extends Scene {
     this.load.spritesheet("enemies", "/assets/game/enemies.png", {
       frameWidth: 32,
       frameHeight: 32,
-      margin: 100, // Estimated margin for labels on the left
+      margin: 0,
       spacing: 0,
     });
 
@@ -70,7 +70,7 @@ export class Preloader extends Scene {
 
     this.anims.create({
       key: "idle",
-      frames: this.anims.generateFrameNumbers("cat", { start: 0, end: 3 }), // Row 0 (Sit/Idle)
+      frames: this.anims.generateFrameNumbers("cat", { start: 0, end: 2 }), // Row 0, first 3 frames only
       frameRate: 5,
       repeat: -1,
     });
