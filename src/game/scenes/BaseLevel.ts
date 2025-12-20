@@ -83,8 +83,8 @@ export class BaseLevel extends Scene {
 
     // Camera
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
-    this.cameras.main.setBounds(0, 0, 2000, 600); // Example bounds
-    this.physics.world.setBounds(0, 0, 2000, 600);
+    this.cameras.main.setBounds(0, 0, 3200, 640);
+    this.physics.world.setBounds(0, 0, 3200, 640);
 
     // Listen for shoot event
     this.events.on("player-shoot", this.spawnHairball, this);

@@ -19,8 +19,8 @@ export class Level1 extends BaseLevel {
         let tileIndex = -1;
 
         // Ground
-        if (r === ROWS - 1) {
-          tileIndex = 10; // Pavement/Ground
+        if (r >= ROWS - 2) {
+          tileIndex = 10; // Pavement/Ground (Bottom 2 rows)
         }
 
         // Platforms
@@ -45,10 +45,12 @@ export class Level1 extends BaseLevel {
       tileHeight: TILE_SIZE,
     });
 
-    const tileset = map.addTilesetImage("alleyTiles", undefined, TILE_SIZE, TILE_SIZE);
+    const tileset = map.addTilesetImage("alleyTiles");
     if (tileset) {
         this.layer = map.createLayer(0, tileset, 0, 0)!;
         this.layer.setCollision([10]);
+    } else {
+        console.error("Failed to load tileset 'alleyTiles'");
     }
 
     // Enemies

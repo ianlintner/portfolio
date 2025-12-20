@@ -70,7 +70,7 @@ export class Preloader extends Scene {
 
     this.anims.create({
       key: "idle",
-      frames: this.anims.generateFrameNumbers("cat", { start: 210, end: 212 }), // Row 15 (Tail Wag)
+      frames: this.anims.generateFrameNumbers("cat", { start: 0, end: 3 }), // Row 0 (Sit/Idle)
       frameRate: 5,
       repeat: -1,
     });
