@@ -20,18 +20,18 @@ export class Level1 extends BaseLevel {
 
         // Ground
         if (r >= ROWS - 2) {
-          tileIndex = 10; // Pavement/Ground (Bottom 2 rows)
+          tileIndex = 1; // Use index 1 (likely visible) instead of 10 just to be sure
         }
 
         // Platforms
         // (400, 400) -> col ~12, row ~12
-        if (r === 12 && c >= 12 && c <= 16) tileIndex = 10;
+        if (r === 12 && c >= 12 && c <= 16) tileIndex = 1;
 
         // (600, 300) -> col ~18, row ~9
-        if (r === 9 && c >= 18 && c <= 20) tileIndex = 10;
+        if (r === 9 && c >= 18 && c <= 20) tileIndex = 1;
 
         // (800, 450) -> col ~25, row ~14
-        if (r === 14 && c >= 25 && c <= 28) tileIndex = 10;
+        if (r === 14 && c >= 25 && c <= 28) tileIndex = 1;
 
         row.push(tileIndex);
       }
@@ -45,10 +45,13 @@ export class Level1 extends BaseLevel {
       tileHeight: TILE_SIZE,
     });
 
-    const tileset = map.addTilesetImage("alleyTiles");
+    // When creating from data, addTilesetImage creates a new tileset if we pass the key
+    const tileset = map.addTilesetImage("alleyTiles", "alleyTiles", TILE_SIZE, TILE_SIZE);
+    
     if (tileset) {
         this.layer = map.createLayer(0, tileset, 0, 0)!;
-        this.layer.setCollision([10]);
+        // Collide with all non-empty tiles for now to be safe
+        this.layer.setCollisionByExclusion([-1, 0]); 
     } else {
         console.error("Failed to load tileset 'alleyTiles'");
     }

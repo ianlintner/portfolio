@@ -77,14 +77,14 @@ export class Preloader extends Scene {
 
     this.anims.create({
       key: "jump-left",
-      frames: this.anims.generateFrameNumbers("cat", { start: 154, end: 157 }), // Row 11
+      frames: this.anims.generateFrameNumbers("cat", { start: 56, end: 59 }), // Use walk frames for now to prevent glitching
       frameRate: 10,
       repeat: -1,
     });
 
     this.anims.create({
       key: "jump-right",
-      frames: this.anims.generateFrameNumbers("cat", { start: 140, end: 143 }), // Row 10
+      frames: this.anims.generateFrameNumbers("cat", { start: 70, end: 73 }), // Use walk frames for now to prevent glitching
       frameRate: 10,
       repeat: -1,
     });

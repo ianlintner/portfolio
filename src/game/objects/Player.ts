@@ -89,7 +89,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Jump
-    const isGrounded = this.body.touching.down;
+    const isGrounded = this.body.blocked.down || this.body.touching.down;
     if (
       (this.cursors.up.isDown ||
         this.wasd.up.isDown ||
