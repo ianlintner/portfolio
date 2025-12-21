@@ -1,5 +1,8 @@
 import { BaseLevel } from "./BaseLevel";
 import { Enemy } from "../objects/Enemy";
+import { PARALLAX_SETS, TILESETS } from "../assets/manifest";
+import { createParallaxBackground } from "../assets/parallax";
+import { createTilemapFromData } from "../assets/tilemap";
 
 export class Level1 extends BaseLevel {
   constructor() {
@@ -7,12 +10,15 @@ export class Level1 extends BaseLevel {
   }
 
   protected createLevel() {
-    const TILE_SIZE = 20; // native tile size of city tileset
-    const SCALE = 32 / 20; // upscale to ~32px feel
+    const tileset = TILESETS.city;
+    const TILE_SIZE = tileset.tileWidth; // native tile size of city tileset
+    const SCALE = 32 / TILE_SIZE; // upscale to ~32px feel
     const COLS = 120;
     const ROWS = 24;
     const WORLD_WIDTH = COLS * TILE_SIZE * SCALE;
     const WORLD_HEIGHT = ROWS * TILE_SIZE * SCALE;
+
+    this.setWorldSize(WORLD_WIDTH, WORLD_HEIGHT);
 
     // Generate level data
     const levelData: number[][] = [];
@@ -36,57 +42,24 @@ export class Level1 extends BaseLevel {
       levelData.push(row);
     }
 
-    // Parallax backgrounds (6 layers: 1 = foreground -> 6 = background)
-    const parallaxLayers = [
-      { key: "cityParallax1", scrollFactor: 0.85 },
-      { key: "cityParallax2", scrollFactor: 0.7 },
-      { key: "cityParallax3", scrollFactor: 0.55 },
-      { key: "cityParallax4", scrollFactor: 0.4 },
-      { key: "cityParallax5", scrollFactor: 0.25 },
-      { key: "cityParallax6", scrollFactor: 0.12 },
-    ];
-
-    parallaxLayers.forEach((layer, index) => {
-      const texture = this.textures.get(layer.key);
-      const source = texture.getSourceImage() as HTMLImageElement;
-      const height = source?.height ?? WORLD_HEIGHT;
-      const sprite = this.add.tileSprite(
-        0,
-        WORLD_HEIGHT - height,
-        WORLD_WIDTH,
-        height,
-        layer.key,
-      );
-      sprite.setOrigin(0, 0);
-      sprite.setScrollFactor(layer.scrollFactor, 0);
-      sprite.setDepth(-(index + 1));
+    // Parallax backgrounds (non-square, long layers; repeat horizontally)
+    createParallaxBackground(this, {
+      set: PARALLAX_SETS.city1,
+      worldWidth: WORLD_WIDTH,
+      worldHeight: WORLD_HEIGHT,
+      repeatX: true,
+      depthStart: -50,
     });
 
-    // Create Map
-    const map = this.make.tilemap({
+    // Tilemap layer from procedural data
+    const { layer } = createTilemapFromData(this, {
       data: levelData,
-      tileWidth: TILE_SIZE,
-      tileHeight: TILE_SIZE,
+      tileset,
+      scale: SCALE,
+      x: 0,
+      y: 0,
     });
-
-    // When creating from data, addTilesetImage creates a new tileset if we pass the key
-    const tileset = map.addTilesetImage(
-      "cityTiles",
-      "cityTiles",
-      TILE_SIZE,
-      TILE_SIZE,
-      0,
-      0,
-    );
-
-    if (tileset) {
-      this.layer = map.createLayer(0, tileset, 0, 0)!;
-      this.layer.setScale(SCALE);
-      // Collide with all non-empty tiles
-      this.layer.setCollisionByExclusion([-1]);
-    } else {
-      console.error("Failed to load tileset 'cityTiles'");
-    }
+    this.layer = layer;
 
     // Enemies
     const mouse = new Enemy(this, 500, 350, "mouse");

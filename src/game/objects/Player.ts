@@ -2,8 +2,8 @@ import { Scene } from "phaser";
 import * as Phaser from "phaser";
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
-  private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
-  private wasd: {
+  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+  private wasd!: {
     up: Phaser.Input.Keyboard.Key;
     left: Phaser.Input.Keyboard.Key;
     down: Phaser.Input.Keyboard.Key;
@@ -13,8 +13,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     s: Phaser.Input.Keyboard.Key;
     d: Phaser.Input.Keyboard.Key;
   };
-  private jumpKey: Phaser.Input.Keyboard.Key;
-  private shootKey: Phaser.Input.Keyboard.Key;
+  private jumpKey!: Phaser.Input.Keyboard.Key;
+  private shootKey!: Phaser.Input.Keyboard.Key;
 
   public isPoweredUp: boolean = false;
   private lastShotTime: number = 0;
@@ -34,27 +34,50 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.body?.setSize(32, 32);
     this.body?.setOffset(16, 16);
 
-    if (scene.input.keyboard) {
-      this.cursors = scene.input.keyboard.createCursorKeys();
+    const keyboard = scene.input.keyboard;
+
+    // Phaser scenes should have keyboard input, but we keep a safe fallback so
+    // the code remains type-safe and doesn't crash if the plugin is disabled.
+    if (!keyboard) {
+      const nullKey = { isDown: false } as Phaser.Input.Keyboard.Key;
+      this.cursors = {
+        up: nullKey,
+        down: nullKey,
+        left: nullKey,
+        right: nullKey,
+        space: nullKey,
+        shift: nullKey,
+      } as Phaser.Types.Input.Keyboard.CursorKeys;
+
       this.wasd = {
-        up: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
-        left: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
-        down: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
-        right: scene.input.keyboard.addKey(
-          Phaser.Input.Keyboard.KeyCodes.RIGHT,
-        ),
-        w: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
-        a: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
-        s: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-        d: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
+        up: nullKey,
+        left: nullKey,
+        down: nullKey,
+        right: nullKey,
+        w: nullKey,
+        a: nullKey,
+        s: nullKey,
+        d: nullKey,
       };
-      this.jumpKey = scene.input.keyboard.addKey(
-        Phaser.Input.Keyboard.KeyCodes.SPACE,
-      );
-      this.shootKey = scene.input.keyboard.addKey(
-        Phaser.Input.Keyboard.KeyCodes.F,
-      );
+
+      this.jumpKey = nullKey;
+      this.shootKey = nullKey;
+      return;
     }
+
+    this.cursors = keyboard.createCursorKeys();
+    this.wasd = {
+      up: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
+      left: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
+      down: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
+      right: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
+      w: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+      a: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+      s: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
+      d: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
+    };
+    this.jumpKey = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this.shootKey = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
   }
 
   update() {

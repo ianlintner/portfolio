@@ -7,6 +7,8 @@ export class Level2 extends BaseLevel {
   }
 
   protected createLevel() {
+    this.setWorldSize(2000, 600);
+
     // Ground
     for (let x = 0; x < 2000; x += 32) {
       if (x < 600 || x > 800) {

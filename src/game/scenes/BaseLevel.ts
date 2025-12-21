@@ -10,6 +10,13 @@ export class BaseLevel extends Scene {
   protected hairballs!: Phaser.Physics.Arcade.Group;
   protected goal!: Phaser.Physics.Arcade.Sprite;
 
+  /**
+   * Levels can set these via setWorldSize(). If a tilemap layer exists,
+   * we will prefer deriving bounds from the layer's display size.
+   */
+  protected worldWidth: number = 800;
+  protected worldHeight: number = 600;
+
   protected levelKey: string;
   protected nextLevelKey: string;
 
@@ -83,9 +90,12 @@ export class BaseLevel extends Scene {
 
     // Camera
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
-    // Adjust bounds to new scaled tilemap (approx COLS*32 x ROWS*32 => 120*32 x 24*32)
-    this.cameras.main.setBounds(0, 0, 3840, 768);
-    this.physics.world.setBounds(0, 0, 3840, 768);
+
+    const derivedWidth = this.layer?.displayWidth ?? this.worldWidth;
+    const derivedHeight = this.layer?.displayHeight ?? this.worldHeight;
+
+    this.cameras.main.setBounds(0, 0, derivedWidth, derivedHeight);
+    this.physics.world.setBounds(0, 0, derivedWidth, derivedHeight);
 
     // Listen for shoot event
     this.events.on("player-shoot", this.spawnHairball, this);
@@ -104,6 +114,11 @@ export class BaseLevel extends Scene {
 
   protected createLevel() {
     // Override me
+  }
+
+  protected setWorldSize(width: number, height: number) {
+    this.worldWidth = width;
+    this.worldHeight = height;
   }
 
   private spawnHairball(x: number, y: number, direction: number) {

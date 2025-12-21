@@ -1,4 +1,12 @@
 import { Scene } from "phaser";
+import {
+  IMAGES,
+  PARALLAX_SETS,
+  SPRITESHEETS,
+  TILESETS,
+  getParallaxLayerKey,
+  getParallaxLayerUrl,
+} from "../assets/manifest";
 
 export class Preloader extends Scene {
   constructor() {
@@ -6,58 +14,52 @@ export class Preloader extends Scene {
   }
 
   preload() {
-    // Load Player
-    this.load.spritesheet("cat", "/assets/game/cat.png", {
-      frameWidth: 64,
-      frameHeight: 64,
-    });
-
-    // Load Enemies
-    // Note: Adjust margin/spacing if the sprite sheet has labels or padding
-    this.load.spritesheet("enemies", "/assets/game/enemies.png", {
-      frameWidth: 32,
-      frameHeight: 32,
-      margin: 0,
-      spacing: 0,
-    });
-
-    // Load Items
-    this.load.spritesheet("items", "/assets/game/items.png", {
-      frameWidth: 32,
-      frameHeight: 32,
-    });
-
-    // Load new city tileset (20x20, scaled later to 32)
-    this.load.spritesheet("cityTiles", "/assets/city_tileset/city.png", {
-      frameWidth: 20,
-      frameHeight: 20,
-    });
-
-    // Load parallax background (city 1 set, layers 1-6 foreground -> background)
-    const parallaxSet = "city 1";
-    const parallaxBasePath = `/assets/free-city-backgrounds-pixel-art/${encodeURIComponent(parallaxSet)}`;
-    for (let i = 1; i <= 6; i++) {
-      this.load.image(`cityParallax${i}`, `${parallaxBasePath}/${i}.png`);
+    // Spritesheets (animated)
+    for (const sheet of Object.values(SPRITESHEETS)) {
+      const margin = "margin" in sheet ? (sheet.margin ?? 0) : 0;
+      const spacing = "spacing" in sheet ? (sheet.spacing ?? 0) : 0;
+      this.load.spritesheet(sheet.key, sheet.url, {
+        frameWidth: sheet.frameWidth,
+        frameHeight: sheet.frameHeight,
+        margin,
+        spacing,
+      });
     }
 
-    // Load Tiles
-    this.load.image("alleyTiles", "/assets/game/alley_tiles.png");
+    // Tilesets (for Tilemaps) MUST be loaded as images.
+    for (const tileset of Object.values(TILESETS)) {
+      this.load.image(tileset.key, tileset.url);
+    }
+
+    // Plain images
+    for (const img of Object.values(IMAGES)) {
+      this.load.image(img.key, img.url);
+    }
+
+    // Parallax backgrounds
+    // (Currently: Free City "city 1" set, layers 1..6)
+    for (const set of Object.values(PARALLAX_SETS)) {
+      for (let i = 1; i <= set.layerCount; i++) {
+        this.load.image(
+          getParallaxLayerKey(set, i),
+          getParallaxLayerUrl(set, i),
+        );
+      }
+    }
 
     // Load placeholders for other elements (we can replace these with real assets later)
     // For now, we'll generate textures programmatically in the create method if needed,
     // or load simple colored blocks if we had them.
     // Let's create a simple 32x32 white pixel for platforms to tint.
-    this.make
-      .graphics({ x: 0, y: 0, add: false })
-      .fillStyle(0xffffff)
-      .fillRect(0, 0, 32, 32)
-      .generateTexture("platform", 32, 32);
+    const platformGfx = this.make.graphics({ x: 0, y: 0 });
+    platformGfx.fillStyle(0xffffff).fillRect(0, 0, 32, 32);
+    platformGfx.generateTexture("platform", 32, 32);
+    platformGfx.destroy();
 
-    this.make
-      .graphics({ x: 0, y: 0, add: false })
-      .fillStyle(0x00ff00)
-      .fillCircle(16, 16, 16)
-      .generateTexture("hairball", 32, 32);
+    const hairballGfx = this.make.graphics({ x: 0, y: 0 });
+    hairballGfx.fillStyle(0x00ff00).fillCircle(16, 16, 16);
+    hairballGfx.generateTexture("hairball", 32, 32);
+    hairballGfx.destroy();
   }
 
   create() {

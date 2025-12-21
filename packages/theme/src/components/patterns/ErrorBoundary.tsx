@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import * as React from "react";
 
 interface ErrorBoundaryState {
   hasError: boolean;
