@@ -11,6 +11,8 @@ export class Level1 extends BaseLevel {
     const SCALE = 32 / 20; // upscale to ~32px feel
     const COLS = 120;
     const ROWS = 24;
+    const WORLD_WIDTH = COLS * TILE_SIZE * SCALE;
+    const WORLD_HEIGHT = ROWS * TILE_SIZE * SCALE;
 
     // Generate level data
     const levelData: number[][] = [];
@@ -34,10 +36,31 @@ export class Level1 extends BaseLevel {
       levelData.push(row);
     }
 
-    // Parallax background (simple tile sprite fill)
-    const bg = this.add.tileSprite(0, 0, COLS * TILE_SIZE * SCALE, ROWS * TILE_SIZE * SCALE, "cityBg");
-    bg.setOrigin(0, 0);
-    bg.setScrollFactor(0.2, 0.2);
+    // Parallax backgrounds (6 layers: 1 = foreground -> 6 = background)
+    const parallaxLayers = [
+      { key: "cityParallax1", scrollFactor: 0.85 },
+      { key: "cityParallax2", scrollFactor: 0.7 },
+      { key: "cityParallax3", scrollFactor: 0.55 },
+      { key: "cityParallax4", scrollFactor: 0.4 },
+      { key: "cityParallax5", scrollFactor: 0.25 },
+      { key: "cityParallax6", scrollFactor: 0.12 },
+    ];
+
+    parallaxLayers.forEach((layer, index) => {
+      const texture = this.textures.get(layer.key);
+      const source = texture.getSourceImage() as HTMLImageElement;
+      const height = source?.height ?? WORLD_HEIGHT;
+      const sprite = this.add.tileSprite(
+        0,
+        WORLD_HEIGHT - height,
+        WORLD_WIDTH,
+        height,
+        layer.key,
+      );
+      sprite.setOrigin(0, 0);
+      sprite.setScrollFactor(layer.scrollFactor, 0);
+      sprite.setDepth(-(index + 1));
+    });
 
     // Create Map
     const map = this.make.tilemap({
@@ -47,15 +70,22 @@ export class Level1 extends BaseLevel {
     });
 
     // When creating from data, addTilesetImage creates a new tileset if we pass the key
-    const tileset = map.addTilesetImage("cityTiles", "cityTiles", TILE_SIZE, TILE_SIZE, 0, 0);
-    
+    const tileset = map.addTilesetImage(
+      "cityTiles",
+      "cityTiles",
+      TILE_SIZE,
+      TILE_SIZE,
+      0,
+      0,
+    );
+
     if (tileset) {
-        this.layer = map.createLayer(0, tileset, 0, 0)!;
-        this.layer.setScale(SCALE);
-        // Collide with all non-empty tiles
-        this.layer.setCollisionByExclusion([-1]); 
+      this.layer = map.createLayer(0, tileset, 0, 0)!;
+      this.layer.setScale(SCALE);
+      // Collide with all non-empty tiles
+      this.layer.setCollisionByExclusion([-1]);
     } else {
-        console.error("Failed to load tileset 'cityTiles'");
+      console.error("Failed to load tileset 'cityTiles'");
     }
 
     // Enemies

@@ -33,8 +33,12 @@ export class Preloader extends Scene {
       frameHeight: 20,
     });
 
-    // Load parallax background
-    this.load.image("cityBg", "/assets/city_tileset/city_bg.png");
+    // Load parallax background (city 1 set, layers 1-6 foreground -> background)
+    const parallaxSet = "city 1";
+    const parallaxBasePath = `/assets/free-city-backgrounds-pixel-art/${encodeURIComponent(parallaxSet)}`;
+    for (let i = 1; i <= 6; i++) {
+      this.load.image(`cityParallax${i}`, `${parallaxBasePath}/${i}.png`);
+    }
 
     // Load Tiles
     this.load.image("alleyTiles", "/assets/game/alley_tiles.png");
@@ -79,7 +83,7 @@ export class Preloader extends Scene {
 
     this.anims.create({
       key: "idle",
-      frames: this.anims.generateFrameNumbers("cat", { start: 268, end: 271 }), // Row 0, first 3 frames only
+      frames: this.anims.generateFrameNumbers("cat", { start: 267, end: 270 }), // Row 0, first 3 frames only
       frameRate: 5,
       repeat: -1,
     });
