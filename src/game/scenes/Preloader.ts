@@ -27,6 +27,15 @@ export class Preloader extends Scene {
       frameHeight: 32,
     });
 
+    // Load new city tileset (20x20, scaled later to 32)
+    this.load.spritesheet("cityTiles", "/assets/city_tileset/city.png", {
+      frameWidth: 20,
+      frameHeight: 20,
+    });
+
+    // Load parallax background
+    this.load.image("cityBg", "/assets/city_tileset/city_bg.png");
+
     // Load Tiles
     this.load.image("alleyTiles", "/assets/game/alley_tiles.png");
 
@@ -70,7 +79,7 @@ export class Preloader extends Scene {
 
     this.anims.create({
       key: "idle",
-      frames: this.anims.generateFrameNumbers("cat", { start: 0, end: 2 }), // Row 0, first 3 frames only
+      frames: this.anims.generateFrameNumbers("cat", { start: 268, end: 271 }), // Row 0, first 3 frames only
       frameRate: 5,
       repeat: -1,
     });

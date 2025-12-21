@@ -7,9 +7,10 @@ export class Level1 extends BaseLevel {
   }
 
   protected createLevel() {
-    const TILE_SIZE = 32;
-    const COLS = 100; // Wider world
-    const ROWS = 20;
+    const TILE_SIZE = 20; // native tile size of city tileset
+    const SCALE = 32 / 20; // upscale to ~32px feel
+    const COLS = 120;
+    const ROWS = 24;
 
     // Generate level data
     const levelData: number[][] = [];
@@ -18,22 +19,25 @@ export class Level1 extends BaseLevel {
       for (let c = 0; c < COLS; c++) {
         let tileIndex = -1;
 
-        // Ground: use a visible pavement tile from the sheet (index 124)
+        // Ground: pick solid bricks at index 0
         if (r >= ROWS - 2) {
-          tileIndex = 124;
+          tileIndex = 0;
         }
 
-        // Platforms lowered to make jumps reachable
-        if (r === ROWS - 5 && c >= 12 && c <= 16) tileIndex = 125; // was row 12
-
-        if (r === ROWS - 7 && c >= 18 && c <= 20) tileIndex = 125; // was row 9
-
-        if (r === ROWS - 6 && c >= 25 && c <= 28) tileIndex = 125; // was row 14
+        // Platforms: choose another solid tile (index 9)
+        if (r === ROWS - 5 && c >= 18 && c <= 26) tileIndex = 9;
+        if (r === ROWS - 8 && c >= 32 && c <= 36) tileIndex = 9;
+        if (r === ROWS - 6 && c >= 48 && c <= 54) tileIndex = 9;
 
         row.push(tileIndex);
       }
       levelData.push(row);
     }
+
+    // Parallax background (simple tile sprite fill)
+    const bg = this.add.tileSprite(0, 0, COLS * TILE_SIZE * SCALE, ROWS * TILE_SIZE * SCALE, "cityBg");
+    bg.setOrigin(0, 0);
+    bg.setScrollFactor(0.2, 0.2);
 
     // Create Map
     const map = this.make.tilemap({
@@ -43,14 +47,15 @@ export class Level1 extends BaseLevel {
     });
 
     // When creating from data, addTilesetImage creates a new tileset if we pass the key
-    const tileset = map.addTilesetImage("alleyTiles", "alleyTiles", TILE_SIZE, TILE_SIZE);
+    const tileset = map.addTilesetImage("cityTiles", "cityTiles", TILE_SIZE, TILE_SIZE, 0, 0);
     
     if (tileset) {
         this.layer = map.createLayer(0, tileset, 0, 0)!;
-        // Collide with all non-empty tiles for now to be safe
+        this.layer.setScale(SCALE);
+        // Collide with all non-empty tiles
         this.layer.setCollisionByExclusion([-1]); 
     } else {
-        console.error("Failed to load tileset 'alleyTiles'");
+        console.error("Failed to load tileset 'cityTiles'");
     }
 
     // Enemies

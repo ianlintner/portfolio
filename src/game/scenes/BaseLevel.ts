@@ -83,8 +83,9 @@ export class BaseLevel extends Scene {
 
     // Camera
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
-    this.cameras.main.setBounds(0, 0, 3200, 640);
-    this.physics.world.setBounds(0, 0, 3200, 640);
+    // Adjust bounds to new scaled tilemap (approx COLS*32 x ROWS*32 => 120*32 x 24*32)
+    this.cameras.main.setBounds(0, 0, 3840, 768);
+    this.physics.world.setBounds(0, 0, 3840, 768);
 
     // Listen for shoot event
     this.events.on("player-shoot", this.spawnHairball, this);
