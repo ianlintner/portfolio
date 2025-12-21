@@ -26,6 +26,11 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "import": "./dist/client.mjs",
+      "require": "./dist/client.js"
+    },
     "./styles.css": "./dist/styles.css",
     "./tailwind.config": "./tailwind.config.ts"
   },
