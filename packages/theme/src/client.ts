@@ -6,4 +6,7 @@
 // (including Error Boundaries) inside Server Component module graphs.
 // Import these from "@ianlintner/theme/client".
 
-export { ErrorBoundary, type ErrorBoundaryProps } from "./components/patterns/ErrorBoundary";
+export {
+  ErrorBoundary,
+  type ErrorBoundaryProps,
+} from "./components/patterns/ErrorBoundary";
