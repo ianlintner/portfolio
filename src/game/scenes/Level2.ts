@@ -1,5 +1,7 @@
 import { BaseLevel } from "./BaseLevel";
 import { Enemy } from "../objects/Enemy";
+import { TILESETS } from "../assets/manifest";
+import { createTilemapFromData } from "../assets/tilemap";
 
 export class Level2 extends BaseLevel {
   constructor() {
@@ -7,26 +9,55 @@ export class Level2 extends BaseLevel {
   }
 
   protected createLevel() {
-    this.setWorldSize(2000, 600);
+    const tileset = TILESETS.retro;
 
-    // Ground
-    for (let x = 0; x < 2000; x += 32) {
-      if (x < 600 || x > 800) {
-        // Gap
-        this.platforms.create(x, 584, "platform").setOrigin(0, 0).refreshBody();
-      }
-    }
+    // Retro platformer level with a gap in the ground
+    const levelData: number[][] = [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [
+        0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
+        11, 0,
+      ],
+      [0, 11, 3, 3, 3, 3, 11, 11, 11, 3, 3, 3, 11, 11, 11, 11, 11, 11, 11, 0],
+      [
+        0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
+        11, 0,
+      ],
+      [
+        0, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,
+        14, 0,
+      ],
+      [
+        0, 12, 12, 12, 12, 12, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+        12, 0,
+      ], // Ground with gap
+    ];
 
-    // Platforms
-    this.platforms.create(700, 450, "platform").setScale(3, 1).refreshBody();
-    this.platforms.create(1000, 350, "platform").setScale(2, 1).refreshBody();
-    this.platforms.create(1300, 250, "platform").setScale(4, 1).refreshBody();
+    const WORLD_WIDTH = levelData[0].length * tileset.tileWidth;
+    const WORLD_HEIGHT = levelData.length * tileset.tileHeight;
+    this.setWorldSize(WORLD_WIDTH, WORLD_HEIGHT);
+
+    const { layer } = createTilemapFromData(this, {
+      data: levelData,
+      tileset,
+      scale: 1,
+      x: 0,
+      y: 0,
+    });
+    this.layer = layer;
+
+    // Set collision on solid tiles
+    layer.setCollision([0, 3, 12, 13, 14]);
+
+    // Camera setup
+    this.cameras.main.setRoundPixels(true);
+    this.cameras.main.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 
     // Enemies (Dog)
-    const dog = new Enemy(this, 1000, 300, "dog");
+    const dog = new Enemy(this, 320, 100, "dog");
     this.enemies.add(dog);
 
     // Goal
-    this.goal = this.physics.add.staticSprite(1900, 550, "items", 0); // Golden Bowl
+    this.goal = this.physics.add.staticSprite(608, 80, "items", 0); // Golden Bowl
   }
 }

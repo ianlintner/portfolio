@@ -83,6 +83,14 @@ export const TILESETS = {
     tileMargin: 0,
     tileSpacing: 0,
   },
+  retro: {
+    key: "retroTiles",
+    url: "/assets/retro_tileset_32x32_nogaps_final.png",
+    tileWidth: 32,
+    tileHeight: 32,
+    tileMargin: 0,
+    tileSpacing: 0,
+  },
 } satisfies Record<string, TilesetSpec>;
 
 export const PARALLAX_SETS = {
