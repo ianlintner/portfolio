@@ -138,40 +138,74 @@ export class Preloader extends Scene {
     // Row 2: Run/Action (Frames 28-41)
     // Row 3: Jump (Frames 42-55)
 
-    this.anims.create({
-      key: "walk-left",
-      frames: this.anims.generateFrameNumbers("cat", { start: 56, end: 59 }), // Row 4
-      frameRate: 10,
-      repeat: -1,
-    });
+    try {
+      if (!this.anims.exists("walk-left")) {
+        this.anims.create({
+          key: "walk-left",
+          frames: this.anims.generateFrameNumbers("cat", {
+            start: 56,
+            end: 59,
+          }), // Row 4
+          frameRate: 10,
+          repeat: -1,
+        });
+      }
 
-    this.anims.create({
-      key: "walk-right",
-      frames: this.anims.generateFrameNumbers("cat", { start: 70, end: 73 }), // Row 5
-      frameRate: 10,
-      repeat: -1,
-    });
+      if (!this.anims.exists("walk-right")) {
+        this.anims.create({
+          key: "walk-right",
+          frames: this.anims.generateFrameNumbers("cat", {
+            start: 70,
+            end: 73,
+          }), // Row 5
+          frameRate: 10,
+          repeat: -1,
+        });
+      }
 
-    this.anims.create({
-      key: "idle",
-      frames: this.anims.generateFrameNumbers("cat", { start: 267, end: 270 }), // Row 0, first 3 frames only
-      frameRate: 5,
-      repeat: -1,
-    });
+      if (!this.anims.exists("idle")) {
+        this.anims.create({
+          key: "idle",
+          frames: this.anims.generateFrameNumbers("cat", {
+            start: 267,
+            end: 270,
+          }), // Row 0, first 3 frames only
+          frameRate: 5,
+          repeat: -1,
+        });
+      }
 
-    this.anims.create({
-      key: "jump-left",
-      frames: this.anims.generateFrameNumbers("cat", { start: 56, end: 59 }), // Use walk frames for now to prevent glitching
-      frameRate: 10,
-      repeat: -1,
-    });
+      if (!this.anims.exists("jump-left")) {
+        this.anims.create({
+          key: "jump-left",
+          frames: this.anims.generateFrameNumbers("cat", {
+            start: 56,
+            end: 59,
+          }), // Use walk frames for now to prevent glitching
+          frameRate: 10,
+          repeat: -1,
+        });
+      }
 
-    this.anims.create({
-      key: "jump-right",
-      frames: this.anims.generateFrameNumbers("cat", { start: 70, end: 73 }), // Use walk frames for now to prevent glitching
-      frameRate: 10,
-      repeat: -1,
-    });
+      if (!this.anims.exists("jump-right")) {
+        this.anims.create({
+          key: "jump-right",
+          frames: this.anims.generateFrameNumbers("cat", {
+            start: 70,
+            end: 73,
+          }), // Use walk frames for now to prevent glitching
+          frameRate: 10,
+          repeat: -1,
+        });
+      }
+    } catch (err) {
+      console.error("Failed to create cat animations", err);
+      this.add
+        .text(16, 48, "Animation init failed. Check console.", {
+          color: "#ff6b6b",
+        })
+        .setScrollFactor(0);
+    }
 
     // Enemy Animations
     const enemyTypes = [
@@ -186,9 +220,12 @@ export class Preloader extends Scene {
     // Assuming 5 columns per row (Idle A, Idle B, Attack, Hit, Defeated)
     // We'll use frames 0 and 1 for a simple walk/idle loop
     enemyTypes.forEach((type, index) => {
+      const key = `${type}-walk`;
+      if (this.anims.exists(key)) return;
+
       const startFrame = index * 5; // 5 frames per row
       this.anims.create({
-        key: `${type}-walk`,
+        key,
         frames: this.anims.generateFrameNumbers("enemies", {
           start: startFrame,
           end: startFrame + 1,
