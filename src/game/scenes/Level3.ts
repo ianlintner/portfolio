@@ -9,7 +9,7 @@ export class Level3 extends BaseLevel {
   }
 
   protected createLevel() {
-    const tileset = TILESETS.retro;
+    const tileset = TILESETS.industrial;
 
     // Retro platformer level with verticality and a gap
     const levelData: number[][] = [
@@ -34,8 +34,8 @@ export class Level3 extends BaseLevel {
     });
     this.layer = layer;
 
-    // Set collision on solid tiles
-    layer.setCollision([0, 3, 12, 13, 14]);
+    // Set collision on solid tiles (avoid 0 which we reserve as empty)
+    layer.setCollision([3, 12, 13, 14]);
 
     // Camera setup
     this.cameras.main.setRoundPixels(true);
@@ -46,9 +46,9 @@ export class Level3 extends BaseLevel {
     this.enemies.add(snake);
 
     // Items
-    this.items.create(288, 100, "items", 2); // Catnip
+    this.items.create(288, 100, "catnip");
 
     // Goal
-    this.goal = this.physics.add.staticSprite(480, 100, "items", 0); // Golden Bowl
+    this.goal = this.physics.add.staticSprite(480, 100, "catfoodBowl");
   }
 }

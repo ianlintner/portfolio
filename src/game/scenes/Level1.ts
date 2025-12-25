@@ -10,8 +10,8 @@ export class Level1 extends BaseLevel {
   }
 
   protected createLevel() {
-    // Retro platformer tileset: 32×32 tiles, no gaps/margins
-    const tileset = TILESETS.retro;
+    // Runtime industrial tileset: 32×32 tiles, stitched during Preloader
+    const tileset = TILESETS.industrial;
 
     // Build a retro platformer level
     const levelData: number[][] = [
@@ -42,8 +42,8 @@ export class Level1 extends BaseLevel {
     });
     this.layer = layer;
 
-    // Set collision on solid tiles (brick wall, ridge platform, dirt/grass, overgrown pavement, rocks)
-    layer.setCollision([0, 3, 12, 13, 14]);
+    // Set collision on solid tiles (avoid 0 which we reserve as empty)
+    layer.setCollision([3, 12, 13, 14]);
 
     // Animate water tiles
     setupWaterAnimation(this, layer, 180);
@@ -60,9 +60,9 @@ export class Level1 extends BaseLevel {
     this.enemies.add(rat);
 
     // Items
-    this.items.create(224, 150, "items", 2); // Catnip
+    this.items.create(224, 150, "catnip");
 
     // Goal
-    this.goal = this.physics.add.staticSprite(448, 180, "items", 0); // Golden Bowl
+    this.goal = this.physics.add.staticSprite(448, 180, "catfoodBowl");
   }
 }

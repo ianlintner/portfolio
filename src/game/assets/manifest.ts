@@ -95,13 +95,25 @@ export const IMAGES = {
     key: "alleyTiles",
     url: "/assets/game/alley_tiles.png",
   },
+  catnip: {
+    key: "catnip",
+    url: "/assets/game/3%20Objects/Catnip.png",
+  },
+  hairball: {
+    key: "hairball",
+    url: "/assets/game/3%20Objects/Hairball.png",
+  },
+  catfoodBowl: {
+    key: "catfoodBowl",
+    url: "/assets/game/3%20Objects/Catfood-Bowl.png",
+  },
 } satisfies Record<string, ImageSpec>;
 
 /**
  * Tilesets should be loaded with `load.image` (not spritesheet) for Tilemap.
  * Tile sizes MUST match the source image grid.
  */
-export const TILESETS = {
+export const TILESETS: Record<string, TilesetSpec> = {
   /**
    * Industrial tileset is built at runtime by stitching individual tile PNGs into a canvas texture.
    * See `buildIndustrialTilesetTexture()`.
@@ -113,7 +125,7 @@ export const TILESETS = {
     tileMargin: 0,
     tileSpacing: 0,
   },
-} satisfies Record<string, TilesetSpec>;
+};
 
 export const PARALLAX_SETS = {
   /**

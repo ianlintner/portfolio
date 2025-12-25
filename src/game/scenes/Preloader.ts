@@ -68,11 +68,6 @@ export class Preloader extends Scene {
     platformGfx.fillStyle(0xffffff).fillRect(0, 0, 32, 32);
     platformGfx.generateTexture("platform", 32, 32);
     platformGfx.destroy();
-
-    const hairballGfx = this.make.graphics({ x: 0, y: 0 });
-    hairballGfx.fillStyle(0x00ff00).fillCircle(16, 16, 16);
-    hairballGfx.generateTexture("hairball", 32, 32);
-    hairballGfx.destroy();
   }
 
   create() {
@@ -148,7 +143,6 @@ export class Preloader extends Scene {
     } catch (err) {
       // Surface the error so we don't silently start a broken game.
       // (Still start MainMenu so users can see something rather than a blank screen.)
-      // eslint-disable-next-line no-console
       console.error("Failed to build industrial tileset texture", err);
       this.add
         .text(
