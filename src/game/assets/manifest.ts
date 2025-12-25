@@ -25,13 +25,39 @@ export type TilesetSpec = {
 export type ParallaxSetSpec = {
   /** Human-friendly name (for docs/debug). */
   name: string;
-  /** Folder under /public/assets/free-city-backgrounds-pixel-art/ */
-  folder: string;
+  /** Optional base path under /public/assets (absolute, starts with /assets/). */
+  basePath?: string;
+  /** Optional folder name appended under `basePath`. */
+  folder?: string;
   /** Key prefix; final keys become `${keyPrefix}${layerIndex}` */
   keyPrefix: string;
   layerCount: number;
-  /** Foreground -> background scroll factors. */
+  /** Foreground -> background scroll factors (or background -> foreground when `foregroundFirst=false`). */
   scrollFactors: number[];
+
+  /** If true, image 1 is foreground. If false, image 1 is background. */
+  foregroundFirst?: boolean;
+
+  /** Layer indices (1-based) that should be stretched to cover the full viewport. */
+  coverLayerIndices?: number[];
+
+  /** Controls vertical placement of each layer. */
+  verticalMode?: "bottom" | "top" | "spread";
+
+  /** Global vertical shift for the whole parallax stack (fraction of worldHeight). Positive moves UP. */
+  verticalShiftY?: number;
+
+  /** Optional normalized stops (0..1) used when `verticalMode: "spread"` (length == layerCount). */
+  verticalStops?: number[];
+
+  /** Optional per-layer vertical offsets (fraction of worldHeight). Positive moves DOWN. Keys are 1-based. */
+  layerOffsetY?: Partial<Record<number, number>>;
+
+  /** Optional solid background color drawn behind all parallax layers. Use a 0xRRGGBB number. */
+  backgroundColor?: number;
+
+  /** Uniform scale applied to all non-cover layers (e.g. 1.4 = 40% bigger). */
+  layerScale?: number;
 };
 
 /**
@@ -100,10 +126,44 @@ export const PARALLAX_SETS = {
    */
   city1: {
     name: "Free City: city 1",
+    basePath: "/assets/free-city-backgrounds-pixel-art",
     folder: "city 1",
     keyPrefix: "cityParallax",
     layerCount: 6,
     scrollFactors: [0.85, 0.7, 0.55, 0.4, 0.25, 0.12],
+    foregroundFirst: true,
+  },
+
+  /**
+   * Free Industrial Zone Tileset backgrounds.
+   * Files are 1.png..5.png where 1 is the far/background (top) and 5 is the near/foreground (bottom).
+   */
+  industrial1: {
+    name: "Industrial Zone: background 1..5",
+    basePath: "/assets/game/Free Industrial Zone Tileset/2 Background",
+    keyPrefix: "industrialParallax",
+    layerCount: 5,
+    // Background -> foreground
+    scrollFactors: [0.12, 0.25, 0.4, 0.6, 0.85],
+    foregroundFirst: false,
+    // Vertical layout: 1 at top, 5 at bottom.
+    verticalMode: "spread",
+    // 1.png is a solid background; cover the full viewport.
+    coverLayerIndices: [1],
+    // Medium gray behind all layers.
+    backgroundColor: 0x6b7280,
+    // Move the stack upward a bit so we see more sky.
+    verticalShiftY: 0.15,
+    // Tighten spacing between layers 1 & 2.
+    verticalStops: [0, 0.14, 0.5, 0.78, 1],
+    // Nudge the lower industrial layers down a bit.
+    layerOffsetY: {
+      3: 0.05,
+      4: 0.05,
+      5: 0.05,
+    },
+    // Scale layers up to eliminate visible gaps between stacked layers.
+    layerScale: 1.4,
   },
 } satisfies Record<string, ParallaxSetSpec>;
 
@@ -118,6 +178,18 @@ export function getParallaxLayerUrl(
   set: ParallaxSetSpec,
   layerIndex1Based: number,
 ): string {
-  const folderEncoded = encodeURIComponent(set.folder);
-  return `/assets/free-city-backgrounds-pixel-art/${folderEncoded}/${layerIndex1Based}.png`;
+  const basePath = set.basePath ?? "/assets/free-city-backgrounds-pixel-art";
+  const base = basePath
+    .split("/")
+    .filter(Boolean)
+    .map(encodeURIComponent)
+    .join("/");
+
+  const folder = set.folder?.trim();
+  if (folder) {
+    const folderEncoded = encodeURIComponent(folder);
+    return `/${base}/${folderEncoded}/${layerIndex1Based}.png`;
+  }
+
+  return `/${base}/${layerIndex1Based}.png`;
 }
