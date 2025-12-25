@@ -126,7 +126,6 @@ export class BaseLevel extends Scene {
   }
 
   /** Levels can override to disable or swap parallax sets. */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected getParallaxSet(): ParallaxSetSpec | undefined {
     return this.defaultParallaxSet;
   }

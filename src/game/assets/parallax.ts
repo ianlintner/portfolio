@@ -76,13 +76,23 @@ export function createParallaxBackground(
   };
 
   const getSpreadStop = (rankBgToFg: number) => {
-    if (Array.isArray(verticalStops) && verticalStops.length === set.layerCount) {
-      return verticalStops[rankBgToFg] ?? (rankBgToFg / Math.max(1, set.layerCount - 1));
+    if (
+      Array.isArray(verticalStops) &&
+      verticalStops.length === set.layerCount
+    ) {
+      return (
+        verticalStops[rankBgToFg] ??
+        rankBgToFg / Math.max(1, set.layerCount - 1)
+      );
     }
     return rankBgToFg / Math.max(1, set.layerCount - 1);
   };
 
-  for (let layerIndex1Based = 1; layerIndex1Based <= set.layerCount; layerIndex1Based++) {
+  for (
+    let layerIndex1Based = 1;
+    layerIndex1Based <= set.layerCount;
+    layerIndex1Based++
+  ) {
     const key = getParallaxLayerKey(set, layerIndex1Based);
     const rankBgToFg = getRankBgToFg(layerIndex1Based);
     const scrollFactor = getScrollFactorForLayer(rankBgToFg);
@@ -95,7 +105,8 @@ export function createParallaxBackground(
     const depth = depthStart - (set.layerCount - rankBgToFg);
 
     // Create object (position computed after scale/display sizing)
-    const obj: Phaser.GameObjects.Image | Phaser.GameObjects.TileSprite = (() => {
+    const obj: Phaser.GameObjects.Image | Phaser.GameObjects.TileSprite =
+      (() => {
       if (isCover) {
         const img = scene.add.image(0, 0, key);
         img.setOrigin(0, 0);
@@ -106,7 +117,13 @@ export function createParallaxBackground(
       }
 
       if (repeatX) {
-        const tileSprite = scene.add.tileSprite(0, 0, worldWidth, baseHeight, key);
+        const tileSprite = scene.add.tileSprite(
+          0,
+          0,
+          worldWidth,
+          baseHeight,
+          key,
+        );
         tileSprite.setOrigin(0, 0);
         tileSprite.setScrollFactor(scrollFactor, 0);
         tileSprite.setDepth(depth);
