@@ -46,4 +46,16 @@ describe("game asset manifest", () => {
       }
     }
   });
+
+  it("computes correct parallax URLs (spaces encoded)", () => {
+    // Folder-based (city)
+    expect(getParallaxLayerUrl(PARALLAX_SETS.city1, 1)).toBe(
+      "/assets/free-city-backgrounds-pixel-art/city%201/1.png",
+    );
+
+    // Base-path-only (industrial)
+    expect(getParallaxLayerUrl(PARALLAX_SETS.industrial1, 1)).toBe(
+      "/assets/game/2-Background/1.png",
+    );
+  });
 });

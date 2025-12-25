@@ -24,7 +24,8 @@ export function getIndustrialTileKey(tileNumber: number): string {
  */
 export function getIndustrialTileUrl(tileNumber: number): string {
   const n = String(tileNumber).padStart(2, "0");
-  return `/assets/game/1%20Tiles/IndustrialTile_${n}.png`;
+  // Use the canonical no-space alias path to avoid %20 encoding issues.
+  return `/assets/game/1-Tiles/IndustrialTile_${n}.png`;
 }
 
 export type BuildIndustrialTilesetOptions = {

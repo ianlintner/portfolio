@@ -20,6 +20,10 @@ export class Preloader extends Scene {
   }
 
   preload() {
+    // Helpful debugging: remember what URL we *intended* to load for certain keys.
+    // This makes it much easier to spot "url fell back to key" or encoding issues.
+    const expectedUrlByKey: Record<string, string> = {};
+
     // Visible loading UI so we don't look "stuck" on the default background.
     const { width, height } = this.scale;
     const loadingText = this.add
@@ -71,12 +75,24 @@ export class Preloader extends Scene {
     this.load.on(
       "loaderror",
       (file: Phaser.Loader.File) => {
+        const key = file?.key;
+        const loaderUrl = (file as any)?.url;
+        const loaderSrc = (file as any)?.src;
+        const loaderType = (file as any)?.type;
+        const expectedUrl = key ? expectedUrlByKey[key] : undefined;
+
         console.error("Asset failed to load", {
-          key: file?.key,
-          url: (file as any)?.url,
-          type: (file as any)?.type,
+          key,
+          url: loaderUrl,
+          src: loaderSrc,
+          type: loaderType,
+          expectedUrl,
+          // Useful when diagnosing cached/legacy URLs.
+          origin: typeof window !== "undefined" ? window.location.origin : "",
         });
-        detailText.setText(`Failed: ${file?.key}`);
+
+        const expected = expectedUrl ? ` (expected: ${expectedUrl})` : "";
+        detailText.setText(`Failed: ${key ?? "<unknown>"}${expected}`);
       },
       this,
     );
@@ -114,10 +130,10 @@ export class Preloader extends Scene {
     // (Currently: Free City "city 1" set, layers 1..6)
     for (const set of Object.values(PARALLAX_SETS)) {
       for (let i = 1; i <= set.layerCount; i++) {
-        this.load.image(
-          getParallaxLayerKey(set, i),
-          getParallaxLayerUrl(set, i),
-        );
+        const key = getParallaxLayerKey(set, i);
+        const url = getParallaxLayerUrl(set, i);
+        expectedUrlByKey[key] = url;
+        this.load.image(key, url);
       }
     }
   }

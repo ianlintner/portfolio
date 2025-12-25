@@ -97,15 +97,15 @@ export const IMAGES = {
   },
   catnip: {
     key: "catnip",
-    url: "/assets/game/3%20Objects/Catnip.png",
+    url: "/assets/game/3-Objects/Catnip.png",
   },
   hairball: {
     key: "hairball",
-    url: "/assets/game/3%20Objects/Hairball.png",
+    url: "/assets/game/3-Objects/Hairball.png",
   },
   catfoodBowl: {
     key: "catfoodBowl",
-    url: "/assets/game/3%20Objects/Catfood-Bowl.png",
+    url: "/assets/game/3-Objects/Catfood-Bowl.png",
   },
 } satisfies Record<string, ImageSpec>;
 
@@ -148,7 +148,7 @@ export const PARALLAX_SETS = {
    */
   industrial1: {
     name: "Industrial Zone: background 1..5",
-    basePath: "/assets/game/2 Background",
+    basePath: "/assets/game/2-Background",
     keyPrefix: "industrialParallax",
     layerCount: 5,
     // Background -> foreground
@@ -186,18 +186,15 @@ export function getParallaxLayerUrl(
   set: ParallaxSetSpec,
   layerIndex1Based: number,
 ): string {
-  const basePath = set.basePath ?? "/assets/free-city-backgrounds-pixel-art";
-  const base = basePath
-    .split("/")
-    .filter(Boolean)
-    .map(encodeURIComponent)
-    .join("/");
+  const basePathRaw = set.basePath ?? "/assets/free-city-backgrounds-pixel-art";
+  const basePath = basePathRaw.replace(/\/+$/, "");
 
   const folder = set.folder?.trim();
-  if (folder) {
-    const folderEncoded = encodeURIComponent(folder);
-    return `/${base}/${folderEncoded}/${layerIndex1Based}.png`;
-  }
+  const url = folder
+    ? `${basePath}/${folder}/${layerIndex1Based}.png`
+    : `${basePath}/${layerIndex1Based}.png`;
 
-  return `/${base}/${layerIndex1Based}.png`;
+  // Use encodeURI so path separators remain intact while spaces and other
+  // unsafe characters (e.g. in folder names) are encoded.
+  return encodeURI(url);
 }
