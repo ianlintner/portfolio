@@ -20,6 +20,67 @@ export class Preloader extends Scene {
   }
 
   preload() {
+    // Visible loading UI so we don't look "stuck" on the default background.
+    const { width, height } = this.scale;
+    const loadingText = this.add
+      .text(width / 2, height / 2 - 40, "Loading... 0%", {
+        fontFamily: "Arial",
+        fontSize: "24px",
+        color: "#ffffff",
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+
+    const detailText = this.add
+      .text(width / 2, height / 2 + 12, "", {
+        fontFamily: "Arial",
+        fontSize: "14px",
+        color: "#cbd5e1",
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+
+    const barWidth = Math.min(520, width * 0.8);
+    const barHeight = 16;
+    const barX = width / 2 - barWidth / 2;
+    const barY = height / 2;
+
+    const barBg = this.add
+      .rectangle(barX, barY, barWidth, barHeight, 0x1f2937)
+      .setOrigin(0, 0)
+      .setScrollFactor(0);
+    const barFill = this.add
+      .rectangle(barX, barY, 0, barHeight, 0x3b82f6)
+      .setOrigin(0, 0)
+      .setScrollFactor(0);
+
+    this.load.on("progress", (value: number) => {
+      const pct = Math.round(value * 100);
+      loadingText.setText(`Loading... ${pct}%`);
+      barFill.width = Math.max(2, barWidth * value);
+    });
+
+    this.load.on(
+      "fileprogress",
+      (file: Phaser.Loader.File) => {
+        detailText.setText(file.key);
+      },
+      this,
+    );
+
+    this.load.on(
+      "loaderror",
+      (file: Phaser.Loader.File) => {
+        console.error("Asset failed to load", {
+          key: file?.key,
+          url: (file as any)?.url,
+          type: (file as any)?.type,
+        });
+        detailText.setText(`Failed: ${file?.key}`);
+      },
+      this,
+    );
+
     // Spritesheets (animated)
     for (const sheet of Object.values(SPRITESHEETS)) {
       const margin = "margin" in sheet ? (sheet.margin ?? 0) : 0;
@@ -59,18 +120,18 @@ export class Preloader extends Scene {
         );
       }
     }
-
-    // Load placeholders for other elements (we can replace these with real assets later)
-    // For now, we'll generate textures programmatically in the create method if needed,
-    // or load simple colored blocks if we had them.
-    // Let's create a simple 32x32 white pixel for platforms to tint.
-    const platformGfx = this.make.graphics({ x: 0, y: 0 });
-    platformGfx.fillStyle(0xffffff).fillRect(0, 0, 32, 32);
-    platformGfx.generateTexture("platform", 32, 32);
-    platformGfx.destroy();
   }
 
   create() {
+    // Create a simple 32x32 white pixel for platforms to tint.
+    // Do this in create() so it can't interfere with the loader lifecycle.
+    if (!this.textures.exists("platform")) {
+      const platformGfx = this.make.graphics({ x: 0, y: 0 });
+      platformGfx.fillStyle(0xffffff).fillRect(0, 0, 32, 32);
+      platformGfx.generateTexture("platform", 32, 32);
+      platformGfx.destroy();
+    }
+
     // Create Animations
     // Row 0: Idle/Sit (Frames 0-13)
     // Row 1: Walk (Frames 14-27)
