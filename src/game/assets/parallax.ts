@@ -67,9 +67,7 @@ export function createParallaxBackground(
 
   const getScrollFactorForLayer = (rankBgToFg: number) => {
     if (set.scrollFactors.length === 0) return 0;
-    const idx = foregroundFirst
-      ? set.layerCount - 1 - rankBgToFg
-      : rankBgToFg;
+    const idx = foregroundFirst ? set.layerCount - 1 - rankBgToFg : rankBgToFg;
     const clamped = Math.max(0, Math.min(set.scrollFactors.length - 1, idx));
     const last = set.scrollFactors[set.scrollFactors.length - 1];
     return set.scrollFactors[clamped] ?? last ?? 0.2;
@@ -107,37 +105,37 @@ export function createParallaxBackground(
     // Create object (position computed after scale/display sizing)
     const obj: Phaser.GameObjects.Image | Phaser.GameObjects.TileSprite =
       (() => {
-      if (isCover) {
+        if (isCover) {
+          const img = scene.add.image(0, 0, key);
+          img.setOrigin(0, 0);
+          img.setScrollFactor(scrollFactor, 0);
+          img.setDepth(depth);
+          img.setDisplaySize(worldWidth, worldHeight);
+          return img;
+        }
+
+        if (repeatX) {
+          const tileSprite = scene.add.tileSprite(
+            0,
+            0,
+            worldWidth,
+            baseHeight,
+            key,
+          );
+          tileSprite.setOrigin(0, 0);
+          tileSprite.setScrollFactor(scrollFactor, 0);
+          tileSprite.setDepth(depth);
+          tileSprite.setScale(layerScale);
+          return tileSprite;
+        }
+
         const img = scene.add.image(0, 0, key);
         img.setOrigin(0, 0);
         img.setScrollFactor(scrollFactor, 0);
         img.setDepth(depth);
-        img.setDisplaySize(worldWidth, worldHeight);
+        img.setScale(layerScale);
         return img;
-      }
-
-      if (repeatX) {
-        const tileSprite = scene.add.tileSprite(
-          0,
-          0,
-          worldWidth,
-          baseHeight,
-          key,
-        );
-        tileSprite.setOrigin(0, 0);
-        tileSprite.setScrollFactor(scrollFactor, 0);
-        tileSprite.setDepth(depth);
-        tileSprite.setScale(layerScale);
-        return tileSprite;
-      }
-
-      const img = scene.add.image(0, 0, key);
-      img.setOrigin(0, 0);
-      img.setScrollFactor(scrollFactor, 0);
-      img.setDepth(depth);
-      img.setScale(layerScale);
-      return img;
-    })();
+      })();
 
     // Compute vertical placement.
     // For cover layers, always start at y=0.
