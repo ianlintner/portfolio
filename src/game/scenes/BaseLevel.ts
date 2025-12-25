@@ -1,5 +1,7 @@
 import { Scene } from "phaser";
 import { Player } from "../objects/Player";
+import { PARALLAX_SETS, type ParallaxSetSpec } from "../assets/manifest";
+import { createParallaxBackground } from "../assets/parallax";
 
 export class BaseLevel extends Scene {
   protected player!: Player;
@@ -9,6 +11,7 @@ export class BaseLevel extends Scene {
   protected items!: Phaser.Physics.Arcade.Group;
   protected hairballs!: Phaser.Physics.Arcade.Group;
   protected goal!: Phaser.Physics.Arcade.Sprite;
+  protected parallaxLayers?: Phaser.GameObjects.GameObject[];
 
   /**
    * Levels can set these via setWorldSize(). If a tilemap layer exists,
@@ -19,6 +22,9 @@ export class BaseLevel extends Scene {
 
   protected levelKey: string;
   protected nextLevelKey: string;
+
+  /** Default parallax set for the current industrial art style. Levels can override via `getParallaxSet()`. */
+  protected defaultParallaxSet: ParallaxSetSpec = PARALLAX_SETS.industrial1;
 
   constructor(key: string, nextLevel: string) {
     super(key);
@@ -35,6 +41,9 @@ export class BaseLevel extends Scene {
 
     // Create Level Layout (Override in subclasses)
     this.createLevel();
+
+    // Parallax background (behind tilemap + entities)
+    this.createParallax();
 
     // Player
     this.player = new Player(this, 100, 450);
@@ -114,6 +123,28 @@ export class BaseLevel extends Scene {
 
   protected createLevel() {
     // Override me
+  }
+
+  /** Levels can override to disable or swap parallax sets. */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected getParallaxSet(): ParallaxSetSpec | undefined {
+    return this.defaultParallaxSet;
+  }
+
+  protected createParallax() {
+    const set = this.getParallaxSet();
+    if (!set) return;
+
+    const worldWidth = this.layer?.displayWidth ?? this.worldWidth;
+    const worldHeight = this.layer?.displayHeight ?? this.worldHeight;
+
+    this.parallaxLayers = createParallaxBackground(this, {
+      set,
+      worldWidth,
+      worldHeight,
+      repeatX: true,
+      depthStart: -100,
+    });
   }
 
   protected setWorldSize(width: number, height: number) {
