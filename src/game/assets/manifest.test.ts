@@ -23,7 +23,9 @@ describe("game asset manifest", () => {
     const urls = [
       ...Object.values(SPRITESHEETS).map((x) => x.url),
       ...Object.values(IMAGES).map((x) => x.url),
-      ...Object.values(TILESETS).map((x) => x.url),
+      ...Object.values(TILESETS)
+        .map((x) => x.url)
+        .filter((x): x is string => Boolean(x)),
     ];
 
     for (const url of urls) {

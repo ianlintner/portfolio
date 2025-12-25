@@ -15,7 +15,8 @@ export type ImageSpec = {
 export type TilesetSpec = {
   /** Texture key used by Phaser and also the tileset name for Tilemap APIs. */
   key: string;
-  url: string;
+  /** Optional URL for tilesets loaded from disk. Runtime-built tilesets can omit this. */
+  url?: string;
   tileWidth: number;
   tileHeight: number;
   tileMargin?: number;
@@ -101,17 +102,12 @@ export const IMAGES = {
  * Tile sizes MUST match the source image grid.
  */
 export const TILESETS = {
-  city: {
-    key: "cityTiles",
-    url: "/assets/city_tileset/city.png",
-    tileWidth: 20,
-    tileHeight: 20,
-    tileMargin: 0,
-    tileSpacing: 0,
-  },
-  retro: {
-    key: "retroTiles",
-    url: "/assets/retro_tileset_32x32_nogaps_final.png",
+  /**
+   * Industrial tileset is built at runtime by stitching individual tile PNGs into a canvas texture.
+   * See `buildIndustrialTilesetTexture()`.
+   */
+  industrial: {
+    key: "industrialTiles",
     tileWidth: 32,
     tileHeight: 32,
     tileMargin: 0,

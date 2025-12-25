@@ -7,6 +7,12 @@ import {
   getParallaxLayerKey,
   getParallaxLayerUrl,
 } from "../assets/manifest";
+import {
+  INDUSTRIAL_TILE_NUMBERS,
+  buildIndustrialTilesetTexture,
+  getIndustrialTileKey,
+  getIndustrialTileUrl,
+} from "../assets/industrial-tileset";
 
 export class Preloader extends Scene {
   constructor() {
@@ -28,7 +34,14 @@ export class Preloader extends Scene {
 
     // Tilesets (for Tilemaps) MUST be loaded as images.
     for (const tileset of Object.values(TILESETS)) {
-      this.load.image(tileset.key, tileset.url);
+      if (tileset.url) {
+        this.load.image(tileset.key, tileset.url);
+      }
+    }
+
+    // Industrial tiles are individual PNGs that will be stitched into a single runtime tilesheet.
+    for (const n of INDUSTRIAL_TILE_NUMBERS) {
+      this.load.image(getIndustrialTileKey(n), getIndustrialTileUrl(n));
     }
 
     // Plain images
@@ -128,6 +141,24 @@ export class Preloader extends Scene {
         repeat: -1,
       });
     });
+
+    // Build the runtime industrial tileset texture (tile index 0 is transparent).
+    try {
+      buildIndustrialTilesetTexture(this);
+    } catch (err) {
+      // Surface the error so we don't silently start a broken game.
+      // (Still start MainMenu so users can see something rather than a blank screen.)
+      // eslint-disable-next-line no-console
+      console.error("Failed to build industrial tileset texture", err);
+      this.add
+        .text(
+          16,
+          16,
+          "Failed to build tileset texture. Check console for details.",
+          { color: "#ff6b6b" },
+        )
+        .setScrollFactor(0);
+    }
 
     this.scene.start("MainMenu");
   }
