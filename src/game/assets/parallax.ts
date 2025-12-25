@@ -71,7 +71,8 @@ export function createParallaxBackground(
       ? set.layerCount - 1 - rankBgToFg
       : rankBgToFg;
     const clamped = Math.max(0, Math.min(set.scrollFactors.length - 1, idx));
-    return set.scrollFactors[clamped] ?? set.scrollFactors.at(-1) ?? 0.2;
+    const last = set.scrollFactors[set.scrollFactors.length - 1];
+    return set.scrollFactors[clamped] ?? last ?? 0.2;
   };
 
   const getSpreadStop = (rankBgToFg: number) => {
@@ -94,7 +95,7 @@ export function createParallaxBackground(
     const depth = depthStart - (set.layerCount - rankBgToFg);
 
     // Create object (position computed after scale/display sizing)
-    const obj: Phaser.GameObjects.GameObject = (() => {
+    const obj: Phaser.GameObjects.Image | Phaser.GameObjects.TileSprite = (() => {
       if (isCover) {
         const img = scene.add.image(0, 0, key);
         img.setOrigin(0, 0);
@@ -125,7 +126,7 @@ export function createParallaxBackground(
     // For cover layers, always start at y=0.
     let y = 0;
     if (!isCover) {
-      const displayHeight = (obj as Phaser.GameObjects.Components.Size).displayHeight ?? baseHeight;
+      const displayHeight = obj.displayHeight ?? baseHeight;
 
       if (verticalMode === "top") {
         y = 0;
@@ -146,7 +147,7 @@ export function createParallaxBackground(
     }
 
     // Apply computed y (origin is 0,0)
-    (obj as Phaser.GameObjects.Components.Transform).y = y;
+    obj.setY(y);
 
     layers.push(obj);
   }
