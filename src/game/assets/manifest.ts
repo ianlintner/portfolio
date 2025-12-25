@@ -148,7 +148,7 @@ export const PARALLAX_SETS = {
    */
   industrial1: {
     name: "Industrial Zone: background 1..5",
-    basePath: "/assets/game/Free Industrial Zone Tileset/2 Background",
+    basePath: "/assets/game/2 Background",
     keyPrefix: "industrialParallax",
     layerCount: 5,
     // Background -> foreground

@@ -24,7 +24,7 @@ export function getIndustrialTileKey(tileNumber: number): string {
  */
 export function getIndustrialTileUrl(tileNumber: number): string {
   const n = String(tileNumber).padStart(2, "0");
-  return `/assets/game/Free%20Industrial%20Zone%20Tileset/1%20Tiles/IndustrialTile_${n}.png`;
+  return `/assets/game/1%20Tiles/IndustrialTile_${n}.png`;
 }
 
 export type BuildIndustrialTilesetOptions = {
