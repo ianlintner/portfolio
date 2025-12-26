@@ -7,12 +7,6 @@ import {
   getParallaxLayerKey,
   getParallaxLayerUrl,
 } from "../assets/manifest";
-import {
-  INDUSTRIAL_TILE_NUMBERS,
-  buildIndustrialTilesetTexture,
-  getIndustrialTileKey,
-  getIndustrialTileUrl,
-} from "../assets/industrial-tileset";
 
 export class Preloader extends Scene {
   constructor() {
@@ -116,11 +110,6 @@ export class Preloader extends Scene {
       }
     }
 
-    // Industrial tiles are individual PNGs that will be stitched into a single runtime tilesheet.
-    for (const n of INDUSTRIAL_TILE_NUMBERS) {
-      this.load.image(getIndustrialTileKey(n), getIndustrialTileUrl(n));
-    }
-
     // Plain images
     for (const img of Object.values(IMAGES)) {
       this.load.image(img.key, img.url);
@@ -132,6 +121,19 @@ export class Preloader extends Scene {
       for (let i = 1; i <= set.layerCount; i++) {
         const key = getParallaxLayerKey(set, i);
         const url = getParallaxLayerUrl(set, i);
+
+        // Defensive: if anything ever causes the URL to become invalid (e.g. stale
+        // cached bundle, accidental config mutation), skip loading rather than
+        // letting Phaser treat the key as the URL.
+        if (!url || !url.startsWith("/assets/")) {
+          console.error("Invalid parallax URL; skipping load", {
+            key,
+            url,
+            set,
+          });
+          continue;
+        }
+
         expectedUrlByKey[key] = url;
         this.load.image(key, url);
       }
@@ -250,23 +252,6 @@ export class Preloader extends Scene {
         repeat: -1,
       });
     });
-
-    // Build the runtime industrial tileset texture (tile index 0 is transparent).
-    try {
-      buildIndustrialTilesetTexture(this);
-    } catch (err) {
-      // Surface the error so we don't silently start a broken game.
-      // (Still start MainMenu so users can see something rather than a blank screen.)
-      console.error("Failed to build industrial tileset texture", err);
-      this.add
-        .text(
-          16,
-          16,
-          "Failed to build tileset texture. Check console for details.",
-          { color: "#ff6b6b" },
-        )
-        .setScrollFactor(0);
-    }
 
     this.scene.start("MainMenu");
   }

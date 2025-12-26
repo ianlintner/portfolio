@@ -115,11 +115,14 @@ export const IMAGES = {
  */
 export const TILESETS: Record<string, TilesetSpec> = {
   /**
-   * Industrial tileset is built at runtime by stitching individual tile PNGs into a canvas texture.
-   * See `buildIndustrialTilesetTexture()`.
+   * Industrial tileset is a prebuilt tilesheet image.
+   *
+   * This avoids loading 81 individual tile PNGs at startup, which can make the
+   * preload bar appear stuck on slower networks/devices.
    */
   industrial: {
     key: "industrialTiles",
+    url: "/assets/game/tilesheets/industrialTiles.png",
     tileWidth: 32,
     tileHeight: 32,
     tileMargin: 0,
