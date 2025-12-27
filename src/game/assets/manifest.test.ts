@@ -1,10 +1,12 @@
 import {
+  ASSET_URL_PREFIX,
   IMAGES,
   PARALLAX_SETS,
   SPRITESHEETS,
   TILESETS,
   getParallaxLayerKey,
   getParallaxLayerUrl,
+  withBasePath,
 } from "./manifest";
 
 describe("game asset manifest", () => {
@@ -29,7 +31,7 @@ describe("game asset manifest", () => {
     ];
 
     for (const url of urls) {
-      expect(url.startsWith("/assets/")).toBe(true);
+      expect(url.startsWith(ASSET_URL_PREFIX)).toBe(true);
     }
   });
 
@@ -42,7 +44,7 @@ describe("game asset manifest", () => {
         const key = getParallaxLayerKey(set, i);
         const url = getParallaxLayerUrl(set, i);
         expect(key).toContain(set.keyPrefix);
-        expect(url.startsWith("/assets/")).toBe(true);
+        expect(url.startsWith(ASSET_URL_PREFIX)).toBe(true);
       }
     }
   });
@@ -50,7 +52,7 @@ describe("game asset manifest", () => {
   it("computes correct parallax URLs (spaces encoded)", () => {
     // Base-path-only (industrial)
     expect(getParallaxLayerUrl(PARALLAX_SETS.industrial1, 1)).toBe(
-      "/assets/game/2-Background/1.png",
+      withBasePath("/assets/game/2-Background/1.png"),
     );
   });
 });

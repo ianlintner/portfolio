@@ -1,5 +1,6 @@
 import { Scene } from "phaser";
 import {
+  ASSET_URL_PREFIX,
   IMAGES,
   PARALLAX_SETS,
   SPRITESHEETS,
@@ -125,10 +126,11 @@ export class Preloader extends Scene {
         // Defensive: if anything ever causes the URL to become invalid (e.g. stale
         // cached bundle, accidental config mutation), skip loading rather than
         // letting Phaser treat the key as the URL.
-        if (!url || !url.startsWith("/assets/")) {
+        if (!url || !url.startsWith(ASSET_URL_PREFIX)) {
           console.error("Invalid parallax URL; skipping load", {
             key,
             url,
+            expectedPrefix: ASSET_URL_PREFIX,
             set,
           });
           continue;
