@@ -30,7 +30,9 @@ export class GameOver extends Scene {
         this.registry.set("score", 0);
 
         this.scene.start("RogueRun", { seed, floor: 1 });
-        this.scene.start("UIScene");
+        // UI is an overlay; launching avoids stopping the gameplay scene.
+        this.scene.launch("UIScene");
+        this.scene.bringToTop("UIScene");
       });
   }
 }

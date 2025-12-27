@@ -8,7 +8,15 @@ export default defineConfig({
   },
   fullyParallel: true,
   retries: process.env.CI ? 1 : 0,
-  reporter: process.env.CI ? "github" : "html",
+  // The HTML reporter can start a local server on failure which looks like a
+  // "hung" terminal in automation. Prefer a non-interactive reporter by default.
+  // If you want the HTML report locally, run: pnpm exec playwright show-report
+  reporter: process.env.CI
+    ? "github"
+    : [
+        ["line"],
+        ["html", { open: "never" }],
+      ],
   use: {
     baseURL: "http://127.0.0.1:3000",
     // Game is a fixed 800x600 canvas; keep the browser viewport predictable.

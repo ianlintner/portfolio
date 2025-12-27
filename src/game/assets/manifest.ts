@@ -14,7 +14,10 @@ export type SpritesheetSpec = {
  * - "" (default) -> assets resolve like "/assets/..."
  * - "/portfolio" -> assets resolve like "/portfolio/assets/..."
  */
-const RAW_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const RAW_BASE_PATH =
+  (typeof process !== "undefined" && process?.env
+    ? process.env.NEXT_PUBLIC_BASE_PATH
+    : undefined) ?? "";
 const NORMALIZED_BASE_PATH = RAW_BASE_PATH.replace(/\/+$/, "");
 
 export function withBasePath(path: string): string {

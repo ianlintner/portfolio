@@ -27,6 +27,10 @@ export class RogueRun extends Scene {
   private seed = "run";
   private floor = 1;
 
+  constructor() {
+    super("RogueRun");
+  }
+
   create(data?: RogueRunInit) {
     // Seed/floor come from scene start/restart, falling back to registry.
     const registrySeed = String(this.registry.get("runSeed") ?? "run");
