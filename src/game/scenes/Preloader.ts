@@ -116,7 +116,7 @@ export class Preloader extends Scene {
     }
 
     // Parallax backgrounds
-    // (Currently: Free City "city 1" set, layers 1..6)
+    // Industrial parallax set(s)
     for (const set of Object.values(PARALLAX_SETS)) {
       for (let i = 1; i <= set.layerCount; i++) {
         const key = getParallaxLayerKey(set, i);
@@ -226,31 +226,80 @@ export class Preloader extends Scene {
     }
 
     // Enemy Animations
+    // enemies.png is loaded as 32×32 frames.
+    // Logical layout we care about:
+    // - 7 enemy "rows" in order: Mouse, Rat, Chipmunk, Rabbit, Snake, Shark, Lizard
+    // - 6 relevant columns per enemy:
+    //   col 1-2: movement loop
+    //   col 3: idle
+    //   col 5-6: squishing -> squished
+    // Note: the source sheet contains more columns; we compute the true column
+    // count so frame indices resolve correctly.
     const enemyTypes = [
       "mouse",
       "rat",
-      "dog",
+      "chipmunk",
       "rabbit",
       "snake",
       "shark",
       "lizard",
-    ];
-    // Assuming 5 columns per row (Idle A, Idle B, Attack, Hit, Defeated)
-    // We'll use frames 0 and 1 for a simple walk/idle loop
-    enemyTypes.forEach((type, index) => {
-      const key = `${type}-walk`;
-      if (this.anims.exists(key)) return;
+    ] as const;
 
-      const startFrame = index * 5; // 5 frames per row
-      this.anims.create({
-        key,
-        frames: this.anims.generateFrameNumbers("enemies", {
-          start: startFrame,
-          end: startFrame + 1,
-        }),
-        frameRate: 4,
-        repeat: -1,
-      });
+    const enemiesTexture = this.textures.get("enemies");
+    const src = enemiesTexture.getSourceImage() as
+      | HTMLImageElement
+      | HTMLCanvasElement;
+    const frameW = SPRITESHEETS.enemies.frameWidth;
+    const cols = Math.max(1, Math.floor((src as any).width / frameW));
+
+    enemyTypes.forEach((type, rowIndex) => {
+      const rowStart = rowIndex * cols;
+
+      const moveKey = `enemy:${type}:move`;
+      if (!this.anims.exists(moveKey)) {
+        this.anims.create({
+          key: moveKey,
+          frames: this.anims.generateFrameNumbers("enemies", {
+            start: rowStart + 0,
+            end: rowStart + 1,
+          }),
+          frameRate: 6,
+          repeat: -1,
+        });
+      }
+
+      const idleKey = `enemy:${type}:idle`;
+      if (!this.anims.exists(idleKey)) {
+        this.anims.create({
+          key: idleKey,
+          frames: [{ key: "enemies", frame: rowStart + 2 }],
+          frameRate: 1,
+          repeat: -1,
+        });
+      }
+
+      const squishKey = `enemy:${type}:squish`;
+      if (!this.anims.exists(squishKey)) {
+        this.anims.create({
+          key: squishKey,
+          frames: this.anims.generateFrameNumbers("enemies", {
+            start: rowStart + 4,
+            end: rowStart + 5,
+          }),
+          frameRate: 10,
+          repeat: 0,
+        });
+      }
+
+      const squishedKey = `enemy:${type}:squished`;
+      if (!this.anims.exists(squishedKey)) {
+        this.anims.create({
+          key: squishedKey,
+          frames: [{ key: "enemies", frame: rowStart + 5 }],
+          frameRate: 1,
+          repeat: -1,
+        });
+      }
     });
 
     this.scene.start("MainMenu");

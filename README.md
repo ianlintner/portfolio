@@ -21,7 +21,16 @@ Environment variables are defined in `.env.example`. For local development set v
 
 - Lint: `pnpm lint` (run before commits)
 - Tests: `pnpm test`
+- E2E (Playwright): `pnpm test:e2e`
 - DB: `pnpm db:generate`, `pnpm db:migrate`
+
+## Visual QA (Playwright)
+
+This repo includes Playwright-based visual regression tests for the Phaser game route (`/game`).
+
+- First-time setup (installs browser binaries): `pnpm exec playwright install chromium`
+- Run visual tests: `pnpm test:e2e`
+- Update snapshots after intentional visual changes: `pnpm test:e2e:update`
 
 ## Architecture
 

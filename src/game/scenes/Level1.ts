@@ -60,9 +60,27 @@ export class Level1 extends BaseLevel {
     this.enemies.add(rat);
 
     // Items
-    this.items.create(224, 150, "catnip");
+    {
+      // Source art is 1024×1024; scale + body size keep it "sprite-sized" in-game.
+      const ITEM_DISPLAY_PX = 48;
+      const ITEM_SCALE = ITEM_DISPLAY_PX / 1024;
+
+      const item = this.items.create(224, 150, "catnip");
+      item.setScale(ITEM_SCALE);
+      item.body.setSize(28, 28, true);
+    }
 
     // Goal
-    this.goal = this.physics.add.staticSprite(448, 180, "catfoodBowl");
+    {
+      // The bowl art is 1024×1024; without scaling it will overlap the player immediately.
+      const GOAL_DISPLAY_PX = 64;
+      const GOAL_SCALE = GOAL_DISPLAY_PX / 1024;
+
+      this.goal = this.physics.add.staticSprite(448, 180, "catfoodBowl");
+      this.goal.setScale(GOAL_SCALE);
+      const goalBody = this.goal.body as Phaser.Physics.Arcade.StaticBody;
+      goalBody.setSize(44, 44, true);
+      this.goal.refreshBody();
+    }
   }
 }

@@ -15,6 +15,8 @@
     "db:migrate": "drizzle-kit push",
     "test:ci": "jest --ci --runInBand",
     "test": "jest",
+    "test:e2e": "playwright test",
+    "test:e2e:update": "playwright test --update-snapshots",
     "docs:build": "python3 -m mkdocs build -d public/docs",
     "docs:serve": "python3 -m mkdocs serve"
   },
@@ -55,6 +57,7 @@
     "zod": "latest"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@testing-library/jest-dom": "latest",
     "@testing-library/react": "latest",
     "@testing-library/user-event": "latest",

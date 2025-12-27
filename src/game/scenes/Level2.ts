@@ -53,11 +53,22 @@ export class Level2 extends BaseLevel {
     this.cameras.main.setRoundPixels(true);
     this.cameras.main.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 
-    // Enemies (Dog)
-    const dog = new Enemy(this, 320, 100, "dog");
-    this.enemies.add(dog);
+    // Enemies
+    // Note: EnemyType no longer includes "dog" in the roguelike rebuild.
+    const chipmunk = new Enemy(this, 320, 100, "chipmunk");
+    this.enemies.add(chipmunk);
 
     // Goal
-    this.goal = this.physics.add.staticSprite(608, 80, "catfoodBowl");
+    {
+      // The bowl art is 1024×1024; without scaling it will overlap huge areas.
+      const GOAL_DISPLAY_PX = 64;
+      const GOAL_SCALE = GOAL_DISPLAY_PX / 1024;
+
+      this.goal = this.physics.add.staticSprite(608, 80, "catfoodBowl");
+      this.goal.setScale(GOAL_SCALE);
+      const goalBody = this.goal.body as Phaser.Physics.Arcade.StaticBody;
+      goalBody.setSize(44, 44, true);
+      this.goal.refreshBody();
+    }
   }
 }

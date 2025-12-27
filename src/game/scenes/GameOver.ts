@@ -16,14 +16,20 @@ export class GameOver extends Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(width / 2, height / 2 + 100, "Click to Restart", {
+      .text(width / 2, height / 2 + 100, "Click for New Run", {
         fontSize: "32px",
         color: "#ffffff",
       })
       .setOrigin(0.5)
       .setInteractive()
       .on("pointerdown", () => {
-        this.scene.start("Level1");
+        const seed = Math.random().toString(36).slice(2, 10);
+        this.registry.set("runSeed", seed);
+        this.registry.set("runFloor", 1);
+        this.registry.set("lives", 3);
+        this.registry.set("score", 0);
+
+        this.scene.start("RogueRun", { seed, floor: 1 });
         this.scene.start("UIScene");
       });
   }

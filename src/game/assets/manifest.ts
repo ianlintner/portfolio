@@ -7,6 +7,29 @@ export type SpritesheetSpec = {
   spacing?: number;
 };
 
+/**
+ * Optional base path for static exports hosted under a sub-path.
+ *
+ * Example:
+ * - "" (default) -> assets resolve like "/assets/..."
+ * - "/portfolio" -> assets resolve like "/portfolio/assets/..."
+ */
+const RAW_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const NORMALIZED_BASE_PATH = RAW_BASE_PATH.replace(/\/+$/, "");
+
+export function withBasePath(path: string): string {
+  if (!path.startsWith("/")) {
+    throw new Error(`withBasePath expects an absolute path starting with '/', got '${path}'`);
+  }
+
+  // Empty string means "hosted at domain root".
+  if (!NORMALIZED_BASE_PATH) return path;
+  return `${NORMALIZED_BASE_PATH}${path}`;
+}
+
+/** Prefix for public asset URLs (used for validation/debug logging). */
+export const ASSET_URL_PREFIX = withBasePath("/assets/");
+
 export type ImageSpec = {
   key: string;
   url: string;
@@ -69,13 +92,13 @@ export type ParallaxSetSpec = {
 export const SPRITESHEETS = {
   cat: {
     key: "cat",
-    url: "/assets/game/cat.png",
+    url: withBasePath("/assets/game/cat.png"),
     frameWidth: 64,
     frameHeight: 64,
   },
   enemies: {
     key: "enemies",
-    url: "/assets/game/enemies.png",
+    url: withBasePath("/assets/game/enemies.png"),
     frameWidth: 32,
     frameHeight: 32,
     margin: 0,
@@ -83,7 +106,7 @@ export const SPRITESHEETS = {
   },
   items: {
     key: "items",
-    url: "/assets/game/items.png",
+    url: withBasePath("/assets/game/items.png"),
     frameWidth: 32,
     frameHeight: 32,
   },
@@ -93,19 +116,19 @@ export const SPRITESHEETS = {
 export const IMAGES = {
   alleyTiles: {
     key: "alleyTiles",
-    url: "/assets/game/alley_tiles.png",
+    url: withBasePath("/assets/game/alley_tiles.png"),
   },
   catnip: {
     key: "catnip",
-    url: "/assets/game/3-Objects/Catnip.png",
+    url: withBasePath("/assets/game/3-Objects/Catnip.png"),
   },
   hairball: {
     key: "hairball",
-    url: "/assets/game/3-Objects/Hairball.png",
+    url: withBasePath("/assets/game/3-Objects/Hairball.png"),
   },
   catfoodBowl: {
     key: "catfoodBowl",
-    url: "/assets/game/3-Objects/Catfood-Bowl.png",
+    url: withBasePath("/assets/game/3-Objects/Catfood-Bowl.png"),
   },
 } satisfies Record<string, ImageSpec>;
 
@@ -122,7 +145,7 @@ export const TILESETS: Record<string, TilesetSpec> = {
    */
   industrial: {
     key: "industrialTiles",
-    url: "/assets/game/tilesheets/industrialTiles.png",
+    url: withBasePath("/assets/game/tilesheets/industrialTiles.png"),
     tileWidth: 32,
     tileHeight: 32,
     tileMargin: 0,
@@ -132,26 +155,12 @@ export const TILESETS: Record<string, TilesetSpec> = {
 
 export const PARALLAX_SETS = {
   /**
-   * Free City Backgrounds Pixel Art ("city 1" folder).
-   * Layers are numbered 1..6 where 1 is foreground and 6 is background.
-   */
-  city1: {
-    name: "Free City: city 1",
-    basePath: "/assets/free-city-backgrounds-pixel-art",
-    folder: "city 1",
-    keyPrefix: "cityParallax",
-    layerCount: 6,
-    scrollFactors: [0.85, 0.7, 0.55, 0.4, 0.25, 0.12],
-    foregroundFirst: true,
-  },
-
-  /**
    * Free Industrial Zone Tileset backgrounds.
    * Files are 1.png..5.png where 1 is the far/background (top) and 5 is the near/foreground (bottom).
    */
   industrial1: {
     name: "Industrial Zone: background 1..5",
-    basePath: "/assets/game/2-Background",
+    basePath: withBasePath("/assets/game/2-Background"),
     keyPrefix: "industrialParallax",
     layerCount: 5,
     // Background -> foreground
@@ -189,7 +198,13 @@ export function getParallaxLayerUrl(
   set: ParallaxSetSpec,
   layerIndex1Based: number,
 ): string {
-  const basePathRaw = set.basePath ?? "/assets/free-city-backgrounds-pixel-art";
+  if (!set.basePath) {
+    throw new Error(
+      `Parallax set '${set.name}' is missing basePath; cannot build URL`,
+    );
+  }
+
+  const basePathRaw = set.basePath;
   const basePath = basePathRaw.replace(/\/+$/, "");
 
   const folder = set.folder?.trim();

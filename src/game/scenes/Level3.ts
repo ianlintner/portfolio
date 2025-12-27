@@ -46,9 +46,27 @@ export class Level3 extends BaseLevel {
     this.enemies.add(snake);
 
     // Items
-    this.items.create(288, 100, "catnip");
+    {
+      // Source art is 1024×1024; scale + body size keep it "sprite-sized" in-game.
+      const ITEM_DISPLAY_PX = 48;
+      const ITEM_SCALE = ITEM_DISPLAY_PX / 1024;
+
+      const item = this.items.create(288, 100, "catnip");
+      item.setScale(ITEM_SCALE);
+      item.body.setSize(28, 28, true);
+    }
 
     // Goal
-    this.goal = this.physics.add.staticSprite(480, 100, "catfoodBowl");
+    {
+      // The bowl art is 1024×1024; without scaling it will overlap huge areas.
+      const GOAL_DISPLAY_PX = 64;
+      const GOAL_SCALE = GOAL_DISPLAY_PX / 1024;
+
+      this.goal = this.physics.add.staticSprite(480, 100, "catfoodBowl");
+      this.goal.setScale(GOAL_SCALE);
+      const goalBody = this.goal.body as Phaser.Physics.Arcade.StaticBody;
+      goalBody.setSize(44, 44, true);
+      this.goal.refreshBody();
+    }
   }
 }

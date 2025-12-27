@@ -153,8 +153,15 @@ export class BaseLevel extends Scene {
 
   private spawnHairball(x: number, y: number, direction: number) {
     const ball = this.hairballs.create(x, y, "hairball");
+
+    // Hairball art is 1024×1024; keep the projectile visually small and its
+    // physics body tight so it doesn't collide with half the level.
+    const HAIRBALL_DISPLAY_PX = 24;
+    const HAIRBALL_SCALE = HAIRBALL_DISPLAY_PX / 1024;
+    ball.setScale(HAIRBALL_SCALE);
+
     ball.setVelocityX(400 * direction);
-    ball.setCircle(16);
+    ball.setCircle(10);
     ball.setCollideWorldBounds(true);
     // Destroy after 2 seconds
     this.time.delayedCall(2000, () => ball.destroy());

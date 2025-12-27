@@ -17,7 +17,7 @@ export class MainMenu extends Scene {
       .setOrigin(0.5);
 
     const startButton = this.add
-      .text(width / 2, height / 2, "Start Game", {
+      .text(width / 2, height / 2, "Start Run", {
         fontSize: "32px",
         color: "#ffffff",
         fontFamily: "Arial",
@@ -27,10 +27,29 @@ export class MainMenu extends Scene {
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .on("pointerdown", () => {
-        this.scene.start("Level1");
+        const seed = Math.random().toString(36).slice(2, 10);
+        this.registry.set("runSeed", seed);
+        this.registry.set("runFloor", 1);
+        this.registry.set("lives", 3);
+        this.registry.set("score", 0);
+
+        this.scene.start("RogueRun", { seed, floor: 1 });
         this.scene.start("UIScene");
       })
       .on("pointerover", () => startButton.setStyle({ fill: "#ff0" }))
       .on("pointerout", () => startButton.setStyle({ fill: "#fff" }));
+
+    this.add
+      .text(
+        width / 2,
+        height / 2 + 70,
+        "Procedural roguelike run. New layout every floor.",
+        {
+          fontSize: "16px",
+          color: "#94a3b8",
+          fontFamily: "Arial",
+        },
+      )
+      .setOrigin(0.5);
   }
 }

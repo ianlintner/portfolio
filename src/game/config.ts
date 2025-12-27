@@ -2,12 +2,9 @@ import * as Phaser from "phaser";
 import { BootScene } from "./scenes/BootScene";
 import { Preloader } from "./scenes/Preloader";
 import { MainMenu } from "./scenes/MainMenu";
-import { Level1 } from "./scenes/Level1";
-import { Level2 } from "./scenes/Level2";
-import { Level3 } from "./scenes/Level3";
+import { RogueRun } from "./scenes/RogueRun";
 import { UIScene } from "./scenes/UIScene";
 import { GameOver } from "./scenes/GameOver";
-import { Victory } from "./scenes/Victory";
 
 export const GameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -26,15 +23,5 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
       debug: process.env.NODE_ENV === "development",
     },
   },
-  scene: [
-    BootScene,
-    Preloader,
-    MainMenu,
-    Level1,
-    Level2,
-    Level3,
-    UIScene,
-    GameOver,
-    Victory,
-  ],
+  scene: [BootScene, Preloader, MainMenu, RogueRun, UIScene, GameOver],
 };
