@@ -116,3 +116,8 @@ istio-1.27.1
 /site
 packages/theme/dist
 dist
+
+# Playwright
+/playwright-report/
+/test-results/
+e2e/game.visual.spec.ts-snapshots/
