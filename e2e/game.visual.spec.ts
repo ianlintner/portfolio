@@ -194,6 +194,30 @@ test.describe("/game visual QA", () => {
       );
     }
 
+    // Regression guard: the cat sprite should not be visibly below the floor.
+    // We approximate this by ensuring the sprite's bottom aligns closely with
+    // the Arcade body bottom (which is what collides with tiles).
+    const alignment = await page.evaluate(() => {
+      const game = (globalThis as any).__PHASER_GAME__ as any;
+      const rr = game?.scene?.getScene?.("RogueRun");
+      const p = rr?.player;
+      const body = p?.body;
+      const spriteBottom = p ? p.y + p.displayHeight / 2 : null;
+      const bodyBottom = body ? body.bottom : null;
+      const delta =
+        spriteBottom != null && bodyBottom != null
+          ? Math.abs(spriteBottom - bodyBottom)
+          : null;
+      return { hasPlayer: Boolean(p), spriteBottom, bodyBottom, delta };
+    });
+
+    expect(
+      alignment,
+      `Player sprite/body alignment unexpected: ${JSON.stringify(alignment)}`,
+    ).toMatchObject({ hasPlayer: true });
+    expect(alignment.delta).not.toBeNull();
+    expect(alignment.delta as number).toBeLessThanOrEqual(2);
+
     // Let at least one frame render before freezing.
     await page.waitForTimeout(250);
     await freezeGameLoop(page);

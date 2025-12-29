@@ -30,9 +30,30 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setBounce(0.1);
     this.setDragX(1000); // Friction
 
-    // Adjust hitbox if needed (64x64 might be too big if the cat is small in the frame)
-    this.body?.setSize(32, 32);
-    this.body?.setOffset(16, 16);
+    // Physics body alignment
+    //
+    // The cat sprite is 64×64, but we want a smaller hitbox for fair platforming.
+    // Previously the body was centered (offset 16,16), which made the sprite appear
+    // sunk into the floor because the sprite's feet extended below the body.
+    //
+    // We align the body's bottom with the sprite's bottom, then compensate the
+    // sprite's y by half the unused vertical space so existing spawn coordinates
+    // and level tuning don't shift.
+    const body = this.body as Phaser.Physics.Arcade.Body | undefined;
+    if (body) {
+      const bodyW = 32;
+      const bodyH = 32;
+
+      // Center horizontally; anchor vertically at the sprite's feet.
+      const offsetX = (this.displayWidth - bodyW) / 2;
+      const offsetY = this.displayHeight - bodyH;
+      body.setSize(bodyW, bodyH);
+      body.setOffset(offsetX, offsetY);
+
+      // Keep the body's bottom where it used to be when we were centering the body.
+      // (i.e., don't make the player suddenly collide 16px lower everywhere.)
+      this.y -= (this.displayHeight - bodyH) / 2;
+    }
 
     const keyboard = scene.input.keyboard;
 
