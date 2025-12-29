@@ -22,7 +22,9 @@ const NORMALIZED_BASE_PATH = RAW_BASE_PATH.replace(/\/+$/, "");
 
 export function withBasePath(path: string): string {
   if (!path.startsWith("/")) {
-    throw new Error(`withBasePath expects an absolute path starting with '/', got '${path}'`);
+    throw new Error(
+      `withBasePath expects an absolute path starting with '/', got '${path}'`,
+    );
   }
 
   // Empty string means "hosted at domain root".
@@ -175,8 +177,10 @@ export const PARALLAX_SETS = {
     coverLayerIndices: [1],
     // Medium gray behind all layers.
     backgroundColor: 0x6b7280,
-    // Move the stack upward a bit so we see more sky.
-    verticalShiftY: 0.15,
+    // Keep the stack centered (a positive value moves UP). We previously
+    // shifted upward for more sky, but it made the background read as
+    // "too high" relative to the gameplay framing.
+    verticalShiftY: 0,
     // Tighten spacing between layers 1 & 2.
     verticalStops: [0, 0.14, 0.5, 0.78, 1],
     // Nudge the lower industrial layers down a bit.

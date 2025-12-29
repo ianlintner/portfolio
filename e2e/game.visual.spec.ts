@@ -52,7 +52,8 @@ async function waitForSceneActive(page: Page, sceneKey: string) {
     try {
       state = await page.evaluate(() => {
         const game = (globalThis as any).__PHASER_GAME__ as any;
-        if (!game?.scene) return { hasGame: Boolean(game), scenes: [], activeKeys: [] };
+        if (!game?.scene)
+          return { hasGame: Boolean(game), scenes: [], activeKeys: [] };
 
         const allScenes = (game.scene.getScenes?.(false) ?? []) as any[];
         const activeScenes = (game.scene.getScenes?.(true) ?? []) as any[];
@@ -229,7 +230,9 @@ test.describe("/game visual QA", () => {
       const followOffsetY = cam?.followOffset?.y ?? null;
       const height = cam?.height ?? null;
       const expected =
-        height != null && followOffsetY != null ? height / 2 - followOffsetY : null;
+        height != null && followOffsetY != null
+          ? height / 2 - followOffsetY
+          : null;
       return {
         hasCamera: Boolean(cam),
         hasPlayer: Boolean(p),
@@ -247,10 +250,10 @@ test.describe("/game visual QA", () => {
       `Unexpected camera/player composition: ${JSON.stringify(composition)}`,
     ).toMatchObject({ hasCamera: true, hasPlayer: true });
     expect(composition.screenY).not.toBeNull();
-    // With an 800x600 viewport, screenY should land around ~440 when followOffsetY=-140.
+    // With an 800x600 viewport, screenY should land around ~460 when followOffsetY=-160.
     // Use a generous window to avoid platform differences.
-    expect(composition.screenY as number).toBeGreaterThan(360);
-    expect(composition.screenY as number).toBeLessThan(520);
+    expect(composition.screenY as number).toBeGreaterThan(380);
+    expect(composition.screenY as number).toBeLessThan(540);
 
     // Let at least one frame render before freezing.
     await page.waitForTimeout(250);

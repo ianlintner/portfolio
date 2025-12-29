@@ -168,9 +168,26 @@ export class RogueRun extends Scene {
     // platforms, and goal aren't clustered too high.
     // Negative followOffsetY makes the camera track a point slightly ABOVE the
     // player, which moves the world DOWN on screen.
-    const followOffsetY = -140;
-    this.cameras.main.startFollow(this.player, true, 0.08, 0.08, 0, followOffsetY);
-    this.cameras.main.setBounds(0, 0, this.worldWidthPx, this.worldHeightPx);
+    const followOffsetY = -160;
+    this.cameras.main.startFollow(
+      this.player,
+      true,
+      0.08,
+      0.08,
+      0,
+      followOffsetY,
+    );
+
+    // Allow a bit of "look-down" even when the player starts near the top of
+    // the world (otherwise the camera clamps at scrollY=0 and the level still
+    // reads too high in the 800x600 viewport).
+    const cameraTopMarginPx = 200;
+    this.cameras.main.setBounds(
+      0,
+      -cameraTopMarginPx,
+      this.worldWidthPx,
+      this.worldHeightPx + cameraTopMarginPx,
+    );
     this.physics.world.setBounds(0, 0, this.worldWidthPx, this.worldHeightPx);
 
     // Shoot event
