@@ -79,7 +79,15 @@ export class RogueRun extends Scene {
     layer.setCollision([3, 12, 13, 14]);
 
     // Player
-    this.player = new Player(this, level.spawn.player.x, level.spawn.player.y);
+    // The level generator spawns at (groundY-1) tile center. For a 64px sprite
+    // with 32px body at its feet to stand on groundY, we need:
+    // - Ground top is at groundY * tileSize = 17 * 32 = 544px
+    // - Sprite bottom should be at 544px
+    // - Sprite center should be at 544 - 32 = 512px
+    // - Spawn gives us (groundY-1) * 32 + 16 = 16*32+16 = 528px
+    // - Adjustment: 512 - 528 = -16px (move up by half a tile)
+    const playerSpawnY = level.spawn.player.y - level.tileSize / 2;
+    this.player = new Player(this, level.spawn.player.x, playerSpawnY);
 
     // Goal
     this.goal = this.physics.add.staticSprite(

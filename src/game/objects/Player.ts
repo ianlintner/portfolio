@@ -50,9 +50,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       body.setSize(bodyW, bodyH);
       body.setOffset(offsetX, offsetY);
 
-      // Keep the body's bottom where it used to be when we were centering the body.
-      // (i.e., don't make the player suddenly collide 16px lower everywhere.)
-      this.y -= (this.displayHeight - bodyH) / 2;
+      // NOTE: We do NOT adjust this.y here. The spawn position from levelGenerator
+      // is already tile-center based. Changing the body offset changes where the
+      // physics body sits relative to the sprite visual, but the sprite itself
+      // should remain at its spawn coordinates. The previous y-adjustment was
+      // moving the sprite UP by 16px, causing it to appear below the floor.
     }
 
     const keyboard = scene.input.keyboard;
