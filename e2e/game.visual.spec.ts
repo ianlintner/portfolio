@@ -218,6 +218,40 @@ test.describe("/game visual QA", () => {
     expect(alignment.delta).not.toBeNull();
     expect(alignment.delta as number).toBeLessThanOrEqual(2);
 
+    // Composition guard: keep the player (and therefore the floor/platforms)
+    // in the lower half of the viewport so the level doesn't read as "too high".
+    const composition = await page.evaluate(() => {
+      const game = (globalThis as any).__PHASER_GAME__ as any;
+      const rr = game?.scene?.getScene?.("RogueRun");
+      const cam = rr?.cameras?.main;
+      const p = rr?.player;
+      const screenY = cam && p ? p.y - cam.scrollY : null;
+      const followOffsetY = cam?.followOffset?.y ?? null;
+      const height = cam?.height ?? null;
+      const expected =
+        height != null && followOffsetY != null ? height / 2 - followOffsetY : null;
+      return {
+        hasCamera: Boolean(cam),
+        hasPlayer: Boolean(p),
+        screenY,
+        followOffsetY,
+        height,
+        expected,
+        scrollY: cam?.scrollY ?? null,
+        playerY: p?.y ?? null,
+      };
+    });
+
+    expect(
+      composition,
+      `Unexpected camera/player composition: ${JSON.stringify(composition)}`,
+    ).toMatchObject({ hasCamera: true, hasPlayer: true });
+    expect(composition.screenY).not.toBeNull();
+    // With an 800x600 viewport, screenY should land around ~440 when followOffsetY=-140.
+    // Use a generous window to avoid platform differences.
+    expect(composition.screenY as number).toBeGreaterThan(360);
+    expect(composition.screenY as number).toBeLessThan(520);
+
     // Let at least one frame render before freezing.
     await page.waitForTimeout(250);
     await freezeGameLoop(page);

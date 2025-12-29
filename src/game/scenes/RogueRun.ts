@@ -164,7 +164,12 @@ export class RogueRun extends Scene {
 
     // Camera
     this.cameras.main.setRoundPixels(true);
-    this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
+    // Composition: keep the player a bit lower in the viewport so the ground,
+    // platforms, and goal aren't clustered too high.
+    // Negative followOffsetY makes the camera track a point slightly ABOVE the
+    // player, which moves the world DOWN on screen.
+    const followOffsetY = -140;
+    this.cameras.main.startFollow(this.player, true, 0.08, 0.08, 0, followOffsetY);
     this.cameras.main.setBounds(0, 0, this.worldWidthPx, this.worldHeightPx);
     this.physics.world.setBounds(0, 0, this.worldWidthPx, this.worldHeightPx);
 
