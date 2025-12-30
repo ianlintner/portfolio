@@ -20,6 +20,15 @@ export default function HomePage() {
   // Latest demos data (matching the structure from demos page)
   const latestDemos = [
     {
+      id: "7",
+      title: "Rust OAuth2 Server",
+      slug: "rust-oauth2-server",
+      description:
+        "A modern OAuth2/OIDC authorization server built in Rust with Actix-Web and the actor model, with first-class observability and Kubernetes-ready ops.",
+      technologies: ["Rust", "OAuth2", "Actix"],
+      liveUrl: "https://github.com/ianlintner/rust-oauth2-server",
+    },
+    {
       id: "6",
       title: "OAuth2 Proxy Sidecar",
       slug: "oauth2-sidecar",
