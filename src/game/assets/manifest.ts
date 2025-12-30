@@ -22,7 +22,9 @@ const NORMALIZED_BASE_PATH = RAW_BASE_PATH.replace(/\/+$/, "");
 
 export function withBasePath(path: string): string {
   if (!path.startsWith("/")) {
-    throw new Error(`withBasePath expects an absolute path starting with '/', got '${path}'`);
+    throw new Error(
+      `withBasePath expects an absolute path starting with '/', got '${path}'`,
+    );
   }
 
   // Empty string means "hosted at domain root".

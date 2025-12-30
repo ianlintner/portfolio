@@ -52,7 +52,8 @@ async function waitForSceneActive(page: Page, sceneKey: string) {
     try {
       state = await page.evaluate(() => {
         const game = (globalThis as any).__PHASER_GAME__ as any;
-        if (!game?.scene) return { hasGame: Boolean(game), scenes: [], activeKeys: [] };
+        if (!game?.scene)
+          return { hasGame: Boolean(game), scenes: [], activeKeys: [] };
 
         const allScenes = (game.scene.getScenes?.(false) ?? []) as any[];
         const activeScenes = (game.scene.getScenes?.(true) ?? []) as any[];
@@ -229,7 +230,9 @@ test.describe("/game visual QA", () => {
       const followOffsetY = cam?.followOffset?.y ?? null;
       const height = cam?.height ?? null;
       const expected =
-        height != null && followOffsetY != null ? height / 2 - followOffsetY : null;
+        height != null && followOffsetY != null
+          ? height / 2 - followOffsetY
+          : null;
       return {
         hasCamera: Boolean(cam),
         hasPlayer: Boolean(p),

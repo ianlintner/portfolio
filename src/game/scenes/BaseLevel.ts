@@ -101,7 +101,14 @@ export class BaseLevel extends Scene {
     // Keep the player lower in the frame (more forward view) to avoid the
     // floor/platforms reading as "too high" in an 800x600 viewport.
     const followOffsetY = -140;
-    this.cameras.main.startFollow(this.player, true, 0.05, 0.05, 0, followOffsetY);
+    this.cameras.main.startFollow(
+      this.player,
+      true,
+      0.05,
+      0.05,
+      0,
+      followOffsetY,
+    );
 
     const derivedWidth = this.layer?.displayWidth ?? this.worldWidth;
     const derivedHeight = this.layer?.displayHeight ?? this.worldHeight;

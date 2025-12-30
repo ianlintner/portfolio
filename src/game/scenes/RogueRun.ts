@@ -169,7 +169,14 @@ export class RogueRun extends Scene {
     // Negative followOffsetY makes the camera track a point slightly ABOVE the
     // player, which moves the world DOWN on screen.
     const followOffsetY = -140;
-    this.cameras.main.startFollow(this.player, true, 0.08, 0.08, 0, followOffsetY);
+    this.cameras.main.startFollow(
+      this.player,
+      true,
+      0.08,
+      0.08,
+      0,
+      followOffsetY,
+    );
     this.cameras.main.setBounds(0, 0, this.worldWidthPx, this.worldHeightPx);
     this.physics.world.setBounds(0, 0, this.worldWidthPx, this.worldHeightPx);
 
