@@ -71,7 +71,7 @@ export class RogueRun extends Scene {
       tileset,
       scale: 1,
       x: 0,
-      y: 0,
+      y: 25,
     });
     this.layer = layer;
 
@@ -190,7 +190,7 @@ export class RogueRun extends Scene {
     // platforms, and goal aren't clustered too high.
     // Negative followOffsetY makes the camera track a point slightly ABOVE the
     // player, which moves the world DOWN on screen.
-    const followOffsetY = -160;
+    const followOffsetY = -288;
     this.cameras.main.startFollow(
       this.player,
       true,
@@ -231,6 +231,16 @@ export class RogueRun extends Scene {
       graphics.lineTo(this.worldWidthPx, groundY);
       graphics.strokePath();
       graphics.setDepth(1000);
+
+      // DEBUG: Keyboard controls to adjust tilemap Y position
+      this.input.keyboard?.on("keydown-U", () => {
+        this.layer.y += 1;
+        console.log("🔧 Tilemap Y adjusted:", this.layer.y);
+      });
+      this.input.keyboard?.on("keydown-J", () => {
+        this.layer.y -= 1;
+        console.log("🔧 Tilemap Y adjusted:", this.layer.y);
+      });
     }
   }
 
