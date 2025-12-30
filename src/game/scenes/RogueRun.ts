@@ -89,6 +89,20 @@ export class RogueRun extends Scene {
     const playerSpawnY = level.spawn.player.y - level.tileSize / 2;
     this.player = new Player(this, level.spawn.player.x, playerSpawnY);
 
+    // DEBUG: Log actual positions to verify alignment
+    console.log("🐱 Player spawn debug:", {
+      rawSpawnY: level.spawn.player.y,
+      adjustedSpawnY: playerSpawnY,
+      spriteHeight: 64,
+      spriteTop: playerSpawnY - 32,
+      spriteBottom: playerSpawnY + 32,
+      bodyHeight: 32,
+      bodyOffset: this.player.body ? (this.player.body as any).offset.y : "N/A",
+      groundRow: level.heightTiles - 3,
+      groundTopPx: (level.heightTiles - 3) * level.tileSize,
+      tileSize: level.tileSize,
+    });
+
     // Goal
     this.goal = this.physics.add.staticSprite(
       level.spawn.goal.x,
@@ -204,6 +218,20 @@ export class RogueRun extends Scene {
     // Ensure registry defaults
     if (this.registry.get("lives") == null) this.registry.set("lives", 3);
     if (this.registry.get("score") == null) this.registry.set("score", 0);
+
+    // DEBUG: Visual collision debug
+    if (process.env.NODE_ENV !== "production") {
+      this.physics.world.createDebugGraphic();
+      this.physics.world.debugGraphic.clear();
+      // Draw ground line
+      const groundY = (this.worldHeightPx / level.tileSize - 3) * level.tileSize;
+      const graphics = this.add.graphics();
+      graphics.lineStyle(2, 0xff0000, 1);
+      graphics.moveTo(0, groundY);
+      graphics.lineTo(this.worldWidthPx, groundY);
+      graphics.strokePath();
+      graphics.setDepth(1000);
+    }
   }
 
   update() {
