@@ -122,3 +122,4 @@ dist
 /test-results/
 e2e/game.visual.spec.ts-snapshots/
 *.ts-snapshots
+.fake
