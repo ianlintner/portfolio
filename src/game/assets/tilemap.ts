@@ -12,7 +12,7 @@ export type CreateTilemapFromDataOptions = {
 
 export function createTilemapFromData(
   scene: Scene,
-  options: CreateTilemapFromDataOptions
+  options: CreateTilemapFromDataOptions,
 ) {
   const { data, tileset } = options;
   const scale = options.scale ?? 1;
@@ -31,19 +31,19 @@ export function createTilemapFromData(
     tileset.tileWidth,
     tileset.tileHeight,
     tileset.tileMargin ?? 0,
-    tileset.tileSpacing ?? 0
+    tileset.tileSpacing ?? 0,
   );
 
   if (!phaserTileset) {
     throw new Error(
-      `Failed to create tileset '${tileset.key}'. Is it loaded via load.image()?`
+      `Failed to create tileset '${tileset.key}'. Is it loaded via load.image()?`,
     );
   }
 
   const layer = map.createLayer(0, phaserTileset, x, y);
   if (!layer) {
     throw new Error(
-      `Failed to create tilemap layer for tileset '${tileset.key}'.`
+      `Failed to create tilemap layer for tileset '${tileset.key}'.`,
     );
   }
 

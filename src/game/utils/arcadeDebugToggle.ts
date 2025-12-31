@@ -39,7 +39,7 @@ function setArcadeDebug(scene: Phaser.Scene, enabled: boolean) {
  */
 export function installArcadeDebugToggle(
   scene: Phaser.Scene,
-  options: ArcadeDebugToggleOptions = {}
+  options: ArcadeDebugToggleOptions = {},
 ) {
   const key = (options.key ?? "O").toUpperCase();
   const enabledByDefault = options.enabledByDefault ?? false;

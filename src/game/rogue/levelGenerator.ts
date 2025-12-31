@@ -83,7 +83,7 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
     const gapChanceBase = 0.06;
     const gapChance = Math.min(
       0.18,
-      gapChanceBase + Math.max(0, options.floor - 1) * 0.01
+      gapChanceBase + Math.max(0, options.floor - 1) * 0.01,
     );
 
     if (!nearStart && !nearEnd && rng.chance(gapChance)) {
@@ -175,7 +175,7 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
     for (let dx = 0; dx < 10; dx++) {
       const tx = Math.min(
         widthTiles - 2,
-        Math.max(2, ex + (dx % 2 === 0 ? dx : -dx))
+        Math.max(2, ex + (dx % 2 === 0 ? dx : -dx)),
       );
       if (isSolid(data[groundY][tx])) {
         enemies.push({ type, pos: toPx(tx, groundY - 1, tileSize) });

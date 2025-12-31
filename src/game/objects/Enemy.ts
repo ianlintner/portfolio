@@ -100,7 +100,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       const tileBelowAhead = this.terrainLayer.getTileAtWorldXY(
         aheadX,
         feetY,
-        true
+        true,
       );
 
       // `collides` reflects the layer's collision settings.

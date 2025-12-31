@@ -64,7 +64,7 @@ export class Preloader extends Scene {
       (file: Phaser.Loader.File) => {
         detailText.setText(file.key);
       },
-      this
+      this,
     );
 
     this.load.on(
@@ -89,7 +89,7 @@ export class Preloader extends Scene {
         const expected = expectedUrl ? ` (expected: ${expectedUrl})` : "";
         detailText.setText(`Failed: ${key ?? "<unknown>"}${expected}`);
       },
-      this
+      this,
     );
 
     // Spritesheets (animated)
