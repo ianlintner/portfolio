@@ -85,7 +85,7 @@ export class RogueRun extends Scene {
     this.goal = this.physics.add.staticSprite(
       level.spawn.goal.x,
       level.spawn.goal.y,
-      "catfoodBowl",
+      "catfoodBowl"
     );
     {
       const { sourcePx, displayPx, bodyPx } = SPRITE_SIZES.catfoodBowl;
@@ -127,7 +127,7 @@ export class RogueRun extends Scene {
         this.registry.set("score", score);
       },
       undefined,
-      this,
+      this
     );
 
     this.physics.add.overlap(
@@ -135,7 +135,7 @@ export class RogueRun extends Scene {
       this.goal,
       () => this.advanceFloor(),
       undefined,
-      this,
+      this
     );
 
     this.physics.add.overlap(
@@ -143,7 +143,7 @@ export class RogueRun extends Scene {
       this.enemies,
       (playerObj, enemyObj) => this.onPlayerEnemy(playerObj, enemyObj),
       undefined,
-      this,
+      this
     );
 
     this.physics.add.overlap(
@@ -154,12 +154,12 @@ export class RogueRun extends Scene {
         ball.destroy();
       },
       undefined,
-      this,
+      this
     );
 
     // Hairball vs world
     this.physics.add.collider(this.hairballs, this.layer, (ball) =>
-      ball.destroy(),
+      ball.destroy()
     );
 
     // Camera
@@ -175,7 +175,7 @@ export class RogueRun extends Scene {
       0.08,
       0.08,
       0,
-      followOffsetY,
+      followOffsetY
     );
 
     // Avoid showing "empty" bands beyond the world when bounds are smaller than

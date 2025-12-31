@@ -166,7 +166,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         "player-shoot",
         this.x,
         this.y,
-        this.flipX ? -1 : 1,
+        this.flipX ? -1 : 1
       );
       this.lastShotTime = time;
     }

@@ -60,7 +60,7 @@ export class BaseLevel extends Scene {
       this.physics.add.collider(this.items, this.layer);
       this.physics.add.collider(this.goal, this.layer);
       this.physics.add.collider(this.hairballs, this.layer, (ball) =>
-        ball.destroy(),
+        ball.destroy()
       );
     }
 
@@ -70,31 +70,31 @@ export class BaseLevel extends Scene {
       this.items,
       this.collectItem,
       undefined,
-      this,
+      this
     );
     this.physics.add.overlap(
       this.player,
       this.goal,
       this.reachGoal,
       undefined,
-      this,
+      this
     );
     this.physics.add.overlap(
       this.player,
       this.enemies,
       this.hitEnemy,
       undefined,
-      this,
+      this
     );
     this.physics.add.overlap(
       this.hairballs,
       this.enemies,
       this.shootEnemy,
       undefined,
-      this,
+      this
     );
     this.physics.add.collider(this.hairballs, this.platforms, (ball) =>
-      ball.destroy(),
+      ball.destroy()
     );
 
     // Camera
@@ -107,7 +107,7 @@ export class BaseLevel extends Scene {
       0.05,
       0.05,
       0,
-      followOffsetY,
+      followOffsetY
     );
 
     const derivedWidth = this.layer?.displayWidth ?? this.worldWidth;

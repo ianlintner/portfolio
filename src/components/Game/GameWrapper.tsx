@@ -46,9 +46,7 @@ export default function GameWrapper() {
   }, []);
 
   return (
-    <div
-      className="relative rounded-lg overflow-hidden shadow-2xl mx-auto w-[800px] h-[600px]"
-    >
+    <div className="relative rounded-lg overflow-hidden shadow-2xl mx-auto w-[800px] h-[600px]">
       {bootError ? (
         <div className="absolute inset-0 bg-slate-950/90 text-slate-100 flex items-center justify-center p-6 text-center">
           <div className="max-w-[680px]">
