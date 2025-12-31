@@ -15,7 +15,10 @@ export type GenerateLevelOptions = {
 // solid ground while having no collision (because we don't mark index 0 solid).
 const EMPTY_TILE = -1;
 
-const SOLID_TILE = 12;
+// In the industrial tileset, we use a distinct top vs fill tile so the ground
+// doesn't look like a thin strip with a "gap" underneath.
+const GROUND_TOP_TILE = 12;
+const GROUND_FILL_TILE = 14;
 const PLATFORM_TILE = 3;
 
 const ENEMY_TYPES: EnemyType[] = [
@@ -44,7 +47,11 @@ function toPx(tileX: number, tileY: number, tileSize: number) {
 }
 
 function isSolid(tileIndex: number): boolean {
-  return tileIndex === SOLID_TILE || tileIndex === PLATFORM_TILE;
+  return (
+    tileIndex === GROUND_TOP_TILE ||
+    tileIndex === GROUND_FILL_TILE ||
+    tileIndex === PLATFORM_TILE
+  );
 }
 
 export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
@@ -58,6 +65,9 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
   // A simple 2D platformer layout:
   // - a mostly-solid ground with occasional gaps
   // - some floating platforms
+  // Keep the walkable surface a couple rows above the bottom, but ensure the
+  // level extends to the bottom of the viewport so players don't see (or fall
+  // into) an empty band under the floor.
   const groundY = heightTiles - 3;
 
   // NOTE: Empty is -1. If you want decorative tiles, set them to a real tile index
@@ -82,9 +92,10 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
       continue;
     }
 
-    data[groundY][x] = SOLID_TILE;
-    // Add a second solid row beneath, to feel chunkier.
-    data[groundY + 1][x] = SOLID_TILE;
+    data[groundY][x] = GROUND_TOP_TILE;
+    // Add solid fill rows beneath.
+    data[groundY + 1][x] = GROUND_FILL_TILE;
+    data[groundY + 2][x] = GROUND_FILL_TILE;
     x += 1;
   }
 
@@ -105,14 +116,16 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
 
   // Ensure start platform is safe.
   for (let tx = 0; tx < 6; tx++) {
-    data[groundY][tx] = SOLID_TILE;
-    data[groundY + 1][tx] = SOLID_TILE;
+    data[groundY][tx] = GROUND_TOP_TILE;
+    data[groundY + 1][tx] = GROUND_FILL_TILE;
+    data[groundY + 2][tx] = GROUND_FILL_TILE;
   }
 
   // Ensure end platform is safe.
   for (let tx = widthTiles - 7; tx < widthTiles; tx++) {
-    data[groundY][tx] = SOLID_TILE;
-    data[groundY + 1][tx] = SOLID_TILE;
+    data[groundY][tx] = GROUND_TOP_TILE;
+    data[groundY + 1][tx] = GROUND_FILL_TILE;
+    data[groundY + 2][tx] = GROUND_FILL_TILE;
   }
 
   const playerTile = { x: 2, y: groundY - 1 };

@@ -49,6 +49,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       const offsetY = this.displayHeight - bodyH;
       body.setSize(bodyW, bodyH);
       body.setOffset(offsetX, offsetY);
+
+      // Keep legacy spawn points stable: callers pass the sprite's visual center
+      // as `y`, but with a feet-anchored body the effective contact point would
+      // otherwise shift downward by half the unused vertical space.
+      const verticalSlack = this.displayHeight - bodyH;
+      this.y -= verticalSlack / 2;
     }
 
     const keyboard = scene.input.keyboard;
