@@ -14,6 +14,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   private enemyType: EnemyType;
   private walkSpeed: number = 80;
   private squished = false;
+  private direction: 1 | -1 = 1;
+  private terrainLayer?: Phaser.Tilemaps.TilemapLayer;
 
   constructor(scene: Scene, x: number, y: number, type: EnemyType) {
     super(scene, x, y, "enemies"); // Using 'enemies' texture
@@ -27,9 +29,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true);
     this.setBounce(0);
     this.setDragX(0);
-    this.setVelocityX(
-      scene.registry.get("enemyDir") === -1 ? -this.walkSpeed : this.walkSpeed,
-    );
+
+    // Persisted direction can be used to add variety across spawns.
+    this.direction = scene.registry.get("enemyDir") === -1 ? -1 : 1;
+    this.setVelocityX(this.direction * this.walkSpeed);
+    this.setFlipX(this.direction === -1);
 
     // Tight-ish body so collisions feel fair.
     const body = this.body as Phaser.Physics.Arcade.Body;
@@ -63,6 +67,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     });
   }
 
+  /** Optional: provide the collidable terrain layer so enemies can avoid pits/edges. */
+  public setTerrainLayer(layer?: Phaser.Tilemaps.TilemapLayer) {
+    this.terrainLayer = layer;
+  }
+
   update(player?: Phaser.Physics.Arcade.Sprite) {
     if (!this.body) return;
     if (this.squished) return;
@@ -77,17 +86,31 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       if (dx < 180) speed = baseSpeed * 1.25;
     }
 
-    // Keep moving in current direction unless blocked.
-    if (body.blocked.left) {
-      body.setVelocityX(speed);
-      this.setFlipX(true);
-    } else if (body.blocked.right) {
-      body.setVelocityX(-speed);
-      this.setFlipX(false);
-    } else if (Math.abs(body.velocity.x) < 5) {
-      // If we got stuck, nudge.
-      body.setVelocityX(this.flipX ? speed : -speed);
+    // Reverse at world bounds / solid walls.
+    if (body.blocked.left) this.direction = 1;
+    if (body.blocked.right) this.direction = -1;
+
+    // Avoid pits: if we're on the ground and there is no collidable tile just
+    // ahead of our feet, turn around.
+    if (this.terrainLayer && body.blocked.down) {
+      const lookAheadPx = 14;
+      const aheadX = body.center.x + this.direction * lookAheadPx;
+      const feetY = body.bottom + 2;
+
+      const tileBelowAhead = this.terrainLayer.getTileAtWorldXY(
+        aheadX,
+        feetY,
+        true
+      );
+
+      // `collides` reflects the layer's collision settings.
+      if (!tileBelowAhead || !tileBelowAhead.collides) {
+        this.direction = this.direction === 1 ? -1 : 1;
+      }
     }
+
+    body.setVelocityX(this.direction * speed);
+    this.setFlipX(this.direction === -1);
 
     // Animation based on motion.
     if (Math.abs(body.velocity.x) > 2) {

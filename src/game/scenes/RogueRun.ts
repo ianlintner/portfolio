@@ -108,6 +108,7 @@ export class RogueRun extends Scene {
     // Enemies
     for (const e of level.enemies) {
       const enemy = new Enemy(this, e.pos.x, e.pos.y, e.type);
+      enemy.setTerrainLayer?.(this.layer);
       this.enemies.add(enemy);
     }
 

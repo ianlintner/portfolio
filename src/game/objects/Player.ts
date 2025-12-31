@@ -36,25 +36,25 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     // Previously the body was centered (offset 16,16), which made the sprite appear
     // sunk into the floor because the sprite's feet extended below the body.
     //
-    // We align the body's bottom with the sprite's bottom, then compensate the
-    // sprite's y by half the unused vertical space so existing spawn coordinates
-    // and level tuning don't shift.
+    // The cat sprite frames include transparent padding at the bottom.
+    // If we anchor the body to the sprite's bottom, the *visible* feet can look
+    // like they're floating above the ground even though collision is correct.
+    //
+    // To match what the player sees, we raise the physics body slightly within
+    // the sprite so the body's bottom lines up with the visible feet.
     const body = this.body as Phaser.Physics.Arcade.Body | undefined;
     if (body) {
       const bodyW = 32;
       const bodyH = 32;
 
+      // Empirically tuned for the current cat spritesheet.
+      const FOOT_PAD_PX = 12;
+
       // Center horizontally; anchor vertically at the sprite's feet.
       const offsetX = (this.displayWidth - bodyW) / 2;
-      const offsetY = this.displayHeight - bodyH;
+      const offsetY = this.displayHeight - bodyH - FOOT_PAD_PX;
       body.setSize(bodyW, bodyH);
       body.setOffset(offsetX, offsetY);
-
-      // Keep legacy spawn points stable: callers pass the sprite's visual center
-      // as `y`, but with a feet-anchored body the effective contact point would
-      // otherwise shift downward by half the unused vertical space.
-      const verticalSlack = this.displayHeight - bodyH;
-      this.y -= verticalSlack / 2;
     }
 
     const keyboard = scene.input.keyboard;
@@ -168,12 +168,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (time > this.lastShotTime + 500) {
       // Create hairball
       // This would ideally call a method on the scene or emit an event
-      this.scene.events.emit(
-        "player-shoot",
-        this.x,
-        this.y,
-        this.flipX ? -1 : 1
-      );
+      const direction = this.lastDirection === "left" ? -1 : 1;
+      this.scene.events.emit("player-shoot", this.x, this.y, direction);
       this.lastShotTime = time;
     }
   }

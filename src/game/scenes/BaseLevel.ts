@@ -62,6 +62,12 @@ export class BaseLevel extends Scene {
       this.physics.add.collider(this.hairballs, this.layer, (ball) =>
         ball.destroy()
       );
+
+      // Provide the terrain layer to enemies (if they support it) so they can
+      // turn around at pits/edges.
+      this.enemies.getChildren().forEach((enemy: any) => {
+        enemy.setTerrainLayer?.(this.layer);
+      });
     }
 
     // Overlaps
