@@ -64,7 +64,7 @@ export class Preloader extends Scene {
       (file: Phaser.Loader.File) => {
         detailText.setText(file.key);
       },
-      this,
+      this
     );
 
     this.load.on(
@@ -89,7 +89,7 @@ export class Preloader extends Scene {
         const expected = expectedUrl ? ` (expected: ${expectedUrl})` : "";
         detailText.setText(`Failed: ${key ?? "<unknown>"}${expected}`);
       },
-      this,
+      this
     );
 
     // Spritesheets (animated)
@@ -228,15 +228,14 @@ export class Preloader extends Scene {
     }
 
     // Enemy Animations
-    // enemies.png is loaded as 32×32 frames.
-    // Logical layout we care about:
-    // - 7 enemy "rows" in order: Mouse, Rat, Chipmunk, Rabbit, Snake, Shark, Lizard
-    // - 6 relevant columns per enemy:
-    //   col 1-2: movement loop
-    //   col 3: idle
-    //   col 5-6: squishing -> squished
-    // Note: the source sheet contains more columns; we compute the true column
-    // count so frame indices resolve correctly.
+    //
+    // enemies.png is a large 32×32 grid that contains many blank cells and
+    // multiple enemy strips separated by empty rows. A simple "rowIndex * cols"
+    // mapping will select the wrong frames and can look especially broken in
+    // squish/squished states (partial sprites).
+    //
+    // These row indices were derived by inspecting which 32×32 cells contain
+    // actual non-transparent pixels for our 7 supported enemy types.
     const enemyTypes = [
       "mouse",
       "rat",
@@ -254,17 +253,37 @@ export class Preloader extends Scene {
     const frameW = SPRITESHEETS.enemies.frameWidth;
     const cols = Math.max(1, Math.floor((src as any).width / frameW));
 
-    enemyTypes.forEach((type, rowIndex) => {
-      const rowStart = rowIndex * cols;
+    const ENEMY_ROW_BY_TYPE: Record<(typeof enemyTypes)[number], number> = {
+      mouse: 3,
+      rat: 4,
+      chipmunk: 5,
+      rabbit: 7,
+      snake: 8,
+      shark: 9,
+      lizard: 11,
+    };
+
+    // Column layout (0-based) used by all supported enemy rows.
+    // Move: two-frame loop
+    const ENEMY_MOVE_COLS = [16, 17] as const;
+    // Idle: single frame
+    const ENEMY_IDLE_COL = 13;
+    // Squish: two-frame animation, then a squished pose
+    const ENEMY_SQUISH_COLS = [20, 21] as const;
+    const ENEMY_SQUISHED_COL = 22;
+
+    enemyTypes.forEach((type) => {
+      const row = ENEMY_ROW_BY_TYPE[type];
+      const rowStart = row * cols;
 
       const moveKey = `enemy:${type}:move`;
       if (!this.anims.exists(moveKey)) {
         this.anims.create({
           key: moveKey,
-          frames: this.anims.generateFrameNumbers("enemies", {
-            start: rowStart + 0,
-            end: rowStart + 1,
-          }),
+          frames: ENEMY_MOVE_COLS.map((col) => ({
+            key: "enemies",
+            frame: rowStart + col,
+          })),
           frameRate: 6,
           repeat: -1,
         });
@@ -274,7 +293,7 @@ export class Preloader extends Scene {
       if (!this.anims.exists(idleKey)) {
         this.anims.create({
           key: idleKey,
-          frames: [{ key: "enemies", frame: rowStart + 2 }],
+          frames: [{ key: "enemies", frame: rowStart + ENEMY_IDLE_COL }],
           frameRate: 1,
           repeat: -1,
         });
@@ -284,10 +303,10 @@ export class Preloader extends Scene {
       if (!this.anims.exists(squishKey)) {
         this.anims.create({
           key: squishKey,
-          frames: this.anims.generateFrameNumbers("enemies", {
-            start: rowStart + 4,
-            end: rowStart + 5,
-          }),
+          frames: ENEMY_SQUISH_COLS.map((col) => ({
+            key: "enemies",
+            frame: rowStart + col,
+          })),
           frameRate: 10,
           repeat: 0,
         });
@@ -297,7 +316,7 @@ export class Preloader extends Scene {
       if (!this.anims.exists(squishedKey)) {
         this.anims.create({
           key: squishedKey,
-          frames: [{ key: "enemies", frame: rowStart + 5 }],
+          frames: [{ key: "enemies", frame: rowStart + ENEMY_SQUISHED_COL }],
           frameRate: 1,
           repeat: -1,
         });
