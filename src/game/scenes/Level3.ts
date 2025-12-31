@@ -13,12 +13,12 @@ export class Level3 extends BaseLevel {
 
     // Retro platformer level with verticality and a gap
     const levelData: number[][] = [
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 0],
-      [0, 11, 3, 3, 11, 11, 11, 3, 3, 11, 11, 11, 3, 3, 11, 0],
-      [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 0],
-      [0, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 0],
-      [0, 12, 12, 12, 12, 12, 11, 11, 11, 12, 12, 12, 12, 12, 12, 0], // Ground with gap
+      [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+      [-1, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, -1],
+      [-1, 11, 3, 3, 11, 11, 11, 3, 3, 11, 11, 11, 3, 3, 11, -1],
+      [-1, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, -1],
+      [-1, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, -1],
+      [-1, 12, 12, 12, 12, 12, 11, 11, 11, 12, 12, 12, 12, 12, 12, -1], // Ground with gap
     ];
 
     const WORLD_WIDTH = levelData[0].length * tileset.tileWidth;
@@ -34,7 +34,7 @@ export class Level3 extends BaseLevel {
     });
     this.layer = layer;
 
-    // Set collision on solid tiles (avoid 0 which we reserve as empty)
+    // Set collision on solid tiles (empty is -1)
     layer.setCollision([3, 12, 13, 14]);
 
     // Camera setup

@@ -10,6 +10,11 @@ export type GenerateLevelOptions = {
   tileSize?: number;
 };
 
+// Phaser Tilemap convention: -1 means "no tile".
+// Using 0 as empty will render tile index 0 everywhere, which can look like
+// solid ground while having no collision (because we don't mark index 0 solid).
+const EMPTY_TILE = -1;
+
 const SOLID_TILE = 12;
 const PLATFORM_TILE = 3;
 
@@ -26,7 +31,7 @@ const ENEMY_TYPES: EnemyType[] = [
 function emptyGrid(width: number, height: number): number[][] {
   const rows: number[][] = [];
   for (let y = 0; y < height; y++) {
-    rows.push(new Array<number>(width).fill(0));
+    rows.push(new Array<number>(width).fill(EMPTY_TILE));
   }
   return rows;
 }
@@ -55,8 +60,8 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
   // - some floating platforms
   const groundY = heightTiles - 3;
 
-  // Fill the bedrock row for visuals (optional), but keep it non-colliding by using 0.
-  // We'll rely on SOLID_TILE row for collision.
+  // NOTE: Empty is -1. If you want decorative tiles, set them to a real tile index
+  // but keep them out of the collision set.
 
   // Ground generation with gaps
   let x = 0;
@@ -68,7 +73,7 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
     const gapChanceBase = 0.06;
     const gapChance = Math.min(
       0.18,
-      gapChanceBase + Math.max(0, options.floor - 1) * 0.01,
+      gapChanceBase + Math.max(0, options.floor - 1) * 0.01
     );
 
     if (!nearStart && !nearEnd && rng.chance(gapChance)) {
@@ -120,7 +125,7 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
     // Try to place on top of a solid tile.
     let placed = false;
     for (let yTry = 2; yTry < groundY; yTry++) {
-      if (isSolid(data[yTry][ix]) && data[yTry - 1][ix] === 0) {
+      if (isSolid(data[yTry][ix]) && data[yTry - 1][ix] === EMPTY_TILE) {
         items.push({ key: "catnip", pos: toPx(ix, yTry - 1, tileSize) });
         placed = true;
         break;
@@ -156,7 +161,7 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
     for (let dx = 0; dx < 10; dx++) {
       const tx = Math.min(
         widthTiles - 2,
-        Math.max(2, ex + (dx % 2 === 0 ? dx : -dx)),
+        Math.max(2, ex + (dx % 2 === 0 ? dx : -dx))
       );
       if (isSolid(data[groundY][tx])) {
         enemies.push({ type, pos: toPx(tx, groundY - 1, tileSize) });
