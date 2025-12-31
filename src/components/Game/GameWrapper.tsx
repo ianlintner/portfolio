@@ -47,8 +47,7 @@ export default function GameWrapper() {
 
   return (
     <div
-      className="relative rounded-lg overflow-hidden shadow-2xl mx-auto"
-      style={{ width: "800px", height: "600px" }}
+      className="relative rounded-lg overflow-hidden shadow-2xl mx-auto w-[800px] h-[600px]"
     >
       {bootError ? (
         <div className="absolute inset-0 bg-slate-950/90 text-slate-100 flex items-center justify-center p-6 text-center">
@@ -64,7 +63,13 @@ export default function GameWrapper() {
         </div>
       ) : null}
 
-      <div id="game-container" ref={gameRef} className="w-full h-full" />
+      <div
+        id="game-container"
+        ref={gameRef}
+        // Canvas defaults to inline and leaves a baseline gap (like an <img>).
+        // Force it to block-level so the 800x600 surface fills the wrapper.
+        className="w-full h-full [&>canvas]:block"
+      />
     </div>
   );
 }

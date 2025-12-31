@@ -136,8 +136,9 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
     }
   }
 
-  // Enemies: more as floors increase.
-  const enemyCount = Math.min(12, 2 + options.floor + rng.int(0, 2));
+  // Enemies: ramp up faster so early floors don't feel empty.
+  // Floor 1: ~7-9, Floor 5: ~15-17 (capped).
+  const enemyCount = Math.min(20, 6 + options.floor * 2 + rng.int(0, 2));
   const enemies: GeneratedLevel["enemies"] = [];
 
   const usedXs = new Set<number>();

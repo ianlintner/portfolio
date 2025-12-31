@@ -177,8 +177,13 @@ export class RogueRun extends Scene {
       0,
       followOffsetY,
     );
-    this.cameras.main.setBounds(0, 0, this.worldWidthPx, this.worldHeightPx);
-    this.physics.world.setBounds(0, 0, this.worldWidthPx, this.worldHeightPx);
+
+    // Avoid showing "empty" bands beyond the world when bounds are smaller than
+    // the 800×600 canvas.
+    const boundsWidth = Math.max(this.worldWidthPx, this.scale.width);
+    const boundsHeight = Math.max(this.worldHeightPx, this.scale.height);
+    this.cameras.main.setBounds(0, 0, boundsWidth, boundsHeight);
+    this.physics.world.setBounds(0, 0, boundsWidth, boundsHeight);
 
     // Shoot event
     this.events.on("player-shoot", this.spawnHairball, this);

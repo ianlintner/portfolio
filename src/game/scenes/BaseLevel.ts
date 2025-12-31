@@ -113,8 +113,14 @@ export class BaseLevel extends Scene {
     const derivedWidth = this.layer?.displayWidth ?? this.worldWidth;
     const derivedHeight = this.layer?.displayHeight ?? this.worldHeight;
 
-    this.cameras.main.setBounds(0, 0, derivedWidth, derivedHeight);
-    this.physics.world.setBounds(0, 0, derivedWidth, derivedHeight);
+    // If the level is smaller than the viewport (e.g. tutorial levels), Phaser
+    // cameras can show the scene background beyond the map bounds, which reads
+    // like a "gap" at the bottom. Clamp bounds to at least the viewport size.
+    const boundsWidth = Math.max(derivedWidth, this.scale.width);
+    const boundsHeight = Math.max(derivedHeight, this.scale.height);
+
+    this.cameras.main.setBounds(0, 0, boundsWidth, boundsHeight);
+    this.physics.world.setBounds(0, 0, boundsWidth, boundsHeight);
 
     // Listen for shoot event
     this.events.on("player-shoot", this.spawnHairball, this);

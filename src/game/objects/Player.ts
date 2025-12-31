@@ -49,10 +49,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       const offsetY = this.displayHeight - bodyH;
       body.setSize(bodyW, bodyH);
       body.setOffset(offsetX, offsetY);
-
-      // Keep the body's bottom where it used to be when we were centering the body.
-      // (i.e., don't make the player suddenly collide 16px lower everywhere.)
-      this.y -= (this.displayHeight - bodyH) / 2;
     }
 
     const keyboard = scene.input.keyboard;
