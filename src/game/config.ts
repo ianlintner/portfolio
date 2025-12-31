@@ -20,7 +20,8 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
     default: "arcade",
     arcade: {
       gravity: { x: 0, y: 800 },
-      debug: process.env.NODE_ENV === "development",
+      // Start with debug hidden; scenes can toggle it with the "O" key.
+      debug: false,
     },
   },
   scene: [BootScene, Preloader, MainMenu, RogueRun, UIScene, GameOver],

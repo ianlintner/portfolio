@@ -8,6 +8,7 @@ import { Player } from "../objects/Player";
 import { Enemy } from "../objects/Enemy";
 import { generateLevel } from "../rogue/levelGenerator";
 import { SPRITE_SIZES } from "../sprites/constants";
+import { installArcadeDebugToggle } from "../utils/arcadeDebugToggle";
 
 type RogueRunInit = {
   seed?: string;
@@ -185,6 +186,10 @@ export class RogueRun extends Scene {
     const boundsHeight = Math.max(this.worldHeightPx, this.scale.height);
     this.cameras.main.setBounds(0, 0, boundsWidth, boundsHeight);
     this.physics.world.setBounds(0, 0, boundsWidth, boundsHeight);
+
+    // Debug visuals (hitboxes, velocities, collision tiles): hidden by default.
+    // Toggle with the "O" key.
+    installArcadeDebugToggle(this, { key: "O", enabledByDefault: false });
 
     // Shoot event
     this.events.on("player-shoot", this.spawnHairball, this);

@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import { Player } from "../objects/Player";
 import { PARALLAX_SETS, type ParallaxSetSpec } from "../assets/manifest";
 import { createParallaxBackground } from "../assets/parallax";
+import { installArcadeDebugToggle } from "../utils/arcadeDebugToggle";
 
 export class BaseLevel extends Scene {
   protected player!: Player;
@@ -127,6 +128,10 @@ export class BaseLevel extends Scene {
 
     this.cameras.main.setBounds(0, 0, boundsWidth, boundsHeight);
     this.physics.world.setBounds(0, 0, boundsWidth, boundsHeight);
+
+    // Debug visuals (hitboxes, velocities, collision tiles): hidden by default.
+    // Toggle with the "O" key.
+    installArcadeDebugToggle(this, { key: "O", enabledByDefault: false });
 
     // Listen for shoot event
     this.events.on("player-shoot", this.spawnHairball, this);
