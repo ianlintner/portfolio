@@ -10,6 +10,9 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   parent: "game-container",
   backgroundColor: "#028af8",
+  // Treat art as pixel art to prevent smoothing/shimmer when scaled.
+  pixelArt: true,
+  antialias: false,
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,

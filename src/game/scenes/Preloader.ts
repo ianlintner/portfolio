@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import * as Phaser from "phaser";
 import {
   ASSET_URL_PREFIX,
   IMAGES,
@@ -64,7 +65,7 @@ export class Preloader extends Scene {
       (file: Phaser.Loader.File) => {
         detailText.setText(file.key);
       },
-      this,
+      this
     );
 
     this.load.on(
@@ -89,7 +90,7 @@ export class Preloader extends Scene {
         const expected = expectedUrl ? ` (expected: ${expectedUrl})` : "";
         detailText.setText(`Failed: ${key ?? "<unknown>"}${expected}`);
       },
-      this,
+      this
     );
 
     // Spritesheets (animated)
@@ -150,6 +151,26 @@ export class Preloader extends Scene {
       platformGfx.fillStyle(0xffffff).fillRect(0, 0, 32, 32);
       platformGfx.generateTexture("platform", 32, 32);
       platformGfx.destroy();
+    }
+
+    // Pixel-art filtering: without this, sprites can look like they're
+    // "zooming"/shimmering when the camera follows with sub-pixel motion.
+    // Apply NEAREST to all pixel-art textures used in the game.
+    const nearestKeys = [
+      SPRITESHEETS.cat.key,
+      SPRITESHEETS.enemies.key,
+      SPRITESHEETS.items.key,
+      "platform",
+      // Plain images used as pixel art.
+      IMAGES.catnip.key,
+      IMAGES.hairball.key,
+      IMAGES.catfoodBowl.key,
+    ] as const;
+
+    for (const key of nearestKeys) {
+      const tex = this.textures.get(key);
+      // TextureManager#get returns a Texture; the filter applies to all frames.
+      tex.setFilter(Phaser.Textures.FilterMode.NEAREST);
     }
 
     // Create Animations
