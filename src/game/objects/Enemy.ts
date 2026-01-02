@@ -17,6 +17,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   private direction: 1 | -1 = 1;
   private terrainLayer?: Phaser.Tilemaps.TilemapLayer;
 
+  /** Tile-sized enemies (our world/tile grid is 32px). */
+  private static readonly DISPLAY_PX = 32;
+  /** Keep collisions fair: slightly smaller than the full 32×32 frame. */
+  private static readonly BODY_PX = 26;
+
   constructor(scene: Scene, x: number, y: number, type: EnemyType) {
     super(scene, x, y, "enemies"); // Using 'enemies' texture
 
@@ -35,9 +40,17 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setVelocityX(this.direction * this.walkSpeed);
     this.setFlipX(this.direction === -1);
 
-    // Tight-ish body so collisions feel fair.
+    // Ensure enemies are consistently tile-sized in world pixels.
+    // (If any parent scene/camera scaling changes, this keeps them on the 32px grid.)
+    this.setDisplaySize(Enemy.DISPLAY_PX, Enemy.DISPLAY_PX);
+
+    // Tight-ish body so collisions feel fair, but not so small that debug looks wrong.
     const body = this.body as Phaser.Physics.Arcade.Body;
-    body.setSize(20, 20, true);
+    body.setSize(Enemy.BODY_PX, Enemy.BODY_PX);
+    body.setOffset(
+      (this.displayWidth - Enemy.BODY_PX) / 2,
+      (this.displayHeight - Enemy.BODY_PX) / 2
+    );
 
     // Play initial animation
     this.play(this.animKey("move"));
@@ -100,7 +113,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       const tileBelowAhead = this.terrainLayer.getTileAtWorldXY(
         aheadX,
         feetY,
-        true,
+        true
       );
 
       // `collides` reflects the layer's collision settings.
