@@ -287,8 +287,10 @@ export class Preloader extends Scene {
     // Column layout (0-based) used by all supported enemy rows.
     // Move: two-frame loop
     const ENEMY_MOVE_COLS = [16, 17] as const;
-    // Idle: single frame
-    const ENEMY_IDLE_COL = 13;
+    // Idle: use the first move frame.
+    // Some rows have multiple sprite strips; using a dedicated "idle" column
+    // can pick a mismatched/odd-looking sprite and appear like flicker.
+    const ENEMY_IDLE_COL = ENEMY_MOVE_COLS[0];
     // Squish: two-frame animation, then a squished pose
     const ENEMY_SQUISH_COLS = [20, 21] as const;
     const ENEMY_SQUISHED_COL = 22;

@@ -125,15 +125,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     body.setVelocityX(this.direction * speed);
     this.setFlipX(this.direction === -1);
 
-    // Animation based on motion.
-    if (Math.abs(body.velocity.x) > 2) {
-      if (this.anims.currentAnim?.key !== this.animKey("move")) {
-        this.play(this.animKey("move"));
-      }
-    } else {
-      if (this.anims.currentAnim?.key !== this.animKey("idle")) {
-        this.play(this.animKey("idle"));
-      }
+    // Keep a stable animation to avoid flicker when velocity briefly hits 0 at
+    // walls/turn-arounds. These enemies are patrol movers, so always use "move".
+    if (this.anims.currentAnim?.key !== this.animKey("move")) {
+      this.play(this.animKey("move"));
     }
   }
 
