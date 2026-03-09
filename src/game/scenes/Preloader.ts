@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import * as Phaser from "phaser";
 import {
   ASSET_URL_PREFIX,
+  ENEMY_TEXTURE_KEY,
   IMAGES,
   PARALLAX_SETS,
   SPRITESHEETS,
@@ -65,7 +66,7 @@ export class Preloader extends Scene {
       (file: Phaser.Loader.File) => {
         detailText.setText(file.key);
       },
-      this
+      this,
     );
 
     this.load.on(
@@ -90,13 +91,19 @@ export class Preloader extends Scene {
         const expected = expectedUrl ? ` (expected: ${expectedUrl})` : "";
         detailText.setText(`Failed: ${key ?? "<unknown>"}${expected}`);
       },
-      this
+      this,
     );
 
     // Spritesheets (animated)
     for (const sheet of Object.values(SPRITESHEETS)) {
-      const margin = "margin" in sheet ? (sheet.margin ?? 0) : 0;
-      const spacing = "spacing" in sheet ? (sheet.spacing ?? 0) : 0;
+      const margin =
+        "margin" in sheet && typeof sheet.margin === "number"
+          ? sheet.margin
+          : 0;
+      const spacing =
+        "spacing" in sheet && typeof sheet.spacing === "number"
+          ? sheet.spacing
+          : 0;
       this.load.spritesheet(sheet.key, sheet.url, {
         frameWidth: sheet.frameWidth,
         frameHeight: sheet.frameHeight,
@@ -158,7 +165,15 @@ export class Preloader extends Scene {
     // Apply NEAREST to all pixel-art textures used in the game.
     const nearestKeys = [
       SPRITESHEETS.cat.key,
-      SPRITESHEETS.enemies.key,
+      // Per-animal enemy spritesheets
+      SPRITESHEETS.enemy_dog1.key,
+      SPRITESHEETS.enemy_dog2.key,
+      SPRITESHEETS.enemy_cat1.key,
+      SPRITESHEETS.enemy_cat2.key,
+      SPRITESHEETS.enemy_rat1.key,
+      SPRITESHEETS.enemy_rat2.key,
+      SPRITESHEETS.enemy_bird1.key,
+      SPRITESHEETS.enemy_bird2.key,
       SPRITESHEETS.items.key,
       "platform",
       // Plain images used as pixel art.
@@ -250,101 +265,136 @@ export class Preloader extends Scene {
 
     // Enemy Animations
     //
-    // enemies.png is a large 32×32 grid that contains many blank cells and
-    // multiple enemy strips separated by empty rows. A simple "rowIndex * cols"
-    // mapping will select the wrong frames and can look especially broken in
-    // squish/squished states (partial sprites).
+    // Each enemy type has its own combined spritesheet with frames laid out as:
+    //   Idle | Walk | Hurt | Death | Attack (if present)
     //
-    // These row indices were derived by inspecting which 32×32 cells contain
-    // actual non-transparent pixels for our 7 supported enemy types.
-    const enemyTypes = [
-      "mouse",
-      "rat",
-      "chipmunk",
-      "rabbit",
-      "snake",
-      "shark",
-      "lizard",
-    ] as const;
-
-    const enemiesTexture = this.textures.get("enemies");
-    const src = enemiesTexture.getSourceImage() as
-      | HTMLImageElement
-      | HTMLCanvasElement;
-    const frameW = SPRITESHEETS.enemies.frameWidth;
-    const cols = Math.max(1, Math.floor((src as any).width / frameW));
-
-    const ENEMY_ROW_BY_TYPE: Record<(typeof enemyTypes)[number], number> = {
-      mouse: 3,
-      rat: 4,
-      chipmunk: 5,
-      rabbit: 7,
-      snake: 8,
-      shark: 9,
-      lizard: 11,
+    // Frame ranges per animal (from build_enemy_sheets.py manifest):
+    type AnimRange = { start: number; end: number };
+    type EnemyAnimDef = {
+      textureKey: string;
+      idle: AnimRange;
+      walk: AnimRange;
+      hurt: AnimRange;
+      death: AnimRange;
     };
 
-    // Column layout (0-based) used by all supported enemy rows.
-    // Move: two-frame loop
-    const ENEMY_MOVE_COLS = [16, 17] as const;
-    // Idle: use the first move frame.
-    // Some rows have multiple sprite strips; using a dedicated "idle" column
-    // can pick a mismatched/odd-looking sprite and appear like flicker.
-    const ENEMY_IDLE_COL = ENEMY_MOVE_COLS[0];
-    // Squish: two-frame animation, then a squished pose
-    const ENEMY_SQUISH_COLS = [20, 21] as const;
-    const ENEMY_SQUISHED_COL = 22;
+    const ENEMY_ANIM_DEFS: Record<string, EnemyAnimDef> = {
+      dog1: {
+        textureKey: ENEMY_TEXTURE_KEY.dog1,
+        idle: { start: 0, end: 3 },
+        walk: { start: 4, end: 9 },
+        hurt: { start: 10, end: 11 },
+        death: { start: 12, end: 15 },
+      },
+      dog2: {
+        textureKey: ENEMY_TEXTURE_KEY.dog2,
+        idle: { start: 0, end: 3 },
+        walk: { start: 4, end: 9 },
+        hurt: { start: 10, end: 11 },
+        death: { start: 12, end: 15 },
+      },
+      cat1: {
+        textureKey: ENEMY_TEXTURE_KEY.cat1,
+        idle: { start: 0, end: 3 },
+        walk: { start: 4, end: 9 },
+        hurt: { start: 10, end: 11 },
+        death: { start: 12, end: 15 },
+      },
+      cat2: {
+        textureKey: ENEMY_TEXTURE_KEY.cat2,
+        idle: { start: 0, end: 3 },
+        walk: { start: 4, end: 9 },
+        hurt: { start: 10, end: 11 },
+        death: { start: 12, end: 15 },
+      },
+      rat1: {
+        textureKey: ENEMY_TEXTURE_KEY.rat1,
+        idle: { start: 0, end: 3 },
+        walk: { start: 4, end: 7 },
+        hurt: { start: 8, end: 9 },
+        death: { start: 10, end: 13 },
+      },
+      rat2: {
+        textureKey: ENEMY_TEXTURE_KEY.rat2,
+        idle: { start: 0, end: 3 },
+        walk: { start: 4, end: 7 },
+        hurt: { start: 8, end: 9 },
+        death: { start: 10, end: 11 },
+      },
+      bird1: {
+        textureKey: ENEMY_TEXTURE_KEY.bird1,
+        idle: { start: 0, end: 3 },
+        walk: { start: 4, end: 9 },
+        hurt: { start: 10, end: 11 },
+        death: { start: 12, end: 15 },
+      },
+      bird2: {
+        textureKey: ENEMY_TEXTURE_KEY.bird2,
+        idle: { start: 0, end: 3 },
+        walk: { start: 4, end: 9 },
+        hurt: { start: 10, end: 11 },
+        death: { start: 12, end: 15 },
+      },
+    };
 
-    enemyTypes.forEach((type) => {
-      const row = ENEMY_ROW_BY_TYPE[type];
-      const rowStart = row * cols;
+    for (const [type, def] of Object.entries(ENEMY_ANIM_DEFS)) {
+      const tex = def.textureKey;
 
+      // move (walk loop)
       const moveKey = `enemy:${type}:move`;
-      if (!this.anims.exists(moveKey)) {
-        this.anims.create({
-          key: moveKey,
-          frames: ENEMY_MOVE_COLS.map((col) => ({
-            key: "enemies",
-            frame: rowStart + col,
-          })),
-          frameRate: 6,
-          repeat: -1,
-        });
-      }
+      if (this.anims.exists(moveKey)) this.anims.remove(moveKey);
+      this.anims.create({
+        key: moveKey,
+        frames: this.anims.generateFrameNumbers(tex, {
+          start: def.walk.start,
+          end: def.walk.end,
+        }),
+        frameRate: 8,
+        repeat: -1,
+      });
 
+      // idle
       const idleKey = `enemy:${type}:idle`;
-      if (!this.anims.exists(idleKey)) {
-        this.anims.create({
-          key: idleKey,
-          frames: [{ key: "enemies", frame: rowStart + ENEMY_IDLE_COL }],
-          frameRate: 1,
-          repeat: -1,
-        });
-      }
+      if (this.anims.exists(idleKey)) this.anims.remove(idleKey);
+      this.anims.create({
+        key: idleKey,
+        frames: this.anims.generateFrameNumbers(tex, {
+          start: def.idle.start,
+          end: def.idle.end,
+        }),
+        frameRate: 5,
+        repeat: -1,
+      });
 
+      // squish (hurt + first death frames, plays once)
       const squishKey = `enemy:${type}:squish`;
-      if (!this.anims.exists(squishKey)) {
-        this.anims.create({
-          key: squishKey,
-          frames: ENEMY_SQUISH_COLS.map((col) => ({
-            key: "enemies",
-            frame: rowStart + col,
-          })),
-          frameRate: 10,
-          repeat: 0,
-        });
-      }
+      if (this.anims.exists(squishKey)) this.anims.remove(squishKey);
+      this.anims.create({
+        key: squishKey,
+        frames: [
+          ...this.anims.generateFrameNumbers(tex, {
+            start: def.hurt.start,
+            end: def.hurt.end,
+          }),
+          ...this.anims.generateFrameNumbers(tex, {
+            start: def.death.start,
+            end: def.death.end - 1,
+          }),
+        ],
+        frameRate: 12,
+        repeat: 0,
+      });
 
+      // squished (final death frame, stays flat)
       const squishedKey = `enemy:${type}:squished`;
-      if (!this.anims.exists(squishedKey)) {
-        this.anims.create({
-          key: squishedKey,
-          frames: [{ key: "enemies", frame: rowStart + ENEMY_SQUISHED_COL }],
-          frameRate: 1,
-          repeat: -1,
-        });
-      }
-    });
+      if (this.anims.exists(squishedKey)) this.anims.remove(squishedKey);
+      this.anims.create({
+        key: squishedKey,
+        frames: [{ key: tex, frame: def.death.end }],
+        frameRate: 1,
+        repeat: -1,
+      });
+    }
 
     this.scene.start("MainMenu");
   }

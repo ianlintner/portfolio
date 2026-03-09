@@ -101,13 +101,55 @@ export const SPRITESHEETS = {
     frameWidth: 64,
     frameHeight: 64,
   },
-  enemies: {
-    key: "enemies",
-    url: withBasePath("/assets/game/enemies.png"),
+  // Per-animal enemy spritesheets (from free_street donation-ware pack).
+  // Dogs & cats are 48×48, rats & birds are 32×32.
+  enemy_dog1: {
+    key: "enemy_dog1",
+    url: withBasePath("/assets/game/enemies/dog1.png"),
+    frameWidth: 48,
+    frameHeight: 48,
+  },
+  enemy_dog2: {
+    key: "enemy_dog2",
+    url: withBasePath("/assets/game/enemies/dog2.png"),
+    frameWidth: 48,
+    frameHeight: 48,
+  },
+  enemy_cat1: {
+    key: "enemy_cat1",
+    url: withBasePath("/assets/game/enemies/cat1.png"),
+    frameWidth: 48,
+    frameHeight: 48,
+  },
+  enemy_cat2: {
+    key: "enemy_cat2",
+    url: withBasePath("/assets/game/enemies/cat2.png"),
+    frameWidth: 48,
+    frameHeight: 48,
+  },
+  enemy_rat1: {
+    key: "enemy_rat1",
+    url: withBasePath("/assets/game/enemies/rat1.png"),
     frameWidth: 32,
     frameHeight: 32,
-    margin: 0,
-    spacing: 0,
+  },
+  enemy_rat2: {
+    key: "enemy_rat2",
+    url: withBasePath("/assets/game/enemies/rat2.png"),
+    frameWidth: 32,
+    frameHeight: 32,
+  },
+  enemy_bird1: {
+    key: "enemy_bird1",
+    url: withBasePath("/assets/game/enemies/bird1.png"),
+    frameWidth: 32,
+    frameHeight: 32,
+  },
+  enemy_bird2: {
+    key: "enemy_bird2",
+    url: withBasePath("/assets/game/enemies/bird2.png"),
+    frameWidth: 32,
+    frameHeight: 32,
   },
   items: {
     key: "items",
@@ -116,6 +158,21 @@ export const SPRITESHEETS = {
     frameHeight: 32,
   },
 } satisfies Record<string, SpritesheetSpec>;
+
+/**
+ * Texture key used for each enemy type.
+ * Must match the spritesheet keys above.
+ */
+export const ENEMY_TEXTURE_KEY: Record<string, string> = {
+  dog1: "enemy_dog1",
+  dog2: "enemy_dog2",
+  cat1: "enemy_cat1",
+  cat2: "enemy_cat2",
+  rat1: "enemy_rat1",
+  rat2: "enemy_rat2",
+  bird1: "enemy_bird1",
+  bird2: "enemy_bird2",
+};
 
 /** Plain images (non-animated). */
 export const IMAGES = {

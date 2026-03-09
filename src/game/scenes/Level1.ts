@@ -53,10 +53,10 @@ export class Level1 extends BaseLevel {
     this.cameras.main.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 
     // Enemies
-    const mouse = new Enemy(this, 224, 200, "mouse");
+    const mouse = new Enemy(this, 224, 200, "dog1");
     this.enemies.add(mouse);
 
-    const rat = new Enemy(this, 320, 150, "rat");
+    const rat = new Enemy(this, 320, 150, "rat1");
     this.enemies.add(rat);
 
     // Items

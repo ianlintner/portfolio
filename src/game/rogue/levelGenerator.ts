@@ -22,13 +22,14 @@ const GROUND_FILL_TILE = 14;
 const PLATFORM_TILE = 3;
 
 const ENEMY_TYPES: EnemyType[] = [
-  "mouse",
-  "rat",
-  "chipmunk",
-  "rabbit",
-  "snake",
-  "shark",
-  "lizard",
+  "dog1",
+  "dog2",
+  "cat1",
+  "cat2",
+  "rat1",
+  "rat2",
+  "bird1",
+  "bird2",
 ];
 
 function emptyGrid(width: number, height: number): number[][] {

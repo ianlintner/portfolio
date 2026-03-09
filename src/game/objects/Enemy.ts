@@ -1,14 +1,16 @@
 import { Scene } from "phaser";
 import * as Phaser from "phaser";
+import { ENEMY_TEXTURE_KEY } from "../assets/manifest";
 
 export type EnemyType =
-  | "mouse"
-  | "rat"
-  | "chipmunk"
-  | "rabbit"
-  | "snake"
-  | "shark"
-  | "lizard";
+  | "dog1"
+  | "dog2"
+  | "cat1"
+  | "cat2"
+  | "rat1"
+  | "rat2"
+  | "bird1"
+  | "bird2";
 
 export class Enemy extends Phaser.Physics.Arcade.Sprite {
   private enemyType: EnemyType;
@@ -23,7 +25,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   private static readonly BODY_PX = 26;
 
   constructor(scene: Scene, x: number, y: number, type: EnemyType) {
-    super(scene, x, y, "enemies"); // Using 'enemies' texture
+    // Each enemy type has its own texture key.
+    const textureKey = ENEMY_TEXTURE_KEY[type] ?? "enemy_dog1";
+    super(scene, x, y, textureKey);
 
     this.enemyType = type;
     this.scene = scene;
@@ -49,7 +53,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     body.setSize(Enemy.BODY_PX, Enemy.BODY_PX);
     body.setOffset(
       (this.displayWidth - Enemy.BODY_PX) / 2,
-      (this.displayHeight - Enemy.BODY_PX) / 2
+      (this.displayHeight - Enemy.BODY_PX) / 2,
     );
 
     // Play initial animation
@@ -113,7 +117,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       const tileBelowAhead = this.terrainLayer.getTileAtWorldXY(
         aheadX,
         feetY,
-        true
+        true,
       );
 
       // `collides` reflects the layer's collision settings.

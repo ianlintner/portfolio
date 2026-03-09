@@ -41,8 +41,8 @@ export class Level3 extends BaseLevel {
     this.cameras.main.setRoundPixels(true);
     this.cameras.main.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 
-    // Enemies (Snake)
-    const snake = new Enemy(this, 256, 100, "snake");
+    // Enemies (Bird)
+    const snake = new Enemy(this, 256, 100, "bird1");
     this.enemies.add(snake);
 
     // Items

@@ -57,8 +57,8 @@ export class Level2 extends BaseLevel {
     this.cameras.main.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 
     // Enemies
-    // Note: EnemyType no longer includes "dog" in the roguelike rebuild.
-    const chipmunk = new Enemy(this, 320, 100, "chipmunk");
+    // Note: EnemyType uses the free_street pixel art pack.
+    const chipmunk = new Enemy(this, 320, 100, "cat1");
     this.enemies.add(chipmunk);
 
     // Goal
