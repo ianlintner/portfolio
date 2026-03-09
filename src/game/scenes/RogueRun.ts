@@ -292,6 +292,9 @@ export class RogueRun extends Scene {
     const boundsHeight = Math.max(this.worldHeightPx, this.scale.height);
     this.cameras.main.setBounds(0, 0, boundsWidth, boundsHeight);
     this.physics.world.setBounds(0, 0, boundsWidth, boundsHeight);
+    // Disable the bottom world boundary so objects fall through pits
+    // and the fall-death check in update() can fire.
+    this.physics.world.setBoundsCollision(true, true, true, false);
 
     // Debug visuals (hitboxes, velocities, collision tiles): hidden by default.
     // Toggle with the "O" key.
