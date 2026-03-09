@@ -32,6 +32,11 @@ export class MainMenu extends Scene {
         this.registry.set("runFloor", 1);
         this.registry.set("lives", 3);
         this.registry.set("score", 0);
+        this.registry.set("coins", 0);
+        this.registry.set("gems", 0);
+        this.registry.set("maxHearts", 3);
+        this.registry.set("playerHearts", 3);
+        this.registry.set("objectiveStatus", "-");
 
         this.scene.start("RogueRun", { seed, floor: 1 });
         // UI is an overlay; launching avoids stopping the gameplay scene.

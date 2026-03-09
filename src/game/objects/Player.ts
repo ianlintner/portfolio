@@ -19,6 +19,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   public isPoweredUp: boolean = false;
   private lastShotTime: number = 0;
   private lastDirection: "left" | "right" = "right";
+  private speedMultiplier = 1;
+  private jumpMultiplier = 1;
+
+  // Health System
+  private maxHearts: number = 3;
+  private currentHearts: number = 3;
+  private isInvulnerable: boolean = false;
+  private invulnerabilityTime: number = 2000; // 2 seconds of iframes after hit
 
   constructor(scene: Scene, x: number, y: number) {
     super(scene, x, y, "cat");
@@ -101,13 +109,20 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     };
     this.jumpKey = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.shootKey = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
+
+    this.maxHearts = Number(scene.registry.get("maxHearts") ?? 3);
+    this.currentHearts = Number(
+      scene.registry.get("playerHearts") ?? this.maxHearts,
+    );
+    scene.registry.set("maxHearts", this.maxHearts);
+    scene.registry.set("playerHearts", this.currentHearts);
   }
 
   update() {
     if (!this.body) return;
 
-    const speed = 200;
-    const jumpForce = -550;
+    const speed = 200 * this.speedMultiplier;
+    const jumpForce = -550 * this.jumpMultiplier;
 
     // Movement
     if (
@@ -177,5 +192,123 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   public powerUp() {
     this.isPoweredUp = true;
     this.setTint(0x00ff00); // Visual feedback
+  }
+
+  public takeDamage(amount: number = 1): boolean {
+    if (this.isInvulnerable) {
+      return false; // No damage during iframes
+    }
+
+    this.currentHearts = Math.max(0, this.currentHearts - amount);
+
+    // Update registry for UI
+    this.scene.registry.set("playerHearts", this.currentHearts);
+    this.scene.registry.set("maxHearts", this.maxHearts);
+
+    if (this.currentHearts <= 0) {
+      return true; // Player died
+    }
+
+    // Grant temporary invulnerability
+    this.isInvulnerable = true;
+    this.createDamageFlash();
+
+    this.scene.time.delayedCall(this.invulnerabilityTime, () => {
+      this.isInvulnerable = false;
+      this.clearTint();
+    });
+
+    return false; // Player survived
+  }
+
+  private createDamageFlash() {
+    // Flash red and make slightly transparent to show invulnerability
+    let flashCount = 0;
+    this.scene.time.addEvent({
+      delay: 150,
+      callback: () => {
+        if (flashCount % 2 === 0) {
+          this.setTint(0xff0000);
+          this.setAlpha(0.5);
+        } else {
+          this.clearTint();
+          this.setAlpha(1);
+        }
+        flashCount++;
+      },
+      repeat: Math.floor(this.invulnerabilityTime / 150),
+    });
+  }
+
+  public heal(amount: number = 1) {
+    this.currentHearts = Math.min(this.maxHearts, this.currentHearts + amount);
+    this.scene.registry.set("playerHearts", this.currentHearts);
+
+    // Visual feedback for healing
+    this.setTint(0x00ff00);
+    this.scene.time.delayedCall(300, () => this.clearTint());
+  }
+
+  public increaseMaxHearts(amount: number = 1) {
+    this.maxHearts += amount;
+    this.currentHearts += amount; // Also heal when max increases
+    this.scene.registry.set("maxHearts", this.maxHearts);
+    this.scene.registry.set("playerHearts", this.currentHearts);
+  }
+
+  public getCurrentHearts(): number {
+    return this.currentHearts;
+  }
+
+  public getMaxHearts(): number {
+    return this.maxHearts;
+  }
+
+  public isDead(): boolean {
+    return this.currentHearts <= 0;
+  }
+
+  public resetHeartsToMax() {
+    this.currentHearts = this.maxHearts;
+    this.scene.registry.set("playerHearts", this.currentHearts);
+  }
+
+  public applyPowerup(type: "catnip" | "fish" | "yarn" | "milk" | "feather") {
+    switch (type) {
+      case "catnip":
+        this.powerUp();
+        break;
+      case "milk":
+        this.heal(1);
+        this.setTint(0xffffff);
+        break;
+      case "fish":
+        this.speedMultiplier = 1.45;
+        this.scene.time.delayedCall(8000, () => {
+          this.speedMultiplier = 1;
+        });
+        this.setTint(0x60a5fa);
+        break;
+      case "yarn":
+        this.jumpMultiplier = 1.25;
+        this.scene.time.delayedCall(9000, () => {
+          this.jumpMultiplier = 1;
+        });
+        this.setTint(0xa78bfa);
+        break;
+      case "feather":
+        this.jumpMultiplier = 1.4;
+        this.scene.time.delayedCall(7000, () => {
+          this.jumpMultiplier = 1;
+        });
+        this.setTint(0xf59e0b);
+        break;
+      default:
+        break;
+    }
+
+    this.scene.time.delayedCall(320, () => {
+      if (!this.isInvulnerable) this.clearTint();
+    });
   }
 }

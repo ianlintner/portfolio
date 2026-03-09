@@ -18,6 +18,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   private squished = false;
   private direction: 1 | -1 = 1;
   private terrainLayer?: Phaser.Tilemaps.TilemapLayer;
+  private maxHp = 1;
+  private hp = 1;
+  private isBossEnemy = false;
+  private lastActionAt = 0;
+  private baseY = 0;
 
   /**
    * Display sizes per enemy type.  Dogs & cats are large (48px source art),
@@ -43,6 +48,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     this.enemyType = type;
     this.scene = scene;
+    this.baseY = y;
 
     scene.add.existing(this);
     scene.physics.add.existing(this);
@@ -55,6 +61,16 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.direction = scene.registry.get("enemyDir") === -1 ? -1 : 1;
     this.setVelocityX(this.direction * this.walkSpeed);
     this.setFlipX(this.direction === -1);
+
+    if (type === "dog2" || type === "cat2") {
+      this.walkSpeed = 95;
+    }
+    if (type === "bird1" || type === "bird2") {
+      this.walkSpeed = 110;
+    }
+    if (type === "rat2") {
+      this.walkSpeed = 60;
+    }
 
     // Scale to the per-type display size.
     const displayPx = Enemy.DISPLAY_SIZE[type] ?? 48;
@@ -69,8 +85,29 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       (this.displayHeight - bodyPx) / 2,
     );
 
+    if (type === "bird1" || type === "bird2") {
+      body.setAllowGravity(false);
+      body.setVelocityY(0);
+    }
+
+    this.maxHp = type === "dog2" || type === "cat2" ? 2 : 1;
+    this.hp = this.maxHp;
+
     // Play initial animation
     this.play(this.animKey("move"));
+  }
+
+  public setBossMode() {
+    this.isBossEnemy = true;
+    this.maxHp = Math.max(this.maxHp, 8);
+    this.hp = this.maxHp;
+    this.walkSpeed = Math.max(this.walkSpeed, 120);
+    this.setScale(this.scale * 1.65);
+    this.setTint(0xf43f5e);
+  }
+
+  public isBoss(): boolean {
+    return this.isBossEnemy;
   }
 
   public isSquished(): boolean {
@@ -97,6 +134,22 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     });
   }
 
+  public takeHit(amount = 1): boolean {
+    if (this.squished) return false;
+    this.hp = Math.max(0, this.hp - amount);
+
+    if (this.hp <= 0) {
+      this.squish();
+      return true;
+    }
+
+    this.setTintFill(0xffffff);
+    this.scene.time.delayedCall(90, () => {
+      if (!this.squished) this.clearTint();
+    });
+    return false;
+  }
+
   /** Optional: provide the collidable terrain layer so enemies can avoid pits/edges. */
   public setTerrainLayer(layer?: Phaser.Tilemaps.TilemapLayer) {
     this.terrainLayer = layer;
@@ -114,6 +167,54 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     if (player) {
       const dx = Math.abs(player.x - this.x);
       if (dx < 180) speed = baseSpeed * 1.25;
+
+      // Chargers: quick burst toward player every couple seconds.
+      if (
+        (this.enemyType === "dog2" || this.enemyType === "cat2") &&
+        dx < 260 &&
+        this.scene.time.now > this.lastActionAt + 2200
+      ) {
+        this.direction = player.x >= this.x ? 1 : -1;
+        body.setVelocityX(this.direction * (this.isBossEnemy ? 320 : 250));
+        this.lastActionAt = this.scene.time.now;
+      }
+
+      // Shooters: rat2 periodically shoots and keeps a bit of distance.
+      if (this.enemyType === "rat2") {
+        const faceRight = player.x >= this.x;
+        this.direction = faceRight ? 1 : -1;
+        if (dx < 160) {
+          body.setVelocityX(-this.direction * 80);
+        } else if (dx > 260) {
+          body.setVelocityX(this.direction * 70);
+        }
+
+        if (dx < 360 && this.scene.time.now > this.lastActionAt + 1800) {
+          this.scene.events.emit(
+            "enemy-shoot",
+            this.x,
+            this.y - 8,
+            this.direction,
+          );
+          this.lastActionAt = this.scene.time.now;
+        }
+      }
+    }
+
+    // Flyers: hovering sine-wave motion.
+    if (this.enemyType === "bird1" || this.enemyType === "bird2") {
+      const t = this.scene.time.now * 0.004;
+      const sine = Math.sin(t + this.x * 0.02) * 40;
+      this.setY(this.baseY + sine);
+      if (player) {
+        this.direction = player.x >= this.x ? 1 : -1;
+      }
+      body.setVelocityX(this.direction * (this.isBossEnemy ? 180 : 130));
+      this.setFlipX(this.direction === -1);
+      if (this.anims.currentAnim?.key !== this.animKey("move")) {
+        this.play(this.animKey("move"));
+      }
+      return;
     }
 
     // Reverse at world bounds / solid walls.
@@ -122,7 +223,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     // Avoid pits: if we're on the ground and there is no collidable tile just
     // ahead of our feet, turn around.
-    if (this.terrainLayer && body.blocked.down) {
+    if (this.terrainLayer && body.blocked.down && this.enemyType !== "rat2") {
       const lookAheadPx = 14;
       const aheadX = body.center.x + this.direction * lookAheadPx;
       const feetY = body.bottom + 2;

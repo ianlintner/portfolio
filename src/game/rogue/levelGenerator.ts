@@ -32,6 +32,14 @@ const ENEMY_TYPES: EnemyType[] = [
   "bird2",
 ];
 
+const POWERUP_KEYS: GeneratedLevel["items"][number]["key"][] = [
+  "catnip",
+  "fish",
+  "yarn",
+  "milk",
+  "feather",
+];
+
 function emptyGrid(width: number, height: number): number[][] {
   const rows: number[][] = [];
   for (let y = 0; y < height; y++) {
@@ -55,6 +63,19 @@ function isSolid(tileIndex: number): boolean {
   );
 }
 
+function setGroundColumn(data: number[][], x: number, groundY: number) {
+  data[groundY][x] = GROUND_TOP_TILE;
+  data[groundY + 1][x] = GROUND_FILL_TILE;
+  data[groundY + 2][x] = GROUND_FILL_TILE;
+}
+
+function pickLayout(rng: Rng, floor: number): GeneratedLevel["layout"] {
+  if (floor % 5 === 0) return "boss";
+  if (floor >= 6 && rng.chance(0.18)) return "parkour";
+  if (floor >= 4 && rng.chance(0.14)) return "vertical";
+  return "standard";
+}
+
 export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
   const tileSize = options.tileSize ?? 32;
   const widthTiles = options.widthTiles ?? 90;
@@ -62,6 +83,8 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
 
   const rng = new Rng(`${options.seed}::floor:${options.floor}`);
   const data = emptyGrid(widthTiles, heightTiles);
+  const layout = pickLayout(rng, options.floor);
+  const isBossFloor = layout === "boss";
 
   // A simple 2D platformer layout:
   // - a mostly-solid ground with occasional gaps
@@ -74,63 +97,96 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
   // NOTE: Empty is -1. If you want decorative tiles, set them to a real tile index
   // but keep them out of the collision set.
 
-  // Ground generation with gaps
-  let x = 0;
-  while (x < widthTiles) {
-    // Keep spawn/goal safe zones mostly solid.
-    const nearStart = x < 10;
-    const nearEnd = x > widthTiles - 12;
-
-    const gapChanceBase = 0.06;
-    const gapChance = Math.min(
-      0.18,
-      gapChanceBase + Math.max(0, options.floor - 1) * 0.01,
-    );
-
-    if (!nearStart && !nearEnd && rng.chance(gapChance)) {
-      const gapLen = rng.int(2, 5);
-      x += gapLen;
-      continue;
+  // Ground/layout generation
+  if (layout === "boss") {
+    for (let tx = 0; tx < widthTiles; tx++) setGroundColumn(data, tx, groundY);
+  } else if (layout === "parkour") {
+    // Very sparse ground with denser floating islands.
+    for (let tx = 0; tx < widthTiles; tx++) {
+      if (tx < 8 || tx > widthTiles - 9 || tx % 9 < 4) {
+        setGroundColumn(data, tx, groundY);
+      }
     }
 
-    data[groundY][x] = GROUND_TOP_TILE;
-    // Add solid fill rows beneath.
-    data[groundY + 1][x] = GROUND_FILL_TILE;
-    data[groundY + 2][x] = GROUND_FILL_TILE;
-    x += 1;
-  }
+    const islands = Math.min(20, 9 + Math.floor(options.floor / 2));
+    for (let i = 0; i < islands; i++) {
+      const px = rng.int(6, widthTiles - 8);
+      const py = rng.int(groundY - 10, groundY - 3);
+      const len = rng.int(2, 4);
+      for (let dx = 0; dx < len; dx++) {
+        const tx = px + dx;
+        if (tx > 1 && tx < widthTiles - 2) data[py][tx] = PLATFORM_TILE;
+      }
+    }
+  } else if (layout === "vertical") {
+    // Safer ground + staircase climb to goal.
+    for (let tx = 0; tx < widthTiles; tx++) setGroundColumn(data, tx, groundY);
+    const steps = Math.min(16, 10 + Math.floor(options.floor / 2));
+    let stepX = 7;
+    let stepY = groundY - 2;
+    for (let i = 0; i < steps; i++) {
+      const len = rng.int(2, 4);
+      for (let dx = 0; dx < len; dx++) {
+        const tx = Math.min(widthTiles - 5, stepX + dx);
+        if (stepY > 2) data[stepY][tx] = PLATFORM_TILE;
+      }
+      stepX += rng.int(3, 5);
+      stepY = Math.max(3, stepY - rng.int(1, 2));
+      if (stepX > widthTiles - 10) break;
+    }
+  } else {
+    // Standard: ground generation with gaps.
+    let x = 0;
+    while (x < widthTiles) {
+      const nearStart = x < 10;
+      const nearEnd = x > widthTiles - 12;
 
-  // Floating platforms
-  const platformCount = Math.min(10, 3 + Math.floor(options.floor / 2));
-  for (let i = 0; i < platformCount; i++) {
-    const px = rng.int(8, widthTiles - 12);
-    const py = rng.int(groundY - 8, groundY - 3);
-    const len = rng.int(2, 7);
+      const gapChanceBase = 0.06;
+      const gapChance = Math.min(
+        0.18,
+        gapChanceBase + Math.max(0, options.floor - 1) * 0.01,
+      );
 
-    // Avoid stacking platforms directly on top of gaps by checking for ground.
-    for (let dx = 0; dx < len; dx++) {
-      const tx = px + dx;
-      if (tx <= 1 || tx >= widthTiles - 2) continue;
-      data[py][tx] = PLATFORM_TILE;
+      if (!nearStart && !nearEnd && rng.chance(gapChance)) {
+        const gapLen = rng.int(2, 5);
+        x += gapLen;
+        continue;
+      }
+
+      setGroundColumn(data, x, groundY);
+      x += 1;
+    }
+
+    // Floating platforms
+    const platformCount = Math.min(12, 3 + Math.floor(options.floor / 2));
+    for (let i = 0; i < platformCount; i++) {
+      const px = rng.int(8, widthTiles - 12);
+      const py = rng.int(groundY - 8, groundY - 3);
+      const len = rng.int(2, 7);
+
+      for (let dx = 0; dx < len; dx++) {
+        const tx = px + dx;
+        if (tx <= 1 || tx >= widthTiles - 2) continue;
+        data[py][tx] = PLATFORM_TILE;
+      }
     }
   }
 
   // Ensure start platform is safe.
   for (let tx = 0; tx < 6; tx++) {
-    data[groundY][tx] = GROUND_TOP_TILE;
-    data[groundY + 1][tx] = GROUND_FILL_TILE;
-    data[groundY + 2][tx] = GROUND_FILL_TILE;
+    setGroundColumn(data, tx, groundY);
   }
 
   // Ensure end platform is safe.
   for (let tx = widthTiles - 7; tx < widthTiles; tx++) {
-    data[groundY][tx] = GROUND_TOP_TILE;
-    data[groundY + 1][tx] = GROUND_FILL_TILE;
-    data[groundY + 2][tx] = GROUND_FILL_TILE;
+    setGroundColumn(data, tx, groundY);
   }
 
   const playerTile = { x: 2, y: groundY - 1 };
-  const goalTile = { x: widthTiles - 4, y: groundY - 1 };
+  const goalTile =
+    layout === "vertical"
+      ? { x: widthTiles - 6, y: Math.max(2, groundY - 10) }
+      : { x: widthTiles - 4, y: groundY - 1 };
 
   // Items: catnip occasionally on a platform near the middle.
   const items: GeneratedLevel["items"] = [];
@@ -140,19 +196,26 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
     let placed = false;
     for (let yTry = 2; yTry < groundY; yTry++) {
       if (isSolid(data[yTry][ix]) && data[yTry - 1][ix] === EMPTY_TILE) {
-        items.push({ key: "catnip", pos: toPx(ix, yTry - 1, tileSize) });
+        items.push({
+          key: rng.pick(POWERUP_KEYS),
+          pos: toPx(ix, yTry - 1, tileSize),
+        });
         placed = true;
         break;
       }
     }
     if (!placed) {
-      items.push({ key: "catnip", pos: toPx(ix, groundY - 4, tileSize) });
+      items.push({
+        key: rng.pick(POWERUP_KEYS),
+        pos: toPx(ix, groundY - 4, tileSize),
+      });
     }
   }
 
-  // Enemies: ramp up faster so early floors don't feel empty.
-  // Floor 1: ~7-9, Floor 5: ~15-17 (capped).
-  const enemyCount = Math.min(20, 6 + options.floor * 2 + rng.int(0, 2));
+  // Enemies: for boss floors keep count low + one boss entry.
+  const enemyCount = isBossFloor
+    ? Math.min(6, 2 + Math.floor(options.floor / 4))
+    : Math.min(22, 6 + options.floor * 2 + rng.int(0, 2));
   const enemies: GeneratedLevel["enemies"] = [];
 
   const usedXs = new Set<number>();
@@ -190,16 +253,76 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
     }
   }
 
+  if (isBossFloor) {
+    enemies.push({
+      type: "dog2",
+      role: "boss",
+      pos: toPx(Math.floor(widthTiles / 2), groundY - 1, tileSize),
+    });
+  }
+
+  const hazards: GeneratedLevel["hazards"] = [];
+  if (!isBossFloor) {
+    const spikeCount = Math.min(10, Math.max(2, Math.floor(options.floor / 2)));
+    for (let i = 0; i < spikeCount; i++) {
+      const hx = rng.int(8, widthTiles - 8);
+      if (isSolid(data[groundY][hx])) {
+        hazards.push({ type: "spike", pos: toPx(hx, groundY - 1, tileSize) });
+      }
+    }
+
+    if (options.floor >= 3) {
+      const steamCount = Math.min(6, 1 + Math.floor(options.floor / 4));
+      for (let i = 0; i < steamCount; i++) {
+        const hx = rng.int(12, widthTiles - 12);
+        if (isSolid(data[groundY][hx])) {
+          hazards.push({ type: "steam", pos: toPx(hx, groundY - 1, tileSize) });
+        }
+      }
+    }
+  }
+
+  const collectibles: GeneratedLevel["collectibles"] = [];
+  const coinCount = Math.min(28, 10 + options.floor * 2);
+  for (let i = 0; i < coinCount; i++) {
+    const tx = rng.int(6, widthTiles - 6);
+    const ty = rng.int(3, groundY - 2);
+    if (isSolid(data[ty][tx]) && data[ty - 1][tx] === EMPTY_TILE) {
+      collectibles.push({ type: "coin", pos: toPx(tx, ty - 1, tileSize) });
+    }
+  }
+
+  if (rng.chance(0.35)) {
+    collectibles.push({
+      type: "heart_small",
+      pos: toPx(rng.int(14, widthTiles - 14), groundY - 2, tileSize),
+    });
+  }
+  if (rng.chance(0.12)) {
+    collectibles.push({
+      type: "gem",
+      pos: toPx(
+        rng.int(18, widthTiles - 18),
+        Math.max(3, groundY - 8),
+        tileSize,
+      ),
+    });
+  }
+
   return {
     widthTiles,
     heightTiles,
     tileSize,
     data,
+    layout,
+    isBossFloor,
     spawn: {
       player: toPx(playerTile.x, playerTile.y, tileSize),
       goal: toPx(goalTile.x, goalTile.y, tileSize),
     },
     enemies,
     items,
+    hazards,
+    collectibles,
   };
 }
