@@ -22,7 +22,7 @@ export class RogueRun extends Scene {
   private player!: Player;
   private enemies!: Phaser.Physics.Arcade.Group;
   private items!: Phaser.Physics.Arcade.Group;
-  private hazards!: Phaser.Physics.Arcade.Group;
+  private hazards!: Phaser.Physics.Arcade.StaticGroup;
   private collectibles!: Phaser.Physics.Arcade.Group;
   private hairballs!: Phaser.Physics.Arcade.Group;
   private enemyProjectiles!: Phaser.Physics.Arcade.Group;
@@ -63,10 +63,7 @@ export class RogueRun extends Scene {
       allowGravity: false,
       immovable: true,
     });
-    this.hazards = this.physics.add.group({
-      allowGravity: false,
-      immovable: true,
-    });
+    this.hazards = this.physics.add.staticGroup();
     this.collectibles = this.physics.add.group({
       allowGravity: false,
       immovable: true,
