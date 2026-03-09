@@ -1,5 +1,6 @@
 import { Scene } from "phaser";
 import * as Phaser from "phaser";
+import { AudioManager } from "../audio/AudioManager";
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -159,6 +160,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       isGrounded
     ) {
       this.setVelocityY(jumpForce);
+      AudioManager.instance.sfx.jump();
     }
 
     // Air animation (Jump/Fall)

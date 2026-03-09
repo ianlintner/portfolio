@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import { AudioManager } from "../audio/AudioManager";
 
 export class Victory extends Scene {
   constructor() {
@@ -7,6 +8,8 @@ export class Victory extends Scene {
 
   create() {
     const { width, height } = this.scale;
+    AudioManager.instance.stopMusic();
+    AudioManager.instance.sfx.floorCleared();
 
     this.add
       .text(width / 2, height / 2, "You Win!", {
@@ -23,6 +26,7 @@ export class Victory extends Scene {
       .setOrigin(0.5)
       .setInteractive()
       .on("pointerdown", () => {
+        AudioManager.instance.sfx.menuSelect();
         this.scene.start("MainMenu");
       });
   }

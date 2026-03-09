@@ -1,4 +1,6 @@
 import { Scene } from "phaser";
+import * as Phaser from "phaser";
+import { AudioManager } from "../audio/AudioManager";
 
 export class UIScene extends Scene {
   private scoreText!: Phaser.GameObjects.Text;
@@ -8,6 +10,7 @@ export class UIScene extends Scene {
   private floorText!: Phaser.GameObjects.Text;
   private seedText!: Phaser.GameObjects.Text;
   private objectiveText!: Phaser.GameObjects.Text;
+  private muteText!: Phaser.GameObjects.Text;
 
   constructor() {
     super("UIScene");
@@ -39,6 +42,21 @@ export class UIScene extends Scene {
       ...textStyle,
       fontSize: "14px",
       color: "#fde68a",
+    });
+
+    // Mute toggle indicator (top-right)
+    const audio = AudioManager.instance;
+    this.muteText = this.add
+      .text(this.scale.width - 16, 12, audio.muted ? "🔇 [M]" : "🔊 [M]", {
+        ...textStyle,
+        fontSize: "16px",
+      })
+      .setOrigin(1, 0);
+
+    // "M" key toggles mute
+    this.input.keyboard?.on("keydown-M", () => {
+      audio.muted = !audio.muted;
+      this.muteText.setText(audio.muted ? "🔇 [M]" : "🔊 [M]");
     });
 
     const render = () => {

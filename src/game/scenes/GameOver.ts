@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import { AudioManager } from "../audio/AudioManager";
 
 export class GameOver extends Scene {
   constructor() {
@@ -7,6 +8,7 @@ export class GameOver extends Scene {
 
   create() {
     const { width, height } = this.scale;
+    AudioManager.instance.playMusic("gameover");
 
     this.add
       .text(width / 2, height / 2, "Game Over", {
@@ -23,6 +25,8 @@ export class GameOver extends Scene {
       .setOrigin(0.5)
       .setInteractive()
       .on("pointerdown", () => {
+        AudioManager.instance.sfx.menuSelect();
+        AudioManager.instance.stopMusic();
         const seed = Math.random().toString(36).slice(2, 10);
         this.registry.set("runSeed", seed);
         this.registry.set("runFloor", 1);

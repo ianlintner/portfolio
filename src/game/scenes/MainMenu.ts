@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import { AudioManager } from "../audio/AudioManager";
 
 export class MainMenu extends Scene {
   constructor() {
@@ -7,6 +8,17 @@ export class MainMenu extends Scene {
 
   create() {
     const { width, height } = this.scale;
+    const audio = AudioManager.instance;
+
+    // Unlock Web Audio on first user gesture, then start menu music.
+    const unlockAndPlay = () => {
+      audio.unlock();
+      audio.playMusic("menu");
+    };
+    this.input.once("pointerdown", unlockAndPlay);
+    this.input.keyboard?.once("keydown", unlockAndPlay);
+    // If already unlocked from a previous visit, start music immediately.
+    if (audio.isUnlocked) audio.playMusic("menu");
 
     this.add
       .text(width / 2, height / 3, "Cat Adventure", {
@@ -27,6 +39,8 @@ export class MainMenu extends Scene {
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .on("pointerdown", () => {
+        audio.sfx.menuSelect();
+        audio.stopMusic();
         const seed = Math.random().toString(36).slice(2, 10);
         this.registry.set("runSeed", seed);
         this.registry.set("runFloor", 1);
@@ -43,7 +57,10 @@ export class MainMenu extends Scene {
         this.scene.launch("UIScene");
         this.scene.bringToTop("UIScene");
       })
-      .on("pointerover", () => startButton.setStyle({ fill: "#ff0" }))
+      .on("pointerover", () => {
+        audio.sfx.menuHover();
+        startButton.setStyle({ fill: "#ff0" });
+      })
       .on("pointerout", () => startButton.setStyle({ fill: "#fff" }));
 
     this.add

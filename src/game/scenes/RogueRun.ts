@@ -12,6 +12,7 @@ import { Powerup } from "../objects/Powerup";
 import { generateLevel } from "../rogue/levelGenerator";
 import { SPRITE_SIZES } from "../sprites/constants";
 import { installArcadeDebugToggle } from "../utils/arcadeDebugToggle";
+import { AudioManager } from "../audio/AudioManager";
 
 type RogueRunInit = {
   seed?: string;
@@ -171,6 +172,7 @@ export class RogueRun extends Scene {
         item.destroy();
         const powerup = item as Powerup;
         this.player.applyPowerup(powerup.powerupType);
+        AudioManager.instance.sfx.powerUp();
         const score = Number(this.registry.get("score") ?? 0) + 30;
         this.registry.set("score", score);
       },
@@ -201,6 +203,7 @@ export class RogueRun extends Scene {
             "score",
             Number(this.registry.get("score") ?? 0) + 5,
           );
+          AudioManager.instance.sfx.coinCollect();
         } else if (collectible.collectibleType === "gem") {
           const gems = Number(this.registry.get("gems") ?? 0) + 1;
           this.registry.set("gems", gems);
@@ -208,10 +211,13 @@ export class RogueRun extends Scene {
             "score",
             Number(this.registry.get("score") ?? 0) + 60,
           );
+          AudioManager.instance.sfx.gemCollect();
         } else if (collectible.collectibleType === "heart_small") {
           this.player.heal(1);
+          AudioManager.instance.sfx.heartCollect();
         } else if (collectible.collectibleType === "heart_big") {
           this.player.heal(2);
+          AudioManager.instance.sfx.heartCollect();
         }
       },
       undefined,
@@ -247,6 +253,9 @@ export class RogueRun extends Scene {
             "score",
             Number(this.registry.get("score") ?? 0) + killScore,
           );
+          AudioManager.instance.sfx.enemyStomp();
+        } else {
+          AudioManager.instance.sfx.enemyHit();
         }
         ball.destroy();
       },
@@ -259,6 +268,7 @@ export class RogueRun extends Scene {
       this.enemyProjectiles,
       (_playerObj, projectileObj) => {
         projectileObj.destroy();
+        AudioManager.instance.sfx.hazardHit();
         this.applyPlayerDamage(1);
       },
       undefined,
@@ -314,6 +324,11 @@ export class RogueRun extends Scene {
     if (this.registry.get("maxHearts") == null)
       this.registry.set("maxHearts", 3);
 
+    // Start music: boss track for boss floors, action track otherwise.
+    const audio = AudioManager.instance;
+    audio.playMusic(this.isBossFloor ? "boss" : "action");
+    if (this.isBossFloor) audio.sfx.bossAppear();
+
     this.events.once("shutdown", () => {
       this.events.off("player-shoot", this.spawnHairball, this);
       this.events.off("enemy-shoot", this.spawnEnemyProjectile, this);
@@ -334,6 +349,7 @@ export class RogueRun extends Scene {
   }
 
   private spawnHairball(x: number, y: number, direction: number) {
+    AudioManager.instance.sfx.shoot();
     const ball = this.hairballs.create(x, y, "hairball");
     const { sourcePx, displayPx, bodyRadius } = SPRITE_SIZES.hairball;
     ball.setScale(displayPx / sourcePx);
@@ -370,6 +386,9 @@ export class RogueRun extends Scene {
       player.setVelocityY(-320);
       if (died) {
         this.killsThisFloor += 1;
+        AudioManager.instance.sfx.enemyStomp();
+      } else {
+        AudioManager.instance.sfx.enemyHit();
       }
       const score =
         Number(this.registry.get("score") ?? 0) + (enemy.isBoss() ? 80 : 25);
@@ -385,16 +404,23 @@ export class RogueRun extends Scene {
     const hazard = hazardObj as Hazard;
     if (player !== this.player) return;
     if (hazard.hazardType === "steam" && !hazard.isActive()) return;
+    AudioManager.instance.sfx.hazardHit();
     this.applyPlayerDamage(hazard.damage);
   }
 
   private applyPlayerDamage(amount: number) {
     this.tookDamageThisFloor = true;
     const died = this.player.takeDamage(amount);
-    if (died) this.handlePlayerDeath();
+    if (died) {
+      AudioManager.instance.sfx.playerDeath();
+      this.handlePlayerDeath();
+    } else {
+      AudioManager.instance.sfx.playerHit();
+    }
   }
 
   private handlePlayerDeath() {
+    AudioManager.instance.stopMusic();
     const lives = Math.max(0, Number(this.registry.get("lives") ?? 3) - 1);
     this.registry.set("lives", lives);
 
@@ -463,11 +489,14 @@ export class RogueRun extends Scene {
         "score",
         Number(this.registry.get("score") ?? 0) + bonus,
       );
+      AudioManager.instance.sfx.scoreBonus();
     }
     this.registry.set(
       "objectiveStatus",
       badges.length ? badges.join(" · ") : "Goal Cleared",
     );
+
+    AudioManager.instance.sfx.floorCleared();
 
     const nextFloor = this.floor + 1;
     this.registry.set("runFloor", nextFloor);
