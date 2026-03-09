@@ -19,10 +19,22 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   private direction: 1 | -1 = 1;
   private terrainLayer?: Phaser.Tilemaps.TilemapLayer;
 
-  /** Tile-sized enemies (our world/tile grid is 32px). */
-  private static readonly DISPLAY_PX = 32;
-  /** Keep collisions fair: slightly smaller than the full 32×32 frame. */
-  private static readonly BODY_PX = 26;
+  /**
+   * Display sizes per enemy type.  Dogs & cats are large (48px source art),
+   * rats & birds are small (32px source art).  Sizes are tuned relative to
+   * the 64×64 player cat so enemies are clearly visible but still smaller
+   * than the player.
+   */
+  private static readonly DISPLAY_SIZE: Record<EnemyType, number> = {
+    dog1: 56,
+    dog2: 56,
+    cat1: 52,
+    cat2: 48,
+    rat1: 40,
+    rat2: 36,
+    bird1: 40,
+    bird2: 36,
+  };
 
   constructor(scene: Scene, x: number, y: number, type: EnemyType) {
     // Each enemy type has its own texture key.
@@ -44,16 +56,17 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setVelocityX(this.direction * this.walkSpeed);
     this.setFlipX(this.direction === -1);
 
-    // Ensure enemies are consistently tile-sized in world pixels.
-    // (If any parent scene/camera scaling changes, this keeps them on the 32px grid.)
-    this.setDisplaySize(Enemy.DISPLAY_PX, Enemy.DISPLAY_PX);
+    // Scale to the per-type display size.
+    const displayPx = Enemy.DISPLAY_SIZE[type] ?? 48;
+    this.setDisplaySize(displayPx, displayPx);
 
-    // Tight-ish body so collisions feel fair, but not so small that debug looks wrong.
+    // Physics body: ~80% of display size for fair collision.
+    const bodyPx = Math.round(displayPx * 0.8);
     const body = this.body as Phaser.Physics.Arcade.Body;
-    body.setSize(Enemy.BODY_PX, Enemy.BODY_PX);
+    body.setSize(bodyPx, bodyPx);
     body.setOffset(
-      (this.displayWidth - Enemy.BODY_PX) / 2,
-      (this.displayHeight - Enemy.BODY_PX) / 2,
+      (this.displayWidth - bodyPx) / 2,
+      (this.displayHeight - bodyPx) / 2,
     );
 
     // Play initial animation
