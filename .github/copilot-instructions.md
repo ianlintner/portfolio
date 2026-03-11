@@ -87,15 +87,15 @@ imageAlt: "Descriptive alt text for the hero/social image"
 ---
 ```
 
-| Field      | Required | Default          | Notes                                                             |
-| ---------- | -------- | ---------------- | ----------------------------------------------------------------- |
-| `title`    | ✅        |                  | May include emoji prefix (e.g., `"🧠 My Title"`)                  |
-| `date`     | ✅        |                  | `YYYY-MM-DD` format; posts sorted newest-first                   |
-| `excerpt`  | ✅        |                  | Shown on blog index and in OpenGraph description                  |
-| `tags`     | Optional | `[]`             | Array of strings for categorization                               |
-| `author`   | Optional | `"Ian Lintner"`  | Displayed in post header and footer                               |
-| `image`    | Optional | social-default   | Path relative to `/public`; stored in `/public/images/`           |
-| `imageAlt` | Optional |                  | Required when `image` is set; used for OpenGraph and accessibility |
+| Field      | Required | Default         | Notes                                                              |
+| ---------- | -------- | --------------- | ------------------------------------------------------------------ |
+| `title`    | ✅       |                 | May include emoji prefix (e.g., `"🧠 My Title"`)                   |
+| `date`     | ✅       |                 | `YYYY-MM-DD` format; posts sorted newest-first                     |
+| `excerpt`  | ✅       |                 | Shown on blog index and in OpenGraph description                   |
+| `tags`     | Optional | `[]`            | Array of strings for categorization                                |
+| `author`   | Optional | `"Ian Lintner"` | Displayed in post header and footer                                |
+| `image`    | Optional | social-default  | Path relative to `/public`; stored in `/public/images/`            |
+| `imageAlt` | Optional |                 | Required when `image` is set; used for OpenGraph and accessibility |
 
 ### Content structure
 
@@ -116,7 +116,7 @@ Follow this standard post structure (matching existing engineering posts):
 
 Content flows through `src/components/MarkdownRenderer.tsx`:
 
-```
+````
 Raw MDX string
   → ReactMarkdown
     ├ remarkGfm          (tables, strikethrough, task lists)
@@ -126,7 +126,7 @@ Raw MDX string
         • ```mermaid blocks → <Mermaid> client component
         • All other <pre> blocks → default rendering
   → Tailwind Typography prose classes
-```
+````
 
 - Styling comes from parent `prose prose-lg dark:prose-invert` classes and `src/styles/highlight.css` (imports `highlight.js/styles/github-dark.css`).
 - **Never add inline styles** — rely on the existing prose/Tailwind system.
@@ -228,12 +228,12 @@ Use standard Markdown image syntax within post content:
 
 ### Image specifications
 
-| Property   | Value                         |
-| ---------- | ----------------------------- |
-| Dimensions | 1200 × 630 px (hero/social)  |
+| Property   | Value                          |
+| ---------- | ------------------------------ |
+| Dimensions | 1200 × 630 px (hero/social)    |
 | Format     | SVG preferred; PNG/WebP/JPG OK |
-| Location   | `/public/images/`             |
-| Reference  | `/images/filename.ext`        |
+| Location   | `/public/images/`              |
+| Reference  | `/images/filename.ext`         |
 
 ## SVG & Hero Image Generation
 
