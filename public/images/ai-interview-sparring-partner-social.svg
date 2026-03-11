@@ -1,0 +1,110 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark background -->
+  <rect width="1200" height="630" fill="#0f172a"/>
+
+  <!-- Grid pattern -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="overlay" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#0ea5e9;stop-opacity:0.15"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0ea5e9" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.5"/>
+  <rect width="1200" height="630" fill="url(#overlay)"/>
+
+  <!-- Left figure: Human silhouette (engineer) -->
+  <g transform="translate(280, 180)" filter="url(#shadow)">
+    <!-- Head -->
+    <circle cx="0" cy="0" r="35" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
+    <!-- Body -->
+    <line x1="0" y1="35" x2="0" y2="120" stroke="#3b82f6" stroke-width="2.5"/>
+    <!-- Arms -->
+    <line x1="0" y1="60" x2="-40" y2="95" stroke="#3b82f6" stroke-width="2.5"/>
+    <line x1="0" y1="60" x2="40" y2="95" stroke="#3b82f6" stroke-width="2.5"/>
+    <!-- Legs -->
+    <line x1="0" y1="120" x2="-30" y2="175" stroke="#3b82f6" stroke-width="2.5"/>
+    <line x1="0" y1="120" x2="30" y2="175" stroke="#3b82f6" stroke-width="2.5"/>
+    <!-- Label -->
+    <text x="0" y="210" font-family="Arial, sans-serif" font-size="18" fill="#94a3b8" text-anchor="middle">Engineer</text>
+  </g>
+
+  <!-- Right figure: AI node cluster -->
+  <g transform="translate(920, 180)" filter="url(#shadow)">
+    <!-- Central brain node -->
+    <circle cx="0" cy="30" r="38" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+    <!-- Neural connections -->
+    <circle cx="-50" cy="-20" r="12" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+    <circle cx="50" cy="-20" r="12" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+    <circle cx="-55" cy="80" r="12" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+    <circle cx="55" cy="80" r="12" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+    <circle cx="0" cy="110" r="12" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+    <line x1="-38" y1="15" x2="-50" y2="-8" stroke="#8b5cf6" stroke-width="1" opacity="0.6"/>
+    <line x1="38" y1="15" x2="50" y2="-8" stroke="#8b5cf6" stroke-width="1" opacity="0.6"/>
+    <line x1="-30" y1="60" x2="-55" y2="68" stroke="#8b5cf6" stroke-width="1" opacity="0.6"/>
+    <line x1="30" y1="60" x2="55" y2="68" stroke="#8b5cf6" stroke-width="1" opacity="0.6"/>
+    <line x1="0" y1="68" x2="0" y2="98" stroke="#8b5cf6" stroke-width="1" opacity="0.6"/>
+    <!-- AI text inside -->
+    <text x="0" y="37" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#8b5cf6" text-anchor="middle">AI</text>
+    <!-- Label -->
+    <text x="0" y="210" font-family="Arial, sans-serif" font-size="18" fill="#94a3b8" text-anchor="middle">Sparring Partner</text>
+  </g>
+
+  <!-- Bidirectional conversation arrows between figures -->
+  <g filter="url(#glow)">
+    <!-- Top arrow: Engineer -> AI -->
+    <line x1="340" y1="230" x2="850" y2="230" stroke="#0ea5e9" stroke-width="2" stroke-dasharray="8,4" opacity="0.7"/>
+    <polygon points="850,225 870,230 850,235" fill="#0ea5e9" opacity="0.7"/>
+    <!-- Speech bubble dots on top arrow -->
+    <circle cx="500" cy="222" r="4" fill="#0ea5e9" opacity="0.5"/>
+    <circle cx="520" cy="222" r="4" fill="#0ea5e9" opacity="0.5"/>
+    <circle cx="540" cy="222" r="4" fill="#0ea5e9" opacity="0.5"/>
+
+    <!-- Bottom arrow: AI -> Engineer -->
+    <line x1="850" y1="260" x2="340" y2="260" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="8,4" opacity="0.7"/>
+    <polygon points="340,255 320,260 340,265" fill="#8b5cf6" opacity="0.7"/>
+    <!-- Speech bubble dots on bottom arrow -->
+    <circle cx="660" cy="268" r="4" fill="#8b5cf6" opacity="0.5"/>
+    <circle cx="680" cy="268" r="4" fill="#8b5cf6" opacity="0.5"/>
+    <circle cx="700" cy="268" r="4" fill="#8b5cf6" opacity="0.5"/>
+
+    <!-- Center label -->
+    <text x="600" y="250" font-family="Arial, sans-serif" font-size="14" fill="#64748b" text-anchor="middle">practice &amp; feedback</text>
+  </g>
+
+  <!-- Role tags scattered -->
+  <g font-family="Arial, sans-serif" font-size="13" fill="#64748b">
+    <rect x="430" y="310" width="100" height="26" rx="13" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="480" y="327" text-anchor="middle" fill="#94a3b8">Interviewer</text>
+
+    <rect x="555" y="310" width="100" height="26" rx="13" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="605" y="327" text-anchor="middle" fill="#94a3b8">Interviewee</text>
+
+    <rect x="680" y="310" width="90" height="26" rx="13" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="725" y="327" text-anchor="middle" fill="#94a3b8">Presenter</text>
+
+    <rect x="490" y="345" width="90" height="26" rx="13" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="535" y="362" text-anchor="middle" fill="#94a3b8">Facilitator</text>
+
+    <rect x="605" y="345" width="110" height="26" rx="13" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="660" y="362" text-anchor="middle" fill="#94a3b8">Stakeholder</text>
+  </g>
+
+  <!-- Title -->
+  <text x="80" y="480" font-family="Arial, sans-serif" font-size="52" font-weight="bold" fill="white">Stop Practicing Alone</text>
+
+  <!-- Subtitle -->
+  <text x="80" y="535" font-family="Arial, sans-serif" font-size="34" fill="#94a3b8">AI as Your Engineering Communication Coach</text>
+
+  <!-- Author credit -->
+  <text x="1020" y="580" font-family="Arial, sans-serif" font-size="24" fill="#64748b">by Ian Lintner</text>
+</svg>
