@@ -9,7 +9,8 @@
 import { ChiptuneEngine } from "./ChiptuneEngine";
 import { SFXLibrary } from "./SFXLibrary";
 import type { TrackName } from "./MusicTracks";
-import { ALL_TRACKS } from "./MusicTracks";
+import { ALL_TRACKS, BG_TRACK_LIST } from "./MusicTracks";
+import type { MusicTrack } from "./MusicTracks";
 
 export class AudioManager {
   // ── Singleton ──────────────────────────────────────────────────────
@@ -85,6 +86,35 @@ export class AudioManager {
   /** Get the name of the currently playing track (if any). */
   get playing(): TrackName | null {
     return this.currentTrack;
+  }
+
+  /**
+   * Play a random background music track from the 10-track pool.
+   * Avoids repeating the same track that just played.
+   */
+  playRandomBgMusic(): void {
+    const pool = BG_TRACK_LIST;
+    let pick: MusicTrack;
+    if (pool.length <= 1) {
+      pick = pool[0];
+    } else {
+      // Avoid the track that's currently playing
+      const filtered = this.currentTrack
+        ? pool.filter((t) => {
+            const current = this.currentTrack
+              ? ALL_TRACKS[this.currentTrack]
+              : null;
+            return t !== current;
+          })
+        : pool;
+      pick = filtered[Math.floor(Math.random() * filtered.length)];
+    }
+
+    // Find the key for this track in ALL_TRACKS
+    const entry = Object.entries(ALL_TRACKS).find(([, v]) => v === pick);
+    if (entry) {
+      this.playMusic(entry[0] as TrackName);
+    }
   }
 
   // ── Global controls ────────────────────────────────────────────────

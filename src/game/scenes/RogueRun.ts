@@ -324,9 +324,13 @@ export class RogueRun extends Scene {
     if (this.registry.get("maxHearts") == null)
       this.registry.set("maxHearts", 3);
 
-    // Start music: boss track for boss floors, action track otherwise.
+    // Start music: boss track for boss floors, random bg track otherwise.
     const audio = AudioManager.instance;
-    audio.playMusic(this.isBossFloor ? "boss" : "action");
+    if (this.isBossFloor) {
+      audio.playMusic("boss");
+    } else {
+      audio.playRandomBgMusic();
+    }
     if (this.isBossFloor) audio.sfx.bossAppear();
 
     this.events.once("shutdown", () => {

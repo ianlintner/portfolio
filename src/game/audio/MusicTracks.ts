@@ -484,6 +484,24 @@ export const TRACK_GAMEOVER: MusicTrack = {
   ],
 };
 
+// ── Background tracks (10 genre-spanning compositions) ───────────────────
+
+import {
+  TRACK_BG_FUNKY,
+  TRACK_BG_JAZZ,
+  TRACK_BG_TECHNO,
+  TRACK_BG_CYBER,
+  TRACK_BG_BLUES,
+  TRACK_BG_AMBIENT,
+  TRACK_BG_DISCO,
+  TRACK_BG_FUSION,
+  TRACK_BG_POP,
+  TRACK_BG_SYNTH,
+  BG_TRACK_LIST,
+} from "./BgTracks";
+
+export { BG_TRACK_LIST };
+
 // ── All tracks ───────────────────────────────────────────────────────────
 
 export const ALL_TRACKS = {
@@ -491,6 +509,16 @@ export const ALL_TRACKS = {
   menu: TRACK_MENU,
   boss: TRACK_BOSS,
   gameover: TRACK_GAMEOVER,
+  bg_funky: TRACK_BG_FUNKY,
+  bg_jazz: TRACK_BG_JAZZ,
+  bg_techno: TRACK_BG_TECHNO,
+  bg_cyber: TRACK_BG_CYBER,
+  bg_blues: TRACK_BG_BLUES,
+  bg_ambient: TRACK_BG_AMBIENT,
+  bg_disco: TRACK_BG_DISCO,
+  bg_fusion: TRACK_BG_FUSION,
+  bg_pop: TRACK_BG_POP,
+  bg_synth: TRACK_BG_SYNTH,
 } as const;
 
 export type TrackName = keyof typeof ALL_TRACKS;
