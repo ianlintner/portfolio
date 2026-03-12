@@ -49,7 +49,10 @@ export class AudioManager {
 
   // ── Music ──────────────────────────────────────────────────────────
 
-  /** Start a named music track (looping). Stops any currently playing track. */
+  /** Start a named music track (looping). 
+   * Stops any currently playing track. 
+   * @param name The name of the track to play.
+   */
   playMusic(name: TrackName): void {
     if (this.currentTrack === name) return; // already playing
     this.stopMusic();
