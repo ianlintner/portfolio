@@ -2,50 +2,76 @@
 
 <img width="991" height="651" alt="Screenshot 2025-12-10 at 14 14 25" src="https://github.com/user-attachments/assets/dfd34e4c-10c8-4d5e-8461-a1612bd5c4b5" />
 
-A modern full‑stack portfolio and technical blog powered by:
+A static portfolio, technical blog, and browser game built with **Next.js 15**, **Tailwind CSS**, and **Phaser 3** — deployed to **Azure Static Web Apps**.
 
-- Next.js
-- Tailwind CSS for styling
-- Azure Static Site
+**Live at:** [cat-herding.net](https://www.cat-herding.net)
 
 ## Quick Start
 
-- Install deps: `pnpm install`
-- Generate DB migrations (Drizzle): `pnpm db:generate`
-- Apply migrations: `pnpm db:migrate`
-- Run locally: `pnpm dev` (http://localhost:3000)
-
-Environment variables are defined in `.env.example`. For local development set values in `.env.local` (at minimum `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`).
+```bash
+pnpm install
+pnpm dev          # http://localhost:3000
+```
 
 ## Scripts
 
-- Lint: `pnpm lint` (run before commits)
-- Tests: `pnpm test`
-- E2E (Playwright): `pnpm test:e2e`
-- DB: `pnpm db:generate`, `pnpm db:migrate`
+| Command                | Purpose                                          |
+| ---------------------- | ------------------------------------------------ |
+| `pnpm dev`             | Local development server                         |
+| `pnpm build`           | Lint, format, build docs & Next.js static export |
+| `pnpm lint`            | ESLint                                           |
+| `pnpm format`          | Prettier check (`format:fix` to auto-fix)        |
+| `pnpm test`            | Jest unit tests                                  |
+| `pnpm test:ci`         | Jest in CI mode (`--ci --runInBand`)             |
+| `pnpm test:e2e`        | Playwright visual regression tests               |
+| `pnpm test:e2e:update` | Update Playwright snapshots                      |
+| `pnpm docs:build`      | Build MkDocs into `public/docs`                  |
 
-## Visual QA (Playwright)
+## Features
 
-This repo includes Playwright-based visual regression tests for the Phaser game route (`/game`).
-
-- First-time setup (installs browser binaries): `pnpm exec playwright install chromium`
-- Run visual tests: `pnpm test:e2e`
-- Update snapshots after intentional visual changes: `pnpm test:e2e:update`
+- **Blog** — MDX posts in `src/app/blog/*.mdx`, parsed with `gray-matter`, rendered with `react-markdown` + `rehype-highlight` + Mermaid diagrams
+- **Resume** — Static resume page with PDF export
+- **Demos** — Project showcase with links to live demos and repos
+- **Game** — Phaser 3 browser game at `/game` (Cat Adventure roguelite)
+- **Docs** — MkDocs-generated documentation site served at `/docs`
+- **Theme Package** — Shared UI components published as `@ianlintner/theme` (`packages/theme`)
 
 ## Architecture
 
-- Static Next JS Published Website Hosted at Azure
+Static Next.js export (`output: "export"`) deployed to Azure Static Web Apps. No server, no database at runtime.
+
+```
+src/
+├── app/          # Next.js App Router (blog, game, demos, resume, docs)
+├── components/   # Shared React components (MarkdownRenderer, Mermaid, Game)
+├── game/         # Phaser 3 game source (scenes, assets, rogue mode)
+├── lib/          # Utilities (posts parser, metadata helpers)
+└── styles/       # Tailwind + highlight.js styles
+packages/theme/   # Publishable UI component library
+docs/             # MkDocs source → public/docs
+```
 
 ## CI/CD
 
-- Docker build/push via GitHub Actions (`.github/workflows/docker.yml`) to Google Artifact Registry.
-- CI & optional rollout utilities in `.github/workflows/ci.yml`.
-- Flux CD performs image automation and cluster reconciliation (`k8s/flux-system`).
+GitHub Actions (`.github/workflows/ci.yml`):
+
+1. **Quality gate** — lint → format check → test → build
+2. **Deploy** — uploads static export to Azure Static Web Apps (main branch only)
+
+Theme publishing is handled by `.github/workflows/publish-theme.yml` on tagged releases.
+
+## Visual QA (Playwright)
+
+Playwright-based visual regression tests for the Phaser game route (`/game`).
+
+```bash
+pnpm exec playwright install chromium   # first-time browser setup
+pnpm test:e2e                           # run visual tests
+pnpm test:e2e:update                    # update snapshots
+```
 
 ## Further Docs
 
-- `docs/ARCHITECTURE.md` — End‑to‑end app + platform architecture
-- `DOCKER_CI_SETUP.md` — Docker CI setup and secrets
-- `FLUX_CD_MIGRATION.md` — GitOps image automation with Flux
-- `AUTOMATIC_DEPLOYMENT_SETUP.md` — Branch‑to‑environment rollouts
-- `PODS_IMAGE_POLICY.md` — Image policy and pod security notes
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — App + platform architecture
+- [docs/AZURE_CI_CD_SETUP.md](docs/AZURE_CI_CD_SETUP.md) — Azure CI/CD pipeline setup
+- [docs/GAME_IMPLEMENTATION_PLAN.md](docs/GAME_IMPLEMENTATION_PLAN.md) — Phaser game design
