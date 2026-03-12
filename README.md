@@ -4,7 +4,7 @@
 
 A static portfolio, technical blog, and browser game built with **Next.js 15**, **Tailwind CSS**, and **Phaser 3** — deployed to **Azure Static Web Apps**.
 
-**Live at:** [cat-herding.net](https://www.cat-herding.net)
+**Live at:** [cat-herding.net](https://cat-herding.net)
 
 ## Quick Start
 
