@@ -33,7 +33,41 @@ export type CollectibleSpawn = {
   pos: PixelCoord;
 };
 
-export type LayoutType = "standard" | "parkour" | "vertical" | "boss";
+export type LayoutType =
+  | "standard"
+  | "parkour"
+  | "vertical"
+  | "boss"
+  | "tower"
+  | "climb"
+  | "zigzag";
+
+/** Tile indices used by the level generator. */
+export const TILE = {
+  EMPTY: -1,
+  PLATFORM: 3,
+  WATER_1: 4,
+  WATER_2: 5,
+  WATER_3: 6,
+  GROUND_TOP: 12,
+  GROUND_DECO: 13,
+  GROUND_FILL: 14,
+  ONE_WAY: 15,
+  WALL: 16,
+} as const;
+
+/** All tile indices that count as solid for collision. */
+export const SOLID_TILES = [
+  TILE.PLATFORM,
+  TILE.GROUND_TOP,
+  TILE.GROUND_DECO,
+  TILE.GROUND_FILL,
+  TILE.ONE_WAY,
+  TILE.WALL,
+] as const;
+
+/** Tile indices that are only solid from above (one-way). */
+export const ONE_WAY_TILES = [TILE.ONE_WAY] as const;
 
 export type GeneratedLevel = {
   widthTiles: number;

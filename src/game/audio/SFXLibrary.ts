@@ -295,4 +295,56 @@ export class SFXLibrary {
     });
     this.engine.playNoiseBurst(0.08, 0.08);
   }
+
+  /** Wall slide — soft scraping loop. */
+  wallSlide(): void {
+    this.engine.playNoiseBurst(0.06, 0.04);
+  }
+
+  /** Wall jump — quick spring-like upward sweep. */
+  wallJump(): void {
+    this.engine.playSweep({
+      type: "square",
+      startFreq: 250,
+      endFreq: 700,
+      duration: 0.1,
+      volume: 0.12,
+    });
+  }
+
+  /** Bounce off a surface — soft boing. */
+  bounce(): void {
+    this.engine.playSweep({
+      type: "triangle",
+      startFreq: 200,
+      endFreq: 500,
+      duration: 0.08,
+      volume: 0.1,
+    });
+    this.engine.playSweep({
+      type: "triangle",
+      startFreq: 500,
+      endFreq: 300,
+      duration: 0.06,
+      volume: 0.08,
+    });
+  }
+
+  /** Checkpoint reached — cheerful ascending arpeggio. */
+  checkpoint(): void {
+    this.engine.playSweep({
+      type: "square",
+      startFreq: 440,
+      endFreq: 660,
+      duration: 0.1,
+      volume: 0.1,
+    });
+    this.engine.playSweep({
+      type: "square",
+      startFreq: 550,
+      endFreq: 880,
+      duration: 0.1,
+      volume: 0.1,
+    });
+  }
 }

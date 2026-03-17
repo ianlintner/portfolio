@@ -13,6 +13,9 @@ import { generateLevel } from "../rogue/levelGenerator";
 import { SPRITE_SIZES } from "../sprites/constants";
 import { installArcadeDebugToggle } from "../utils/arcadeDebugToggle";
 import { AudioManager } from "../audio/AudioManager";
+import { TILE } from "../rogue/types";
+import { DeathSequence } from "../systems/DeathSequence";
+import type { LayoutType } from "../rogue/types";
 
 type RogueRunInit = {
   seed?: string;
@@ -34,7 +37,7 @@ export class RogueRun extends Scene {
 
   private seed = "run";
   private floor = 1;
-  private layout: "standard" | "parkour" | "vertical" | "boss" = "standard";
+  private layout: LayoutType = "standard";
   private isBossFloor = false;
   private floorStartMs = 0;
   private tookDamageThisFloor = false;
@@ -42,6 +45,7 @@ export class RogueRun extends Scene {
   private totalEnemiesThisFloor = 0;
   private collectedCoinsThisFloor = 0;
   private totalCoinsThisFloor = 0;
+  private deathSequence!: DeathSequence;
 
   constructor() {
     super("RogueRun");
@@ -111,11 +115,38 @@ export class RogueRun extends Scene {
     });
     this.layer = layer;
 
-    // Collision: we only generate a couple of solid tile indices.
-    layer.setCollision([3, 12, 13, 14]);
+    // Collision: solid tiles including one-way and wall tiles.
+    layer.setCollision([
+      TILE.PLATFORM,
+      TILE.GROUND_TOP,
+      TILE.GROUND_DECO,
+      TILE.GROUND_FILL,
+      TILE.ONE_WAY,
+      TILE.WALL,
+    ]);
 
     // Player
     this.player = new Player(this, level.spawn.player.x, level.spawn.player.y);
+
+    // One-way platform handling: allow the player to jump through from below
+    this.physics.add.collider(
+      this.player,
+      this.layer,
+      undefined,
+      (playerObj, tile) => {
+        const t = tile as Phaser.Tilemaps.Tile;
+        if (t.index !== TILE.ONE_WAY) return true;
+        const pBody = (playerObj as Player).body as
+          | Phaser.Physics.Arcade.Body
+          | undefined;
+        if (!pBody) return true;
+        // Only collide when player is falling and feet are above the platform
+        return pBody.velocity.y >= 0 && pBody.bottom <= t.pixelY + 4;
+      },
+      this,
+    );
+
+    this.deathSequence = new DeathSequence(this);
 
     // Goal
     this.goal = this.physics.add.staticSprite(
@@ -160,8 +191,7 @@ export class RogueRun extends Scene {
       this.enemies.add(enemy);
     }
 
-    // Physics
-    this.physics.add.collider(this.player, this.layer);
+    // Physics (player-layer collider is set up above with one-way platform logic)
     this.physics.add.collider(this.enemies, this.layer);
     this.physics.add.collider(this.goal, this.layer);
 
@@ -282,16 +312,20 @@ export class RogueRun extends Scene {
 
     // Camera
     this.cameras.main.setRoundPixels(true);
-    // Composition: keep the player a bit lower in the viewport so the ground,
-    // platforms, and goal aren't clustered too high.
-    // Negative followOffsetY makes the camera track a point slightly ABOVE the
-    // player, which moves the world DOWN on screen.
-    const followOffsetY = -140;
+    const isVerticalLevel =
+      this.layout === "tower" ||
+      this.layout === "climb" ||
+      this.layout === "zigzag";
+
+    // For vertical layouts use tighter Y lerp and less Y offset so the
+    // camera tracks the player's upward movement responsively.
+    const followOffsetY = isVerticalLevel ? -60 : -140;
+    const lerpY = isVerticalLevel ? 0.12 : 0.08;
     this.cameras.main.startFollow(
       this.player,
       true,
       0.08,
-      0.08,
+      lerpY,
       0,
       followOffsetY,
     );
@@ -400,6 +434,8 @@ export class RogueRun extends Scene {
       return;
     }
 
+    // Apply knockback before damage
+    player.applyKnockback(enemy.x);
     this.applyPlayerDamage(1);
   }
 
@@ -428,21 +464,24 @@ export class RogueRun extends Scene {
     const lives = Math.max(0, Number(this.registry.get("lives") ?? 3) - 1);
     this.registry.set("lives", lives);
 
-    if (lives <= 0) {
-      this.scene.stop("UIScene");
-      this.scene.start("GameOver");
-      return;
-    }
-
     // New life starts with full hearts.
     const maxHearts = Number(this.registry.get("maxHearts") ?? 3);
     this.registry.set("playerHearts", maxHearts);
 
-    // Restart current floor with same seed (player gets full hearts back)
-    this.scene.restart({
-      seed: this.seed,
+    this.deathSequence.play({
       floor: this.floor,
-    } satisfies RogueRunInit);
+      livesRemaining: lives,
+      onRespawn: () => {
+        this.scene.restart({
+          seed: this.seed,
+          floor: this.floor,
+        } satisfies RogueRunInit);
+      },
+      onGameOver: () => {
+        this.scene.stop("UIScene");
+        this.scene.start("GameOver");
+      },
+    });
   }
 
   private loseLifeAndMaybeGameOver() {

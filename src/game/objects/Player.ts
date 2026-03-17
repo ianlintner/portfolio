@@ -27,7 +27,32 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private maxHearts: number = 3;
   private currentHearts: number = 3;
   private isInvulnerable: boolean = false;
-  private invulnerabilityTime: number = 2000; // 2 seconds of iframes after hit
+  private invulnerabilityTime: number = 2000;
+
+  // ── Knockback ────────────────────────────────────────────────────
+  private static readonly KNOCKBACK_FORCE_X = 250;
+  private static readonly KNOCKBACK_FORCE_Y = -200;
+  private static readonly KNOCKBACK_STUN_MS = 350;
+  private isStunned: boolean = false;
+
+  // ── Wall slide / jump ────────────────────────────────────────────
+  private static readonly WALL_SLIDE_GRAVITY_FACTOR = 0.3;
+  private static readonly WALL_JUMP_FORCE_X = 300;
+  private static readonly WALL_JUMP_FORCE_Y = -450;
+  private isWallSliding: boolean = false;
+  private wallSlideSide: "left" | "right" | null = null;
+  private wallJumpLockUntil: number = 0;
+
+  // ── Variable jump / coyote time / jump buffer ────────────────────
+  private static readonly JUMP_FORCE_TAP = -350;
+  private static readonly JUMP_FORCE_HOLD = -550;
+  private static readonly JUMP_CUT_VELOCITY = -200;
+  private static readonly COYOTE_TIME_MS = 80;
+  private static readonly JUMP_BUFFER_MS = 100;
+  private lastGroundedTime: number = 0;
+  private lastJumpPressTime: number = 0;
+  private isJumpHeld: boolean = false;
+  private jumpPeakReached: boolean = false;
 
   constructor(scene: Scene, x: number, y: number) {
     super(scene, x, y, "cat");
@@ -121,51 +146,152 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   update() {
     if (!this.body) return;
+    const body = this.body as Phaser.Physics.Arcade.Body;
+    const now = this.scene.time.now;
 
     const speed = 200 * this.speedMultiplier;
-    const jumpForce = -550 * this.jumpMultiplier;
+    const isGrounded = body.blocked.down || body.touching.down;
+    const touchingWallLeft = body.blocked.left || body.touching.left;
+    const touchingWallRight = body.blocked.right || body.touching.right;
 
-    // Movement
-    if (
-      this.cursors.left.isDown ||
-      this.wasd.left.isDown ||
-      this.wasd.a.isDown
-    ) {
-      this.setVelocityX(-speed);
-      this.setFlipX(false);
-      this.anims.play("walk-left", true);
-      this.lastDirection = "left";
-    } else if (
-      this.cursors.right.isDown ||
-      this.wasd.right.isDown ||
-      this.wasd.d.isDown
-    ) {
-      this.setVelocityX(speed);
-      this.setFlipX(false);
-      this.anims.play("walk-right", true);
-      this.lastDirection = "right";
-    } else {
-      this.setVelocityX(0);
-      this.anims.play("idle", true);
-      this.setFlipX(this.lastDirection === "left");
+    // Track grounded for coyote time
+    if (isGrounded) {
+      this.lastGroundedTime = now;
+      this.isWallSliding = false;
+      this.wallSlideSide = null;
+      this.jumpPeakReached = false;
     }
 
-    // Jump
-    const isGrounded = this.body.blocked.down || this.body.touching.down;
+    const canCoyoteJump = now - this.lastGroundedTime < Player.COYOTE_TIME_MS;
+
+    // ── Stunned from knockback ──────────────────────────────────
+    if (this.isStunned) return;
+
+    // ── Wall slide detection ────────────────────────────────────
+    const pressingLeft =
+      this.cursors.left.isDown || this.wasd.left.isDown || this.wasd.a.isDown;
+    const pressingRight =
+      this.cursors.right.isDown || this.wasd.right.isDown || this.wasd.d.isDown;
+
     if (
-      (this.cursors.up.isDown ||
-        this.wasd.up.isDown ||
-        this.wasd.w.isDown ||
-        this.jumpKey.isDown) &&
-      isGrounded
+      !isGrounded &&
+      body.velocity.y > 0 &&
+      ((touchingWallLeft && pressingLeft) ||
+        (touchingWallRight && pressingRight))
     ) {
-      this.setVelocityY(jumpForce);
+      this.isWallSliding = true;
+      this.wallSlideSide = touchingWallLeft ? "left" : "right";
+      // Reduce gravity for wall slide
+      body.velocity.y = Math.min(
+        body.velocity.y,
+        (this.scene.physics.world.gravity.y *
+          Player.WALL_SLIDE_GRAVITY_FACTOR *
+          this.scene.game.loop.delta) /
+          1000 +
+          body.velocity.y * 0.5,
+      );
+      // Cap downward speed during wall slide
+      if (body.velocity.y > 100) body.velocity.y = 100;
+    } else {
+      this.isWallSliding = false;
+      this.wallSlideSide = null;
+    }
+
+    // ── Horizontal movement ─────────────────────────────────────
+    if (now >= this.wallJumpLockUntil) {
+      if (pressingLeft) {
+        this.setVelocityX(-speed);
+        this.setFlipX(false);
+        this.anims.play("walk-left", true);
+        this.lastDirection = "left";
+      } else if (pressingRight) {
+        this.setVelocityX(speed);
+        this.setFlipX(false);
+        this.anims.play("walk-right", true);
+        this.lastDirection = "right";
+      } else {
+        this.setVelocityX(0);
+        this.anims.play("idle", true);
+        this.setFlipX(this.lastDirection === "left");
+      }
+    }
+
+    // ── Jump input detection ────────────────────────────────────
+    const jumpPressed =
+      this.cursors.up.isDown ||
+      this.wasd.up.isDown ||
+      this.wasd.w.isDown ||
+      this.jumpKey.isDown;
+
+    const jumpJustPressed =
+      Phaser.Input.Keyboard.JustDown(this.cursors.up) ||
+      Phaser.Input.Keyboard.JustDown(this.wasd.up) ||
+      Phaser.Input.Keyboard.JustDown(this.wasd.w) ||
+      Phaser.Input.Keyboard.JustDown(this.jumpKey);
+
+    if (jumpJustPressed) {
+      this.lastJumpPressTime = now;
+    }
+
+    const hasBufferedJump =
+      now - this.lastJumpPressTime < Player.JUMP_BUFFER_MS;
+
+    // ── Wall jump ───────────────────────────────────────────────
+    if (this.isWallSliding && jumpJustPressed) {
+      const dirX =
+        this.wallSlideSide === "left"
+          ? Player.WALL_JUMP_FORCE_X
+          : -Player.WALL_JUMP_FORCE_X;
+      this.setVelocityX(dirX);
+      this.setVelocityY(Player.WALL_JUMP_FORCE_Y * this.jumpMultiplier);
+      this.wallJumpLockUntil = now + 150;
+      this.isWallSliding = false;
+      this.wallSlideSide = null;
+      this.lastGroundedTime = 0;
+      this.lastJumpPressTime = 0;
+      this.isJumpHeld = true;
+      this.jumpPeakReached = false;
+      this.lastDirection = dirX > 0 ? "right" : "left";
+      AudioManager.instance.sfx.jump();
+    }
+    // ── Normal / coyote / buffered jump ─────────────────────────
+    else if (
+      (jumpJustPressed || hasBufferedJump) &&
+      (isGrounded || canCoyoteJump)
+    ) {
+      // Full force on press; releasing early cuts the jump short
+      this.setVelocityY(Player.JUMP_FORCE_HOLD * this.jumpMultiplier);
+      this.lastGroundedTime = 0;
+      this.lastJumpPressTime = 0;
+      this.isJumpHeld = true;
+      this.jumpPeakReached = false;
       AudioManager.instance.sfx.jump();
     }
 
-    // Air animation (Jump/Fall)
+    // ── Variable jump height (release early = short jump) ───────
+    if (this.isJumpHeld && !isGrounded) {
+      if (!jumpPressed && body.velocity.y < Player.JUMP_CUT_VELOCITY) {
+        // Button released while still ascending fast → cut the jump
+        body.velocity.y = Player.JUMP_CUT_VELOCITY;
+        this.isJumpHeld = false;
+        this.jumpPeakReached = true;
+      } else if (body.velocity.y >= 0) {
+        // Reached peak naturally
+        this.isJumpHeld = false;
+        this.jumpPeakReached = true;
+      }
+    }
+
+    // ── Air animation ───────────────────────────────────────────
     if (!isGrounded) {
-      if (this.lastDirection === "left") {
+      if (this.isWallSliding) {
+        // Use jump animation flipped toward wall for wall slide visual
+        this.anims.play(
+          this.wallSlideSide === "left" ? "jump-right" : "jump-left",
+          true,
+        );
+        this.setFlipX(false);
+      } else if (this.lastDirection === "left") {
         this.anims.play("jump-left", true);
         this.setFlipX(false);
       } else {
@@ -178,6 +304,22 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.isPoweredUp && Phaser.Input.Keyboard.JustDown(this.shootKey)) {
       this.shoot();
     }
+  }
+
+  /**
+   * Apply Nintendo-style knockback. sourceX is the world X position of the
+   * damage source — the player is pushed away from it.
+   */
+  public applyKnockback(sourceX: number) {
+    if (!this.body) return;
+    const dir = this.x >= sourceX ? 1 : -1;
+    this.setVelocityX(dir * Player.KNOCKBACK_FORCE_X);
+    this.setVelocityY(Player.KNOCKBACK_FORCE_Y);
+
+    this.isStunned = true;
+    this.scene.time.delayedCall(Player.KNOCKBACK_STUN_MS, () => {
+      this.isStunned = false;
+    });
   }
 
   private shoot() {
