@@ -33,6 +33,13 @@ export type CollectibleSpawn = {
   pos: PixelCoord;
 };
 
+export type MovingPlatformSpawn = {
+  startPos: PixelCoord;
+  endPos: PixelCoord;
+  speed?: number;
+  widthTiles?: number;
+};
+
 export type LayoutType =
   | "standard"
   | "parkour"
@@ -81,4 +88,5 @@ export type GeneratedLevel = {
   items: ItemSpawn[];
   hazards: HazardSpawn[];
   collectibles: CollectibleSpawn[];
+  movingPlatforms: MovingPlatformSpawn[];
 };

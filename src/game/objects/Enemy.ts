@@ -10,7 +10,9 @@ export type EnemyType =
   | "rat1"
   | "rat2"
   | "bird1"
-  | "bird2";
+  | "bird2"
+  | "dropper"
+  | "climber";
 
 export class Enemy extends Phaser.Physics.Arcade.Sprite {
   private enemyType: EnemyType;
@@ -23,6 +25,14 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   private isBossEnemy = false;
   private lastActionAt = 0;
   private baseY = 0;
+
+  // Dropper state
+  private dropperState: "waiting" | "dropping" | "patrolling" = "patrolling";
+
+  // Climber state
+  private climbDirection: 1 | -1 = -1; // -1 = up, 1 = down
+  private climbMinY = 0;
+  private climbMaxY = 0;
 
   /**
    * Display sizes per enemy type.  Dogs & cats are large (48px source art),
@@ -39,6 +49,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     rat2: 36,
     bird1: 40,
     bird2: 36,
+    dropper: 36,
+    climber: 40,
   };
 
   constructor(scene: Scene, x: number, y: number, type: EnemyType) {
@@ -88,6 +100,25 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     if (type === "bird1" || type === "bird2") {
       body.setAllowGravity(false);
       body.setVelocityY(0);
+    }
+
+    // Dropper: clings to ceiling, no gravity, waits for player below
+    if (type === "dropper") {
+      body.setAllowGravity(false);
+      body.setVelocityX(0);
+      this.dropperState = "waiting";
+      this.setTint(0xa855f7); // purple tint to distinguish
+    }
+
+    // Climber: moves up/down on walls, no gravity
+    if (type === "climber") {
+      body.setAllowGravity(false);
+      body.setVelocityX(0);
+      this.climbMinY = y - 4 * 32; // patrol range: 4 tiles up
+      this.climbMaxY = y + 4 * 32; // patrol range: 4 tiles down
+      this.climbDirection = -1;
+      body.setVelocityY(this.climbDirection * 60);
+      this.setTint(0x10b981); // green tint to distinguish
     }
 
     this.maxHp = type === "dog2" || type === "cat2" ? 2 : 1;
@@ -160,6 +191,60 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     if (this.squished) return;
 
     const body = this.body as Phaser.Physics.Arcade.Body;
+
+    // ── Dropper AI ─────────────────────────────────────────────────
+    if (this.enemyType === "dropper") {
+      if (this.dropperState === "waiting") {
+        // Wait on ceiling; drop when player is within ±2 tiles horizontally
+        // and below (within 8 tiles)
+        if (player) {
+          const dx = Math.abs(player.x - this.x);
+          const dy = player.y - this.y; // positive = player is below
+          if (dx < 64 && dy > 0 && dy < 256) {
+            this.dropperState = "dropping";
+            body.setAllowGravity(true);
+            body.setVelocityY(100); // initial push down
+          }
+        }
+        // Face player while waiting
+        if (player) {
+          this.setFlipX(player.x < this.x);
+        }
+        return;
+      }
+      if (this.dropperState === "dropping") {
+        // Falling down — switch to patrolling when we land
+        if (body.blocked.down) {
+          this.dropperState = "patrolling";
+          this.walkSpeed = 70;
+          body.setVelocityX(this.direction * this.walkSpeed);
+        }
+        return;
+      }
+      // "patrolling" state falls through to normal patrol logic below
+    }
+
+    // ── Climber AI ─────────────────────────────────────────────────
+    if (this.enemyType === "climber") {
+      // Move up and down within patrol range
+      if (this.y <= this.climbMinY) {
+        this.climbDirection = 1; // start going down
+      } else if (this.y >= this.climbMaxY) {
+        this.climbDirection = -1; // start going up
+      }
+      // Also reverse on blocked
+      if (body.blocked.up) this.climbDirection = 1;
+      if (body.blocked.down) this.climbDirection = -1;
+
+      body.setVelocityY(this.climbDirection * 60);
+      body.setVelocityX(0);
+      this.setFlipY(this.climbDirection === -1);
+
+      if (this.anims.currentAnim?.key !== this.animKey("move")) {
+        this.play(this.animKey("move"));
+      }
+      return;
+    }
 
     // Basic AI: patrol; slightly speed up when player is near.
     const baseSpeed = this.walkSpeed;

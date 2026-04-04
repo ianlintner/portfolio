@@ -172,6 +172,8 @@ export const ENEMY_TEXTURE_KEY: Record<string, string> = {
   rat2: "enemy_rat2",
   bird1: "enemy_bird1",
   bird2: "enemy_bird2",
+  dropper: "enemy_rat1",
+  climber: "enemy_cat1",
 };
 
 /** Plain images (non-animated). */

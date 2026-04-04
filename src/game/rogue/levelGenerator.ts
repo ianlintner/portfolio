@@ -1,6 +1,7 @@
 import { Rng, type Seed } from "./rng";
 import { TILE, type GeneratedLevel, type LayoutType } from "./types";
 import type { EnemyType } from "@/game/objects/Enemy";
+import type { MovingPlatformSpawn } from "./types";
 
 export type GenerateLevelOptions = {
   seed: Seed;
@@ -27,6 +28,9 @@ const ENEMY_TYPES: EnemyType[] = [
   "bird1",
   "bird2",
 ];
+
+/** Enemy types exclusive to vertical layouts (tower, climb, zigzag). */
+const VERTICAL_ENEMY_TYPES: EnemyType[] = ["dropper", "climber"];
 
 const POWERUP_KEYS: GeneratedLevel["items"][number]["key"][] = [
   "catnip",
@@ -537,7 +541,13 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
 
   const usedPositions = new Set<string>();
   for (let i = 0; i < enemyCount; i++) {
-    const type = rng.pick(ENEMY_TYPES);
+    // In vertical layouts, mix in dropper and climber enemies
+    let type: EnemyType;
+    if (isVerticalLayout && rng.chance(0.3)) {
+      type = rng.pick(VERTICAL_ENEMY_TYPES);
+    } else {
+      type = rng.pick(ENEMY_TYPES);
+    }
     const safeMinX = Math.min(10, widthTiles - 4);
     const safeMaxX = Math.max(safeMinX + 1, widthTiles - 4);
     let ex = rng.int(safeMinX, safeMaxX);
@@ -555,15 +565,56 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
     // For vertical layouts, search the full column for a surface to place on
     let placed = false;
     if (isVerticalLayout) {
-      for (let ey = 2; ey < heightTiles - 1; ey++) {
-        if (
-          isStandable(data[ey][ex]) &&
-          ey - 1 >= 0 &&
-          data[ey - 1][ex] === EMPTY_TILE
-        ) {
-          enemies.push({ type, pos: toPx(ex, ey - 1, tileSize) });
-          placed = true;
-          break;
+      // Dropper: place under an overhang/ceiling (tile above is solid, tile is empty)
+      if (type === "dropper") {
+        for (let ey = 2; ey < heightTiles - 3; ey++) {
+          if (
+            ex >= 0 &&
+            ex < widthTiles &&
+            ey - 1 >= 0 &&
+            isStandable(data[ey - 1][ex]) &&
+            data[ey][ex] === EMPTY_TILE
+          ) {
+            enemies.push({ type, pos: toPx(ex, ey, tileSize) });
+            placed = true;
+            break;
+          }
+        }
+      }
+      // Climber: place adjacent to a wall tile
+      else if (type === "climber") {
+        for (let ey = 4; ey < heightTiles - 6; ey++) {
+          // Check for wall tile to the left or right
+          if (
+            ex > 1 &&
+            data[ey][ex - 1] === WALL_TILE &&
+            data[ey][ex] === EMPTY_TILE
+          ) {
+            enemies.push({ type, pos: toPx(ex, ey, tileSize) });
+            placed = true;
+            break;
+          }
+          if (
+            ex < widthTiles - 2 &&
+            data[ey][ex + 1] === WALL_TILE &&
+            data[ey][ex] === EMPTY_TILE
+          ) {
+            enemies.push({ type, pos: toPx(ex, ey, tileSize) });
+            placed = true;
+            break;
+          }
+        }
+      } else {
+        for (let ey = 2; ey < heightTiles - 1; ey++) {
+          if (
+            isStandable(data[ey][ex]) &&
+            ey - 1 >= 0 &&
+            data[ey - 1][ex] === EMPTY_TILE
+          ) {
+            enemies.push({ type, pos: toPx(ex, ey - 1, tileSize) });
+            placed = true;
+            break;
+          }
         }
       }
     }
@@ -665,6 +716,46 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
     });
   }
 
+  // ── Moving Platforms ──────────────────────────────────────────────
+  const movingPlatforms: MovingPlatformSpawn[] = [];
+  if (!isBossFloor && options.floor >= 3) {
+    // Place moving platforms across gaps and in vertical sections
+    const platCount = isVerticalLayout
+      ? rng.int(2, Math.min(5, 2 + Math.floor(options.floor / 3)))
+      : rng.int(0, Math.min(3, Math.floor(options.floor / 4)));
+
+    for (let i = 0; i < platCount; i++) {
+      const px = rng.int(
+        Math.min(8, widthTiles - 10),
+        Math.max(9, widthTiles - 8),
+      );
+
+      if (isVerticalLayout) {
+        // Vertical movers: travel up/down between tiers
+        const sy = rng.int(
+          Math.max(6, Math.floor(heightTiles * 0.3)),
+          Math.max(7, groundY - 6),
+        );
+        const ey = Math.max(4, sy - (rng.int(4, 8) * tileSize) / tileSize);
+        movingPlatforms.push({
+          startPos: toPx(px, sy, tileSize),
+          endPos: toPx(px, Math.max(3, sy - rng.int(4, 8)), tileSize),
+          speed: 30 + rng.int(0, 20),
+          widthTiles: rng.int(2, 4),
+        });
+      } else {
+        // Horizontal movers: bridge gaps
+        const py = rng.int(Math.max(4, groundY - 8), Math.max(5, groundY - 3));
+        movingPlatforms.push({
+          startPos: toPx(px, py, tileSize),
+          endPos: toPx(px + rng.int(4, 8), py, tileSize),
+          speed: 35 + rng.int(0, 25),
+          widthTiles: rng.int(2, 4),
+        });
+      }
+    }
+  }
+
   return {
     widthTiles,
     heightTiles,
@@ -680,5 +771,6 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
     items,
     hazards,
     collectibles,
+    movingPlatforms,
   };
 }

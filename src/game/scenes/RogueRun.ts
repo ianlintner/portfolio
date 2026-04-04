@@ -9,6 +9,7 @@ import { Enemy } from "../objects/Enemy";
 import { Hazard } from "../objects/Hazard";
 import { Collectible } from "../objects/Collectible";
 import { Powerup } from "../objects/Powerup";
+import { MovingPlatform } from "../objects/MovingPlatform";
 import { generateLevel } from "../rogue/levelGenerator";
 import { SPRITE_SIZES } from "../sprites/constants";
 import { installArcadeDebugToggle } from "../utils/arcadeDebugToggle";
@@ -30,6 +31,8 @@ export class RogueRun extends Scene {
   private collectibles!: Phaser.Physics.Arcade.Group;
   private hairballs!: Phaser.Physics.Arcade.Group;
   private enemyProjectiles!: Phaser.Physics.Arcade.Group;
+  private movingPlatformsGroup!: Phaser.Physics.Arcade.Group;
+  private movingPlatformsList: MovingPlatform[] = [];
   private goal!: Phaser.Physics.Arcade.Sprite;
   private layer!: Phaser.Tilemaps.TilemapLayer;
   private worldWidthPx = 800;
@@ -78,6 +81,11 @@ export class RogueRun extends Scene {
       allowGravity: false,
       immovable: true,
     });
+    this.movingPlatformsGroup = this.physics.add.group({
+      allowGravity: false,
+      immovable: true,
+    });
+    this.movingPlatformsList = [];
 
     // Parallax background (simple + reliable)
     createParallaxBackground(this, {
@@ -191,9 +199,27 @@ export class RogueRun extends Scene {
       this.enemies.add(enemy);
     }
 
+    // Moving Platforms
+    for (const mp of level.movingPlatforms) {
+      const platform = new MovingPlatform(this, {
+        startX: mp.startPos.x,
+        startY: mp.startPos.y,
+        endX: mp.endPos.x,
+        endY: mp.endPos.y,
+        speed: mp.speed,
+        widthTiles: mp.widthTiles,
+      });
+      this.movingPlatformsGroup.add(platform);
+      this.movingPlatformsList.push(platform);
+    }
+
     // Physics (player-layer collider is set up above with one-way platform logic)
     this.physics.add.collider(this.enemies, this.layer);
     this.physics.add.collider(this.goal, this.layer);
+
+    // Moving platform collisions: player rides on top
+    this.physics.add.collider(this.player, this.movingPlatformsGroup);
+    this.physics.add.collider(this.enemies, this.movingPlatformsGroup);
 
     this.physics.add.overlap(
       this.player,
@@ -379,6 +405,11 @@ export class RogueRun extends Scene {
     this.enemies
       .getChildren()
       .forEach((enemy: any) => enemy.update?.(this.player));
+
+    // Update moving platforms
+    for (const mp of this.movingPlatformsList) {
+      mp.update();
+    }
 
     // Fall death (pits are instant life loss)
     if (this.player.y > this.worldHeightPx + 64) {
