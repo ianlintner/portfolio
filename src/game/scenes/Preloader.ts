@@ -152,6 +152,9 @@ export class Preloader extends Scene {
         this.load.image(key, url);
       }
     }
+
+    // Audio assets
+    this.load.audio("intro-music", withBasePath("/assets/game/audio/Saturday_Morning_High_Score.mp3"));
   }
 
   create() {

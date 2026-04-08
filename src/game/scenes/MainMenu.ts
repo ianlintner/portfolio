@@ -9,8 +9,8 @@ export class MainMenu extends Scene {
   private floorTile!: Phaser.GameObjects.TileSprite;
   private cat!: Phaser.GameObjects.Sprite;
   private enemies: Phaser.GameObjects.Sprite[] = [];
-  private runSpeed = 4;
-  private bgScrollSpeed = 2;
+  private runSpeed = 1.5; // Slower speed to avoid dizzying effect
+  private bgMusic?: Phaser.Sound.BaseSound;
 
   constructor() {
     super("MainMenu");
@@ -23,12 +23,28 @@ export class MainMenu extends Scene {
     // Unlock Web Audio on first user gesture, then start menu music.
     const unlockAndPlay = () => {
       audio.unlock();
-      audio.playMusic("menu");
+      audio.stopMusic(); // Ensure old chiptune engine is stopped
+      if (!this.bgMusic) {
+        this.bgMusic = this.sound.add("intro-music", {
+          loop: true,
+          volume: 0.6,
+        });
+        this.bgMusic.play();
+      }
     };
     this.input.once("pointerdown", unlockAndPlay);
     this.input.keyboard?.once("keydown", unlockAndPlay);
     // If already unlocked from a previous visit, start music immediately.
-    if (audio.isUnlocked) audio.playMusic("menu");
+    if (audio.isUnlocked) {
+      audio.stopMusic();
+      if (!this.bgMusic) {
+        this.bgMusic = this.sound.add("intro-music", {
+          loop: true,
+          volume: 0.6,
+        });
+        this.bgMusic.play();
+      }
+    }
 
     this.parallaxLayers = createParallaxBackground(this, {
       set: PARALLAX_SETS.industrial1,
@@ -108,6 +124,9 @@ export class MainMenu extends Scene {
       .setInteractive({ useHandCursor: true })
       .on("pointerdown", () => {
         audio.sfx.menuSelect();
+        if (this.bgMusic) {
+          this.bgMusic.stop();
+        }
         audio.stopMusic();
         const seed = Math.random().toString(36).slice(2, 10);
         this.registry.set("runSeed", seed);
