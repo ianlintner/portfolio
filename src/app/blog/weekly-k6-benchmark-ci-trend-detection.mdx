@@ -333,7 +333,7 @@ deploy:
       memory: 512M
 ```
 
-By enforcing identical resource constraints, the benchmark measures **efficiency**, not capacity. A JVM-based server that needs 2GB to perform well will hit OOM or GC thrashing at 512MB — which is exactly what happens in production when you're running multiple services on the same node. These constraints simulate a realistic, resource-contiguous deployment.
+By enforcing identical resource constraints, the benchmark measures **efficiency**, not capacity. A JVM-based server that needs 2GB to perform well will hit OOM or GC thrashing at 512MB — which is exactly what happens in production when you're running multiple services on the same node. These constraints simulate a realistic, resource-constrained deployment.
 
 ### 5. Structured output for downstream automation
 
