@@ -8,8 +8,6 @@ image: "/images/ai-github-actions-analysis-hero.svg"
 imageAlt: "AI-powered GitHub Actions failure analysis visualization"
 ---
 
-import Mermaid from "@/components/Mermaid";
-
 ## The Problem: Cryptic CI Failures
 
 We've all been there. You push code, the CI pipeline fails, and you're greeted with thousands of lines of logs. Somewhere in that wall of text is the actual problem—but finding it means scrolling through build output, test results, and stack traces.
@@ -33,7 +31,7 @@ Traditional CI failure notifications tell you _what_ failed, but not _why_ or _h
 
 ## How It Works
 
-<Mermaid chart={`
+```mermaid
 sequenceDiagram
     participant W as Workflow
     participant A as AI Action
@@ -52,7 +50,7 @@ sequenceDiagram
     A->>I: Create Issue
     I-->>W: Link Issue to Run
 
-`} />
+```
 
 ### The Architecture
 

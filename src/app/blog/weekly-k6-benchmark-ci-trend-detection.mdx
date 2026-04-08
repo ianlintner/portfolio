@@ -16,8 +16,6 @@ image: /images/weekly-k6-benchmark-ci-social.svg
 imageAlt: Weekly k6 benchmark CI trend chart comparing Rust, Go, Java, Node.js, and Python OAuth2 servers
 ---
 
-import Mermaid from "@/components/Mermaid";
-
 # Weekly k6 Benchmarks in CI: Automated Performance Trend Detection for OAuth2 Servers
 
 Performance bugs are the kind of bugs that _don't_ throw exceptions. They creep in through an innocent dependency bump, a subtle query regression, or a new feature that adds 2ms to your hot path. By the time anyone notices, the degradation has been baked into a dozen releases and nobody knows which commit caused it.
@@ -66,26 +64,24 @@ This is the right framing. CI benchmarks are a **smoke detector**, not a calibra
 
 This is the most technically interesting piece. The workflow doesn't blindly re-run all six servers every week. It uses a **planner** (`plan_benchmark_run.sh`) that inspects the last 7 days of commits on `main` and decides _which_ servers actually need re-benchmarking.
 
-<Mermaid
-  chart={`
+```mermaid
 flowchart TD
-    A["Cron Trigger\\n(Monday 03:17 UTC)"] --> B["Fetch 7 days of commits"]
-    B --> C{"Any commits\\non main?"}
-    C -->|No| D["Skip run\\n(save CI minutes)"]
+    A["Cron Trigger\n(Monday 03:17 UTC)"] --> B["Fetch 7 days of commits"]
+    B --> C{"Any commits\non main?"}
+    C -->|No| D["Skip run\n(save CI minutes)"]
     C -->|Yes| E["Classify changed files"]
-    E --> F{"First-party\\ncode changed?"}
-    E --> G{"Third-party\\nversion bumped?"}
+    E --> F{"First-party\ncode changed?"}
+    E --> G{"Third-party\nversion bumped?"}
     F -->|Yes| H["Select rust + rust-mongo"]
-    G -->|Yes| I["Select bumped server\\n+ rust baseline"]
-    G -->|Yes| J["Create GitHub Issue\\nfor version reconciliation"]
-    F -->|No| K{"Force flag\\nor manual?"}
+    G -->|Yes| I["Select bumped server\n+ rust baseline"]
+    G -->|Yes| J["Create GitHub Issue\nfor version reconciliation"]
+    F -->|No| K{"Force flag\nor manual?"}
     K -->|Yes| H
-    K -->|No| L{"Only docs/CI\\nchanges?"}
+    K -->|No| L{"Only docs/CI\nchanges?"}
     L -->|Yes| D
     H --> M["Run k6 benchmarks"]
     I --> M
-`}
-/>
+```
 
 ### Change classification rules
 
@@ -139,17 +135,15 @@ This is _shift-left_ for performance, but with the intelligence to not waste res
 
 The benchmark suite runs four scenarios against each server:
 
-<Mermaid
-  chart={`
+```mermaid
 flowchart LR
     subgraph Scenarios
-        A["client-credentials\\nPOST /oauth/token"] --> |"JWT signing\\nclient auth\\nDB write"| M["Core OAuth2\\nworkload"]
-        B["token-introspect\\nPOST /oauth/introspect"] --> |"Token lookup\\nDB read\\nvalidation"| M
-        C["discovery\\nGET /.well-known/..."] --> |"JSON serialization\\ncache behavior"| M
-        D["health\\nGET /health"] --> |"Baseline HTTP\\noverhead"| M
+        A["client-credentials\nPOST /oauth/token"] --> |"JWT signing\nclient auth\nDB write"| M["Core OAuth2\nworkload"]
+        B["token-introspect\nPOST /oauth/introspect"] --> |"Token lookup\nDB read\nvalidation"| M
+        C["discovery\nGET /.well-known/..."] --> |"JSON serialization\ncache behavior"| M
+        D["health\nGET /health"] --> |"Baseline HTTP\noverhead"| M
     end
-`}
-/>
+```
 
 The **client credentials** scenario is the primary benchmark because it exercises the full OAuth2 token issuance path (client authentication, JWT signing, token persistence) in a single HTTP POST — no browser interaction, no redirects, no user session state. It's the closest thing to an "apples-to-apples" comparison across servers that have very different architectures.
 
@@ -253,7 +247,7 @@ This is your **audit trail**. When you're investigating a regression three month
 
 ## 🔄 The Full Pipeline: From Cron to Issue
 
-<Mermaid chart={`
+```mermaid
 sequenceDiagram
     participant Cron as ⏰ Cron (Monday)
     participant Plan as 📋 Planner
@@ -287,7 +281,7 @@ sequenceDiagram
     Analyze->>Analyze: Compute averages, ratios
     Analyze->>Art: Upload comparison report + CSV + manifest
 
-`} />
+```
 
 ### The version bump issue workflow
 
