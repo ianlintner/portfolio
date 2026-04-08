@@ -1,0 +1,184 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    </pattern>
+    <linearGradient id="overlay" x1="0" y1="0" x2="1200" y2="630">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="trendLine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="50%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <filter id="glow">
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#0ea5e9" flood-opacity="0.5"/>
+    </filter>
+    <filter id="nodeGlow">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#10b981" flood-opacity="0.6"/>
+    </filter>
+    <filter id="alertGlow">
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#ef4444" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0f172a"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#overlay)"/>
+
+  <!-- Chart area background -->
+  <rect x="80" y="60" width="500" height="300" rx="12" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- Y-axis labels -->
+  <text x="70" y="95" font-family="Arial, sans-serif" font-size="11" fill="#64748b" text-anchor="end">2000</text>
+  <text x="70" y="155" font-family="Arial, sans-serif" font-size="11" fill="#64748b" text-anchor="end">1500</text>
+  <text x="70" y="215" font-family="Arial, sans-serif" font-size="11" fill="#64748b" text-anchor="end">1000</text>
+  <text x="70" y="275" font-family="Arial, sans-serif" font-size="11" fill="#64748b" text-anchor="end">500</text>
+  <text x="70" y="335" font-family="Arial, sans-serif" font-size="11" fill="#64748b" text-anchor="end">0</text>
+
+  <!-- Grid lines -->
+  <line x1="85" y1="90" x2="575" y2="90" stroke="#1e293b" stroke-width="0.5"/>
+  <line x1="85" y1="150" x2="575" y2="150" stroke="#1e293b" stroke-width="0.5"/>
+  <line x1="85" y1="210" x2="575" y2="210" stroke="#1e293b" stroke-width="0.5"/>
+  <line x1="85" y1="270" x2="575" y2="270" stroke="#1e293b" stroke-width="0.5"/>
+  <line x1="85" y1="330" x2="575" y2="330" stroke="#1e293b" stroke-width="0.5"/>
+
+  <!-- X-axis labels (weeks) -->
+  <text x="130" y="355" font-family="Arial, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">W1</text>
+  <text x="210" y="355" font-family="Arial, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">W2</text>
+  <text x="290" y="355" font-family="Arial, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">W3</text>
+  <text x="370" y="355" font-family="Arial, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">W4</text>
+  <text x="450" y="355" font-family="Arial, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">W5</text>
+  <text x="530" y="355" font-family="Arial, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">W6</text>
+
+  <!-- Trend line: Rust (green, top performer) -->
+  <polyline points="130,105 210,100 290,98 370,102 450,95 530,97" fill="none" stroke="#10b981" stroke-width="2.5" filter="url(#nodeGlow)"/>
+  <circle cx="130" cy="105" r="4" fill="#10b981" filter="url(#nodeGlow)"/>
+  <circle cx="210" cy="100" r="4" fill="#10b981"/>
+  <circle cx="290" cy="98" r="4" fill="#10b981"/>
+  <circle cx="370" cy="102" r="4" fill="#10b981"/>
+  <circle cx="450" cy="95" r="4" fill="#10b981"/>
+  <circle cx="530" cy="97" r="4" fill="#10b981"/>
+
+  <!-- Trend line: Go/Hydra (cyan) -->
+  <polyline points="130,155 210,148 290,152 370,150 450,145 530,148" fill="none" stroke="#0ea5e9" stroke-width="2"/>
+  <circle cx="130" cy="155" r="3.5" fill="#0ea5e9"/>
+  <circle cx="210" cy="148" r="3.5" fill="#0ea5e9"/>
+  <circle cx="290" cy="152" r="3.5" fill="#0ea5e9"/>
+  <circle cx="370" cy="150" r="3.5" fill="#0ea5e9"/>
+  <circle cx="450" cy="145" r="3.5" fill="#0ea5e9"/>
+  <circle cx="530" cy="148" r="3.5" fill="#0ea5e9"/>
+
+  <!-- Trend line: Java/Keycloak (purple) -->
+  <polyline points="130,200 210,195 290,198 370,230 450,225 530,222" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+  <circle cx="130" cy="200" r="3.5" fill="#8b5cf6"/>
+  <circle cx="210" cy="195" r="3.5" fill="#8b5cf6"/>
+  <circle cx="290" cy="198" r="3.5" fill="#8b5cf6"/>
+  <circle cx="370" cy="230" r="3.5" fill="#8b5cf6"/>
+  <circle cx="450" cy="225" r="3.5" fill="#8b5cf6"/>
+  <circle cx="530" cy="222" r="3.5" fill="#8b5cf6"/>
+
+  <!-- Trend line: Node.js (orange) -->
+  <polyline points="130,245 210,240 290,242 370,238 450,248 530,245" fill="none" stroke="#f97316" stroke-width="2"/>
+  <circle cx="130" cy="245" r="3.5" fill="#f97316"/>
+  <circle cx="210" cy="240" r="3.5" fill="#f97316"/>
+  <circle cx="290" cy="242" r="3.5" fill="#f97316"/>
+  <circle cx="370" cy="238" r="3.5" fill="#f97316"/>
+  <circle cx="450" cy="248" r="3.5" fill="#f97316"/>
+  <circle cx="530" cy="245" r="3.5" fill="#f97316"/>
+
+  <!-- Trend line: Python/Authentik (red, with regression spike at W5) -->
+  <polyline points="130,290 210,285 290,288 370,285 450,310 530,305" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <circle cx="130" cy="290" r="3.5" fill="#ef4444"/>
+  <circle cx="210" cy="285" r="3.5" fill="#ef4444"/>
+  <circle cx="290" cy="288" r="3.5" fill="#ef4444"/>
+  <circle cx="370" cy="285" r="3.5" fill="#ef4444"/>
+  <circle cx="450" cy="310" r="6" fill="#ef4444" filter="url(#alertGlow)"/>
+  <circle cx="530" cy="305" r="3.5" fill="#ef4444"/>
+
+  <!-- Alert indicator at regression point -->
+  <text x="460" y="328" font-family="Arial, sans-serif" font-size="10" fill="#ef4444" font-weight="bold">⚠ regression</text>
+
+  <!-- Legend -->
+  <rect x="90" y="370" width="12" height="3" rx="1.5" fill="#10b981"/>
+  <text x="108" y="374" font-family="Arial, sans-serif" font-size="11" fill="#94a3b8">Rust</text>
+  <rect x="155" y="370" width="12" height="3" rx="1.5" fill="#0ea5e9"/>
+  <text x="173" y="374" font-family="Arial, sans-serif" font-size="11" fill="#94a3b8">Go</text>
+  <rect x="205" y="370" width="12" height="3" rx="1.5" fill="#8b5cf6"/>
+  <text x="223" y="374" font-family="Arial, sans-serif" font-size="11" fill="#94a3b8">Java</text>
+  <rect x="270" y="370" width="12" height="3" rx="1.5" fill="#f97316"/>
+  <text x="288" y="374" font-family="Arial, sans-serif" font-size="11" fill="#94a3b8">Node.js</text>
+  <rect x="355" y="370" width="12" height="3" rx="1.5" fill="#ef4444"/>
+  <text x="373" y="374" font-family="Arial, sans-serif" font-size="11" fill="#94a3b8">Python</text>
+
+  <!-- Y-axis title -->
+  <text x="25" y="210" font-family="Arial, sans-serif" font-size="12" fill="#64748b" text-anchor="middle" transform="rotate(-90, 25, 210)">Req/s</text>
+
+  <!-- Right side: CI workflow diagram -->
+  <rect x="640" y="70" width="500" height="310" rx="12" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- Cron icon -->
+  <circle cx="710" cy="120" r="22" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="710" y1="108" x2="710" y2="120" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="710" y1="120" x2="722" y2="126" stroke="#3b82f6" stroke-width="2"/>
+  <text x="710" y="158" font-family="Arial, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">Schedule</text>
+
+  <!-- Arrow -->
+  <line x1="745" y1="120" x2="785" y2="120" stroke="#475569" stroke-width="1.5"/>
+  <polygon points="785,116 793,120 785,124" fill="#475569"/>
+
+  <!-- Plan box -->
+  <rect x="795" y="100" width="90" height="40" rx="6" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="840" y="124" font-family="Arial, sans-serif" font-size="12" fill="#3b82f6" text-anchor="middle" font-weight="bold">Plan</text>
+
+  <!-- Arrow -->
+  <line x1="890" y1="120" x2="920" y2="120" stroke="#475569" stroke-width="1.5"/>
+  <polygon points="920,116 928,120 920,124" fill="#475569"/>
+
+  <!-- k6 box -->
+  <rect x="930" y="100" width="90" height="40" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
+  <text x="975" y="124" font-family="Arial, sans-serif" font-size="12" fill="#10b981" text-anchor="middle" font-weight="bold">k6 Run</text>
+
+  <!-- Arrow down from Plan -->
+  <line x1="840" y1="145" x2="840" y2="185" stroke="#475569" stroke-width="1.5"/>
+  <polygon points="836,185 840,193 844,185" fill="#475569"/>
+
+  <!-- Change detect box -->
+  <rect x="775" y="195" width="130" height="40" rx="6" fill="#1e293b" stroke="#f97316" stroke-width="1.5"/>
+  <text x="840" y="219" font-family="Arial, sans-serif" font-size="11" fill="#f97316" text-anchor="middle" font-weight="bold">Detect Changes</text>
+
+  <!-- Arrow down from k6 -->
+  <line x1="975" y1="145" x2="975" y2="185" stroke="#475569" stroke-width="1.5"/>
+  <polygon points="971,185 975,193 979,185" fill="#475569"/>
+
+  <!-- Analyze box -->
+  <rect x="920" y="195" width="110" height="40" rx="6" fill="#1e293b" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="975" y="219" font-family="Arial, sans-serif" font-size="11" fill="#8b5cf6" text-anchor="middle" font-weight="bold">Analyze</text>
+
+  <!-- Arrows down to artifact -->
+  <line x1="840" y1="240" x2="890" y2="280" stroke="#475569" stroke-width="1.5"/>
+  <line x1="975" y1="240" x2="920" y2="280" stroke="#475569" stroke-width="1.5"/>
+
+  <!-- Artifact box -->
+  <rect x="850" y="280" width="120" height="45" rx="6" fill="#1e293b" stroke="#0ea5e9" stroke-width="1.5"/>
+  <text x="910" y="300" font-family="Arial, sans-serif" font-size="11" fill="#0ea5e9" text-anchor="middle" font-weight="bold">📊 Artifact</text>
+  <text x="910" y="316" font-family="Arial, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">Trend Data</text>
+
+  <!-- Arrow to issue -->
+  <line x1="840" y1="240" x2="760" y2="280" stroke="#475569" stroke-width="1.5"/>
+
+  <!-- Issue box -->
+  <rect x="700" y="280" width="120" height="45" rx="6" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="760" y="300" font-family="Arial, sans-serif" font-size="11" fill="#ef4444" text-anchor="middle" font-weight="bold">🎫 Issue</text>
+  <text x="760" y="316" font-family="Arial, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">Version Bumps</text>
+
+  <!-- Title -->
+  <text x="60" y="480" font-family="Arial, sans-serif" font-size="52" font-weight="bold" fill="white">Weekly k6 Benchmarks in CI</text>
+  <text x="60" y="530" font-family="Arial, sans-serif" font-size="30" fill="#94a3b8">Automated Performance Trend Detection</text>
+  <text x="60" y="565" font-family="Arial, sans-serif" font-size="22" fill="#64748b">Rust vs Keycloak vs Hydra vs Authentik vs node-oidc-provider</text>
+
+  <!-- Author -->
+  <text x="1050" y="580" font-family="Arial, sans-serif" font-size="24" fill="#64748b" text-anchor="middle">Ian Lintner</text>
+</svg>
