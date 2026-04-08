@@ -89,8 +89,10 @@ function layoutDimensions(
       return { w: 50, h: Math.min(45, 30 + floor) };
     case "zigzag":
       return { w: 40, h: Math.min(50, 35 + floor) };
+    case "boss":
+      return { w: 40, h: 20 };
     default:
-      // standard / parkour / vertical / boss keep caller defaults
+      // standard / parkour / vertical keep caller defaults
       return { w: 90, h: 20 };
   }
 }
@@ -101,8 +103,8 @@ function pickLayout(rng: Rng, floor: number): LayoutType {
   if (floor >= 8 && rng.chance(0.12)) return "zigzag";
   if (floor >= 5 && rng.chance(0.15)) return "tower";
   if (floor >= 6 && rng.chance(0.15)) return "climb";
-  if (floor >= 6 && rng.chance(0.18)) return "parkour";
-  if (floor >= 4 && rng.chance(0.14)) return "vertical";
+  if (floor >= 2 && rng.chance(0.2)) return "parkour";
+  if (floor >= 3 && rng.chance(0.16)) return "vertical";
   return "standard";
 }
 
@@ -361,24 +363,68 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
   }
   // ── Boss layout ──────────────────────────────────────────────────
   else if (layout === "boss") {
+    // Smaller arena so player and boss are close together
     for (let tx = 0; tx < widthTiles; tx++) setGroundColumn(data, tx, groundY);
+
+    // Elevated platforms for tactical movement — three tiers
+    // Tier 1: two mid-height platforms on left and right
+    const tier1Y = groundY - 4;
+    for (let dx = 0; dx < 5; dx++) {
+      data[tier1Y][4 + dx] = PLATFORM_TILE;
+      data[tier1Y][widthTiles - 9 + dx] = PLATFORM_TILE;
+    }
+    // Tier 2: center platform higher up
+    const tier2Y = groundY - 7;
+    const centerX = Math.floor(widthTiles / 2);
+    for (let dx = -3; dx <= 3; dx++) {
+      if (centerX + dx >= 2 && centerX + dx < widthTiles - 2) {
+        data[tier2Y][centerX + dx] = ONE_WAY_TILE;
+      }
+    }
+    // Tier 3: small escape platforms on the sides
+    const tier3Y = groundY - 10;
+    for (let dx = 0; dx < 3; dx++) {
+      if (8 + dx < widthTiles - 2) data[tier3Y][8 + dx] = ONE_WAY_TILE;
+      if (widthTiles - 11 + dx >= 2)
+        data[tier3Y][widthTiles - 11 + dx] = ONE_WAY_TILE;
+    }
+
+    // Walls on edges to keep the fight contained
+    for (let ty = 0; ty < heightTiles - 3; ty++) {
+      data[ty][0] = WALL_TILE;
+      data[ty][widthTiles - 1] = WALL_TILE;
+    }
   }
   // ── Parkour layout ───────────────────────────────────────────────
   else if (layout === "parkour") {
+    // Wider gaps between ground islands — true platforming
     for (let tx = 0; tx < widthTiles; tx++) {
-      if (tx < 8 || tx > widthTiles - 9 || tx % 9 < 4) {
+      if (tx < 8 || tx > widthTiles - 9 || tx % 9 < 3) {
         setGroundColumn(data, tx, groundY);
       }
     }
 
-    const islands = Math.min(20, 9 + Math.floor(options.floor / 2));
+    // More islands with varied sizes
+    const islands = Math.min(24, 10 + Math.floor(options.floor / 2));
     for (let i = 0; i < islands; i++) {
       const px = rng.int(6, widthTiles - 8);
-      const py = rng.int(groundY - 10, groundY - 3);
-      const len = rng.int(2, 4);
+      const py = rng.int(groundY - 12, groundY - 3);
+      const len = rng.int(2, 5);
       for (let dx = 0; dx < len; dx++) {
         const tx = px + dx;
-        if (tx > 1 && tx < widthTiles - 2) data[py][tx] = PLATFORM_TILE;
+        if (tx > 1 && tx < widthTiles - 2)
+          data[py][tx] = rng.chance(0.4) ? ONE_WAY_TILE : PLATFORM_TILE;
+      }
+    }
+
+    // Add a few high-altitude bonus platforms
+    const highPlats = rng.int(2, 4);
+    for (let i = 0; i < highPlats; i++) {
+      const hx = rng.int(10, widthTiles - 12);
+      const hy = rng.int(groundY - 14, groundY - 10);
+      if (hy < 2) continue;
+      for (let dx = 0; dx < rng.int(2, 3); dx++) {
+        if (hx + dx < widthTiles - 2) data[hy][hx + dx] = ONE_WAY_TILE;
       }
     }
   }
@@ -406,14 +452,14 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
       const nearStart = x < 10;
       const nearEnd = x > widthTiles - 12;
 
-      const gapChanceBase = 0.06;
+      const gapChanceBase = 0.09;
       const gapChance = Math.min(
-        0.18,
-        gapChanceBase + Math.max(0, options.floor - 1) * 0.01,
+        0.22,
+        gapChanceBase + Math.max(0, options.floor - 1) * 0.012,
       );
 
       if (!nearStart && !nearEnd && rng.chance(gapChance)) {
-        const gapLen = rng.int(2, 5);
+        const gapLen = rng.int(3, 6);
         x += gapLen;
         continue;
       }
@@ -422,16 +468,54 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
       x += 1;
     }
 
-    const platformCount = Math.min(12, 3 + Math.floor(options.floor / 2));
+    // More platforms at varying heights — creates multi-level paths
+    const platformCount = Math.min(16, 4 + Math.floor(options.floor * 0.8));
     for (let i = 0; i < platformCount; i++) {
       const px = rng.int(8, widthTiles - 12);
-      const py = rng.int(groundY - 8, groundY - 3);
-      const len = rng.int(2, 7);
+      const py = rng.int(groundY - 10, groundY - 3);
+      const len = rng.int(3, 7);
 
       for (let dx = 0; dx < len; dx++) {
         const tx = px + dx;
         if (tx <= 1 || tx >= widthTiles - 2) continue;
-        data[py][tx] = PLATFORM_TILE;
+        data[py][tx] = rng.chance(0.3) ? ONE_WAY_TILE : PLATFORM_TILE;
+      }
+    }
+
+    // Platform chains: sequences of small platforms requiring consecutive jumps
+    if (options.floor >= 2) {
+      const chains = rng.int(1, Math.min(3, 1 + Math.floor(options.floor / 3)));
+      for (let c = 0; c < chains; c++) {
+        let cx = rng.int(12, Math.floor(widthTiles / 2));
+        let cy = rng.int(groundY - 7, groundY - 4);
+        const steps = rng.int(3, 5);
+        for (let s = 0; s < steps; s++) {
+          const platLen = rng.int(2, 3);
+          for (let dx = 0; dx < platLen; dx++) {
+            if (cx + dx > 1 && cx + dx < widthTiles - 2 && cy > 2) {
+              data[cy][cx + dx] = ONE_WAY_TILE;
+            }
+          }
+          cx += rng.int(3, 5);
+          cy -= rng.int(1, 3);
+        }
+      }
+    }
+
+    // Elevated alternate path on later floors
+    if (options.floor >= 3 && rng.chance(0.6)) {
+      const altY = groundY - rng.int(6, 9);
+      if (altY > 2) {
+        const altStart = rng.int(15, 25);
+        const altEnd = rng.int(
+          altStart + 12,
+          Math.min(altStart + 25, widthTiles - 10),
+        );
+        for (let ax = altStart; ax < altEnd; ax++) {
+          // Alternate between solid and gaps for challenge
+          if (rng.chance(0.15)) continue;
+          data[altY][ax] = ONE_WAY_TILE;
+        }
       }
     }
   }
@@ -639,10 +723,16 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
   }
 
   if (isBossFloor) {
+    // Spawn boss closer to the player (1/3 of arena width, not center)
+    // so the encounter begins quickly
+    const bossX = Math.min(
+      Math.floor(widthTiles / 3),
+      Math.floor(widthTiles / 2),
+    );
     enemies.push({
       type: "dog2",
       role: "boss",
-      pos: toPx(Math.floor(widthTiles / 2), groundY - 1, tileSize),
+      pos: toPx(bossX, groundY - 1, tileSize),
     });
   }
 

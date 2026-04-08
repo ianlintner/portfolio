@@ -11,6 +11,9 @@ export class UIScene extends Scene {
   private seedText!: Phaser.GameObjects.Text;
   private objectiveText!: Phaser.GameObjects.Text;
   private muteText!: Phaser.GameObjects.Text;
+  private bossBarBg!: Phaser.GameObjects.Rectangle;
+  private bossBarFill!: Phaser.GameObjects.Rectangle;
+  private bossBarText!: Phaser.GameObjects.Text;
 
   constructor() {
     super("UIScene");
@@ -59,6 +62,30 @@ export class UIScene extends Scene {
       this.muteText.setText(audio.muted ? "🔇 [M]" : "🔊 [M]");
     });
 
+    // Boss health bar (centered at bottom, hidden by default)
+    const barWidth = 240;
+    const barHeight = 14;
+    const barX = this.scale.width / 2;
+    const barY = this.scale.height - 30;
+
+    this.bossBarBg = this.add
+      .rectangle(barX, barY, barWidth + 4, barHeight + 4, 0x1e293b)
+      .setOrigin(0.5)
+      .setVisible(false);
+    this.bossBarFill = this.add
+      .rectangle(barX - barWidth / 2, barY, barWidth, barHeight, 0xef4444)
+      .setOrigin(0, 0.5)
+      .setVisible(false);
+    this.bossBarText = this.add
+      .text(barX, barY - 14, "BOSS", {
+        fontSize: "14px",
+        color: "#f43f5e",
+        fontFamily: "Arial",
+        fontStyle: "bold",
+      })
+      .setOrigin(0.5)
+      .setVisible(false);
+
     const render = () => {
       const score = Number(this.registry.get("score") ?? 0);
       const hearts = Number(this.registry.get("playerHearts") ?? 3);
@@ -84,6 +111,23 @@ export class UIScene extends Scene {
       this.floorText.setText(`Floor: ${floor} · Layout: ${layout}`);
       this.seedText.setText(`Seed: ${seed}`);
       this.objectiveText.setText(`Objectives: ${objectiveStatus}`);
+
+      // Boss health bar
+      const bossHp = Number(this.registry.get("bossHp") ?? -1);
+      const bossMaxHp = Number(this.registry.get("bossMaxHp") ?? -1);
+      if (bossHp >= 0 && bossMaxHp > 0) {
+        const pct = Math.max(0, bossHp / bossMaxHp);
+        this.bossBarBg.setVisible(true);
+        this.bossBarFill.setVisible(true);
+        this.bossBarText.setVisible(true);
+        this.bossBarFill.setDisplaySize(pct * 240, 14);
+        this.bossBarText.setText(bossHp > 0 ? "BOSS" : "BOSS DEFEATED");
+        this.bossBarFill.setFillStyle(bossHp > 0 ? 0xef4444 : 0x10b981);
+      } else {
+        this.bossBarBg.setVisible(false);
+        this.bossBarFill.setVisible(false);
+        this.bossBarText.setVisible(false);
+      }
     };
 
     render();

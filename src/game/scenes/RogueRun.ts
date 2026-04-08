@@ -49,6 +49,7 @@ export class RogueRun extends Scene {
   private collectedCoinsThisFloor = 0;
   private totalCoinsThisFloor = 0;
   private deathSequence!: DeathSequence;
+  private bossRef: Enemy | null = null;
 
   constructor() {
     super("RogueRun");
@@ -190,13 +191,24 @@ export class RogueRun extends Scene {
     }
 
     // Enemies
+    this.bossRef = null;
     for (const e of level.enemies) {
       const enemy = new Enemy(this, e.pos.x, e.pos.y, e.type);
       enemy.setTerrainLayer?.(this.layer);
       if (e.role === "boss") {
         enemy.setBossMode();
+        this.bossRef = enemy;
       }
       this.enemies.add(enemy);
+    }
+
+    // Push boss HP to registry for the UI health bar
+    if (this.bossRef) {
+      this.registry.set("bossHp", this.bossRef.getHp());
+      this.registry.set("bossMaxHp", this.bossRef.getMaxHp());
+    } else {
+      this.registry.set("bossHp", -1);
+      this.registry.set("bossMaxHp", -1);
     }
 
     // Moving Platforms
@@ -313,6 +325,7 @@ export class RogueRun extends Scene {
         } else {
           AudioManager.instance.sfx.enemyHit();
         }
+        this.updateBossHp();
         ball.destroy();
       },
       undefined,
@@ -462,6 +475,7 @@ export class RogueRun extends Scene {
       const score =
         Number(this.registry.get("score") ?? 0) + (enemy.isBoss() ? 80 : 25);
       this.registry.set("score", score);
+      this.updateBossHp();
       return;
     }
 
@@ -520,11 +534,20 @@ export class RogueRun extends Scene {
     this.handlePlayerDeath();
   }
 
+  private updateBossHp() {
+    if (this.bossRef) {
+      this.registry.set("bossHp", this.bossRef.getHp());
+    }
+  }
+
   private advanceFloor() {
     if (this.isBossFloor) {
       const bossAlive = this.enemies
         .getChildren()
-        .some((e) => e instanceof Enemy && e.isBoss() && !e.isSquished());
+        .some(
+          (e) =>
+            e instanceof Enemy && e.isBoss() && !e.isSquished() && e.active,
+        );
       if (bossAlive) {
         this.registry.set("objectiveStatus", "Defeat boss before using goal");
         return;

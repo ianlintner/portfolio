@@ -99,4 +99,51 @@ describe("generateLevel", () => {
     }
     expect(foundVerticalTiles).toBe(true);
   });
+
+  it("boss arena is 40 tiles wide with platforms and walls", () => {
+    const lvl = generateLevel({ seed: "boss-test", floor: 5 });
+    expect(lvl.isBossFloor).toBe(true);
+    expect(lvl.layout).toBe("boss");
+    expect(lvl.widthTiles).toBe(40);
+
+    const flat = lvl.data.flat();
+    // Boss arena should have platforms for tactical movement
+    const hasPlatforms = flat.includes(TILE.PLATFORM);
+    const hasOneWay = flat.includes(TILE.ONE_WAY);
+    const hasWalls = flat.includes(TILE.WALL);
+    expect(hasPlatforms || hasOneWay).toBe(true);
+    expect(hasWalls).toBe(true);
+  });
+
+  it("boss spawns closer to player spawn (left third of arena)", () => {
+    const lvl = generateLevel({ seed: "boss-pos", floor: 5 });
+    const bossEnemy = lvl.enemies.find((e) => e.role === "boss");
+    expect(bossEnemy).toBeDefined();
+    // Boss should be in the left third (tile ~13 = ~13*32+16 = 432px)
+    const leftThirdPx = Math.floor(lvl.widthTiles / 3) * lvl.tileSize;
+    expect(bossEnemy!.pos.x).toBeLessThanOrEqual(leftThirdPx + lvl.tileSize);
+  });
+
+  it("standard layouts have platform chains on later floors", () => {
+    // Generate several standard layouts at floor 4+ and check for ONE_WAY tiles
+    // (chains use ONE_WAY_TILE)
+    let foundChains = false;
+    for (let i = 0; i < 50 && !foundChains; i++) {
+      const lvl = generateLevel({ seed: `chain-${i}`, floor: 4 });
+      if (lvl.layout === "standard") {
+        const flat = lvl.data.flat();
+        if (flat.includes(TILE.ONE_WAY)) foundChains = true;
+      }
+    }
+    expect(foundChains).toBe(true);
+  });
+
+  it("parkour layout can appear as early as floor 2", () => {
+    let foundParkour = false;
+    for (let i = 0; i < 200 && !foundParkour; i++) {
+      const lvl = generateLevel({ seed: `parkour-early-${i}`, floor: 2 });
+      if (lvl.layout === "parkour") foundParkour = true;
+    }
+    expect(foundParkour).toBe(true);
+  });
 });

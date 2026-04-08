@@ -141,6 +141,14 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     return this.isBossEnemy;
   }
 
+  public getHp(): number {
+    return this.hp;
+  }
+
+  public getMaxHp(): number {
+    return this.maxHp;
+  }
+
   public isSquished(): boolean {
     return this.squished;
   }
@@ -262,6 +270,32 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.direction = player.x >= this.x ? 1 : -1;
         body.setVelocityX(this.direction * (this.isBossEnemy ? 320 : 250));
         this.lastActionAt = this.scene.time.now;
+      }
+
+      // Boss always chases the player and periodically leaps
+      if (this.isBossEnemy && dx > 40) {
+        this.direction = player.x >= this.x ? 1 : -1;
+        const enraged = this.hp <= Math.floor(this.maxHp / 3);
+        const chaseSpeed = enraged
+          ? this.walkSpeed * 2.2
+          : this.walkSpeed * 1.4;
+        speed = Math.max(speed, chaseSpeed);
+
+        // Boss leap toward player periodically
+        const leapCooldown = enraged ? 1400 : 2800;
+        if (
+          body.blocked.down &&
+          this.scene.time.now > this.lastActionAt + leapCooldown &&
+          dx < 400
+        ) {
+          body.setVelocityY(-350);
+          this.lastActionAt = this.scene.time.now;
+        }
+
+        // Enrage visual feedback
+        if (enraged) {
+          this.setTint(0xff0000);
+        }
       }
 
       // Shooters: rat2 periodically shoots and keeps a bit of distance.
