@@ -11,6 +11,9 @@ import {
 
 describe("Metadata Utils", () => {
   const originalEnv = process.env.NEXT_PUBLIC_SITE_URL;
+  const originalNextAuthUrl = process.env.NEXTAUTH_URL;
+  const originalVercelProductionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  const originalVercelUrl = process.env.VERCEL_URL;
 
   afterEach(() => {
     // Restore original environment
@@ -18,6 +21,24 @@ describe("Metadata Utils", () => {
       process.env.NEXT_PUBLIC_SITE_URL = originalEnv;
     } else {
       delete process.env.NEXT_PUBLIC_SITE_URL;
+    }
+
+    if (originalNextAuthUrl) {
+      process.env.NEXTAUTH_URL = originalNextAuthUrl;
+    } else {
+      delete process.env.NEXTAUTH_URL;
+    }
+
+    if (originalVercelProductionUrl) {
+      process.env.VERCEL_PROJECT_PRODUCTION_URL = originalVercelProductionUrl;
+    } else {
+      delete process.env.VERCEL_PROJECT_PRODUCTION_URL;
+    }
+
+    if (originalVercelUrl) {
+      process.env.VERCEL_URL = originalVercelUrl;
+    } else {
+      delete process.env.VERCEL_URL;
     }
   });
 
@@ -27,8 +48,26 @@ describe("Metadata Utils", () => {
       expect(getSiteUrl()).toBe("https://example.com");
     });
 
+    it("should fall back to NEXTAUTH_URL when public site URL is not set", () => {
+      delete process.env.NEXT_PUBLIC_SITE_URL;
+      process.env.NEXTAUTH_URL = "https://auth.example.com";
+
+      expect(getSiteUrl()).toBe("https://auth.example.com");
+    });
+
+    it("should normalize Vercel hostnames into https URLs", () => {
+      delete process.env.NEXT_PUBLIC_SITE_URL;
+      delete process.env.NEXTAUTH_URL;
+      process.env.VERCEL_PROJECT_PRODUCTION_URL = "portfolio.example.com";
+
+      expect(getSiteUrl()).toBe("https://portfolio.example.com");
+    });
+
     it("should return localhost default when environment variable is not set", () => {
       delete process.env.NEXT_PUBLIC_SITE_URL;
+      delete process.env.NEXTAUTH_URL;
+      delete process.env.VERCEL_PROJECT_PRODUCTION_URL;
+      delete process.env.VERCEL_URL;
       expect(getSiteUrl()).toBe("http://localhost:3000");
     });
   });

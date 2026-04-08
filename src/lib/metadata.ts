@@ -3,10 +3,36 @@
  */
 
 /**
+ * Normalize a site URL or host into an absolute URL
+ */
+function normalizeSiteUrl(value: string): string {
+  const trimmedValue = value.trim();
+
+  if (!trimmedValue) {
+    return "";
+  }
+
+  if (
+    trimmedValue.startsWith("http://") ||
+    trimmedValue.startsWith("https://")
+  ) {
+    return trimmedValue;
+  }
+
+  return `https://${trimmedValue}`;
+}
+
+/**
  * Get the site base URL from environment or default to localhost
  */
 export function getSiteUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.NEXTAUTH_URL ||
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+    process.env.VERCEL_URL;
+
+  return siteUrl ? normalizeSiteUrl(siteUrl) : "http://localhost:3000";
 }
 
 /**
