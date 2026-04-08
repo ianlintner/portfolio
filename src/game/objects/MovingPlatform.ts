@@ -1,4 +1,5 @@
 import * as Phaser from "phaser";
+import { GENERATED_TEXTURES } from "../assets/generatedTextures";
 
 export type MovingPlatformConfig = {
   startX: number;
@@ -19,7 +20,12 @@ export class MovingPlatform extends Phaser.Physics.Arcade.Sprite {
   private pauseUntil = 0;
 
   constructor(scene: Phaser.Scene, config: MovingPlatformConfig) {
-    super(scene, config.startX, config.startY, "platform");
+    super(
+      scene,
+      config.startX,
+      config.startY,
+      GENERATED_TEXTURES.movingPlatform,
+    );
 
     this.startPos = new Phaser.Math.Vector2(config.startX, config.startY);
     this.endPos = new Phaser.Math.Vector2(config.endX, config.endY);
@@ -30,13 +36,13 @@ export class MovingPlatform extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this);
 
     const widthPx = (config.widthTiles ?? 3) * 32;
-    this.setDisplaySize(widthPx, 12);
-    this.setTint(0x60a5fa);
+    this.setDisplaySize(widthPx, 14);
 
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setImmovable(true);
     body.setAllowGravity(false);
     body.setFrictionX(1);
+    body.setSize(Math.max(16, widthPx - 8), 10).setOffset(4, 2);
 
     this.moveToward(this.endPos);
   }

@@ -4,6 +4,7 @@ import type * as Phaser from "phaser";
 import { PARALLAX_SETS, TILESETS } from "../assets/manifest";
 import { createTilemapFromData } from "../assets/tilemap";
 import { createParallaxBackground } from "../assets/parallax";
+import { GENERATED_TEXTURES } from "../assets/generatedTextures";
 import { Player } from "../objects/Player";
 import { Enemy } from "../objects/Enemy";
 import { Hazard } from "../objects/Hazard";
@@ -444,12 +445,16 @@ export class RogueRun extends Scene {
   }
 
   private spawnEnemyProjectile(x: number, y: number, direction: number) {
-    const bullet = this.enemyProjectiles.create(x, y, "platform");
-    bullet.setDisplaySize(12, 8);
-    bullet.setTint(0xef4444);
+    const bullet = this.enemyProjectiles.create(
+      x,
+      y,
+      GENERATED_TEXTURES.enemyProjectile,
+    );
+    bullet.setDisplaySize(16, 16);
     bullet.setVelocityX(240 * direction);
-    bullet.setCircle(4);
+    bullet.setCircle(5);
     bullet.setCollideWorldBounds(true);
+    bullet.setFlipX(direction < 0);
 
     this.physics.add.collider(bullet, this.layer, () => bullet.destroy());
     this.time.delayedCall(2600, () => bullet.destroy());

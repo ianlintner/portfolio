@@ -1,11 +1,12 @@
 import { Scene } from "phaser";
 import * as Phaser from "phaser";
+import { GENERATED_TEXTURES } from "../assets/generatedTextures";
 
 export type HazardType = "spike" | "steam";
 
-const TINT_BY_TYPE: Record<HazardType, number> = {
-  spike: 0xf97316,
-  steam: 0x94a3b8,
+const TEXTURE_BY_TYPE: Record<HazardType, string> = {
+  spike: GENERATED_TEXTURES.hazardSpike,
+  steam: GENERATED_TEXTURES.hazardSteamOff,
 };
 
 export class Hazard extends Phaser.Physics.Arcade.Sprite {
@@ -14,24 +15,22 @@ export class Hazard extends Phaser.Physics.Arcade.Sprite {
   private hazardActive = true;
 
   constructor(scene: Scene, x: number, y: number, hazardType: HazardType) {
-    super(scene, x, y, "platform");
+    super(scene, x, y, TEXTURE_BY_TYPE[hazardType]);
 
     this.hazardType = hazardType;
-    this.damage = hazardType === "steam" ? 1 : 1;
+    this.damage = 1;
 
     scene.add.existing(this);
     scene.physics.add.existing(this, true);
 
-    this.setTint(TINT_BY_TYPE[hazardType]);
-    this.setAlpha(hazardType === "steam" ? 0.45 : 0.95);
-
     const body = this.body as Phaser.Physics.Arcade.StaticBody;
     if (hazardType === "spike") {
-      this.setDisplaySize(24, 24);
-      body.setSize(20, 18).setOffset(2, 6);
+      this.setDisplaySize(28, 28);
+      this.setAlpha(0.98);
+      body.setSize(24, 14).setOffset(2, 12);
     } else {
-      this.setDisplaySize(20, 30);
-      body.setSize(16, 26).setOffset(2, 2);
+      this.setDisplaySize(28, 28);
+      body.setSize(18, 12).setOffset(5, 16);
       this.startSteamCycle();
     }
     body.updateFromGameObject();
@@ -42,12 +41,34 @@ export class Hazard extends Phaser.Physics.Arcade.Sprite {
   }
 
   private startSteamCycle() {
+    const syncSteamVisual = () => {
+      this.setTexture(
+        this.hazardActive
+          ? GENERATED_TEXTURES.hazardSteamOn
+          : GENERATED_TEXTURES.hazardSteamOff,
+      );
+      this.setAlpha(this.hazardActive ? 0.95 : 0.6);
+    };
+
+    syncSteamVisual();
+
     this.scene.time.addEvent({
       delay: 2000,
       loop: true,
       callback: () => {
         this.hazardActive = !this.hazardActive;
-        this.setAlpha(this.hazardActive ? 0.85 : 0.2);
+        syncSteamVisual();
+
+        if (this.hazardActive) {
+          this.scene.tweens.add({
+            targets: this,
+            scaleX: 1.06,
+            scaleY: 1.06,
+            duration: 180,
+            yoyo: true,
+            ease: "Sine.Out",
+          });
+        }
       },
     });
   }

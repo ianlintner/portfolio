@@ -10,6 +10,10 @@ import {
   getParallaxLayerKey,
   getParallaxLayerUrl,
 } from "../assets/manifest";
+import {
+  GENERATED_TEXTURES,
+  ensureGeneratedGameTextures,
+} from "../assets/generatedTextures";
 
 export class Preloader extends Scene {
   constructor() {
@@ -151,14 +155,9 @@ export class Preloader extends Scene {
   }
 
   create() {
-    // Create a simple 32x32 white pixel for platforms to tint.
-    // Do this in create() so it can't interfere with the loader lifecycle.
-    if (!this.textures.exists("platform")) {
-      const platformGfx = this.make.graphics({ x: 0, y: 0 });
-      platformGfx.fillStyle(0xffffff).fillRect(0, 0, 32, 32);
-      platformGfx.generateTexture("platform", 32, 32);
-      platformGfx.destroy();
-    }
+    // Create lightweight runtime textures used for hazards, pickups,
+    // projectiles, and fallback placeholder art.
+    ensureGeneratedGameTextures(this);
 
     // Pixel-art filtering: without this, sprites can look like they're
     // "zooming"/shimmering when the camera follows with sub-pixel motion.
@@ -175,12 +174,12 @@ export class Preloader extends Scene {
       SPRITESHEETS.enemy_bird1.key,
       SPRITESHEETS.enemy_bird2.key,
       SPRITESHEETS.items.key,
-      "platform",
+      ...Object.values(GENERATED_TEXTURES),
       // Plain images used as pixel art.
       IMAGES.catnip.key,
       IMAGES.hairball.key,
       IMAGES.catfoodBowl.key,
-    ] as const;
+    ];
 
     for (const key of nearestKeys) {
       const tex = this.textures.get(key);
