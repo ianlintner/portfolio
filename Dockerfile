@@ -26,8 +26,12 @@ COPY . .
 # Provide build-time defaults so NextAuth secret check does not fail during image build.
 # These are only used in this build stage and are not copied into the final runtime image.
 # IMPORTANT: Real secrets must be provided at runtime via environment variables or secret management.
-ARG NEXTAUTH_URL=http://localhost:3000
+ARG NEXTAUTH_URL=https://www.cat-herding.net
 ENV NEXTAUTH_URL=${NEXTAUTH_URL}
+# NEXT_PUBLIC_SITE_URL is inlined by Next.js at build time into all static pages
+# (open-graph tags, canonical URLs, etc.). It MUST match the production domain.
+ARG NEXT_PUBLIC_SITE_URL=https://www.cat-herding.net
+ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
 # Build Next.js app (includes docs:build via pnpm docs:build && next build)
 # We provide a stub NEXTAUTH_SECRET inline to satisfy build-time checks without leaking real secrets or triggering docker warnings
 RUN NEXTAUTH_SECRET="build-time-stub-secret-not-for-production" pnpm run build
