@@ -2,7 +2,10 @@
  * Integration test for blog post metadata generation
  */
 
-import { getPostBySlug } from "../posts";
+import fs from "fs";
+import path from "path";
+
+import { getAllPosts, getPostBySlug } from "../posts";
 import { getBlogPostImage, getAbsoluteUrl } from "../metadata";
 
 describe("Blog Post Metadata Integration", () => {
@@ -46,5 +49,19 @@ describe("Blog Post Metadata Integration", () => {
     expect(meta.author).toBeTruthy();
     expect(meta.tags).toBeInstanceOf(Array);
     expect(meta.tags!.length).toBeGreaterThan(0);
+  });
+
+  it("should provide a social image and alt text for every blog post", () => {
+    const posts = getAllPosts();
+
+    posts.forEach((post) => {
+      expect(post.image?.trim()).toBeTruthy();
+      expect(post.imageAlt?.trim()).toBeTruthy();
+
+      if (post.image?.startsWith("/")) {
+        const imagePath = path.join(process.cwd(), "public", post.image);
+        expect(fs.existsSync(imagePath)).toBe(true);
+      }
+    });
   });
 });
