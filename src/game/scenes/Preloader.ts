@@ -9,6 +9,7 @@ import {
   TILESETS,
   getParallaxLayerKey,
   getParallaxLayerUrl,
+  withBasePath,
 } from "../assets/manifest";
 import {
   GENERATED_TEXTURES,
@@ -154,7 +155,10 @@ export class Preloader extends Scene {
     }
 
     // Audio assets
-    this.load.audio("intro-music", withBasePath("/assets/game/audio/Saturday_Morning_High_Score.mp3"));
+    this.load.audio(
+      "intro-music",
+      withBasePath("/assets/game/audio/Saturday_Morning_High_Score.mp3"),
+    );
   }
 
   create() {
