@@ -83,6 +83,8 @@ jobs:
         run: pnpm run test:ci
 
       - name: Build static site
+        env:
+          NEXT_PUBLIC_SITE_URL: https://cat-herding.net
         run: pnpm docs:build && pnpm next build
 
       - name: Upload static artifact

@@ -21,8 +21,8 @@ configMapGenerator:
     behavior: create
     literals:
       - NODE_ENV=production
-      - NEXTAUTH_URL=https://www.cat-herding.net
-      - NEXT_PUBLIC_SITE_URL=https://www.cat-herding.net
+      - NEXTAUTH_URL=https://cat-herding.net
+      - NEXT_PUBLIC_SITE_URL=https://cat-herding.net
       - AZURE_DEPLOYMENT=true
 
 secretGenerator:
