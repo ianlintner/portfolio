@@ -50,7 +50,7 @@ export function getAbsoluteUrl(path: string): string {
  * Get the default social image URL for the site
  */
 export function getDefaultSocialImage(): string {
-  return getAbsoluteUrl("/images/social-default.svg");
+  return getAbsoluteUrl("/images/social-default.png");
 }
 
 /**

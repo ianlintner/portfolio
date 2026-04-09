@@ -18,7 +18,7 @@ describe("Blog Post Metadata Integration", () => {
 
     expect(meta).toBeDefined();
     expect(meta.title).toBe("🧠 AI Coding Agent Tier List (2025 Edition)");
-    expect(meta.image).toBe("/images/ai-coding-agents-social.svg");
+    expect(meta.image).toBe("/images/ai-coding-agents-social.png");
     expect(meta.imageAlt).toBeTruthy();
   });
 
@@ -27,7 +27,7 @@ describe("Blog Post Metadata Integration", () => {
     const imageUrl = getBlogPostImage(meta.image);
 
     expect(imageUrl).toBe(
-      "https://example.com/images/ai-coding-agents-social.svg",
+      "https://example.com/images/ai-coding-agents-social.png",
     );
   });
 
