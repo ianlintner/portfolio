@@ -55,7 +55,9 @@ export class MainMenu extends Scene {
     });
     // Set scroll factor to 0 so we can manually update tilePositionX
     this.parallaxLayers.forEach((layer) => {
-      layer.setScrollFactor(0, 0);
+      if ("setScrollFactor" in layer) {
+        (layer as Phaser.GameObjects.Image).setScrollFactor(0, 0);
+      }
     });
 
     // Create floor
