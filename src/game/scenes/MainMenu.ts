@@ -27,7 +27,6 @@ export class MainMenu extends Scene {
   private streetLamps: Phaser.GameObjects.Image[] = [];
   private runSpeed = 1.5;
   private catIsJumping = false;
-  private catDodgeCooldown = 0;
   private groundY = 0;
   private rooftopY = 0;
   private catRunY = 0;
@@ -692,26 +691,6 @@ export class MainMenu extends Scene {
     });
   }
 
-  private _catDodgeJump() {
-    this.catIsJumping = true;
-    this.catDodgeCooldown = 2200;
-    this.cat.play("jump-right");
-    const baseY = this.catRunY;
-    // Higher, more dramatic arc for a dodge
-    this.tweens.add({
-      targets: this.cat,
-      y: baseY - 120,
-      duration: 300,
-      yoyo: true,
-      ease: "Sine.easeOut",
-      onComplete: () => {
-        this.cat.y = this.catRunY;
-        this.cat.play("walk-right");
-        this.catIsJumping = false;
-      },
-    });
-  }
-
   private _getCatRoofY() {
     const catX = this.cat?.x ?? 150;
 
@@ -832,29 +811,11 @@ export class MainMenu extends Scene {
       }
     });
 
-    // Cat dodge: react when a bird enemy approaches at rooftop level
-    if (!this.catIsJumping && this.catDodgeCooldown <= 0) {
-      const incoming = this.enemies.find(
-        ({ sprite, type }) =>
-          type.includes("bird") &&
-          sprite.x > this.cat.x - 10 &&
-          sprite.x < this.cat.x + 110,
-      );
-      if (incoming) {
-        this._catDodgeJump();
-        return;
-      }
-    }
-
     // Random idle jump
-    if (!this.catIsJumping && this.catDodgeCooldown <= 0) {
+    if (!this.catIsJumping) {
       if (Phaser.Math.FloatBetween(0, 1) < 0.004) {
         this._catJump(Phaser.Math.Between(40, 80));
       }
-    }
-
-    if (this.catDodgeCooldown > 0) {
-      this.catDodgeCooldown -= delta;
     }
   }
 }
