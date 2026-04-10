@@ -22,8 +22,8 @@ export class MainMenu extends Scene {
 
     // Config global audio manager to allow MP3 playing instead of tracking locally
     audio.soundManager = this.sound;
-    // Use the cyberpunk intro track on the main menu screen
-    audio.mp3Key = "cyberpunk-intro";
+    // Use "Paws in the Downpour" as the main menu intro track
+    audio.mp3Key = "paws-in-downpour";
 
     // Unlock Web Audio on first user gesture, then start menu music.
     const unlockAndPlay = () => {

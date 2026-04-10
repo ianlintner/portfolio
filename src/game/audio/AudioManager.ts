@@ -34,7 +34,7 @@ export class AudioManager {
   // ── Native Phaser Sound ──────────────────────────────────────────
   public soundManager: Phaser.Sound.BaseSoundManager | null = null;
   public mp3Music: Phaser.Sound.BaseSound | null = null;
-  public mp3Key: string = "cyberpunk-intro";
+  public mp3Key: string = "paws-in-downpour";
   private _useRetroMusic: boolean = false;
 
   get useRetroMusic(): boolean {
