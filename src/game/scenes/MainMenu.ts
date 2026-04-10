@@ -14,6 +14,7 @@ interface EnemyInstance {
 interface MidgroundBuilding {
   image: Phaser.GameObjects.Image;
   scrollSpeed: number;
+  roofInset: number;
 }
 
 export class MainMenu extends Scene {
@@ -29,6 +30,7 @@ export class MainMenu extends Scene {
   private catDodgeCooldown = 0;
   private groundY = 0;
   private rooftopY = 0;
+  private catRunY = 0;
 
   constructor() {
     super("MainMenu");
@@ -101,10 +103,12 @@ export class MainMenu extends Scene {
 
     // ── Player cat on the rooftops ──────────────────────────────────────────
     this.cat = this.add
-      .sprite(150, this.rooftopY - 16, "cat")
+      .sprite(150, this.rooftopY, "cat")
       .setOrigin(0.5, 1)
       .setDepth(-4)
       .setAlpha(0);
+    this.catRunY = this._getCatRoofY();
+    this.cat.setY(this.catRunY);
     this.cat.play("walk-right");
     this.tweens.add({ targets: this.cat, alpha: 1, duration: 500 });
 
@@ -178,6 +182,19 @@ export class MainMenu extends Scene {
 
   // ── Collectibles ──────────────────────────────────────────────────────────
 
+  private _randomCollectibleX(width: number) {
+    // Keep center lane cleaner for title/buttons readability.
+    const laneLeftMin = 80;
+    const laneLeftMax = Math.max(laneLeftMin + 20, Math.floor(width * 0.34));
+    const laneRightMin = Math.min(width - 80, Math.ceil(width * 0.66));
+    const laneRightMax = width - 80;
+
+    if (Phaser.Math.Between(0, 1) === 0) {
+      return Phaser.Math.Between(laneLeftMin, laneLeftMax);
+    }
+    return Phaser.Math.Between(laneRightMin, laneRightMax);
+  }
+
   private _spawnCollectibles(width: number) {
     const texKeys = [
       GENERATED_TEXTURES.collectibleCoin,
@@ -189,9 +206,7 @@ export class MainMenu extends Scene {
 
     texKeys.forEach((tex, i) => {
       const x =
-        80 +
-        ((width - 160) / texKeys.length) * i +
-        Phaser.Math.Between(-20, 20);
+        this._randomCollectibleX(width) + i * Phaser.Math.Between(6, 12);
       const baseY = this.rooftopY - Phaser.Math.Between(40, 100);
       const item = this.add
         .image(x, baseY, tex)
@@ -250,6 +265,12 @@ export class MainMenu extends Scene {
   // ── Midground buildings ───────────────────────────────────────────────────
 
   private _spawnBuildings(width: number, _height: number) {
+    const roofInsetByTexture: Record<string, number> = {
+      [GENERATED_TEXTURES.buildingTall]: 12,
+      [GENERATED_TEXTURES.buildingMedium]: 10,
+      [GENERATED_TEXTURES.buildingShort]: 10,
+    };
+
     // Building configs: texture key, x start position, scroll speed multiplier
     const buildingConfigs: {
       tex: string;
@@ -302,7 +323,12 @@ export class MainMenu extends Scene {
         .setScale(cfg.scale)
         .setDepth(-8);
 
-      this.buildings.push({ image: img, scrollSpeed: cfg.scroll });
+      const sourceInset = roofInsetByTexture[cfg.tex] ?? 10;
+      this.buildings.push({
+        image: img,
+        scrollSpeed: cfg.scroll,
+        roofInset: sourceInset * cfg.scale,
+      });
     }
   }
 
@@ -433,8 +459,34 @@ export class MainMenu extends Scene {
         startButton.setStyle({ color: "#ffffff", backgroundColor: "#1e3a5f" }),
       );
 
+    // "Watch AI Play" button — attract-mode autoplay
+    const watchAIBtn = this.add
+      .text(width / 2, btnY + 58, "👁  WATCH  AI  PLAY", {
+        fontSize: "16px",
+        color: "#94a3b8",
+        fontFamily: "Arial",
+        fontStyle: "bold",
+        backgroundColor: "#0f172a",
+        padding: { x: 18, y: 8 },
+        shadow: { offsetX: 1, offsetY: 2, color: "#000", blur: 4, fill: true },
+      })
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .setDepth(10)
+      .setInteractive({ useHandCursor: true });
+
+    watchAIBtn
+      .on("pointerdown", () => this._startGame(audio, { autoplay: true }))
+      .on("pointerover", () => {
+        audio.sfx.menuHover();
+        watchAIBtn.setStyle({ color: "#e2e8f0", backgroundColor: "#1e293b" });
+      })
+      .on("pointerout", () =>
+        watchAIBtn.setStyle({ color: "#94a3b8", backgroundColor: "#0f172a" }),
+      );
+
     // "Press any key" hint — blinks
-    const anyKeyY = btnY + 70;
+    const anyKeyY = btnY + 128;
     const anyKey = this.add
       .text(width / 2, anyKeyY, "PRESS  ANY  KEY  TO  START", {
         fontSize: "13px",
@@ -525,6 +577,14 @@ export class MainMenu extends Scene {
       },
     });
 
+    // 4b. Watch AI button fades in
+    this.tweens.add({
+      targets: watchAIBtn,
+      alpha: 1,
+      duration: 400,
+      delay: 1350,
+    });
+
     // 5. Hint + desc fade in, then hint blinks
     this.tweens.add({
       targets: [anyKey, desc],
@@ -585,13 +645,15 @@ export class MainMenu extends Scene {
   private _catJump(jumpHeight = 95) {
     this.catIsJumping = true;
     this.cat.play("jump-right");
+    const baseY = this.catRunY;
     this.tweens.add({
       targets: this.cat,
-      y: this.rooftopY - 16 - jumpHeight,
+      y: baseY - jumpHeight,
       duration: 340,
       yoyo: true,
       ease: "Sine.easeOut",
       onComplete: () => {
+        this.cat.y = this.catRunY;
         this.cat.play("walk-right");
         this.catIsJumping = false;
       },
@@ -602,18 +664,70 @@ export class MainMenu extends Scene {
     this.catIsJumping = true;
     this.catDodgeCooldown = 2200;
     this.cat.play("jump-right");
+    const baseY = this.catRunY;
     // Higher, more dramatic arc for a dodge
     this.tweens.add({
       targets: this.cat,
-      y: this.rooftopY - 16 - 120,
+      y: baseY - 120,
       duration: 300,
       yoyo: true,
       ease: "Sine.easeOut",
       onComplete: () => {
+        this.cat.y = this.catRunY;
         this.cat.play("walk-right");
         this.catIsJumping = false;
       },
     });
+  }
+
+  private _getCatRoofY() {
+    const catX = this.cat?.x ?? 150;
+
+    let overlapRoofY: number | null = null;
+
+    for (const b of this.buildings) {
+      const left = b.image.x;
+      const right = left + b.image.displayWidth;
+      const roofY = this.groundY - b.image.displayHeight + b.roofInset;
+
+      if (catX >= left && catX <= right) {
+        if (overlapRoofY === null || roofY < overlapRoofY) {
+          overlapRoofY = roofY;
+        }
+      }
+    }
+
+    // If cat is in a gap, use baseline rooftop path instead of nearest building
+    // to avoid visual "air walking".
+    return (overlapRoofY ?? this.rooftopY) - 2;
+  }
+
+  private _rightmostBuildingEdge(exclude?: Phaser.GameObjects.Image) {
+    let rightmost = this.scale.width;
+    for (const b of this.buildings) {
+      if (exclude && b.image === exclude) continue;
+      const edge = b.image.x + b.image.displayWidth;
+      if (edge > rightmost) rightmost = edge;
+    }
+    return rightmost;
+  }
+
+  private _rightmostLampX(exclude?: Phaser.GameObjects.Image) {
+    let rightmost = this.scale.width;
+    for (const lamp of this.streetLamps) {
+      if (exclude && lamp === exclude) continue;
+      if (lamp.x > rightmost) rightmost = lamp.x;
+    }
+    return rightmost;
+  }
+
+  private _rightmostCollectibleX(exclude?: Phaser.GameObjects.Image) {
+    let rightmost = this.scale.width;
+    for (const item of this.collectibles) {
+      if (exclude && item === exclude) continue;
+      if (item.x > rightmost) rightmost = item.x;
+    }
+    return rightmost;
   }
 
   // ── Update loop ───────────────────────────────────────────────────────────
@@ -639,7 +753,8 @@ export class MainMenu extends Scene {
     this.buildings.forEach((b) => {
       b.image.x -= baseScroll * b.scrollSpeed;
       if (b.image.x < -b.image.displayWidth) {
-        b.image.x = width + Phaser.Math.Between(40, 200);
+        const rightmost = this._rightmostBuildingEdge(b.image);
+        b.image.x = rightmost + Phaser.Math.Between(70, 180);
       }
     });
 
@@ -647,7 +762,8 @@ export class MainMenu extends Scene {
     this.streetLamps.forEach((lamp) => {
       lamp.x -= baseScroll * 0.85;
       if (lamp.x < -30) {
-        lamp.x = width + Phaser.Math.Between(100, 400);
+        const rightmost = this._rightmostLampX(lamp);
+        lamp.x = rightmost + Phaser.Math.Between(180, 320);
       }
     });
 
@@ -655,9 +771,21 @@ export class MainMenu extends Scene {
     this.collectibles.forEach((item) => {
       item.x -= baseScroll * 0.55;
       if (item.x < -40) {
-        item.x = width + Phaser.Math.Between(40, 180);
+        const rightmost = this._rightmostCollectibleX(item);
+        item.x = Math.max(
+          width + 40,
+          rightmost + Phaser.Math.Between(120, 220),
+        );
+        item.y = this.rooftopY - Phaser.Math.Between(40, 100);
       }
     });
+
+    // Keep cat grounded on the current rooftop contour when not jumping.
+    const targetRoofY = this._getCatRoofY();
+    this.catRunY = Phaser.Math.Linear(this.catRunY, targetRoofY, 0.2);
+    if (!this.catIsJumping) {
+      this.cat.y = this.catRunY;
+    }
 
     // Move enemies at street level; respawn when off left edge
     this.enemies.forEach(({ sprite, type, speedMult }) => {
