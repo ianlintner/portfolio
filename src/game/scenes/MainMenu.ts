@@ -341,7 +341,7 @@ export class MainMenu extends Scene {
         roofInset: sourceInset * cfg.scale,
       });
 
-      nextX += img.displayWidth - Phaser.Math.Between(18, 34);
+      nextX += img.displayWidth - Phaser.Math.Between(40, 64);
     }
 
     while (nextX < width + 240) {
@@ -359,7 +359,7 @@ export class MainMenu extends Scene {
         roofInset: sourceInset * cfg.scale,
       });
 
-      nextX += img.displayWidth - Phaser.Math.Between(18, 34);
+      nextX += img.displayWidth - Phaser.Math.Between(40, 64);
     }
   }
 
@@ -765,7 +765,7 @@ export class MainMenu extends Scene {
       b.image.x -= baseScroll * b.scrollSpeed;
       if (b.image.x < -b.image.displayWidth) {
         const rightmost = this._rightmostBuildingEdge(b.image);
-        b.image.x = rightmost - Phaser.Math.Between(18, 34);
+        b.image.x = rightmost - Phaser.Math.Between(40, 64);
       }
     });
 
