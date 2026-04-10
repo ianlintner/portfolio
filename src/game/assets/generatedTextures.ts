@@ -14,6 +14,8 @@ export const GENERATED_TEXTURES = {
   buildingTall: "buildingTall",
   buildingMedium: "buildingMedium",
   buildingShort: "buildingShort",
+  buildingTower: "buildingTower",
+  buildingPlant: "buildingPlant",
   streetLamp: "streetLamp",
 } as const;
 
@@ -262,45 +264,81 @@ function drawWindows(
   }
 }
 
+function drawHazardBand(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+) {
+  for (let dx = 0; dx < width; dx += 8) {
+    g.fillStyle((Math.floor(dx / 8) + 1) % 2 === 0 ? 0xdc2626 : 0xf97316);
+    g.fillRect(x + dx, y, 4, height);
+  }
+}
+
+function drawRoofRail(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  width: number,
+) {
+  g.fillStyle(0x64748b).fillRect(x, y, width, 2);
+  for (let dx = x; dx <= x + width; dx += 10) {
+    g.fillStyle(0x475569).fillRect(dx, y - 5, 2, 7);
+  }
+}
+
+function drawPanelLines(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  step: number,
+) {
+  g.fillStyle(0x111827, 0.45);
+  for (let yy = y + step; yy < y + height; yy += step) {
+    g.fillRect(x, yy, width, 1);
+  }
+}
+
+function drawPipeColumn(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  height: number,
+) {
+  g.fillStyle(0x475569).fillRect(x, y, 6, height);
+  g.fillStyle(0x64748b).fillRect(x + 1, y, 4, 2);
+  g.fillStyle(0x334155).fillRect(x - 2, y + 6, 10, 2);
+}
+
 function createBuildingTextures(scene: Phaser.Scene) {
   // Tall factory building (64 x 128)
   withGraphics(
     scene,
     (g) => {
-      // Main body
-      g.fillStyle(0x1e2744);
+      g.fillStyle(0x1b2440);
       g.fillRect(0, 12, 64, 116);
-      // Darker side edge
-      g.fillStyle(0x151c34);
-      g.fillRect(56, 12, 8, 116);
-      // Top cap / cornice
+      g.fillStyle(0x12192f);
+      g.fillRect(54, 12, 10, 116);
       g.fillStyle(0x2d3a5c);
       g.fillRect(0, 8, 64, 8);
-      // Red-stripe hazard band (matches industrial tileset)
-      for (let x = 0; x < 64; x += 8) {
-        g.fillStyle(x % 16 === 0 ? 0xdc2626 : 0xf97316);
-        g.fillRect(x, 8, 4, 4);
-      }
-      // Rooftop pipe
-      g.fillStyle(0x475569);
-      g.fillRect(10, 0, 6, 14);
-      g.fillStyle(0x64748b);
-      g.fillRect(10, 0, 6, 2);
-      // Chimney steam vent
-      g.fillStyle(0x475569);
-      g.fillRect(44, 2, 10, 12);
-      g.fillStyle(0x64748b);
-      g.fillRect(44, 2, 10, 2);
-      // Windows
-      drawWindows(g, 6, 22, 3, 6, 8, 6, 10, 10);
-      // Door at bottom
-      g.fillStyle(0x0f172a);
-      g.fillRect(22, 108, 16, 20);
-      g.fillStyle(0x475569);
-      g.fillRect(22, 108, 16, 2);
-      // Door handle
-      g.fillStyle(0xfbbf24);
-      g.fillRect(34, 118, 2, 2);
+      drawHazardBand(g, 0, 8, 64, 4);
+      drawRoofRail(g, 6, 11, 48);
+      drawPipeColumn(g, 8, 0, 14);
+      drawPipeColumn(g, 46, 2, 12);
+      g.fillStyle(0x334155).fillRect(20, 20, 20, 82);
+      drawPanelLines(g, 20, 20, 20, 82, 10);
+      drawWindows(g, 4, 24, 2, 5, 8, 6, 12, 10);
+      drawWindows(g, 44, 24, 1, 5, 8, 6, 10, 10);
+      g.fillStyle(0x475569).fillRect(6, 104, 50, 4);
+      g.fillStyle(0x0f172a).fillRect(22, 108, 16, 20);
+      g.fillStyle(0x475569).fillRect(22, 108, 16, 2);
+      g.fillStyle(0xeab308).fillRect(34, 118, 2, 2);
+      g.fillStyle(0x64748b).fillRect(28, 58, 4, 28);
+      g.fillStyle(0x94a3b8, 0.55).fillRect(29, 58, 2, 28);
     },
     GENERATED_TEXTURES.buildingTall,
     64,
@@ -311,42 +349,28 @@ function createBuildingTextures(scene: Phaser.Scene) {
   withGraphics(
     scene,
     (g) => {
-      // Main body
-      g.fillStyle(0x232e4a);
+      g.fillStyle(0x202a46);
       g.fillRect(0, 10, 80, 86);
-      // Roof slab
-      g.fillStyle(0x334155);
+      g.fillStyle(0x2f3d5b);
       g.fillRect(0, 6, 80, 8);
-      // Roof extension / overhang
       g.fillStyle(0x3b4d6b);
       g.fillRect(-2, 6, 84, 4);
-      // Red-stripe safety band
-      for (let x = 0; x < 80; x += 8) {
-        g.fillStyle(x % 16 === 0 ? 0xdc2626 : 0xf97316);
-        g.fillRect(x, 10, 4, 3);
-      }
-      // Air vent / AC unit
-      g.fillStyle(0x475569);
-      g.fillRect(60, 0, 14, 10);
-      g.fillStyle(0x64748b);
-      g.fillRect(62, 2, 10, 2);
-      g.fillStyle(0x1e293b);
-      g.fillRect(62, 5, 10, 3);
-      // Windows (2 rows of 4)
+      drawHazardBand(g, 0, 10, 80, 3);
+      drawRoofRail(g, 10, 9, 56);
+      g.fillStyle(0x475569).fillRect(58, 0, 16, 10);
+      g.fillStyle(0x64748b).fillRect(60, 2, 12, 2);
+      g.fillStyle(0x1e293b).fillRect(60, 5, 12, 3);
       drawWindows(g, 6, 20, 4, 2, 10, 8, 8, 12);
-      // Loading dock / garage
-      g.fillStyle(0x0f172a);
-      g.fillRect(8, 62, 28, 34);
+      g.fillStyle(0x0f172a).fillRect(8, 62, 28, 34);
       g.fillStyle(0x334155);
-      // Garage door lines
       for (let y = 66; y < 94; y += 6) {
         g.fillRect(8, y, 28, 1);
       }
-      // Side windows on right
-      drawWindows(g, 50, 62, 2, 1, 8, 8, 8, 0);
-      // Pipe running down
-      g.fillStyle(0x475569);
-      g.fillRect(74, 14, 4, 82);
+      g.fillStyle(0x475569).fillRect(42, 58, 4, 38);
+      g.fillStyle(0x334155).fillRect(46, 58, 18, 6);
+      drawWindows(g, 50, 68, 2, 1, 8, 8, 8, 0);
+      drawPipeColumn(g, 74, 14, 82);
+      g.fillStyle(0x111827).fillRect(0, 46, 80, 2);
     },
     GENERATED_TEXTURES.buildingMedium,
     80,
@@ -357,51 +381,89 @@ function createBuildingTextures(scene: Phaser.Scene) {
   withGraphics(
     scene,
     (g) => {
-      // Main body
       g.fillStyle(0x1a2340);
       g.fillRect(0, 10, 96, 54);
-      // Roof
       g.fillStyle(0x2d3a5c);
       g.fillRect(0, 6, 96, 8);
-      // Chimney
-      g.fillStyle(0x475569);
-      g.fillRect(76, 0, 8, 10);
-      g.fillStyle(0x64748b);
-      g.fillRect(76, 0, 8, 2);
-      // Red-stripe hazard band
-      for (let x = 0; x < 96; x += 8) {
-        g.fillStyle(x % 16 === 0 ? 0xdc2626 : 0xf97316);
-        g.fillRect(x, 10, 4, 3);
-      }
-      // Garage door (wide)
-      g.fillStyle(0x0f172a);
-      g.fillRect(6, 28, 36, 36);
+      drawHazardBand(g, 0, 10, 96, 3);
+      drawRoofRail(g, 6, 9, 70);
+      drawPipeColumn(g, 76, 0, 10);
+      g.fillStyle(0x0f172a).fillRect(6, 28, 36, 36);
       g.fillStyle(0x334155);
       for (let y = 32; y < 62; y += 6) {
         g.fillRect(6, y, 36, 1);
       }
-      // Warning stripes on garage edges
       for (let y = 28; y < 64; y += 8) {
         g.fillStyle(y % 16 === 0 ? 0xf97316 : 0x1e293b);
         g.fillRect(4, y, 2, 4);
         g.fillRect(42, y, 2, 4);
       }
-      // Small windows
       drawWindows(g, 54, 18, 2, 1, 10, 8, 10, 0);
-      // Vent
-      g.fillStyle(0x334155);
-      g.fillRect(54, 40, 14, 8);
+      g.fillStyle(0x334155).fillRect(54, 40, 14, 8);
       g.fillStyle(0x1e293b);
       for (let x = 56; x < 66; x += 3) {
         g.fillRect(x, 42, 1, 4);
       }
-      // Pipe
-      g.fillStyle(0x475569);
-      g.fillRect(90, 14, 4, 50);
+      g.fillStyle(0x334155).fillRect(72, 26, 14, 24);
+      drawPanelLines(g, 72, 26, 14, 24, 6);
+      g.fillStyle(0x475569).fillRect(90, 14, 4, 50);
     },
     GENERATED_TEXTURES.buildingShort,
     96,
     64,
+  );
+
+  // Narrow tower with rooftop tank (72 x 144)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x19233e).fillRect(8, 18, 56, 126);
+      g.fillStyle(0x12192f).fillRect(54, 18, 10, 126);
+      g.fillStyle(0x334155).fillRect(6, 14, 60, 8);
+      drawHazardBand(g, 8, 18, 56, 3);
+      drawRoofRail(g, 14, 17, 42);
+      g.fillStyle(0x475569).fillRect(18, 2, 20, 14);
+      g.fillStyle(0x64748b).fillRect(20, 4, 16, 2);
+      g.fillStyle(0x334155).fillRect(16, 16, 24, 2);
+      drawPipeColumn(g, 44, 0, 18);
+      drawWindows(g, 14, 30, 2, 7, 10, 7, 12, 9);
+      g.fillStyle(0x475569).fillRect(14, 112, 36, 6);
+      g.fillStyle(0x0f172a).fillRect(24, 118, 18, 26);
+      g.fillStyle(0x111827).fillRect(8, 72, 56, 2);
+    },
+    GENERATED_TEXTURES.buildingTower,
+    72,
+    144,
+  );
+
+  // Industrial plant with stacks and catwalk (112 x 88)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x1b2440).fillRect(0, 24, 112, 64);
+      g.fillStyle(0x111827).fillRect(0, 70, 112, 2);
+      g.fillStyle(0x2d3a5c).fillRect(0, 20, 112, 8);
+      drawHazardBand(g, 0, 24, 112, 3);
+      drawRoofRail(g, 8, 23, 58);
+      drawPipeColumn(g, 10, 0, 24);
+      drawPipeColumn(g, 28, 6, 18);
+      g.fillStyle(0x334155).fillRect(52, 8, 22, 16);
+      g.fillStyle(0x64748b).fillRect(54, 10, 18, 2);
+      g.fillStyle(0x475569).fillRect(36, 38, 58, 6);
+      drawPanelLines(g, 36, 44, 58, 30, 7);
+      g.fillStyle(0x0f172a).fillRect(8, 46, 24, 42);
+      g.fillStyle(0x334155).fillRect(8, 46, 24, 2);
+      for (let y = 52; y < 84; y += 6) {
+        g.fillStyle(0x334155).fillRect(8, y, 24, 1);
+      }
+      drawWindows(g, 74, 30, 2, 3, 10, 8, 10, 10);
+      g.fillStyle(0x475569).fillRect(96, 28, 6, 60);
+      g.fillStyle(0x64748b).fillRect(96, 34, 14, 4);
+      g.fillStyle(0x94a3b8).fillRect(100, 35, 8, 2);
+    },
+    GENERATED_TEXTURES.buildingPlant,
+    112,
+    88,
   );
 }
 

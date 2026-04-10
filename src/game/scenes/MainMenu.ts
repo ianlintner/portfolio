@@ -269,56 +269,68 @@ export class MainMenu extends Scene {
       [GENERATED_TEXTURES.buildingTall]: 12,
       [GENERATED_TEXTURES.buildingMedium]: 10,
       [GENERATED_TEXTURES.buildingShort]: 10,
+      [GENERATED_TEXTURES.buildingTower]: 14,
+      [GENERATED_TEXTURES.buildingPlant]: 20,
     };
 
-    // Building configs: texture key, x start position, scroll speed multiplier
+    // Build an overlapping skyline so the cat always has rooftop coverage.
     const buildingConfigs: {
       tex: string;
-      x: number;
       scroll: number;
       scale: number;
     }[] = [
       {
         tex: GENERATED_TEXTURES.buildingTall,
-        x: 40,
         scroll: 0.65,
         scale: 2,
       },
       {
+        tex: GENERATED_TEXTURES.buildingPlant,
+        scroll: 0.69,
+        scale: 2,
+      },
+      {
         tex: GENERATED_TEXTURES.buildingShort,
-        x: Math.round(width * 0.25),
         scroll: 0.7,
         scale: 2,
       },
       {
         tex: GENERATED_TEXTURES.buildingMedium,
-        x: Math.round(width * 0.48),
         scroll: 0.6,
         scale: 2,
       },
       {
+        tex: GENERATED_TEXTURES.buildingTower,
+        scroll: 0.64,
+        scale: 2,
+      },
+      {
         tex: GENERATED_TEXTURES.buildingTall,
-        x: Math.round(width * 0.72),
         scroll: 0.68,
         scale: 2,
       },
       {
         tex: GENERATED_TEXTURES.buildingShort,
-        x: width - 60,
         scroll: 0.72,
         scale: 2,
       },
       {
+        tex: GENERATED_TEXTURES.buildingPlant,
+        scroll: 0.67,
+        scale: 2,
+      },
+      {
         tex: GENERATED_TEXTURES.buildingMedium,
-        x: width + 160,
         scroll: 0.62,
         scale: 2,
       },
     ];
 
+    let nextX = -40;
+
     for (const cfg of buildingConfigs) {
       const img = this.add
-        .image(cfg.x, this.groundY, cfg.tex)
+        .image(nextX, this.groundY, cfg.tex)
         .setOrigin(0, 1)
         .setScale(cfg.scale)
         .setDepth(-8);
@@ -329,6 +341,26 @@ export class MainMenu extends Scene {
         scrollSpeed: cfg.scroll,
         roofInset: sourceInset * cfg.scale,
       });
+
+      nextX += img.displayWidth - Phaser.Math.Between(18, 34);
+    }
+
+    while (nextX < width + 240) {
+      const cfg = Phaser.Utils.Array.GetRandom(buildingConfigs);
+      const img = this.add
+        .image(nextX, this.groundY, cfg.tex)
+        .setOrigin(0, 1)
+        .setScale(cfg.scale)
+        .setDepth(-8);
+
+      const sourceInset = roofInsetByTexture[cfg.tex] ?? 10;
+      this.buildings.push({
+        image: img,
+        scrollSpeed: cfg.scroll,
+        roofInset: sourceInset * cfg.scale,
+      });
+
+      nextX += img.displayWidth - Phaser.Math.Between(18, 34);
     }
   }
 
@@ -754,7 +786,7 @@ export class MainMenu extends Scene {
       b.image.x -= baseScroll * b.scrollSpeed;
       if (b.image.x < -b.image.displayWidth) {
         const rightmost = this._rightmostBuildingEdge(b.image);
-        b.image.x = rightmost + Phaser.Math.Between(70, 180);
+        b.image.x = rightmost - Phaser.Math.Between(18, 34);
       }
     });
 
