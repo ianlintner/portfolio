@@ -79,47 +79,6 @@ export class AudioManager {
     /* singleton */
   }
 
-  // ── Native Phaser Sound ──────────────────────────────────────────
-  public soundManager: Phaser.Sound.BaseSoundManager | null = null;
-  public mp3Music: Phaser.Sound.BaseSound | null = null;
-  private _useRetroMusic: boolean = false;
-
-  get useRetroMusic(): boolean {
-    return this._useRetroMusic;
-  }
-  set useRetroMusic(v: boolean) {
-    this._useRetroMusic = v;
-    if (v) {
-      if (this.mp3Music) {
-        this.mp3Music.stop();
-      }
-      if (this.currentTrack) {
-        const t = this.currentTrack;
-        this.currentTrack = null;
-        this.playMusic(t);
-      } else {
-        this.playRandomBgMusic();
-      }
-    } else {
-      this.stopMusic();
-      this.playMp3();
-    }
-  }
-
-  playMp3(): void {
-    if (!this.soundManager) return;
-    if (this.mp3Music && this.mp3Music.isPlaying) return;
-
-    if (!this.mp3Music) {
-      this.mp3Music = this.soundManager.add("intro-music", {
-        loop: true,
-        volume: 0.6,
-      });
-    }
-
-    this.mp3Music.play();
-  }
-
   // ── Context unlock ─────────────────────────────────────────────────
 
   /** Call once from a user-gesture handler (click / keydown). */

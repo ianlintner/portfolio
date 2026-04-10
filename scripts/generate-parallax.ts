@@ -117,11 +117,11 @@ async function generateLayer(
         response_format: "url",
       });
 
-      const imageUrl = response.data[0]?.url;
+      const imageUrl = response.data?.[0]?.url;
       if (!imageUrl) throw new Error("No image URL in response");
 
       // Log the revised prompt (DALL-E 3 often rewrites it)
-      const revisedPrompt = response.data[0]?.revised_prompt;
+      const revisedPrompt = response.data?.[0]?.revised_prompt;
       if (revisedPrompt) {
         console.log(
           `  [Layer ${layerIndex}] Revised prompt: ${revisedPrompt.slice(0, 120)}...`,
