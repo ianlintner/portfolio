@@ -78,4 +78,58 @@ test.describe("/game", () => {
       );
     }
   });
+
+  test("autoplay headless mode logs QA state and advances into RogueRun", async ({
+    page,
+  }) => {
+    const aiLogs: string[] = [];
+
+    page.on("console", (msg) => {
+      const text = msg.text();
+      if (text.startsWith("[AI] ")) {
+        aiLogs.push(text);
+      }
+    });
+
+    await page.goto("/game?headless=1&autoplay=1", {
+      waitUntil: "domcontentloaded",
+    });
+
+    await page.waitForFunction(() => Boolean((window as any).__PHASER_GAME__), {
+      timeout: 45_000,
+    });
+
+    await page.waitForFunction(
+      () => {
+        const g = (window as any).__PHASER_GAME__ as any;
+        return Boolean(g?.scene?.isActive?.("RogueRun"));
+      },
+      undefined,
+      { timeout: 45_000 },
+    );
+
+    await page.waitForFunction(
+      () => {
+        const qa = (window as any).__PHASER_QA__;
+        return Boolean(qa?.logs?.length >= 3 && qa?.lastState?.playerX != null);
+      },
+      undefined,
+      { timeout: 45_000 },
+    );
+
+    const qaSnapshot = await page.evaluate(() => {
+      const qa = (window as any).__PHASER_QA__;
+      return {
+        logCount: qa?.logs?.length ?? 0,
+        state: qa?.lastState,
+        input: qa?.lastInput,
+      };
+    });
+
+    expect(qaSnapshot.logCount).toBeGreaterThanOrEqual(3);
+    expect(qaSnapshot.state.playerX).toBeGreaterThan(0);
+    expect(qaSnapshot.state.floor).toBeGreaterThanOrEqual(1);
+    expect([true, false]).toContain(Boolean(qaSnapshot.input.right));
+    expect(aiLogs.length).toBeGreaterThanOrEqual(1);
+  });
 });

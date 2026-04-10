@@ -234,8 +234,8 @@ export const PARALLAX_SETS = {
     verticalMode: "spread",
     // 1.png is a solid background; cover the full viewport.
     coverLayerIndices: [1],
-    // Medium gray behind all layers.
-    backgroundColor: 0x6b7280,
+    // Dark navy behind all layers (matches foreground building silhouettes).
+    backgroundColor: 0x1a1f35,
     // Move the stack upward a bit so we see more sky.
     verticalShiftY: 0.15,
     // Tighten spacing between layers 1 & 2.

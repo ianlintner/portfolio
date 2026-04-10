@@ -1,16 +1,35 @@
 import { Scene } from "phaser";
 import { AudioManager } from "../audio/AudioManager";
-import { PARALLAX_SETS } from "../assets/manifest";
+import { PARALLAX_SETS, TILESETS } from "../assets/manifest";
 import { createParallaxBackground } from "../assets/parallax";
-import { TILESETS } from "../assets/manifest";
+import { GENERATED_TEXTURES } from "../assets/generatedTextures";
+import { getBootOptions } from "../bootOptions";
+
+interface EnemyInstance {
+  sprite: Phaser.GameObjects.Sprite;
+  type: string;
+  speedMult: number;
+}
+
+interface MidgroundBuilding {
+  image: Phaser.GameObjects.Image;
+  scrollSpeed: number;
+}
 
 export class MainMenu extends Scene {
   private parallaxLayers: Phaser.GameObjects.GameObject[] = [];
   private floorTile!: Phaser.GameObjects.TileSprite;
   private cat!: Phaser.GameObjects.Sprite;
-  private enemies: Phaser.GameObjects.Sprite[] = [];
-  private runSpeed = 1.5; // Slower speed to avoid dizzying effect
-  private bgMusic?: Phaser.Sound.BaseSound;
+  private enemies: EnemyInstance[] = [];
+  private collectibles: Phaser.GameObjects.Image[] = [];
+  private buildings: MidgroundBuilding[] = [];
+  private streetLamps: Phaser.GameObjects.Image[] = [];
+  private runSpeed = 1.5;
+  private catIsJumping = false;
+  private catDodgeCooldown = 0;
+  private groundY = 0;
+  private rooftopY = 0;
+  private watchDebugEnabled = false;
 
   constructor() {
     super("MainMenu");
@@ -19,21 +38,27 @@ export class MainMenu extends Scene {
   create() {
     const { width, height } = this.scale;
     const audio = AudioManager.instance;
+    const bootOptions = getBootOptions();
+    this.watchDebugEnabled = Boolean(bootOptions.debug);
 
-    // Config global audio manager to allow MP3 playing instead of tracking locally
+    this.groundY = height - 32;
+    // Rooftop where the cat walks — roughly 60% down the viewport
+    this.rooftopY = Math.round(height * 0.68);
+
+    // ── Audio ───────────────────────────────────────────────────────────────
     audio.soundManager = this.sound;
-    // Use "Paws in the Downpour" as the main menu intro track
     audio.mp3Key = "paws-in-downpour";
-
-    // Start music immediately — Phaser queues it until the browser AudioContext
-    // is unlocked on first user gesture automatically.
     audio.playRandomBgMusic();
 
-    // Still call audio.unlock() on first gesture so the chiptune engine is ready.
     const unlockAudio = () => audio.unlock();
     this.input.once("pointerdown", unlockAudio);
     this.input.keyboard?.once("keydown", unlockAudio);
 
+    // Fill the entire scene with a dark colour so there are no bare gray gaps
+    // between the parallax art and the floor tiles.
+    this.cameras.main.setBackgroundColor("#1a1a2e");
+
+    // ── Parallax background ─────────────────────────────────────────────────
     this.parallaxLayers = createParallaxBackground(this, {
       set: PARALLAX_SETS.industrial1,
       worldWidth: width,
@@ -41,176 +66,700 @@ export class MainMenu extends Scene {
       repeatX: true,
       depthStart: -100,
     });
-    // Set scroll factor to 0 so we can manually update tilePositionX
     this.parallaxLayers.forEach((layer) => {
       if ("setScrollFactor" in layer) {
         (layer as Phaser.GameObjects.Image).setScrollFactor(0, 0);
       }
     });
 
-    // Create floor
+    // ── Rain particles (fits "Paws in the Downpour") ────────────────────────
+    this._createRain(width, height);
+
+    // ── Ground fill ────────────────────────────────────────────────────────
+    const floorSurfaceY = height - 32;
+    const fillTop = height * 0.38;
+    const fillH = floorSurfaceY - fillTop + 32;
+
+    this.add
+      .rectangle(width / 2, fillTop + fillH / 2, width, fillH, 0x1a1f35)
+      .setOrigin(0.5, 0.5)
+      .setDepth(-103.5)
+      .setScrollFactor(0, 0);
+
+    // Walking-surface tile strip (street level)
     this.floorTile = this.add
-      .tileSprite(0, height - 32, width, 32, TILESETS.industrial.key)
+      .tileSprite(0, floorSurfaceY, width, 32, TILESETS.industrial.key)
       .setOrigin(0, 0)
-      .setDepth(-10);
+      .setDepth(-9);
 
-    const groundY = height - 32;
+    // ── Midground buildings ─────────────────────────────────────────────────
+    this._spawnBuildings(width, height);
 
-    // Create the runner cat
+    // ── Street lamps between buildings ──────────────────────────────────────
+    this._spawnStreetLamps(width, height);
+
+    // ── Floating collectibles above rooftops ────────────────────────────────
+    this._spawnCollectibles(width);
+
+    // ── Player cat on the rooftops ──────────────────────────────────────────
     this.cat = this.add
-      .sprite(150, groundY - 16, "cat")
+      .sprite(150, this.rooftopY - 16, "cat")
       .setOrigin(0.5, 1)
-      .setDepth(-5);
+      .setDepth(-4)
+      .setAlpha(0);
     this.cat.play("walk-right");
+    this.tweens.add({ targets: this.cat, alpha: 1, duration: 500 });
 
-    // Pre-spawn some enemies off-screen to run towards the cat
-    const enemyTypes = ["dog1", "rat1", "bird1"];
-    for (let i = 0; i < 3; i++) {
-      const type = enemyTypes[Phaser.Math.Between(0, enemyTypes.length - 1)];
-      const tex = `enemy_${type}`;
-      const enemy = this.add
-        .sprite(width + Phaser.Math.Between(200, 800), groundY - 16, tex)
-        .setOrigin(0.5, 1)
-        .setDepth(-6)
-        .setFlipX(true) // running left
-        .setName(tex);
+    // ── Enemies at street level ─────────────────────────────────────────────
+    this._spawnEnemies(width);
 
-      if (type.includes("bird")) {
-        enemy.setY(groundY - Phaser.Math.Between(60, 120));
-      }
+    // ── Scanline CRT overlay ────────────────────────────────────────────────
+    this._addScanlines(width, height);
 
-      enemy.play(`enemy:${type}:move`);
+    // ── Title sequence ───────────────────────────────────────────────────────
+    this._buildTitleSequence(width, height, audio);
 
-      this.enemies.push(enemy);
+    if (bootOptions.autoplay) {
+      this.time.delayedCall(1200, () => {
+        this._startGame(audio, {
+          autoplay: true,
+          debug: this.watchDebugEnabled,
+          headless: Boolean(bootOptions.headless),
+        });
+      });
+    }
+  }
+
+  // ── Rain ─────────────────────────────────────────────────────────────────
+
+  private _createRain(width: number, height: number) {
+    if (!this.textures.exists("raindrop")) {
+      const g = this.make.graphics({ x: 0, y: 0 });
+      g.fillStyle(0x93c5fd, 1);
+      g.fillRect(0, 0, 1, 7);
+      g.generateTexture("raindrop", 1, 7);
+      g.destroy();
     }
 
-    // Title text with retro style
+    const emitter = this.add.particles(0, 0, "raindrop", {
+      x: { min: -80, max: width + 80 },
+      y: -20,
+      lifespan: { min: 700, max: 1100 },
+      speedX: 45,
+      speedY: { min: 380, max: 560 },
+      quantity: 2,
+      frequency: 20,
+      alpha: { start: 0.45, end: 0 },
+      scale: { min: 0.7, max: 1.4 },
+    });
+    emitter.setDepth(-50);
+
+    // Subtle rain puddle splash rings on the floor
+    if (!this.textures.exists("splash")) {
+      const sg = this.make.graphics({ x: 0, y: 0 });
+      sg.lineStyle(1, 0x93c5fd, 0.6);
+      sg.strokeEllipse(6, 3, 12, 4);
+      sg.generateTexture("splash", 12, 6);
+      sg.destroy();
+    }
+
     this.add
-      .text(width / 2, height / 3, "Cat Adventure", {
-        fontSize: "64px",
+      .particles(0, height - 36, "splash", {
+        x: { min: 0, max: width },
+        y: 0,
+        lifespan: 350,
+        speedX: 0,
+        speedY: 0,
+        quantity: 1,
+        frequency: 80,
+        alpha: { start: 0.5, end: 0 },
+        scale: { start: 0.5, end: 1.4 },
+      })
+      .setDepth(-9);
+  }
+
+  // ── Collectibles ──────────────────────────────────────────────────────────
+
+  private _spawnCollectibles(width: number) {
+    const texKeys = [
+      GENERATED_TEXTURES.collectibleCoin,
+      GENERATED_TEXTURES.collectibleGem,
+      GENERATED_TEXTURES.collectibleCoin,
+      GENERATED_TEXTURES.collectibleHeartSmall,
+      GENERATED_TEXTURES.collectibleGem,
+    ];
+
+    texKeys.forEach((tex, i) => {
+      const x =
+        80 +
+        ((width - 160) / texKeys.length) * i +
+        Phaser.Math.Between(-20, 20);
+      const baseY = this.rooftopY - Phaser.Math.Between(40, 100);
+      const item = this.add
+        .image(x, baseY, tex)
+        .setDepth(-3)
+        .setAlpha(0.9)
+        .setScale(1.5);
+
+      // Bob up/down with staggered phase
+      this.tweens.add({
+        targets: item,
+        y: baseY - 14,
+        duration: Phaser.Math.Between(1100, 2000),
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+        delay: i * 180,
+      });
+
+      this.collectibles.push(item);
+    });
+  }
+
+  // ── Enemies ───────────────────────────────────────────────────────────────
+
+  private _spawnEnemies(width: number) {
+    const configs: { type: string; xOff: number; speedMult: number }[] = [
+      { type: "dog1", xOff: 200, speedMult: 1.05 },
+      { type: "rat1", xOff: 460, speedMult: 1.35 },
+      { type: "bird1", xOff: 330, speedMult: 0.9 },
+      { type: "dog2", xOff: 680, speedMult: 1.1 },
+      { type: "cat1", xOff: 900, speedMult: 1.2 },
+      { type: "bird2", xOff: 560, speedMult: 0.85 },
+      { type: "rat2", xOff: 1100, speedMult: 1.4 },
+    ];
+
+    for (const cfg of configs) {
+      const tex = `enemy_${cfg.type}`;
+      const sprite = this.add
+        .sprite(width + cfg.xOff, this.groundY - 16, tex)
+        .setOrigin(0.5, 1)
+        .setDepth(-7)
+        .setFlipX(true)
+        .setName(cfg.type);
+
+      if (cfg.type.includes("bird")) {
+        // Birds fly between rooftop and street level
+        sprite.setY(this.rooftopY - Phaser.Math.Between(10, 60));
+        sprite.setDepth(-4);
+      }
+
+      sprite.play(`enemy:${cfg.type}:move`);
+      this.enemies.push({ sprite, type: cfg.type, speedMult: cfg.speedMult });
+    }
+  }
+
+  // ── Midground buildings ───────────────────────────────────────────────────
+
+  private _spawnBuildings(width: number, _height: number) {
+    // Building configs: texture key, x start position, scroll speed multiplier
+    const buildingConfigs: {
+      tex: string;
+      x: number;
+      scroll: number;
+      scale: number;
+    }[] = [
+      {
+        tex: GENERATED_TEXTURES.buildingTall,
+        x: 60,
+        scroll: 0.65,
+        scale: 2,
+      },
+      {
+        tex: GENERATED_TEXTURES.buildingShort,
+        x: 220,
+        scroll: 0.7,
+        scale: 2,
+      },
+      {
+        tex: GENERATED_TEXTURES.buildingMedium,
+        x: 400,
+        scroll: 0.6,
+        scale: 2,
+      },
+      {
+        tex: GENERATED_TEXTURES.buildingTall,
+        x: 580,
+        scroll: 0.68,
+        scale: 2,
+      },
+      {
+        tex: GENERATED_TEXTURES.buildingShort,
+        x: 720,
+        scroll: 0.72,
+        scale: 2,
+      },
+      {
+        tex: GENERATED_TEXTURES.buildingMedium,
+        x: 900,
+        scroll: 0.62,
+        scale: 2,
+      },
+    ];
+
+    for (const cfg of buildingConfigs) {
+      const img = this.add
+        .image(cfg.x, this.groundY, cfg.tex)
+        .setOrigin(0, 1)
+        .setScale(cfg.scale)
+        .setDepth(-8);
+
+      this.buildings.push({ image: img, scrollSpeed: cfg.scroll });
+    }
+  }
+
+  // ── Street lamps ──────────────────────────────────────────────────────────
+
+  private _spawnStreetLamps(width: number, _height: number) {
+    const lampPositions = [160, 380, 620, 860];
+    for (const x of lampPositions) {
+      const lamp = this.add
+        .image(x, this.groundY, GENERATED_TEXTURES.streetLamp)
+        .setOrigin(0.5, 1)
+        .setScale(1.5)
+        .setDepth(-7)
+        .setAlpha(0.85);
+
+      this.streetLamps.push(lamp);
+    }
+  }
+
+  // ── CRT scanlines ─────────────────────────────────────────────────────────
+
+  private _addScanlines(width: number, height: number) {
+    if (!this.textures.exists("scanline")) {
+      const sg = this.make.graphics({ x: 0, y: 0 });
+      sg.fillStyle(0x000000, 0.13);
+      sg.fillRect(0, 0, 4, 1);
+      sg.fillStyle(0x000000, 0);
+      sg.fillRect(0, 1, 4, 1);
+      sg.generateTexture("scanline", 4, 2);
+      sg.destroy();
+    }
+
+    const scanlines = this.add
+      .tileSprite(0, 0, width, height, "scanline")
+      .setOrigin(0, 0)
+      .setDepth(90)
+      .setAlpha(0.35);
+
+    // Slow-scroll for animated CRT feel
+    this.tweens.add({
+      targets: scanlines,
+      tilePositionY: height,
+      duration: 10000,
+      repeat: -1,
+      ease: "Linear",
+    });
+  }
+
+  // ── Title sequence ────────────────────────────────────────────────────────
+
+  private _buildTitleSequence(
+    width: number,
+    height: number,
+    audio: AudioManager,
+  ) {
+    const bootOptions = getBootOptions();
+
+    // Main title — punches in from slightly larger scale
+    const titleY = height * 0.28;
+    const title = this.add
+      .text(width / 2, titleY, "CAT ADVENTURE", {
+        fontSize: "72px",
         color: "#ffffff",
-        fontFamily: "Arial",
+        fontFamily: "Arial Black, Arial",
+        fontStyle: "bold",
         stroke: "#3b82f6",
-        strokeThickness: 8,
+        strokeThickness: 10,
         shadow: {
-          offsetX: 3,
-          offsetY: 3,
+          offsetX: 4,
+          offsetY: 4,
+          color: "#0f172a",
+          blur: 8,
+          fill: true,
+        },
+      })
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .setScale(1.25)
+      .setDepth(10);
+
+    // Subtitle — slides up from below
+    const subtitleTargetY = titleY + 62;
+    const subtitle = this.add
+      .text(width / 2, subtitleTargetY + 26, "A  RETRO  ROGUELIKE", {
+        fontSize: "20px",
+        color: "#60a5fa",
+        fontFamily: "Arial",
+        letterSpacing: 6,
+        shadow: {
+          offsetX: 2,
+          offsetY: 2,
           color: "#0f172a",
           blur: 4,
           fill: true,
         },
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .setDepth(10);
 
+    // Start button
+    const btnY = height * 0.55;
     const startButton = this.add
-      .text(width / 2, height / 2, "Start Run", {
-        fontSize: "32px",
+      .text(width / 2, btnY, "▶   START  RUN", {
+        fontSize: "30px",
         color: "#ffffff",
         fontFamily: "Arial",
-        backgroundColor: "#000000",
-        padding: { x: 20, y: 10 },
+        fontStyle: "bold",
+        backgroundColor: "#1e3a5f",
+        padding: { x: 30, y: 14 },
+        shadow: { offsetX: 2, offsetY: 3, color: "#000", blur: 6, fill: true },
       })
       .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true })
+      .setAlpha(0)
+      .setDepth(10)
+      .setInteractive({ useHandCursor: true });
+
+    startButton
+      .on("pointerdown", () => this._startGame(audio))
+      .on("pointerover", () => {
+        audio.sfx.menuHover();
+        startButton.setStyle({ color: "#fbbf24", backgroundColor: "#1e40af" });
+      })
+      .on("pointerout", () =>
+        startButton.setStyle({ color: "#ffffff", backgroundColor: "#1e3a5f" }),
+      );
+
+    const watchButton = this.add
+      .text(width / 2, btnY + 54, "🤖  PLAY & WATCH", {
+        fontSize: "18px",
+        color: "#dbeafe",
+        fontFamily: "Arial",
+        fontStyle: "bold",
+        backgroundColor: "#0f3b2e",
+        padding: { x: 18, y: 8 },
+      })
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .setDepth(10)
+      .setInteractive({ useHandCursor: true });
+
+    watchButton
+      .on("pointerdown", () =>
+        this._startGame(audio, {
+          autoplay: true,
+          debug: this.watchDebugEnabled,
+          headless: false,
+        }),
+      )
+      .on("pointerover", () => {
+        audio.sfx.menuHover();
+        watchButton.setStyle({ color: "#f0fdf4", backgroundColor: "#166534" });
+      })
+      .on("pointerout", () =>
+        watchButton.setStyle({ color: "#dbeafe", backgroundColor: "#0f3b2e" }),
+      );
+
+    const debugToggle = this.add
+      .text(
+        width / 2,
+        btnY + 92,
+        this.watchDebugEnabled ? "🐞 DEBUG HUD: ON" : "🐞 DEBUG HUD: OFF",
+        {
+          fontSize: "14px",
+          color: "#fde68a",
+          fontFamily: "Arial",
+          backgroundColor: "#3f2d16",
+          padding: { x: 14, y: 6 },
+        },
+      )
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .setDepth(10)
+      .setInteractive({ useHandCursor: true });
+
+    debugToggle
       .on("pointerdown", () => {
-        audio.sfx.menuSelect();
-        // Do not stop music here; we want it to flow directly into the game if it's the MP3!
-        // The game will change tracks via playRandomBgMusic() when RogueRun starts
-
-        const seed = Math.random().toString(36).slice(2, 10);
-        this.registry.set("runSeed", seed);
-        this.registry.set("runFloor", 1);
-        this.registry.set("lives", 3);
-        this.registry.set("score", 0);
-        this.registry.set("coins", 0);
-        this.registry.set("gems", 0);
-        this.registry.set("maxHearts", 3);
-        this.registry.set("playerHearts", 3);
-        this.registry.set("objectiveStatus", "-");
-
-        this.scene.start("RogueRun", { seed, floor: 1 });
-        // UI is an overlay; launching avoids stopping the gameplay scene.
-        this.scene.launch("UIScene");
-        this.scene.bringToTop("UIScene");
+        this.watchDebugEnabled = !this.watchDebugEnabled;
+        debugToggle.setText(
+          this.watchDebugEnabled ? "🐞 DEBUG HUD: ON" : "🐞 DEBUG HUD: OFF",
+        );
+        if (bootOptions.autoplay) {
+          audio.sfx.menuHover();
+        }
       })
       .on("pointerover", () => {
         audio.sfx.menuHover();
-        startButton.setStyle({ fill: "#ff0" });
+        debugToggle.setStyle({ color: "#fff7cc", backgroundColor: "#6b4f1d" });
       })
-      .on("pointerout", () => startButton.setStyle({ fill: "#fff" }));
+      .on("pointerout", () =>
+        debugToggle.setStyle({ color: "#fde68a", backgroundColor: "#3f2d16" }),
+      );
 
-    this.add
+    // "Press any key" hint — blinks
+    const anyKeyY = btnY + 138;
+    const anyKey = this.add
+      .text(width / 2, anyKeyY, "PRESS  ANY  KEY  TO  START", {
+        fontSize: "13px",
+        color: "#64748b",
+        fontFamily: "Arial",
+        letterSpacing: 4,
+      })
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .setDepth(10);
+
+    // Description tagline
+    const desc = this.add
       .text(
         width / 2,
-        height / 2 + 70,
-        "Procedural roguelike run. New layout every floor.",
+        anyKeyY + 28,
+        "Procedural floors  ·  Roguelike runs  ·  Pixel art action",
         {
-          fontSize: "16px",
-          color: "#94a3b8",
+          fontSize: "13px",
+          color: "#334155",
           fontFamily: "Arial",
-          shadow: {
-            offsetX: 1,
-            offsetY: 1,
-            color: "#000",
-            blur: 2,
-            fill: true,
-          },
         },
       )
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .setDepth(10);
+
+    // ── Reveal sequence ────────────────────────────────────────────────────
+
+    // 1. Title punches in (200ms delay gives world a moment to render)
+    this.tweens.add({
+      targets: title,
+      alpha: 1,
+      scale: 1,
+      duration: 620,
+      ease: "Back.easeOut",
+      delay: 200,
+    });
+
+    // 2. Title idle animations kick in after punch-in
+    this.time.delayedCall(820, () => {
+      // Gentle shimmer
+      this.tweens.add({
+        targets: title,
+        alpha: { from: 1, to: 0.78 },
+        duration: 2000,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+      });
+      // Subtle rocking
+      this.tweens.add({
+        targets: title,
+        angle: { from: -0.6, to: 0.6 },
+        duration: 3400,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+      });
+    });
+
+    // 3. Subtitle slides up
+    this.tweens.add({
+      targets: subtitle,
+      alpha: 1,
+      y: subtitleTargetY,
+      duration: 500,
+      ease: "Power2.easeOut",
+      delay: 700,
+    });
+
+    // 4. Start button fades in, then pulses
+    this.tweens.add({
+      targets: [startButton, watchButton, debugToggle],
+      alpha: 1,
+      duration: 400,
+      delay: 1100,
+      onComplete: () => {
+        this.tweens.add({
+          targets: [startButton, watchButton],
+          scaleX: 1.05,
+          scaleY: 1.05,
+          duration: 850,
+          yoyo: true,
+          repeat: -1,
+          ease: "Sine.easeInOut",
+        });
+      },
+    });
+
+    // 5. Hint + desc fade in, then hint blinks
+    this.tweens.add({
+      targets: [anyKey, desc],
+      alpha: 1,
+      duration: 400,
+      delay: 1500,
+      onComplete: () => {
+        this.tweens.add({
+          targets: anyKey,
+          alpha: 0.15,
+          duration: 650,
+          yoyo: true,
+          repeat: -1,
+          ease: "Sine.easeInOut",
+        });
+      },
+    });
+
+    // Any key → start
+    this.input.keyboard?.on("keydown", () => {
+      if (startButton.active) this._startGame(audio);
+    });
   }
 
-  update(time: number, delta: number) {
+  // ── Start game ────────────────────────────────────────────────────────────
+
+  private _startGame(
+    audio: AudioManager,
+    options: { autoplay?: boolean; debug?: boolean; headless?: boolean } = {},
+  ) {
+    const seed = Math.random().toString(36).slice(2, 10);
+    this.registry.set("runSeed", seed);
+    this.registry.set("runFloor", 1);
+    this.registry.set("lives", 3);
+    this.registry.set("score", 0);
+    this.registry.set("coins", 0);
+    this.registry.set("gems", 0);
+    this.registry.set("maxHearts", 3);
+    this.registry.set("playerHearts", 3);
+    this.registry.set("objectiveStatus", "-");
+    this.registry.set("autoplayEnabled", Boolean(options.autoplay));
+    this.registry.set("autoplayDebug", Boolean(options.debug));
+    this.registry.set("autoplayHeadless", Boolean(options.headless));
+    audio.sfx.menuSelect();
+    this.scene.start("RogueRun", {
+      seed,
+      floor: 1,
+      autoplay: Boolean(options.autoplay),
+      debug: Boolean(options.debug),
+      headless: Boolean(options.headless),
+    });
+    this.scene.launch("UIScene");
+    this.scene.bringToTop("UIScene");
+  }
+
+  // ── Cat jumps ─────────────────────────────────────────────────────────────
+
+  private _catJump(jumpHeight = 95) {
+    this.catIsJumping = true;
+    this.cat.play("jump-right");
+    this.tweens.add({
+      targets: this.cat,
+      y: this.rooftopY - 16 - jumpHeight,
+      duration: 340,
+      yoyo: true,
+      ease: "Sine.easeOut",
+      onComplete: () => {
+        this.cat.play("walk-right");
+        this.catIsJumping = false;
+      },
+    });
+  }
+
+  private _catDodgeJump() {
+    this.catIsJumping = true;
+    this.catDodgeCooldown = 2200;
+    this.cat.play("jump-right");
+    // Higher, more dramatic arc for a dodge
+    this.tweens.add({
+      targets: this.cat,
+      y: this.rooftopY - 16 - 120,
+      duration: 300,
+      yoyo: true,
+      ease: "Sine.easeOut",
+      onComplete: () => {
+        this.cat.play("walk-right");
+        this.catIsJumping = false;
+      },
+    });
+  }
+
+  // ── Update loop ───────────────────────────────────────────────────────────
+
+  update(_time: number, delta: number) {
     const { width } = this.scale;
-    const dt = delta / 1000; // seconds
+    const dt = delta / 1000;
+    const baseScroll = this.runSpeed * 60 * dt;
 
-    // Move floor
-    this.floorTile.tilePositionX += this.runSpeed * 60 * dt;
+    // Scroll floor
+    this.floorTile.tilePositionX += baseScroll;
 
-    // Move parallax backgrounds
+    // Scroll parallax layers
     for (let i = 0; i < this.parallaxLayers.length; i++) {
       const layer = this.parallaxLayers[i];
       if (layer instanceof Phaser.GameObjects.TileSprite) {
-        // layers 1 to 5 (index 0 to 4 in array) speed progressively
-        // Industrial background uses spread so background is index 1
-        const factor = 0.12 + i * 0.18; // rough spread
-        layer.tilePositionX += this.runSpeed * 60 * dt * factor;
+        const factor = 0.12 + i * 0.18;
+        layer.tilePositionX += baseScroll * factor;
       }
     }
 
-    // Move enemies and reset if offscreen
-    this.enemies.forEach((enemy) => {
-      enemy.x -= this.runSpeed * 60 * dt + 1; // slightly faster than background
-      if (enemy.x < -100) {
-        // Respawn offscreen
-        enemy.x = width + Phaser.Math.Between(200, 800);
+    // Scroll midground buildings (slower than floor, faster than far parallax)
+    this.buildings.forEach((b) => {
+      b.image.x -= baseScroll * b.scrollSpeed;
+      if (b.image.x < -b.image.displayWidth) {
+        b.image.x = width + Phaser.Math.Between(40, 200);
+      }
+    });
 
-        // Random Y based on whether it's a bird or grounded
-        if (enemy.name.includes("bird")) {
-          enemy.setY(this.floorTile.y - 16 - Phaser.Math.Between(60, 120));
+    // Scroll street lamps
+    this.streetLamps.forEach((lamp) => {
+      lamp.x -= baseScroll * 0.85;
+      if (lamp.x < -30) {
+        lamp.x = width + Phaser.Math.Between(100, 400);
+      }
+    });
+
+    // Scroll floating collectibles
+    this.collectibles.forEach((item) => {
+      item.x -= baseScroll * 0.55;
+      if (item.x < -40) {
+        item.x = width + Phaser.Math.Between(40, 180);
+      }
+    });
+
+    // Move enemies at street level; respawn when off left edge
+    this.enemies.forEach(({ sprite, type, speedMult }) => {
+      sprite.x -= (baseScroll + 0.8) * speedMult;
+      if (sprite.x < -100) {
+        sprite.x = width + Phaser.Math.Between(150, 750);
+        if (type.includes("bird")) {
+          sprite.setY(this.rooftopY - Phaser.Math.Between(10, 60));
         } else {
-          enemy.setY(this.floorTile.y - 16);
+          sprite.setY(this.groundY - 16);
         }
       }
     });
 
-    // Make the cat randomly jump
-    if (this.cat.y >= this.floorTile.y - 16) {
-      if (Phaser.Math.FloatBetween(0, 1) < 0.01) {
-        // 1% chance per frame to jump
-        this.cat.play("jump-right");
-        // Add a tween for jump arc
-        this.tweens.add({
-          targets: this.cat,
-          y: this.floorTile.y - 16 - 100,
-          duration: 350,
-          yoyo: true,
-          ease: "Sine.easeOut",
-          onComplete: () => {
-            this.cat.play("walk-right");
-          },
-        });
+    // Cat dodge: react when a bird enemy approaches at rooftop level
+    if (!this.catIsJumping && this.catDodgeCooldown <= 0) {
+      const incoming = this.enemies.find(
+        ({ sprite, type }) =>
+          type.includes("bird") &&
+          sprite.x > this.cat.x - 10 &&
+          sprite.x < this.cat.x + 110,
+      );
+      if (incoming) {
+        this._catDodgeJump();
+        return;
       }
+    }
+
+    // Random idle jump
+    if (!this.catIsJumping && this.catDodgeCooldown <= 0) {
+      if (Phaser.Math.FloatBetween(0, 1) < 0.004) {
+        this._catJump(Phaser.Math.Between(40, 80));
+      }
+    }
+
+    if (this.catDodgeCooldown > 0) {
+      this.catDodgeCooldown -= delta;
     }
   }
 }

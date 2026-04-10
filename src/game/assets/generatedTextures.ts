@@ -11,6 +11,10 @@ export const GENERATED_TEXTURES = {
   collectibleGem: "collectibleGem",
   collectibleHeartSmall: "collectibleHeartSmall",
   collectibleHeartBig: "collectibleHeartBig",
+  buildingTall: "buildingTall",
+  buildingMedium: "buildingMedium",
+  buildingShort: "buildingShort",
+  streetLamp: "streetLamp",
 } as const;
 
 function withGraphics(
@@ -229,6 +233,209 @@ function createCollectibleTextures(scene: Phaser.Scene) {
   );
 }
 
+// ── Midground buildings ──────────────────────────────────────────────────────
+
+function drawWindows(
+  g: Phaser.GameObjects.Graphics,
+  startX: number,
+  startY: number,
+  cols: number,
+  rows: number,
+  winW: number,
+  winH: number,
+  gapX: number,
+  gapY: number,
+) {
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const wx = startX + c * (winW + gapX);
+      const wy = startY + r * (winH + gapY);
+      const lit = (r + c) % 3 !== 0;
+      g.fillStyle(lit ? 0xfbbf24 : 0x1e293b, lit ? 0.85 : 0.6);
+      g.fillRect(wx, wy, winW, winH);
+      if (lit) {
+        // Window shine
+        g.fillStyle(0xfef3c7, 0.4);
+        g.fillRect(wx, wy, winW, 1);
+      }
+    }
+  }
+}
+
+function createBuildingTextures(scene: Phaser.Scene) {
+  // Tall factory building (64 x 128)
+  withGraphics(
+    scene,
+    (g) => {
+      // Main body
+      g.fillStyle(0x1e2744);
+      g.fillRect(0, 12, 64, 116);
+      // Darker side edge
+      g.fillStyle(0x151c34);
+      g.fillRect(56, 12, 8, 116);
+      // Top cap / cornice
+      g.fillStyle(0x2d3a5c);
+      g.fillRect(0, 8, 64, 8);
+      // Red-stripe hazard band (matches industrial tileset)
+      for (let x = 0; x < 64; x += 8) {
+        g.fillStyle(x % 16 === 0 ? 0xdc2626 : 0xf97316);
+        g.fillRect(x, 8, 4, 4);
+      }
+      // Rooftop pipe
+      g.fillStyle(0x475569);
+      g.fillRect(10, 0, 6, 14);
+      g.fillStyle(0x64748b);
+      g.fillRect(10, 0, 6, 2);
+      // Chimney steam vent
+      g.fillStyle(0x475569);
+      g.fillRect(44, 2, 10, 12);
+      g.fillStyle(0x64748b);
+      g.fillRect(44, 2, 10, 2);
+      // Windows
+      drawWindows(g, 6, 22, 3, 6, 8, 6, 10, 10);
+      // Door at bottom
+      g.fillStyle(0x0f172a);
+      g.fillRect(22, 108, 16, 20);
+      g.fillStyle(0x475569);
+      g.fillRect(22, 108, 16, 2);
+      // Door handle
+      g.fillStyle(0xfbbf24);
+      g.fillRect(34, 118, 2, 2);
+    },
+    GENERATED_TEXTURES.buildingTall,
+    64,
+    128,
+  );
+
+  // Medium warehouse (80 x 96)
+  withGraphics(
+    scene,
+    (g) => {
+      // Main body
+      g.fillStyle(0x232e4a);
+      g.fillRect(0, 10, 80, 86);
+      // Roof slab
+      g.fillStyle(0x334155);
+      g.fillRect(0, 6, 80, 8);
+      // Roof extension / overhang
+      g.fillStyle(0x3b4d6b);
+      g.fillRect(-2, 6, 84, 4);
+      // Red-stripe safety band
+      for (let x = 0; x < 80; x += 8) {
+        g.fillStyle(x % 16 === 0 ? 0xdc2626 : 0xf97316);
+        g.fillRect(x, 10, 4, 3);
+      }
+      // Air vent / AC unit
+      g.fillStyle(0x475569);
+      g.fillRect(60, 0, 14, 10);
+      g.fillStyle(0x64748b);
+      g.fillRect(62, 2, 10, 2);
+      g.fillStyle(0x1e293b);
+      g.fillRect(62, 5, 10, 3);
+      // Windows (2 rows of 4)
+      drawWindows(g, 6, 20, 4, 2, 10, 8, 8, 12);
+      // Loading dock / garage
+      g.fillStyle(0x0f172a);
+      g.fillRect(8, 62, 28, 34);
+      g.fillStyle(0x334155);
+      // Garage door lines
+      for (let y = 66; y < 94; y += 6) {
+        g.fillRect(8, y, 28, 1);
+      }
+      // Side windows on right
+      drawWindows(g, 50, 62, 2, 1, 8, 8, 8, 0);
+      // Pipe running down
+      g.fillStyle(0x475569);
+      g.fillRect(74, 14, 4, 82);
+    },
+    GENERATED_TEXTURES.buildingMedium,
+    80,
+    96,
+  );
+
+  // Short workshop (96 x 64)
+  withGraphics(
+    scene,
+    (g) => {
+      // Main body
+      g.fillStyle(0x1a2340);
+      g.fillRect(0, 10, 96, 54);
+      // Roof
+      g.fillStyle(0x2d3a5c);
+      g.fillRect(0, 6, 96, 8);
+      // Chimney
+      g.fillStyle(0x475569);
+      g.fillRect(76, 0, 8, 10);
+      g.fillStyle(0x64748b);
+      g.fillRect(76, 0, 8, 2);
+      // Red-stripe hazard band
+      for (let x = 0; x < 96; x += 8) {
+        g.fillStyle(x % 16 === 0 ? 0xdc2626 : 0xf97316);
+        g.fillRect(x, 10, 4, 3);
+      }
+      // Garage door (wide)
+      g.fillStyle(0x0f172a);
+      g.fillRect(6, 28, 36, 36);
+      g.fillStyle(0x334155);
+      for (let y = 32; y < 62; y += 6) {
+        g.fillRect(6, y, 36, 1);
+      }
+      // Warning stripes on garage edges
+      for (let y = 28; y < 64; y += 8) {
+        g.fillStyle(y % 16 === 0 ? 0xf97316 : 0x1e293b);
+        g.fillRect(4, y, 2, 4);
+        g.fillRect(42, y, 2, 4);
+      }
+      // Small windows
+      drawWindows(g, 54, 18, 2, 1, 10, 8, 10, 0);
+      // Vent
+      g.fillStyle(0x334155);
+      g.fillRect(54, 40, 14, 8);
+      g.fillStyle(0x1e293b);
+      for (let x = 56; x < 66; x += 3) {
+        g.fillRect(x, 42, 1, 4);
+      }
+      // Pipe
+      g.fillStyle(0x475569);
+      g.fillRect(90, 14, 4, 50);
+    },
+    GENERATED_TEXTURES.buildingShort,
+    96,
+    64,
+  );
+}
+
+// ── Street lamp ──────────────────────────────────────────────────────────────
+
+function createStreetLampTexture(scene: Phaser.Scene) {
+  withGraphics(
+    scene,
+    (g) => {
+      // Pole
+      g.fillStyle(0x475569);
+      g.fillRect(5, 8, 4, 56);
+      // Base
+      g.fillStyle(0x334155);
+      g.fillRect(2, 60, 10, 4);
+      // Arm
+      g.fillStyle(0x475569);
+      g.fillRect(5, 8, 14, 3);
+      // Lamp housing
+      g.fillStyle(0x64748b);
+      g.fillRect(14, 4, 8, 8);
+      // Light glow
+      g.fillStyle(0xfbbf24, 0.8);
+      g.fillRect(15, 5, 6, 6);
+      // Glow halo
+      g.fillStyle(0xfbbf24, 0.15);
+      g.fillCircle(18, 8, 10);
+    },
+    GENERATED_TEXTURES.streetLamp,
+    28,
+    64,
+  );
+}
+
 export function ensureGeneratedGameTextures(scene: Phaser.Scene) {
   createPlatformFallback(scene);
   createMovingPlatformTexture(scene);
@@ -236,4 +443,6 @@ export function ensureGeneratedGameTextures(scene: Phaser.Scene) {
   createSteamVentTextures(scene);
   createEnemyProjectileTexture(scene);
   createCollectibleTextures(scene);
+  createBuildingTextures(scene);
+  createStreetLampTexture(scene);
 }

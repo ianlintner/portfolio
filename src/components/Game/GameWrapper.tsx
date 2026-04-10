@@ -1,14 +1,25 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function GameWrapper() {
   const gameRef = useRef<HTMLDivElement>(null);
   const [bootError, setBootError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     let disposed = false;
     let stop: (() => void) | null = null;
+
+    const bootOptions = {
+      autoplay:
+        searchParams.get("autoplay") === "1" ||
+        searchParams.get("watch") === "1" ||
+        searchParams.get("headless") === "1",
+      headless: searchParams.get("headless") === "1",
+      debug: searchParams.get("debug") === "1",
+    };
 
     async function boot() {
       try {
@@ -17,7 +28,7 @@ export default function GameWrapper() {
         const { PhaserGame } = await import("@/game/PhaserGame");
 
         if (disposed) return;
-        PhaserGame.start();
+        PhaserGame.start(bootOptions);
         stop = () => PhaserGame.stop();
       } catch (err) {
         console.error("Failed to start Phaser game", err);
@@ -43,7 +54,7 @@ export default function GameWrapper() {
         console.warn("Failed to stop Phaser game", err);
       }
     };
-  }, []);
+  }, [searchParams]);
 
   return (
     <div className="relative rounded-lg overflow-hidden shadow-2xl mx-auto w-[800px] h-[600px]">

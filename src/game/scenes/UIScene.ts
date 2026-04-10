@@ -11,6 +11,8 @@ export class UIScene extends Scene {
   private seedText!: Phaser.GameObjects.Text;
   private objectiveText!: Phaser.GameObjects.Text;
   private muteText!: Phaser.GameObjects.Text;
+  private aiModeText!: Phaser.GameObjects.Text;
+  private debugHudText!: Phaser.GameObjects.Text;
   private bossBarBg!: Phaser.GameObjects.Rectangle;
   private bossBarFill!: Phaser.GameObjects.Rectangle;
   private bossBarText!: Phaser.GameObjects.Text;
@@ -46,6 +48,36 @@ export class UIScene extends Scene {
       fontSize: "14px",
       color: "#fde68a",
     });
+
+    const autoplayEnabled = Boolean(
+      this.registry.get("autoplayEnabled") ?? false,
+    );
+    this.aiModeText = this.add.text(
+      16,
+      176,
+      autoplayEnabled ? "AI: WATCH MODE" : "AI: OFF",
+      {
+        ...textStyle,
+        fontSize: "14px",
+        color: autoplayEnabled ? "#86efac" : "#64748b",
+      },
+    );
+
+    this.debugHudText = this.add
+      .text(16, 196, "Debug HUD [B]", {
+        ...textStyle,
+        fontSize: "14px",
+        color: autoplayEnabled ? "#93c5fd" : "#475569",
+      })
+      .setVisible(autoplayEnabled);
+
+    if (autoplayEnabled) {
+      this.debugHudText.setInteractive().on("pointerdown", () => {
+        this.game.scene
+          .getScene("RogueRun")
+          .events.emit("autoplay-toggle-debug");
+      });
+    }
 
     // Audio Menu (top-right)
     const audio = AudioManager.instance;
@@ -172,6 +204,8 @@ export class UIScene extends Scene {
       const objectiveStatus = String(
         this.registry.get("objectiveStatus") ?? "-",
       );
+      const autoplay = Boolean(this.registry.get("autoplayEnabled") ?? false);
+      const debugHud = Boolean(this.registry.get("autoplayDebug") ?? false);
 
       const heartsStr = `${"♥".repeat(Math.max(0, hearts))}${"♡".repeat(
         Math.max(0, maxHearts - hearts),
@@ -184,6 +218,9 @@ export class UIScene extends Scene {
       this.floorText.setText(`Floor: ${floor} · Layout: ${layout}`);
       this.seedText.setText(`Seed: ${seed}`);
       this.objectiveText.setText(`Objectives: ${objectiveStatus}`);
+      this.aiModeText.setText(autoplay ? "AI: WATCH MODE" : "AI: OFF");
+      this.aiModeText.setColor(autoplay ? "#86efac" : "#64748b");
+      this.debugHudText.setText(`Debug HUD: ${debugHud ? "ON" : "OFF"} [B]`);
 
       // Boss health bar
       const bossHp = Number(this.registry.get("bossHp") ?? -1);

@@ -18,10 +18,15 @@ import { AudioManager } from "../audio/AudioManager";
 import { TILE } from "../rogue/types";
 import { DeathSequence } from "../systems/DeathSequence";
 import type { LayoutType } from "../rogue/types";
+import { AutoplayController } from "../ai/AutoplayController";
+import { getBootOptions } from "../bootOptions";
 
 type RogueRunInit = {
   seed?: string;
   floor?: number;
+  autoplay?: boolean;
+  debug?: boolean;
+  headless?: boolean;
 };
 
 export class RogueRun extends Scene {
@@ -51,21 +56,39 @@ export class RogueRun extends Scene {
   private totalCoinsThisFloor = 0;
   private deathSequence!: DeathSequence;
   private bossRef: Enemy | null = null;
+  private autoplayController: AutoplayController | null = null;
+  private autoplayEnabled = false;
+  private autoplayDebug = false;
+  private autoplayHeadless = false;
 
   constructor() {
     super("RogueRun");
   }
 
   create(data?: RogueRunInit) {
+    const bootOptions = getBootOptions();
+
     // Seed/floor come from scene start/restart, falling back to registry.
     const registrySeed = String(this.registry.get("runSeed") ?? "run");
     const registryFloor = Number(this.registry.get("runFloor") ?? 1);
 
     this.seed = data?.seed ?? registrySeed;
     this.floor = data?.floor ?? registryFloor;
+    this.autoplayEnabled =
+      data?.autoplay ??
+      Boolean(this.registry.get("autoplayEnabled") ?? bootOptions.autoplay);
+    this.autoplayDebug =
+      data?.debug ??
+      Boolean(this.registry.get("autoplayDebug") ?? bootOptions.debug);
+    this.autoplayHeadless =
+      data?.headless ??
+      Boolean(this.registry.get("autoplayHeadless") ?? bootOptions.headless);
 
     this.registry.set("runSeed", this.seed);
     this.registry.set("runFloor", this.floor);
+    this.registry.set("autoplayEnabled", this.autoplayEnabled);
+    this.registry.set("autoplayDebug", this.autoplayDebug);
+    this.registry.set("autoplayHeadless", this.autoplayHeadless);
 
     // Groups
     this.enemies = this.physics.add.group();
@@ -388,6 +411,40 @@ export class RogueRun extends Scene {
     this.events.on("player-shoot", this.spawnHairball, this);
     this.events.on("enemy-shoot", this.spawnEnemyProjectile, this);
 
+    if (this.autoplayEnabled) {
+      this.autoplayController = new AutoplayController({
+        scene: this,
+        player: this.player,
+        enemies: this.enemies,
+        hazards: this.hazards,
+        collectibles: this.collectibles,
+        items: this.items,
+        goal: this.goal,
+        layer: this.layer,
+        showDebug: this.autoplayDebug && !this.autoplayHeadless,
+        headless: this.autoplayHeadless,
+      });
+
+      this.registry.set(
+        "objectiveStatus",
+        this.autoplayHeadless ? "AI Headless QA" : "AI Watch Mode",
+      );
+
+      this.input.keyboard?.on("keydown-B", () => {
+        if (!this.autoplayController || this.autoplayHeadless) return;
+        this.autoplayController.toggleDebug();
+        this.autoplayDebug = !this.autoplayDebug;
+        this.registry.set("autoplayDebug", this.autoplayDebug);
+      });
+
+      this.events.on("autoplay-toggle-debug", () => {
+        if (!this.autoplayController || this.autoplayHeadless) return;
+        this.autoplayController.toggleDebug();
+        this.autoplayDebug = !this.autoplayDebug;
+        this.registry.set("autoplayDebug", this.autoplayDebug);
+      });
+    }
+
     // Ensure registry defaults
     if (this.registry.get("lives") == null) this.registry.set("lives", 3);
     if (this.registry.get("score") == null) this.registry.set("score", 0);
@@ -412,10 +469,14 @@ export class RogueRun extends Scene {
     this.events.once("shutdown", () => {
       this.events.off("player-shoot", this.spawnHairball, this);
       this.events.off("enemy-shoot", this.spawnEnemyProjectile, this);
+      this.events.off("autoplay-toggle-debug");
+      this.autoplayController?.destroy();
+      this.autoplayController = null;
     });
   }
 
   update() {
+    this.autoplayController?.update();
     this.player.update();
 
     this.enemies
@@ -527,6 +588,9 @@ export class RogueRun extends Scene {
         this.scene.restart({
           seed: this.seed,
           floor: this.floor,
+          autoplay: this.autoplayEnabled,
+          debug: this.autoplayDebug,
+          headless: this.autoplayHeadless,
         } satisfies RogueRunInit);
       },
       onGameOver: () => {
@@ -607,6 +671,9 @@ export class RogueRun extends Scene {
     this.scene.restart({
       seed: this.seed,
       floor: nextFloor,
+      autoplay: this.autoplayEnabled,
+      debug: this.autoplayDebug,
+      headless: this.autoplayHeadless,
     } satisfies RogueRunInit);
   }
 }

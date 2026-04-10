@@ -15,7 +15,7 @@ export type EnemyType =
   | "climber";
 
 export class Enemy extends Phaser.Physics.Arcade.Sprite {
-  private enemyType: EnemyType;
+  public readonly enemyType: EnemyType;
   private walkSpeed: number = 80;
   private squished = false;
   private direction: 1 | -1 = 1;

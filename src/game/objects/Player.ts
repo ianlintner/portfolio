@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import * as Phaser from "phaser";
 import { AudioManager } from "../audio/AudioManager";
+import type { VirtualInput } from "../ai/types";
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -16,6 +17,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   };
   private jumpKey!: Phaser.Input.Keyboard.Key;
   private shootKey!: Phaser.Input.Keyboard.Key;
+  private virtualInput: VirtualInput | null = null;
 
   public isPoweredUp: boolean = false;
   private lastShotTime: number = 0;
@@ -169,9 +171,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     // ── Wall slide detection ────────────────────────────────────
     const pressingLeft =
-      this.cursors.left.isDown || this.wasd.left.isDown || this.wasd.a.isDown;
+      this.cursors.left.isDown ||
+      this.wasd.left.isDown ||
+      this.wasd.a.isDown ||
+      this.virtualInput?.left === true;
     const pressingRight =
-      this.cursors.right.isDown || this.wasd.right.isDown || this.wasd.d.isDown;
+      this.cursors.right.isDown ||
+      this.wasd.right.isDown ||
+      this.wasd.d.isDown ||
+      this.virtualInput?.right === true;
 
     if (
       !isGrounded &&
@@ -221,13 +229,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.cursors.up.isDown ||
       this.wasd.up.isDown ||
       this.wasd.w.isDown ||
-      this.jumpKey.isDown;
+      this.jumpKey.isDown ||
+      this.virtualInput?.jump === true;
 
     const jumpJustPressed =
       Phaser.Input.Keyboard.JustDown(this.cursors.up) ||
       Phaser.Input.Keyboard.JustDown(this.wasd.up) ||
       Phaser.Input.Keyboard.JustDown(this.wasd.w) ||
-      Phaser.Input.Keyboard.JustDown(this.jumpKey);
+      Phaser.Input.Keyboard.JustDown(this.jumpKey) ||
+      this.virtualInput?.jumpJustPressed === true;
 
     if (jumpJustPressed) {
       this.lastJumpPressTime = now;
@@ -301,9 +311,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Shoot
-    if (this.isPoweredUp && Phaser.Input.Keyboard.JustDown(this.shootKey)) {
+    if (
+      this.isPoweredUp &&
+      (Phaser.Input.Keyboard.JustDown(this.shootKey) ||
+        this.virtualInput?.shoot === true)
+    ) {
       this.shoot();
     }
+  }
+
+  public setVirtualInput(input: VirtualInput | null) {
+    this.virtualInput = input;
   }
 
   /**
