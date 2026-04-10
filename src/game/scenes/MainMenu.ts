@@ -3,6 +3,7 @@ import { AudioManager } from "../audio/AudioManager";
 import { PARALLAX_SETS, TILESETS } from "../assets/manifest";
 import { createParallaxBackground } from "../assets/parallax";
 import { GENERATED_TEXTURES } from "../assets/generatedTextures";
+import { getBootOptions } from "../bootOptions";
 
 interface EnemyInstance {
   sprite: Phaser.GameObjects.Sprite;
@@ -36,6 +37,7 @@ export class MainMenu extends Scene {
   create() {
     const { width, height } = this.scale;
     const audio = AudioManager.instance;
+    const bootOptions = getBootOptions();
 
     this.groundY = height - 32;
     // Rooftop where the cat walks — roughly 60% down the viewport
@@ -114,6 +116,16 @@ export class MainMenu extends Scene {
 
     // ── Title sequence ───────────────────────────────────────────────────────
     this._buildTitleSequence(width, height, audio);
+
+    if (bootOptions.autoplay) {
+      this.time.delayedCall(1200, () => {
+        this._startGame(audio, {
+          autoplay: true,
+          debug: Boolean(bootOptions.debug),
+          headless: Boolean(bootOptions.headless),
+        });
+      });
+    }
   }
 
   // ── Rain ─────────────────────────────────────────────────────────────────
@@ -539,7 +551,10 @@ export class MainMenu extends Scene {
 
   // ── Start game ────────────────────────────────────────────────────────────
 
-  private _startGame(audio: AudioManager) {
+  private _startGame(
+    audio: AudioManager,
+    options: { autoplay?: boolean; debug?: boolean; headless?: boolean } = {},
+  ) {
     const seed = Math.random().toString(36).slice(2, 10);
     this.registry.set("runSeed", seed);
     this.registry.set("runFloor", 1);
@@ -550,8 +565,17 @@ export class MainMenu extends Scene {
     this.registry.set("maxHearts", 3);
     this.registry.set("playerHearts", 3);
     this.registry.set("objectiveStatus", "-");
+    this.registry.set("autoplayEnabled", Boolean(options.autoplay));
+    this.registry.set("autoplayDebug", Boolean(options.debug));
+    this.registry.set("autoplayHeadless", Boolean(options.headless));
     audio.sfx.menuSelect();
-    this.scene.start("RogueRun", { seed, floor: 1 });
+    this.scene.start("RogueRun", {
+      seed,
+      floor: 1,
+      autoplay: Boolean(options.autoplay),
+      debug: Boolean(options.debug),
+      headless: Boolean(options.headless),
+    });
     this.scene.launch("UIScene");
     this.scene.bringToTop("UIScene");
   }
