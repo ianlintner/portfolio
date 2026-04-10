@@ -1,4 +1,4 @@
-import type * as Phaser from "phaser";
+import * as Phaser from "phaser";
 import type { Player } from "../objects/Player";
 import type { Enemy } from "../objects/Enemy";
 import type { Hazard } from "../objects/Hazard";

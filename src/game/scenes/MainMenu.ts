@@ -3,7 +3,6 @@ import { AudioManager } from "../audio/AudioManager";
 import { PARALLAX_SETS, TILESETS } from "../assets/manifest";
 import { createParallaxBackground } from "../assets/parallax";
 import { GENERATED_TEXTURES } from "../assets/generatedTextures";
-import { getBootOptions } from "../bootOptions";
 
 interface EnemyInstance {
   sprite: Phaser.GameObjects.Sprite;
@@ -29,7 +28,6 @@ export class MainMenu extends Scene {
   private catDodgeCooldown = 0;
   private groundY = 0;
   private rooftopY = 0;
-  private watchDebugEnabled = false;
 
   constructor() {
     super("MainMenu");
@@ -38,8 +36,6 @@ export class MainMenu extends Scene {
   create() {
     const { width, height } = this.scale;
     const audio = AudioManager.instance;
-    const bootOptions = getBootOptions();
-    this.watchDebugEnabled = Boolean(bootOptions.debug);
 
     this.groundY = height - 32;
     // Rooftop where the cat walks — roughly 60% down the viewport
@@ -118,16 +114,6 @@ export class MainMenu extends Scene {
 
     // ── Title sequence ───────────────────────────────────────────────────────
     this._buildTitleSequence(width, height, audio);
-
-    if (bootOptions.autoplay) {
-      this.time.delayedCall(1200, () => {
-        this._startGame(audio, {
-          autoplay: true,
-          debug: this.watchDebugEnabled,
-          headless: Boolean(bootOptions.headless),
-        });
-      });
-    }
   }
 
   // ── Rain ─────────────────────────────────────────────────────────────────
@@ -261,37 +247,37 @@ export class MainMenu extends Scene {
     }[] = [
       {
         tex: GENERATED_TEXTURES.buildingTall,
-        x: 60,
+        x: 40,
         scroll: 0.65,
         scale: 2,
       },
       {
         tex: GENERATED_TEXTURES.buildingShort,
-        x: 220,
+        x: Math.round(width * 0.25),
         scroll: 0.7,
         scale: 2,
       },
       {
         tex: GENERATED_TEXTURES.buildingMedium,
-        x: 400,
+        x: Math.round(width * 0.48),
         scroll: 0.6,
         scale: 2,
       },
       {
         tex: GENERATED_TEXTURES.buildingTall,
-        x: 580,
+        x: Math.round(width * 0.72),
         scroll: 0.68,
         scale: 2,
       },
       {
         tex: GENERATED_TEXTURES.buildingShort,
-        x: 720,
+        x: width - 60,
         scroll: 0.72,
         scale: 2,
       },
       {
         tex: GENERATED_TEXTURES.buildingMedium,
-        x: 900,
+        x: width + 160,
         scroll: 0.62,
         scale: 2,
       },
@@ -311,7 +297,12 @@ export class MainMenu extends Scene {
   // ── Street lamps ──────────────────────────────────────────────────────────
 
   private _spawnStreetLamps(width: number, _height: number) {
-    const lampPositions = [160, 380, 620, 860];
+    const lampPositions = [
+      Math.round(width * 0.2),
+      Math.round(width * 0.46),
+      Math.round(width * 0.74),
+      width + 80,
+    ];
     for (const x of lampPositions) {
       const lamp = this.add
         .image(x, this.groundY, GENERATED_TEXTURES.streetLamp)
@@ -360,8 +351,6 @@ export class MainMenu extends Scene {
     height: number,
     audio: AudioManager,
   ) {
-    const bootOptions = getBootOptions();
-
     // Main title — punches in from slightly larger scale
     const titleY = height * 0.28;
     const title = this.add
@@ -432,74 +421,8 @@ export class MainMenu extends Scene {
         startButton.setStyle({ color: "#ffffff", backgroundColor: "#1e3a5f" }),
       );
 
-    const watchButton = this.add
-      .text(width / 2, btnY + 54, "🤖  PLAY & WATCH", {
-        fontSize: "18px",
-        color: "#dbeafe",
-        fontFamily: "Arial",
-        fontStyle: "bold",
-        backgroundColor: "#0f3b2e",
-        padding: { x: 18, y: 8 },
-      })
-      .setOrigin(0.5)
-      .setAlpha(0)
-      .setDepth(10)
-      .setInteractive({ useHandCursor: true });
-
-    watchButton
-      .on("pointerdown", () =>
-        this._startGame(audio, {
-          autoplay: true,
-          debug: this.watchDebugEnabled,
-          headless: false,
-        }),
-      )
-      .on("pointerover", () => {
-        audio.sfx.menuHover();
-        watchButton.setStyle({ color: "#f0fdf4", backgroundColor: "#166534" });
-      })
-      .on("pointerout", () =>
-        watchButton.setStyle({ color: "#dbeafe", backgroundColor: "#0f3b2e" }),
-      );
-
-    const debugToggle = this.add
-      .text(
-        width / 2,
-        btnY + 92,
-        this.watchDebugEnabled ? "🐞 DEBUG HUD: ON" : "🐞 DEBUG HUD: OFF",
-        {
-          fontSize: "14px",
-          color: "#fde68a",
-          fontFamily: "Arial",
-          backgroundColor: "#3f2d16",
-          padding: { x: 14, y: 6 },
-        },
-      )
-      .setOrigin(0.5)
-      .setAlpha(0)
-      .setDepth(10)
-      .setInteractive({ useHandCursor: true });
-
-    debugToggle
-      .on("pointerdown", () => {
-        this.watchDebugEnabled = !this.watchDebugEnabled;
-        debugToggle.setText(
-          this.watchDebugEnabled ? "🐞 DEBUG HUD: ON" : "🐞 DEBUG HUD: OFF",
-        );
-        if (bootOptions.autoplay) {
-          audio.sfx.menuHover();
-        }
-      })
-      .on("pointerover", () => {
-        audio.sfx.menuHover();
-        debugToggle.setStyle({ color: "#fff7cc", backgroundColor: "#6b4f1d" });
-      })
-      .on("pointerout", () =>
-        debugToggle.setStyle({ color: "#fde68a", backgroundColor: "#3f2d16" }),
-      );
-
     // "Press any key" hint — blinks
-    const anyKeyY = btnY + 138;
+    const anyKeyY = btnY + 70;
     const anyKey = this.add
       .text(width / 2, anyKeyY, "PRESS  ANY  KEY  TO  START", {
         fontSize: "13px",
@@ -573,13 +496,13 @@ export class MainMenu extends Scene {
 
     // 4. Start button fades in, then pulses
     this.tweens.add({
-      targets: [startButton, watchButton, debugToggle],
+      targets: startButton,
       alpha: 1,
       duration: 400,
       delay: 1100,
       onComplete: () => {
         this.tweens.add({
-          targets: [startButton, watchButton],
+          targets: startButton,
           scaleX: 1.05,
           scaleY: 1.05,
           duration: 850,
@@ -616,10 +539,7 @@ export class MainMenu extends Scene {
 
   // ── Start game ────────────────────────────────────────────────────────────
 
-  private _startGame(
-    audio: AudioManager,
-    options: { autoplay?: boolean; debug?: boolean; headless?: boolean } = {},
-  ) {
+  private _startGame(audio: AudioManager) {
     const seed = Math.random().toString(36).slice(2, 10);
     this.registry.set("runSeed", seed);
     this.registry.set("runFloor", 1);
@@ -630,17 +550,8 @@ export class MainMenu extends Scene {
     this.registry.set("maxHearts", 3);
     this.registry.set("playerHearts", 3);
     this.registry.set("objectiveStatus", "-");
-    this.registry.set("autoplayEnabled", Boolean(options.autoplay));
-    this.registry.set("autoplayDebug", Boolean(options.debug));
-    this.registry.set("autoplayHeadless", Boolean(options.headless));
     audio.sfx.menuSelect();
-    this.scene.start("RogueRun", {
-      seed,
-      floor: 1,
-      autoplay: Boolean(options.autoplay),
-      debug: Boolean(options.debug),
-      headless: Boolean(options.headless),
-    });
+    this.scene.start("RogueRun", { seed, floor: 1 });
     this.scene.launch("UIScene");
     this.scene.bringToTop("UIScene");
   }
