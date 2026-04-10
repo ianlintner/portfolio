@@ -25,17 +25,14 @@ export class MainMenu extends Scene {
     // Use "Paws in the Downpour" as the main menu intro track
     audio.mp3Key = "paws-in-downpour";
 
-    // Unlock Web Audio on first user gesture, then start menu music.
-    const unlockAndPlay = () => {
-      audio.unlock();
-      audio.playRandomBgMusic(); // This will play MP3 if not retro!
-    };
-    this.input.once("pointerdown", unlockAndPlay);
-    this.input.keyboard?.once("keydown", unlockAndPlay);
-    // If already unlocked, ensure music is looping correctly.
-    if (audio.isUnlocked) {
-      audio.playRandomBgMusic();
-    }
+    // Start music immediately — Phaser queues it until the browser AudioContext
+    // is unlocked on first user gesture automatically.
+    audio.playRandomBgMusic();
+
+    // Still call audio.unlock() on first gesture so the chiptune engine is ready.
+    const unlockAudio = () => audio.unlock();
+    this.input.once("pointerdown", unlockAudio);
+    this.input.keyboard?.once("keydown", unlockAudio);
 
     this.parallaxLayers = createParallaxBackground(this, {
       set: PARALLAX_SETS.industrial1,
