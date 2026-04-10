@@ -22,7 +22,7 @@ export class MainMenu extends Scene {
 
     // Config global audio manager to allow MP3 playing instead of tracking locally
     audio.soundManager = this.sound;
-    
+
     // Unlock Web Audio on first user gesture, then start menu music.
     const unlockAndPlay = () => {
       audio.unlock();

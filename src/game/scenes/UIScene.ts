@@ -62,26 +62,35 @@ export class UIScene extends Scene {
       });
 
     const retroText = this.add
-      .text(this.scale.width - 16, 36, "Retro: " + (audio.useRetroMusic ? "ON" : "OFF"), {
-        ...textStyle,
-        fontSize: "16px",
-        color: "#93c5fd",
-      })
+      .text(
+        this.scale.width - 16,
+        36,
+        "Retro: " + (audio.useRetroMusic ? "ON" : "OFF"),
+        {
+          ...textStyle,
+          fontSize: "16px",
+          color: "#93c5fd",
+        },
+      )
       .setOrigin(1, 0)
       .setInteractive()
       .on("pointerdown", () => {
         audio.useRetroMusic = !audio.useRetroMusic;
         // Start retro random track
         if (!audio.useRetroMusic && audio.mp3Music) {
-            audio.playRandomBgMusic(); // Will fall back to MP3
+          audio.playRandomBgMusic(); // Will fall back to MP3
         } else {
-            audio.playRandomBgMusic(); // Will play chiptune
+          audio.playRandomBgMusic(); // Will play chiptune
         }
         updateAudioText();
       });
 
     const volDecText = this.add
-      .text(this.scale.width - 120, 60, "[-]", { ...textStyle, fontSize: "16px", color: "#fca5a5" })
+      .text(this.scale.width - 120, 60, "[-]", {
+        ...textStyle,
+        fontSize: "16px",
+        color: "#fca5a5",
+      })
       .setOrigin(1, 0)
       .setInteractive()
       .on("pointerdown", () => {
@@ -90,7 +99,11 @@ export class UIScene extends Scene {
       });
 
     const volIncText = this.add
-      .text(this.scale.width - 16, 60, "[+]", { ...textStyle, fontSize: "16px", color: "#86efac" })
+      .text(this.scale.width - 16, 60, "[+]", {
+        ...textStyle,
+        fontSize: "16px",
+        color: "#86efac",
+      })
       .setOrigin(1, 0)
       .setInteractive()
       .on("pointerdown", () => {
@@ -99,10 +112,15 @@ export class UIScene extends Scene {
       });
 
     const volText = this.add
-      .text(this.scale.width - 68, 60, `Vol: ${Math.round(audio.volume * 100)}%`, {
-        ...textStyle,
-        fontSize: "16px",
-      })
+      .text(
+        this.scale.width - 68,
+        60,
+        `Vol: ${Math.round(audio.volume * 100)}%`,
+        {
+          ...textStyle,
+          fontSize: "16px",
+        },
+      )
       .setOrigin(0.5, 0);
 
     const updateAudioText = () => {
@@ -116,7 +134,6 @@ export class UIScene extends Scene {
       audio.muted = !audio.muted;
       updateAudioText();
     });
-
 
     // Boss health bar (centered at bottom, hidden by default)
     const barWidth = 240;
