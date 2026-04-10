@@ -159,6 +159,10 @@ export class Preloader extends Scene {
       "intro-music",
       withBasePath("/assets/game/audio/Saturday_Morning_High_Score.mp3"),
     );
+    this.load.audio(
+      "cyberpunk-intro",
+      withBasePath("/assets/game/audio/cyberpunk_cat_intro.mp3"),
+    );
   }
 
   create() {

@@ -34,6 +34,7 @@ export class AudioManager {
   // ── Native Phaser Sound ──────────────────────────────────────────
   public soundManager: Phaser.Sound.BaseSoundManager | null = null;
   public mp3Music: Phaser.Sound.BaseSound | null = null;
+  public mp3Key: string = "cyberpunk-intro";
   private _useRetroMusic: boolean = false;
 
   get useRetroMusic(): boolean {
@@ -62,11 +63,25 @@ export class AudioManager {
 
   playMp3(): void {
     if (!this.soundManager) return;
+
+    // If the key changed (e.g. menu → gameplay), discard the old sound object.
+    if (this.mp3Music) {
+      const currentKey = (
+        this.mp3Music as
+          | Phaser.Sound.HTML5AudioSound
+          | Phaser.Sound.WebAudioSound
+      )?.key;
+      if (currentKey !== this.mp3Key) {
+        this.mp3Music.stop();
+        this.mp3Music.destroy?.();
+        this.mp3Music = null;
+      }
+    }
+
     if (this.mp3Music && this.mp3Music.isPlaying) return;
 
-    // Check if we already created it
     if (!this.mp3Music) {
-      this.mp3Music = this.soundManager.add("intro-music", {
+      this.mp3Music = this.soundManager.add(this.mp3Key, {
         loop: true,
         volume: 0.6,
       });

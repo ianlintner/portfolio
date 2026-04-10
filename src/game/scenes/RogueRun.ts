@@ -400,6 +400,8 @@ export class RogueRun extends Scene {
 
     // Start music: boss track for boss floors, random bg track otherwise.
     const audio = AudioManager.instance;
+    // Switch to the in-game Saturday Morning track for gameplay
+    audio.mp3Key = "intro-music";
     if (this.isBossFloor) {
       audio.playMusic("boss");
     } else {
