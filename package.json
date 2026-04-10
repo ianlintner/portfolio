@@ -18,7 +18,8 @@
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
     "docs:build": "python3 -m mkdocs build -d public/docs",
-    "docs:serve": "python3 -m mkdocs serve"
+    "docs:serve": "python3 -m mkdocs serve",
+    "generate:parallax": "npx tsx scripts/generate-parallax.ts"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -74,9 +75,17 @@
     "jest": "latest",
     "jest-environment-jsdom": "^29.7.0",
     "next": "^15.5.3",
+    "openai": "^6.34.0",
     "prettier": "latest",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "sharp": "^0.34.5",
     "typescript": "latest"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp",
+      "esbuild"
+    ]
   }
 }

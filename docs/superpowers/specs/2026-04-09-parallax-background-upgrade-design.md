@@ -12,13 +12,13 @@ Replace the current low-resolution (576x324, indexed PNG) parallax backgrounds w
 
 The game "Cat Adventure" uses a 5-layer parallax background system defined in `src/game/assets/manifest.ts` under `PARALLAX_SETS.industrial1`. The current assets:
 
-| Layer | Depth Role | File | Resolution | File Size |
-|-------|-----------|------|-----------|-----------|
-| 1 | Sky / far background | `2-Background/1.png` | 576x324 | 1.2 KB |
-| 2 | Distant buildings | `2-Background/2.png` | 576x324 | 5.7 KB |
-| 3 | Mid-ground structures | `2-Background/3.png` | 576x324 | 2.4 KB |
-| 4 | Near-background | `2-Background/4.png` | 576x324 | 3.6 KB |
-| 5 | Foreground elements | `2-Background/5.png` | 576x324 | 2.7 KB |
+| Layer | Depth Role            | File                 | Resolution | File Size |
+| ----- | --------------------- | -------------------- | ---------- | --------- |
+| 1     | Sky / far background  | `2-Background/1.png` | 576x324    | 1.2 KB    |
+| 2     | Distant buildings     | `2-Background/2.png` | 576x324    | 5.7 KB    |
+| 3     | Mid-ground structures | `2-Background/3.png` | 576x324    | 2.4 KB    |
+| 4     | Near-background       | `2-Background/4.png` | 576x324    | 3.6 KB    |
+| 5     | Foreground elements   | `2-Background/5.png` | 576x324    | 2.7 KB    |
 
 These are 8-bit indexed PNGs from a free "Industrial Zone Tileset" pack. At the game's 800x600 viewport with `layerScale: 1.4`, they are stretched to roughly 3.3x their native width, causing visible pixelation.
 
@@ -50,15 +50,16 @@ The solution has two parts:
 
 Each prompt follows the pattern: `"Pixel art game background, [layer-specific content], industrial urban alley theme, 16-bit retro style, muted gray-brown palette with amber/orange accents, seamless horizontal tile, no text, no characters"`
 
-| Layer | Content Description |
-|-------|-------------------|
-| 1 (sky) | Gradient sky from deep navy to dusty orange, distant smokestacks silhouetted on horizon, hazy atmosphere |
-| 2 (far buildings) | Distant industrial skyline, factories and warehouses, water towers, faint window lights |
-| 3 (mid structures) | Mid-distance industrial buildings, metal scaffolding, pipes, catwalks, cranes |
-| 4 (near details) | Close industrial structures, brick walls, ventilation units, ladders, rust and grime |
-| 5 (foreground) | Foreground alley elements, dumpsters, chain-link fences, pipes, fire escapes, closest to camera |
+| Layer              | Content Description                                                                                      |
+| ------------------ | -------------------------------------------------------------------------------------------------------- |
+| 1 (sky)            | Gradient sky from deep navy to dusty orange, distant smokestacks silhouetted on horizon, hazy atmosphere |
+| 2 (far buildings)  | Distant industrial skyline, factories and warehouses, water towers, faint window lights                  |
+| 3 (mid structures) | Mid-distance industrial buildings, metal scaffolding, pipes, catwalks, cranes                            |
+| 4 (near details)   | Close industrial structures, brick walls, ventilation units, ladders, rust and grime                     |
+| 5 (foreground)     | Foreground alley elements, dumpsters, chain-link fences, pipes, fire escapes, closest to camera          |
 
 **DALL-E 3 parameters:**
+
 - Model: `dall-e-3`
 - Size: `1792x1024` (closest available aspect ratio to 16:9)
 - Quality: `hd`
@@ -86,15 +87,15 @@ Each prompt follows the pattern: `"Pixel art game background, [layer-specific co
 
 ### File Changes
 
-| File | Action | Description |
-|------|--------|-------------|
-| `scripts/generate-parallax.ts` | Create | Generation + post-processing script |
-| `package.json` | Modify | Add `openai`, `sharp` as devDependencies; add `"generate:parallax"` script |
-| `.env.example` | Modify | Add `OPENAI_API_KEY=` entry |
-| `.gitignore` | Modify | Add `public/assets/game/2-Background/raw/` |
-| `public/assets/game/2-Background/originals/` | Create | Backup of current 1-5.png |
-| `public/assets/game/2-Background/1..5.png` | Replace | AI-generated high-res parallax layers |
-| `src/game/assets/manifest.ts` | Optional | Adjust `layerScale` if needed |
+| File                                         | Action   | Description                                                                |
+| -------------------------------------------- | -------- | -------------------------------------------------------------------------- |
+| `scripts/generate-parallax.ts`               | Create   | Generation + post-processing script                                        |
+| `package.json`                               | Modify   | Add `openai`, `sharp` as devDependencies; add `"generate:parallax"` script |
+| `.env.example`                               | Modify   | Add `OPENAI_API_KEY=` entry                                                |
+| `.gitignore`                                 | Modify   | Add `public/assets/game/2-Background/raw/`                                 |
+| `public/assets/game/2-Background/originals/` | Create   | Backup of current 1-5.png                                                  |
+| `public/assets/game/2-Background/1..5.png`   | Replace  | AI-generated high-res parallax layers                                      |
+| `src/game/assets/manifest.ts`                | Optional | Adjust `layerScale` if needed                                              |
 
 ### Cost
 
@@ -103,12 +104,12 @@ Each prompt follows the pattern: `"Pixel art game background, [layer-specific co
 
 ### Risks and Mitigations
 
-| Risk | Mitigation |
-|------|-----------|
-| DALL-E 3 can't produce strict pixel-art grid | Color quantization + downscaling simulates the effect; prompts emphasize "16-bit retro" style |
-| Layers may not feel stylistically unified | All prompts share the same theme/palette description; raw outputs saved for manual review |
-| Seamless tiling may not work perfectly | Post-processing can crop/blend edges; parallax system uses TileSprite which repeats horizontally |
-| Generated images too detailed for pixel-art game | Aggressive color quantization (64 colors) forces simplification |
+| Risk                                             | Mitigation                                                                                       |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| DALL-E 3 can't produce strict pixel-art grid     | Color quantization + downscaling simulates the effect; prompts emphasize "16-bit retro" style    |
+| Layers may not feel stylistically unified        | All prompts share the same theme/palette description; raw outputs saved for manual review        |
+| Seamless tiling may not work perfectly           | Post-processing can crop/blend edges; parallax system uses TileSprite which repeats horizontally |
+| Generated images too detailed for pixel-art game | Aggressive color quantization (64 colors) forces simplification                                  |
 
 ## Success Criteria
 
