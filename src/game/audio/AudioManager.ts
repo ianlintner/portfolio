@@ -31,8 +31,93 @@ export class AudioManager {
   private cancelFns: (() => void)[] = [];
   private unlocked = false;
 
+  // ── Native Phaser Sound ──────────────────────────────────────────
+  public soundManager: Phaser.Sound.BaseSoundManager | null = null;
+  public mp3Music: Phaser.Sound.BaseSound | null = null;
+  private _useRetroMusic: boolean = false;
+
+  get useRetroMusic(): boolean {
+    return this._useRetroMusic;
+  }
+  set useRetroMusic(v: boolean) {
+    this._useRetroMusic = v;
+    if (v) {
+      if (this.mp3Music) {
+        this.mp3Music.stop();
+      }
+      if (this.currentTrack) {
+        // Re-play current retro track
+        const t = this.currentTrack;
+        this.currentTrack = null;
+        this.playMusic(t);
+      } else {
+        this.playRandomBgMusic();
+      }
+    } else {
+      for (const cancel of this.cancelFns) cancel();
+      this.cancelFns = [];
+      this.playMp3();
+    }
+  }
+
+  playMp3(): void {
+    if (!this.soundManager) return;
+    if (this.mp3Music && this.mp3Music.isPlaying) return;
+
+    // Check if we already created it
+    if (!this.mp3Music) {
+      this.mp3Music = this.soundManager.add("intro-music", {
+        loop: true,
+        volume: 0.6,
+      });
+    }
+
+    this.mp3Music.play();
+  }
+
   private constructor() {
     /* singleton */
+  }
+
+  // ── Native Phaser Sound ──────────────────────────────────────────
+  public soundManager: Phaser.Sound.BaseSoundManager | null = null;
+  public mp3Music: Phaser.Sound.BaseSound | null = null;
+  private _useRetroMusic: boolean = false;
+
+  get useRetroMusic(): boolean {
+    return this._useRetroMusic;
+  }
+  set useRetroMusic(v: boolean) {
+    this._useRetroMusic = v;
+    if (v) {
+      if (this.mp3Music) {
+        this.mp3Music.stop();
+      }
+      if (this.currentTrack) {
+        const t = this.currentTrack;
+        this.currentTrack = null;
+        this.playMusic(t);
+      } else {
+        this.playRandomBgMusic();
+      }
+    } else {
+      this.stopMusic();
+      this.playMp3();
+    }
+  }
+
+  playMp3(): void {
+    if (!this.soundManager) return;
+    if (this.mp3Music && this.mp3Music.isPlaying) return;
+
+    if (!this.mp3Music) {
+      this.mp3Music = this.soundManager.add("intro-music", {
+        loop: true,
+        volume: 0.6,
+      });
+    }
+
+    this.mp3Music.play();
   }
 
   // ── Context unlock ─────────────────────────────────────────────────
@@ -56,12 +141,17 @@ export class AudioManager {
    */
   playMusic(name: TrackName): void {
     if (this.currentTrack === name) return; // already playing
+    this.currentTrack = name; // Just remember the logical track
     this.stopMusic();
+
+    if (!this._useRetroMusic) {
+      this.playMp3();
+      return;
+    }
 
     const track = ALL_TRACKS[name];
     if (!track) return;
 
-    this.currentTrack = name;
     const ctx = this.engine.ensureContext();
     const startTime = ctx.currentTime + 0.05;
 
@@ -80,7 +170,9 @@ export class AudioManager {
   stopMusic(): void {
     for (const cancel of this.cancelFns) cancel();
     this.cancelFns = [];
-    this.currentTrack = null;
+    if (this.mp3Music) {
+      this.mp3Music.stop();
+    }
   }
 
   /** Get the name of the currently playing track (if any). */
@@ -125,6 +217,9 @@ export class AudioManager {
 
   set muted(v: boolean) {
     this.engine.muted = v;
+    if (this.soundManager) {
+      this.soundManager.mute = v;
+    }
   }
 
   get volume(): number {
@@ -133,5 +228,8 @@ export class AudioManager {
 
   set volume(v: number) {
     this.engine.volume = v;
+    if (this.soundManager) {
+      this.soundManager.volume = v;
+    }
   }
 }

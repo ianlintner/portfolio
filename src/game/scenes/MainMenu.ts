@@ -20,30 +20,19 @@ export class MainMenu extends Scene {
     const { width, height } = this.scale;
     const audio = AudioManager.instance;
 
+    // Config global audio manager to allow MP3 playing instead of tracking locally
+    audio.soundManager = this.sound;
+    
     // Unlock Web Audio on first user gesture, then start menu music.
     const unlockAndPlay = () => {
       audio.unlock();
-      audio.stopMusic(); // Ensure old chiptune engine is stopped
-      if (!this.bgMusic) {
-        this.bgMusic = this.sound.add("intro-music", {
-          loop: true,
-          volume: 0.6,
-        });
-        this.bgMusic.play();
-      }
+      audio.playRandomBgMusic(); // This will play MP3 if not retro!
     };
     this.input.once("pointerdown", unlockAndPlay);
     this.input.keyboard?.once("keydown", unlockAndPlay);
-    // If already unlocked from a previous visit, start music immediately.
+    // If already unlocked, ensure music is looping correctly.
     if (audio.isUnlocked) {
-      audio.stopMusic();
-      if (!this.bgMusic) {
-        this.bgMusic = this.sound.add("intro-music", {
-          loop: true,
-          volume: 0.6,
-        });
-        this.bgMusic.play();
-      }
+      audio.playRandomBgMusic();
     }
 
     this.parallaxLayers = createParallaxBackground(this, {
@@ -126,10 +115,9 @@ export class MainMenu extends Scene {
       .setInteractive({ useHandCursor: true })
       .on("pointerdown", () => {
         audio.sfx.menuSelect();
-        if (this.bgMusic) {
-          this.bgMusic.stop();
-        }
-        audio.stopMusic();
+        // Do not stop music here; we want it to flow directly into the game if it's the MP3!
+        // The game will change tracks via playRandomBgMusic() when RogueRun starts
+
         const seed = Math.random().toString(36).slice(2, 10);
         this.registry.set("runSeed", seed);
         this.registry.set("runFloor", 1);
