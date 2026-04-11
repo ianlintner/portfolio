@@ -280,6 +280,45 @@ function drawHazardBand(
   }
 }
 
+function drawBeaconStrip(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  width: number,
+) {
+  g.fillStyle(0x334155).fillRect(x, y, width, 3);
+  for (let dx = x + 4; dx < x + width - 3; dx += 12) {
+    g.fillStyle(0xf59e0b).fillRect(dx, y - 1, 3, 4);
+    g.fillStyle(0xfef3c7, 0.45).fillRect(dx, y - 1, 2, 1);
+  }
+}
+
+function drawServiceCap(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  width: number,
+) {
+  g.fillStyle(0x475569).fillRect(x, y, width, 4);
+  g.fillStyle(0x64748b).fillRect(x + 2, y, width - 4, 1);
+  for (let dx = x + 6; dx < x + width - 6; dx += 14) {
+    g.fillStyle(0x1e293b).fillRect(dx, y + 1, 8, 2);
+  }
+}
+
+function drawWarningNodes(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  width: number,
+) {
+  g.fillStyle(0x2d3a5c).fillRect(x, y, width, 3);
+  for (let dx = x + 3; dx < x + width - 3; dx += 10) {
+    g.fillStyle(0xef4444).fillRect(dx, y, 2, 3);
+    g.fillStyle(0xfbbf24).fillRect(dx + 3, y, 2, 3);
+  }
+}
+
 function drawRoofRail(
   g: Phaser.GameObjects.Graphics,
   x: number,
@@ -360,7 +399,7 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillRect(54, 12, 10, 116);
       g.fillStyle(0x2d3a5c);
       g.fillRect(0, 8, 64, 8);
-      drawHazardBand(g, 0, 8, 64, 4);
+      drawWarningNodes(g, 0, 8, 64);
       drawRoofRail(g, 6, 11, 48);
       drawPipeColumn(g, 8, 0, 14);
       drawPipeColumn(g, 46, 2, 12);
@@ -395,7 +434,7 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillRect(0, 6, 80, 8);
       g.fillStyle(0x3b4d6b);
       g.fillRect(-2, 6, 84, 4);
-      drawHazardBand(g, 0, 10, 80, 3);
+      drawBeaconStrip(g, 0, 10, 80);
       drawRoofRail(g, 10, 9, 56);
       g.fillStyle(0x263451).fillTriangle(6, 10, 20, 0, 34, 10);
       g.fillStyle(0x1e293b).fillTriangle(34, 10, 48, 2, 60, 10);
@@ -428,7 +467,7 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillRect(0, 10, 96, 54);
       g.fillStyle(0x2d3a5c);
       g.fillRect(0, 6, 96, 8);
-      drawHazardBand(g, 0, 10, 96, 3);
+      drawServiceCap(g, 0, 10, 96);
       drawRoofRail(g, 6, 9, 70);
       drawPipeColumn(g, 76, 0, 10);
       g.fillStyle(0x334155).fillRect(44, 12, 22, 8);
@@ -466,7 +505,7 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x19233e).fillRect(8, 18, 56, 126);
       g.fillStyle(0x12192f).fillRect(54, 18, 10, 126);
       g.fillStyle(0x334155).fillRect(6, 14, 60, 8);
-      drawHazardBand(g, 8, 18, 56, 3);
+      drawBeaconStrip(g, 8, 18, 56);
       drawRoofRail(g, 14, 17, 42);
       g.fillStyle(0x475569).fillRect(18, 2, 20, 14);
       g.fillStyle(0x64748b).fillRect(20, 4, 16, 2);
@@ -493,7 +532,8 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x1b2440).fillRect(0, 24, 112, 64);
       g.fillStyle(0x111827).fillRect(0, 70, 112, 2);
       g.fillStyle(0x2d3a5c).fillRect(0, 20, 112, 8);
-      drawHazardBand(g, 0, 24, 112, 3);
+      drawHazardBand(g, 0, 24, 54, 3);
+      drawServiceCap(g, 54, 24, 58);
       drawRoofRail(g, 8, 23, 58);
       drawPipeColumn(g, 10, 0, 24);
       drawPipeColumn(g, 28, 6, 18);
