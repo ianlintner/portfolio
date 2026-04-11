@@ -390,7 +390,7 @@ export class MainMenu extends Scene {
     textureKey: string,
     scale: number,
   ) {
-    if (Phaser.Math.FloatBetween(0, 1) > 0.45) {
+    if (Phaser.Math.FloatBetween(0, 1) > 0.68) {
       return;
     }
 
@@ -448,7 +448,7 @@ export class MainMenu extends Scene {
     const candidates = Phaser.Utils.Array.Shuffle([
       ...(twinkleConfigs[textureKey] ?? []),
     ]);
-    const takeCount = Phaser.Math.Between(1, Math.min(2, candidates.length));
+    const takeCount = Phaser.Math.Between(2, Math.min(3, candidates.length));
 
     for (const cfg of candidates.slice(0, takeCount)) {
       const localX = cfg.x * scale;
@@ -466,7 +466,7 @@ export class MainMenu extends Scene {
               widthPx,
               heightPx,
               cfg.color ?? 0xfbbf24,
-              0.22,
+              0.3,
             )
           : this.add.rectangle(
               worldX,
@@ -474,19 +474,19 @@ export class MainMenu extends Scene {
               widthPx,
               heightPx,
               cfg.color ?? 0xfbbf24,
-              0.22,
+              0.3,
             );
 
       light.setOrigin(0, 0).setDepth(-7.75);
 
       this.tweens.add({
         targets: light,
-        alpha: Phaser.Math.FloatBetween(0.08, 0.42),
-        duration: Phaser.Math.Between(2600, 5200),
-        delay: Phaser.Math.Between(0, 4200),
+        alpha: Phaser.Math.FloatBetween(0.18, 0.58),
+        duration: Phaser.Math.Between(2200, 4200),
+        delay: Phaser.Math.Between(0, 2600),
         yoyo: true,
         repeat: -1,
-        repeatDelay: Phaser.Math.Between(1800, 5200),
+        repeatDelay: Phaser.Math.Between(900, 2600),
         ease: "Sine.easeInOut",
       });
 

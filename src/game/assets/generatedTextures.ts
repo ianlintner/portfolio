@@ -16,6 +16,8 @@ export const GENERATED_TEXTURES = {
   buildingShort: "buildingShort",
   buildingTower: "buildingTower",
   buildingPlant: "buildingPlant",
+  buildingNeonShop: "buildingNeonShop",
+  buildingHoloBar: "buildingHoloBar",
   streetLamp: "streetLamp",
 } as const;
 
@@ -388,6 +390,97 @@ function drawVentGrille(
   }
 }
 
+function drawNeonFrame(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  color: number,
+) {
+  g.fillStyle(color, 0.22).fillRect(x - 1, y - 1, width + 2, height + 2);
+  g.fillStyle(color, 0.8).fillRect(x, y, width, 1);
+  g.fillRect(x, y + height - 1, width, 1);
+  g.fillRect(x, y, 1, height);
+  g.fillRect(x + width - 1, y, 1, height);
+}
+
+function drawPixelWord(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  letters: string[],
+  color: number,
+) {
+  g.fillStyle(color);
+  const glyphs: Record<string, number[][]> = {
+    O: [
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 0, 1],
+      [1, 0, 1],
+      [1, 1, 1],
+    ],
+    P: [
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 1, 1],
+      [1, 0, 0],
+      [1, 0, 0],
+    ],
+    E: [
+      [1, 1, 1],
+      [1, 0, 0],
+      [1, 1, 0],
+      [1, 0, 0],
+      [1, 1, 1],
+    ],
+    N: [
+      [1, 0, 1],
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 0, 1],
+    ],
+    B: [
+      [1, 1, 0],
+      [1, 0, 1],
+      [1, 1, 0],
+      [1, 0, 1],
+      [1, 1, 0],
+    ],
+    A: [
+      [0, 1, 0],
+      [1, 0, 1],
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 0, 1],
+    ],
+    R: [
+      [1, 1, 0],
+      [1, 0, 1],
+      [1, 1, 0],
+      [1, 1, 0],
+      [1, 0, 1],
+    ],
+  };
+
+  let cursorX = x;
+  for (const letter of letters) {
+    const glyph = glyphs[letter];
+    if (!glyph) {
+      cursorX += 4;
+      continue;
+    }
+    glyph.forEach((row, rowIndex) => {
+      row.forEach((px, colIndex) => {
+        if (px) g.fillRect(cursorX + colIndex * 2, y + rowIndex * 2, 2, 2);
+      });
+    });
+    cursorX += 8;
+  }
+}
+
 function createBuildingTextures(scene: Phaser.Scene) {
   // Tall factory building (64 x 128)
   withGraphics(
@@ -557,6 +650,61 @@ function createBuildingTextures(scene: Phaser.Scene) {
     GENERATED_TEXTURES.buildingPlant,
     112,
     88,
+  );
+
+  // Neon convenience storefront (112 x 72)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x18203a).fillRect(0, 14, 112, 58);
+      g.fillStyle(0x243255).fillRect(0, 10, 112, 8);
+      drawServiceCap(g, 0, 14, 112);
+      drawRoofRail(g, 8, 13, 92);
+      g.fillStyle(0x0f172a).fillRect(6, 28, 38, 44);
+      drawWindows(g, 10, 20, 2, 1, 10, 8, 10, 0);
+      g.fillStyle(0x1e293b).fillRect(48, 24, 58, 48);
+      g.fillStyle(0x111827).fillRect(48, 52, 58, 2);
+      drawNeonFrame(g, 54, 18, 42, 12, 0x22d3ee);
+      drawPixelWord(g, 60, 21, ["O", "P", "E", "N"], 0x67e8f9);
+      g.fillStyle(0x7c3aed, 0.35).fillRect(50, 56, 54, 6);
+      g.fillStyle(0xa78bfa, 0.8).fillRect(52, 58, 50, 2);
+      g.fillStyle(0x334155).fillRect(58, 34, 14, 18);
+      g.fillStyle(0xfef3c7, 0.55).fillRect(60, 36, 10, 14);
+      g.fillStyle(0x334155).fillRect(78, 34, 20, 18);
+      g.fillStyle(0xfef3c7, 0.45).fillRect(80, 36, 16, 14);
+      g.fillStyle(0x475569).fillRect(0, 68, 112, 4);
+    },
+    GENERATED_TEXTURES.buildingNeonShop,
+    112,
+    72,
+  );
+
+  // Holo bar storefront (120 x 76)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x151d35).fillRect(0, 18, 120, 58);
+      g.fillStyle(0x29385d).fillRect(0, 14, 120, 8);
+      drawWarningNodes(g, 0, 18, 48);
+      drawBeaconStrip(g, 48, 18, 72);
+      g.fillStyle(0x0f172a).fillRect(8, 36, 28, 40);
+      g.fillStyle(0x243255).fillRect(42, 26, 70, 50);
+      drawNeonFrame(g, 50, 20, 34, 12, 0xf472b6);
+      drawPixelWord(g, 56, 23, ["B", "A", "R"], 0xf9a8d4);
+      g.fillStyle(0x06b6d4, 0.22).fillEllipse(94, 28, 18, 8);
+      g.fillStyle(0x67e8f9, 0.8).fillEllipse(94, 28, 10, 3);
+      g.fillStyle(0xa855f7, 0.3).fillRect(44, 58, 64, 6);
+      g.fillStyle(0xe879f9, 0.82).fillRect(48, 60, 56, 2);
+      g.fillStyle(0x334155).fillRect(48, 34, 16, 18);
+      g.fillStyle(0xfef3c7, 0.45).fillRect(50, 36, 12, 14);
+      g.fillStyle(0x334155).fillRect(70, 34, 14, 18);
+      g.fillStyle(0xfef3c7, 0.35).fillRect(72, 36, 10, 14);
+      g.fillStyle(0x475569).fillRect(0, 72, 120, 4);
+      drawVentGrille(g, 10, 44, 12, 16);
+    },
+    GENERATED_TEXTURES.buildingHoloBar,
+    120,
+    76,
   );
 }
 
