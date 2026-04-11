@@ -168,14 +168,12 @@ export class MainMenu extends Scene {
 
     this.powerWireGraphics = this.add.graphics().setDepth(-8.7);
 
-    const polePositions = [
-      Math.round(width * 0.08),
-      Math.round(width * 0.32),
-      Math.round(width * 0.58),
-      Math.round(width * 0.83),
-      width + 90,
-      width + 310,
-    ];
+    const polePositions: number[] = [];
+    let cursorX = -60;
+    while (cursorX < width + 420) {
+      polePositions.push(cursorX);
+      cursorX += Phaser.Math.Between(150, 220);
+    }
 
     for (const x of polePositions) {
       const pole = this.add
@@ -183,7 +181,7 @@ export class MainMenu extends Scene {
         .setOrigin(0.5, 1)
         .setScale(1.55)
         .setDepth(-8.6)
-        .setAlpha(0.42);
+        .setAlpha(0.5);
 
       this.powerPoles.push({ image: pole, scrollSpeed: 0.66 });
     }
@@ -194,6 +192,31 @@ export class MainMenu extends Scene {
   private _powerPoleWireY(pole: Phaser.GameObjects.Image): number {
     const localArmY = 18 * pole.scaleY;
     return pole.y - pole.displayHeight + localArmY;
+  }
+
+  private _getPowerLineYAt(worldX: number): number | null {
+    if (this.powerPoles.length === 0) return null;
+
+    const sorted = [...this.powerPoles]
+      .map((p) => p.image)
+      .sort((a, b) => a.x - b.x);
+
+    if (worldX <= sorted[0].x) return this._powerPoleWireY(sorted[0]);
+    if (worldX >= sorted[sorted.length - 1].x)
+      return this._powerPoleWireY(sorted[sorted.length - 1]);
+
+    for (let i = 0; i < sorted.length - 1; i++) {
+      const a = sorted[i];
+      const b = sorted[i + 1];
+      if (worldX < a.x || worldX > b.x) continue;
+
+      const t = Phaser.Math.Clamp((worldX - a.x) / (b.x - a.x), 0, 1);
+      const y1 = this._powerPoleWireY(a);
+      const y2 = this._powerPoleWireY(b);
+      return Phaser.Math.Linear(y1, y2, t);
+    }
+
+    return null;
   }
 
   private _redrawPowerWires() {
@@ -1102,9 +1125,17 @@ export class MainMenu extends Scene {
       }
     }
 
-    // If cat is in a gap, use baseline rooftop path instead of nearest building
-    // to avoid visual "air walking".
-    return (overlapRoofY ?? this.rooftopY) + MainMenu.CAT_FOOT_OFFSET;
+    if (overlapRoofY !== null) {
+      return overlapRoofY + MainMenu.CAT_FOOT_OFFSET;
+    }
+
+    // In gaps, use power-line support so the cat doesn't float above empty space.
+    const lineY = this._getPowerLineYAt(catX);
+    if (lineY !== null) {
+      return lineY + 4;
+    }
+
+    return this.rooftopY + MainMenu.CAT_FOOT_OFFSET;
   }
 
   private _rightmostBuildingEdge(exclude?: Phaser.GameObjects.Image) {
@@ -1159,7 +1190,7 @@ export class MainMenu extends Scene {
       b.image.x -= baseScroll * b.scrollSpeed;
       if (b.image.x < -b.image.displayWidth) {
         const rightmost = this._rightmostBuildingEdge(b.image);
-        b.image.x = rightmost - Phaser.Math.Between(40, 64);
+        b.image.x = rightmost - Phaser.Math.Between(30, 52);
       }
     });
 
@@ -1172,7 +1203,7 @@ export class MainMenu extends Scene {
       pole.image.x -= baseScroll * pole.scrollSpeed;
       if (pole.image.x < -40) {
         const rightmost = this._rightmostPowerPoleX(pole.image);
-        pole.image.x = rightmost + Phaser.Math.Between(180, 280);
+        pole.image.x = rightmost + Phaser.Math.Between(150, 220);
       }
     });
     this._redrawPowerWires();
