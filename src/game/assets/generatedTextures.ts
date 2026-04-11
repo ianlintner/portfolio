@@ -28,6 +28,7 @@ export const GENERATED_TEXTURES = {
   buildingHousingBlock: "buildingHousingBlock",
   buildingApartmentSpire: "buildingApartmentSpire",
   streetLamp: "streetLamp",
+  powerPole: "powerPole",
 } as const;
 
 function withGraphics(
@@ -2113,6 +2114,33 @@ function createStreetLampTexture(scene: Phaser.Scene) {
   );
 }
 
+function createPowerPoleTexture(scene: Phaser.Scene) {
+  withGraphics(
+    scene,
+    (g) => {
+      // Wooden pole body
+      g.fillStyle(0x3f2a1c).fillRect(12, 4, 8, 76);
+      g.fillStyle(0x5a3a24).fillRect(13, 4, 2, 76);
+      g.fillStyle(0x2a1a12).fillRect(18, 4, 1, 76);
+
+      // Cross arm
+      g.fillStyle(0x4b3120).fillRect(2, 14, 28, 4);
+      g.fillStyle(0x2f1f15).fillRect(2, 17, 28, 1);
+
+      // Insulators
+      g.fillStyle(0x7c3aed).fillRect(4, 18, 3, 2);
+      g.fillStyle(0x7c3aed).fillRect(14, 18, 3, 2);
+      g.fillStyle(0x7c3aed).fillRect(24, 18, 3, 2);
+
+      // Base footing
+      g.fillStyle(0x243255).fillRect(10, 78, 12, 2);
+    },
+    GENERATED_TEXTURES.powerPole,
+    32,
+    80,
+  );
+}
+
 export function ensureGeneratedGameTextures(scene: Phaser.Scene) {
   createPlatformFallback(scene);
   createMovingPlatformTexture(scene);
@@ -2122,4 +2150,5 @@ export function ensureGeneratedGameTextures(scene: Phaser.Scene) {
   createCollectibleTextures(scene);
   createBuildingTextures(scene);
   createStreetLampTexture(scene);
+  createPowerPoleTexture(scene);
 }

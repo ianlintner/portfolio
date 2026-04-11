@@ -23,6 +23,11 @@ interface BuildingTwinkle {
   offsetX: number;
 }
 
+interface PowerPoleInstance {
+  image: Phaser.GameObjects.Image;
+  scrollSpeed: number;
+}
+
 export class MainMenu extends Scene {
   private static readonly CAT_FOOT_OFFSET = 10;
   private static readonly ENEMY_FOOT_OFFSET: Record<string, number> = {
@@ -43,6 +48,8 @@ export class MainMenu extends Scene {
   private collectibles: Phaser.GameObjects.Image[] = [];
   private buildings: MidgroundBuilding[] = [];
   private buildingTwinkles: BuildingTwinkle[] = [];
+  private powerPoles: PowerPoleInstance[] = [];
+  private powerWireGraphics?: Phaser.GameObjects.Graphics;
   private streetLamps: Phaser.GameObjects.Image[] = [];
   private runSpeed = 1.5;
   private catIsJumping = false;
@@ -113,6 +120,9 @@ export class MainMenu extends Scene {
     // ── Midground buildings ─────────────────────────────────────────────────
     this._spawnBuildings(width, height);
 
+    // ── Power lines behind buildings (peek through skyline gaps) ───────────
+    this._spawnPowerLines(width, height);
+
     // ── Street lamps between buildings ──────────────────────────────────────
     this._spawnStreetLamps(width, height);
 
@@ -148,6 +158,85 @@ export class MainMenu extends Scene {
         });
       });
     }
+  }
+
+  // ── Power poles & wires ──────────────────────────────────────────────────
+
+  private _spawnPowerLines(width: number, _height: number) {
+    // Keep poles/wires low and subtle so they only reveal through building gaps.
+    const baseY = this.rooftopY + 136;
+
+    this.powerWireGraphics = this.add.graphics().setDepth(-8.7);
+
+    const polePositions = [
+      Math.round(width * 0.08),
+      Math.round(width * 0.32),
+      Math.round(width * 0.58),
+      Math.round(width * 0.83),
+      width + 90,
+      width + 310,
+    ];
+
+    for (const x of polePositions) {
+      const pole = this.add
+        .image(x, baseY, GENERATED_TEXTURES.powerPole)
+        .setOrigin(0.5, 1)
+        .setScale(1.55)
+        .setDepth(-8.6)
+        .setAlpha(0.42);
+
+      this.powerPoles.push({ image: pole, scrollSpeed: 0.66 });
+    }
+
+    this._redrawPowerWires();
+  }
+
+  private _powerPoleWireY(pole: Phaser.GameObjects.Image): number {
+    const localArmY = 18 * pole.scaleY;
+    return pole.y - pole.displayHeight + localArmY;
+  }
+
+  private _redrawPowerWires() {
+    if (!this.powerWireGraphics || this.powerPoles.length < 2) return;
+
+    const g = this.powerWireGraphics;
+    g.clear();
+
+    const sorted = [...this.powerPoles]
+      .map((p) => p.image)
+      .sort((a, b) => a.x - b.x);
+
+    const drawWirePass = (color: number, alpha: number, width: number) => {
+      g.lineStyle(width, color, alpha);
+
+      for (let i = 0; i < sorted.length - 1; i++) {
+        const a = sorted[i];
+        const b = sorted[i + 1];
+
+        const x1 = a.x;
+        const x2 = b.x;
+        const y1 = this._powerPoleWireY(a);
+        const y2 = this._powerPoleWireY(b);
+
+        g.beginPath();
+        g.moveTo(x1, y1);
+        g.lineTo(x2, y2);
+        g.strokePath();
+      }
+    };
+
+    // Thin, discreet cable so it only reads when buildings open up.
+    drawWirePass(0x0b1020, 0.36, 2);
+    drawWirePass(0x334155, 0.24, 1);
+  }
+
+  private _rightmostPowerPoleX(exclude?: Phaser.GameObjects.Image) {
+    let rightmost = this.scale.width;
+    for (const pole of this.powerPoles) {
+      if (exclude && pole.image === exclude) continue;
+      if (pole.image.x > rightmost) rightmost = pole.image.x;
+    }
+    return rightmost;
   }
 
   // ── Rain ─────────────────────────────────────────────────────────────────
@@ -1077,6 +1166,16 @@ export class MainMenu extends Scene {
     this.buildingTwinkles.forEach(({ anchor, light, offsetX }) => {
       light.x = anchor.x + offsetX;
     });
+
+    // Scroll power poles and keep wires continuous.
+    this.powerPoles.forEach((pole) => {
+      pole.image.x -= baseScroll * pole.scrollSpeed;
+      if (pole.image.x < -40) {
+        const rightmost = this._rightmostPowerPoleX(pole.image);
+        pole.image.x = rightmost + Phaser.Math.Between(180, 280);
+      }
+    });
+    this._redrawPowerWires();
 
     // Scroll street lamps
     this.streetLamps.forEach((lamp) => {
