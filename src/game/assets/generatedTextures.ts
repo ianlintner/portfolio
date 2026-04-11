@@ -412,45 +412,279 @@ function drawNeonFrame(
 
 // ── Pixel glyph tables (A-Z, 0-9, punctuation) ─────────────────────────────
 const PIXEL_GLYPHS: Record<string, number[][]> = {
-  A: [[0,1,0],[1,0,1],[1,1,1],[1,0,1],[1,0,1]],
-  B: [[1,1,0],[1,0,1],[1,1,0],[1,0,1],[1,1,0]],
-  C: [[0,1,1],[1,0,0],[1,0,0],[1,0,0],[0,1,1]],
-  D: [[1,1,0],[1,0,1],[1,0,1],[1,0,1],[1,1,0]],
-  E: [[1,1,1],[1,0,0],[1,1,0],[1,0,0],[1,1,1]],
-  F: [[1,1,1],[1,0,0],[1,1,0],[1,0,0],[1,0,0]],
-  G: [[0,1,1],[1,0,0],[1,0,1],[1,0,1],[0,1,1]],
-  H: [[1,0,1],[1,0,1],[1,1,1],[1,0,1],[1,0,1]],
-  I: [[1,1,1],[0,1,0],[0,1,0],[0,1,0],[1,1,1]],
-  J: [[0,0,1],[0,0,1],[0,0,1],[1,0,1],[0,1,0]],
-  K: [[1,0,1],[1,0,1],[1,1,0],[1,0,1],[1,0,1]],
-  L: [[1,0,0],[1,0,0],[1,0,0],[1,0,0],[1,1,1]],
-  M: [[1,0,0,1],[1,1,1,1],[1,0,1,1],[1,0,0,1],[1,0,0,1]],
-  N: [[1,0,1],[1,1,1],[1,1,1],[1,0,1],[1,0,1]],
-  O: [[1,1,1],[1,0,1],[1,0,1],[1,0,1],[1,1,1]],
-  P: [[1,1,1],[1,0,1],[1,1,1],[1,0,0],[1,0,0]],
-  Q: [[0,1,0],[1,0,1],[1,0,1],[1,1,0],[0,1,1]],
-  R: [[1,1,0],[1,0,1],[1,1,0],[1,1,0],[1,0,1]],
-  S: [[0,1,1],[1,0,0],[0,1,0],[0,0,1],[1,1,0]],
-  T: [[1,1,1],[0,1,0],[0,1,0],[0,1,0],[0,1,0]],
-  U: [[1,0,1],[1,0,1],[1,0,1],[1,0,1],[0,1,0]],
-  V: [[1,0,1],[1,0,1],[1,0,1],[0,1,0],[0,1,0]],
-  W: [[1,0,0,1],[1,0,0,1],[1,0,1,1],[1,1,1,1],[1,0,1,1]],
-  X: [[1,0,1],[1,0,1],[0,1,0],[1,0,1],[1,0,1]],
-  Y: [[1,0,1],[1,0,1],[0,1,0],[0,1,0],[0,1,0]],
-  Z: [[1,1,1],[0,0,1],[0,1,0],[1,0,0],[1,1,1]],
-  "0": [[1,1,1],[1,0,1],[1,0,1],[1,0,1],[1,1,1]],
-  "1": [[0,1,0],[1,1,0],[0,1,0],[0,1,0],[1,1,1]],
-  "2": [[1,1,1],[0,0,1],[1,1,1],[1,0,0],[1,1,1]],
-  "3": [[1,1,1],[0,0,1],[0,1,1],[0,0,1],[1,1,1]],
-  "4": [[1,0,1],[1,0,1],[1,1,1],[0,0,1],[0,0,1]],
-  "5": [[1,1,1],[1,0,0],[1,1,1],[0,0,1],[1,1,0]],
-  "6": [[0,1,1],[1,0,0],[1,1,1],[1,0,1],[1,1,1]],
-  "7": [[1,1,1],[0,0,1],[0,1,0],[0,1,0],[0,1,0]],
-  "8": [[1,1,1],[1,0,1],[1,1,1],[1,0,1],[1,1,1]],
-  "9": [[1,1,1],[1,0,1],[1,1,1],[0,0,1],[1,1,0]],
-  "+": [[0,0,0],[0,1,0],[1,1,1],[0,1,0],[0,0,0]],
-  "-": [[0,0,0],[0,0,0],[1,1,1],[0,0,0],[0,0,0]],
-  "!": [[0,1,0],[0,1,0],[0,1,0],[0,0,0],[0,1,0]],
+  A: [
+    [0, 1, 0],
+    [1, 0, 1],
+    [1, 1, 1],
+    [1, 0, 1],
+    [1, 0, 1],
+  ],
+  B: [
+    [1, 1, 0],
+    [1, 0, 1],
+    [1, 1, 0],
+    [1, 0, 1],
+    [1, 1, 0],
+  ],
+  C: [
+    [0, 1, 1],
+    [1, 0, 0],
+    [1, 0, 0],
+    [1, 0, 0],
+    [0, 1, 1],
+  ],
+  D: [
+    [1, 1, 0],
+    [1, 0, 1],
+    [1, 0, 1],
+    [1, 0, 1],
+    [1, 1, 0],
+  ],
+  E: [
+    [1, 1, 1],
+    [1, 0, 0],
+    [1, 1, 0],
+    [1, 0, 0],
+    [1, 1, 1],
+  ],
+  F: [
+    [1, 1, 1],
+    [1, 0, 0],
+    [1, 1, 0],
+    [1, 0, 0],
+    [1, 0, 0],
+  ],
+  G: [
+    [0, 1, 1],
+    [1, 0, 0],
+    [1, 0, 1],
+    [1, 0, 1],
+    [0, 1, 1],
+  ],
+  H: [
+    [1, 0, 1],
+    [1, 0, 1],
+    [1, 1, 1],
+    [1, 0, 1],
+    [1, 0, 1],
+  ],
+  I: [
+    [1, 1, 1],
+    [0, 1, 0],
+    [0, 1, 0],
+    [0, 1, 0],
+    [1, 1, 1],
+  ],
+  J: [
+    [0, 0, 1],
+    [0, 0, 1],
+    [0, 0, 1],
+    [1, 0, 1],
+    [0, 1, 0],
+  ],
+  K: [
+    [1, 0, 1],
+    [1, 0, 1],
+    [1, 1, 0],
+    [1, 0, 1],
+    [1, 0, 1],
+  ],
+  L: [
+    [1, 0, 0],
+    [1, 0, 0],
+    [1, 0, 0],
+    [1, 0, 0],
+    [1, 1, 1],
+  ],
+  M: [
+    [1, 0, 0, 1],
+    [1, 1, 1, 1],
+    [1, 0, 1, 1],
+    [1, 0, 0, 1],
+    [1, 0, 0, 1],
+  ],
+  N: [
+    [1, 0, 1],
+    [1, 1, 1],
+    [1, 1, 1],
+    [1, 0, 1],
+    [1, 0, 1],
+  ],
+  O: [
+    [1, 1, 1],
+    [1, 0, 1],
+    [1, 0, 1],
+    [1, 0, 1],
+    [1, 1, 1],
+  ],
+  P: [
+    [1, 1, 1],
+    [1, 0, 1],
+    [1, 1, 1],
+    [1, 0, 0],
+    [1, 0, 0],
+  ],
+  Q: [
+    [0, 1, 0],
+    [1, 0, 1],
+    [1, 0, 1],
+    [1, 1, 0],
+    [0, 1, 1],
+  ],
+  R: [
+    [1, 1, 0],
+    [1, 0, 1],
+    [1, 1, 0],
+    [1, 1, 0],
+    [1, 0, 1],
+  ],
+  S: [
+    [0, 1, 1],
+    [1, 0, 0],
+    [0, 1, 0],
+    [0, 0, 1],
+    [1, 1, 0],
+  ],
+  T: [
+    [1, 1, 1],
+    [0, 1, 0],
+    [0, 1, 0],
+    [0, 1, 0],
+    [0, 1, 0],
+  ],
+  U: [
+    [1, 0, 1],
+    [1, 0, 1],
+    [1, 0, 1],
+    [1, 0, 1],
+    [0, 1, 0],
+  ],
+  V: [
+    [1, 0, 1],
+    [1, 0, 1],
+    [1, 0, 1],
+    [0, 1, 0],
+    [0, 1, 0],
+  ],
+  W: [
+    [1, 0, 0, 1],
+    [1, 0, 0, 1],
+    [1, 0, 1, 1],
+    [1, 1, 1, 1],
+    [1, 0, 1, 1],
+  ],
+  X: [
+    [1, 0, 1],
+    [1, 0, 1],
+    [0, 1, 0],
+    [1, 0, 1],
+    [1, 0, 1],
+  ],
+  Y: [
+    [1, 0, 1],
+    [1, 0, 1],
+    [0, 1, 0],
+    [0, 1, 0],
+    [0, 1, 0],
+  ],
+  Z: [
+    [1, 1, 1],
+    [0, 0, 1],
+    [0, 1, 0],
+    [1, 0, 0],
+    [1, 1, 1],
+  ],
+  "0": [
+    [1, 1, 1],
+    [1, 0, 1],
+    [1, 0, 1],
+    [1, 0, 1],
+    [1, 1, 1],
+  ],
+  "1": [
+    [0, 1, 0],
+    [1, 1, 0],
+    [0, 1, 0],
+    [0, 1, 0],
+    [1, 1, 1],
+  ],
+  "2": [
+    [1, 1, 1],
+    [0, 0, 1],
+    [1, 1, 1],
+    [1, 0, 0],
+    [1, 1, 1],
+  ],
+  "3": [
+    [1, 1, 1],
+    [0, 0, 1],
+    [0, 1, 1],
+    [0, 0, 1],
+    [1, 1, 1],
+  ],
+  "4": [
+    [1, 0, 1],
+    [1, 0, 1],
+    [1, 1, 1],
+    [0, 0, 1],
+    [0, 0, 1],
+  ],
+  "5": [
+    [1, 1, 1],
+    [1, 0, 0],
+    [1, 1, 1],
+    [0, 0, 1],
+    [1, 1, 0],
+  ],
+  "6": [
+    [0, 1, 1],
+    [1, 0, 0],
+    [1, 1, 1],
+    [1, 0, 1],
+    [1, 1, 1],
+  ],
+  "7": [
+    [1, 1, 1],
+    [0, 0, 1],
+    [0, 1, 0],
+    [0, 1, 0],
+    [0, 1, 0],
+  ],
+  "8": [
+    [1, 1, 1],
+    [1, 0, 1],
+    [1, 1, 1],
+    [1, 0, 1],
+    [1, 1, 1],
+  ],
+  "9": [
+    [1, 1, 1],
+    [1, 0, 1],
+    [1, 1, 1],
+    [0, 0, 1],
+    [1, 1, 0],
+  ],
+  "+": [
+    [0, 0, 0],
+    [0, 1, 0],
+    [1, 1, 1],
+    [0, 1, 0],
+    [0, 0, 0],
+  ],
+  "-": [
+    [0, 0, 0],
+    [0, 0, 0],
+    [1, 1, 1],
+    [0, 0, 0],
+    [0, 0, 0],
+  ],
+  "!": [
+    [0, 1, 0],
+    [0, 1, 0],
+    [0, 1, 0],
+    [0, 0, 0],
+    [0, 1, 0],
+  ],
 };
 
 function drawPixelWord(
@@ -505,41 +739,233 @@ function drawCenteredPixelWord(
 // ── Vertical glyph table (4-wide CJK + Latin) ──────────────────────────────
 const VERTICAL_GLYPHS: Record<string, number[][]> = {
   // Latin
-  S: [[0,1,1,0],[1,0,0,0],[0,1,1,0],[0,0,0,1],[1,1,1,0]],
-  Y: [[1,0,0,1],[0,1,1,0],[0,1,1,0],[0,0,1,0],[0,0,1,0]],
-  N: [[1,0,0,1],[1,1,0,1],[1,0,1,1],[1,0,0,1],[1,0,0,1]],
-  A: [[0,1,1,0],[1,0,0,1],[1,1,1,1],[1,0,0,1],[1,0,0,1]],
-  B: [[1,1,1,0],[1,0,0,1],[1,1,1,0],[1,0,0,1],[1,1,1,0]],
-  C: [[0,1,1,1],[1,0,0,0],[1,0,0,0],[1,0,0,0],[0,1,1,1]],
-  D: [[1,1,1,0],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,1,1,0]],
-  E: [[1,1,1,1],[1,0,0,0],[1,1,1,0],[1,0,0,0],[1,1,1,1]],
-  R: [[1,1,1,0],[1,0,0,1],[1,1,1,0],[1,0,1,0],[1,0,0,1]],
-  X: [[1,0,0,1],[0,1,1,0],[0,1,1,0],[0,1,1,0],[1,0,0,1]],
+  S: [
+    [0, 1, 1, 0],
+    [1, 0, 0, 0],
+    [0, 1, 1, 0],
+    [0, 0, 0, 1],
+    [1, 1, 1, 0],
+  ],
+  Y: [
+    [1, 0, 0, 1],
+    [0, 1, 1, 0],
+    [0, 1, 1, 0],
+    [0, 0, 1, 0],
+    [0, 0, 1, 0],
+  ],
+  N: [
+    [1, 0, 0, 1],
+    [1, 1, 0, 1],
+    [1, 0, 1, 1],
+    [1, 0, 0, 1],
+    [1, 0, 0, 1],
+  ],
+  A: [
+    [0, 1, 1, 0],
+    [1, 0, 0, 1],
+    [1, 1, 1, 1],
+    [1, 0, 0, 1],
+    [1, 0, 0, 1],
+  ],
+  B: [
+    [1, 1, 1, 0],
+    [1, 0, 0, 1],
+    [1, 1, 1, 0],
+    [1, 0, 0, 1],
+    [1, 1, 1, 0],
+  ],
+  C: [
+    [0, 1, 1, 1],
+    [1, 0, 0, 0],
+    [1, 0, 0, 0],
+    [1, 0, 0, 0],
+    [0, 1, 1, 1],
+  ],
+  D: [
+    [1, 1, 1, 0],
+    [1, 0, 0, 1],
+    [1, 0, 0, 1],
+    [1, 0, 0, 1],
+    [1, 1, 1, 0],
+  ],
+  E: [
+    [1, 1, 1, 1],
+    [1, 0, 0, 0],
+    [1, 1, 1, 0],
+    [1, 0, 0, 0],
+    [1, 1, 1, 1],
+  ],
+  R: [
+    [1, 1, 1, 0],
+    [1, 0, 0, 1],
+    [1, 1, 1, 0],
+    [1, 0, 1, 0],
+    [1, 0, 0, 1],
+  ],
+  X: [
+    [1, 0, 0, 1],
+    [0, 1, 1, 0],
+    [0, 1, 1, 0],
+    [0, 1, 1, 0],
+    [1, 0, 0, 1],
+  ],
   // Japanese katakana
-  カ: [[1,0,0,1],[1,1,1,0],[1,0,1,0],[1,0,0,1],[0,0,0,1]],
-  ラ: [[1,1,1,1],[0,0,0,0],[0,1,1,1],[0,0,0,1],[1,1,1,0]],
-  オ: [[0,1,1,0],[1,1,1,1],[0,1,1,0],[0,1,1,0],[1,0,0,1]],
-  ケ: [[1,0,0,1],[1,0,0,1],[1,1,1,0],[1,0,1,0],[0,0,0,1]],
-  ネ: [[0,1,1,0],[1,1,1,1],[0,1,0,0],[1,1,1,0],[0,1,0,1]],
-  コ: [[1,1,1,1],[0,0,0,1],[0,0,0,1],[0,0,0,1],[1,1,1,1]],
-  ン: [[0,1,0,0],[0,0,0,0],[1,0,0,1],[0,1,0,1],[0,0,1,0]],
-  ビ: [[0,1,0,1],[0,1,0,0],[1,1,1,0],[0,0,0,1],[1,1,1,0]],
-  ル: [[0,1,0,0],[0,1,0,1],[0,1,0,1],[0,1,0,1],[1,0,1,1]],
-  テ: [[1,1,1,1],[0,0,0,0],[0,1,1,0],[0,1,0,0],[0,1,0,0]],
-  ク: [[0,1,1,0],[0,0,1,0],[0,1,0,0],[1,0,0,0],[0,0,0,1]],
-  ノ: [[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0],[0,0,0,0]],
+  カ: [
+    [1, 0, 0, 1],
+    [1, 1, 1, 0],
+    [1, 0, 1, 0],
+    [1, 0, 0, 1],
+    [0, 0, 0, 1],
+  ],
+  ラ: [
+    [1, 1, 1, 1],
+    [0, 0, 0, 0],
+    [0, 1, 1, 1],
+    [0, 0, 0, 1],
+    [1, 1, 1, 0],
+  ],
+  オ: [
+    [0, 1, 1, 0],
+    [1, 1, 1, 1],
+    [0, 1, 1, 0],
+    [0, 1, 1, 0],
+    [1, 0, 0, 1],
+  ],
+  ケ: [
+    [1, 0, 0, 1],
+    [1, 0, 0, 1],
+    [1, 1, 1, 0],
+    [1, 0, 1, 0],
+    [0, 0, 0, 1],
+  ],
+  ネ: [
+    [0, 1, 1, 0],
+    [1, 1, 1, 1],
+    [0, 1, 0, 0],
+    [1, 1, 1, 0],
+    [0, 1, 0, 1],
+  ],
+  コ: [
+    [1, 1, 1, 1],
+    [0, 0, 0, 1],
+    [0, 0, 0, 1],
+    [0, 0, 0, 1],
+    [1, 1, 1, 1],
+  ],
+  ン: [
+    [0, 1, 0, 0],
+    [0, 0, 0, 0],
+    [1, 0, 0, 1],
+    [0, 1, 0, 1],
+    [0, 0, 1, 0],
+  ],
+  ビ: [
+    [0, 1, 0, 1],
+    [0, 1, 0, 0],
+    [1, 1, 1, 0],
+    [0, 0, 0, 1],
+    [1, 1, 1, 0],
+  ],
+  ル: [
+    [0, 1, 0, 0],
+    [0, 1, 0, 1],
+    [0, 1, 0, 1],
+    [0, 1, 0, 1],
+    [1, 0, 1, 1],
+  ],
+  テ: [
+    [1, 1, 1, 1],
+    [0, 0, 0, 0],
+    [0, 1, 1, 0],
+    [0, 1, 0, 0],
+    [0, 1, 0, 0],
+  ],
+  ク: [
+    [0, 1, 1, 0],
+    [0, 0, 1, 0],
+    [0, 1, 0, 0],
+    [1, 0, 0, 0],
+    [0, 0, 0, 1],
+  ],
+  ノ: [
+    [0, 0, 0, 1],
+    [0, 0, 1, 0],
+    [0, 1, 0, 0],
+    [1, 0, 0, 0],
+    [0, 0, 0, 0],
+  ],
   // Chinese simplified
-  面: [[1,1,1,1],[1,0,0,1],[1,1,1,1],[1,0,1,1],[1,1,1,1]],
-  馆: [[1,0,1,1],[1,1,1,0],[1,0,1,1],[1,0,0,1],[1,0,1,0]],
-  茶: [[0,1,1,0],[1,1,1,1],[0,1,1,0],[1,0,0,1],[0,1,1,0]],
-  酒: [[1,0,1,1],[1,0,1,0],[1,1,1,1],[1,0,0,1],[1,1,1,1]],
-  药: [[0,1,1,0],[1,1,1,1],[1,0,0,1],[0,1,1,0],[1,0,0,1]],
-  店: [[1,1,1,1],[1,0,0,0],[1,1,1,1],[1,0,1,0],[1,0,0,1]],
-  城: [[1,0,1,1],[1,1,1,0],[1,0,1,1],[1,0,1,0],[1,1,1,1]],
-  火: [[0,1,1,0],[0,1,1,0],[1,0,0,1],[1,0,0,1],[1,0,0,1]],
+  面: [
+    [1, 1, 1, 1],
+    [1, 0, 0, 1],
+    [1, 1, 1, 1],
+    [1, 0, 1, 1],
+    [1, 1, 1, 1],
+  ],
+  馆: [
+    [1, 0, 1, 1],
+    [1, 1, 1, 0],
+    [1, 0, 1, 1],
+    [1, 0, 0, 1],
+    [1, 0, 1, 0],
+  ],
+  茶: [
+    [0, 1, 1, 0],
+    [1, 1, 1, 1],
+    [0, 1, 1, 0],
+    [1, 0, 0, 1],
+    [0, 1, 1, 0],
+  ],
+  酒: [
+    [1, 0, 1, 1],
+    [1, 0, 1, 0],
+    [1, 1, 1, 1],
+    [1, 0, 0, 1],
+    [1, 1, 1, 1],
+  ],
+  药: [
+    [0, 1, 1, 0],
+    [1, 1, 1, 1],
+    [1, 0, 0, 1],
+    [0, 1, 1, 0],
+    [1, 0, 0, 1],
+  ],
+  店: [
+    [1, 1, 1, 1],
+    [1, 0, 0, 0],
+    [1, 1, 1, 1],
+    [1, 0, 1, 0],
+    [1, 0, 0, 1],
+  ],
+  城: [
+    [1, 0, 1, 1],
+    [1, 1, 1, 0],
+    [1, 0, 1, 1],
+    [1, 0, 1, 0],
+    [1, 1, 1, 1],
+  ],
+  火: [
+    [0, 1, 1, 0],
+    [0, 1, 1, 0],
+    [1, 0, 0, 1],
+    [1, 0, 0, 1],
+    [1, 0, 0, 1],
+  ],
   // Korean
-  빠: [[1,1,0,1],[1,0,0,1],[1,1,0,1],[1,0,0,1],[1,1,1,1]],
-  른: [[1,1,1,0],[1,0,0,0],[1,1,1,0],[0,0,0,1],[1,1,1,1]],
+  빠: [
+    [1, 1, 0, 1],
+    [1, 0, 0, 1],
+    [1, 1, 0, 1],
+    [1, 0, 0, 1],
+    [1, 1, 1, 1],
+  ],
+  른: [
+    [1, 1, 1, 0],
+    [1, 0, 0, 0],
+    [1, 1, 1, 0],
+    [0, 0, 0, 1],
+    [1, 1, 1, 1],
+  ],
 };
 
 function drawVerticalPixelGlyphs(
@@ -553,7 +979,10 @@ function drawVerticalPixelGlyphs(
   let cursorY = y;
   for (const glyphKey of glyphsToDraw) {
     const glyph = VERTICAL_GLYPHS[glyphKey];
-    if (!glyph) { cursorY += 8; continue; }
+    if (!glyph) {
+      cursorY += 8;
+      continue;
+    }
     glyph.forEach((row, rowIndex) => {
       row.forEach((px, colIndex) => {
         if (px) g.fillRect(x + colIndex * 2, cursorY + rowIndex * 2, 2, 2);
@@ -616,18 +1045,18 @@ function drawTacoSign(g: Phaser.GameObjects.Graphics, x: number, y: number) {
 // ── Cyberpunk neon palette ───────────────────────────────────────────────────
 
 const NEON_COLORS = {
-  cyan:     { frame: 0x06b6d4, text: 0x67e8f9 },
-  magenta:  { frame: 0xf472b6, text: 0xf9a8d4 },
-  amber:    { frame: 0xf59e0b, text: 0xfef3c7 },
-  red:      { frame: 0xef4444, text: 0xfecaca },
-  green:    { frame: 0x22c55e, text: 0xdcfce7 },
-  purple:   { frame: 0xa855f7, text: 0xe9d5ff },
-  pink:     { frame: 0xec4899, text: 0xfce7f3 },
-  orange:   { frame: 0xf97316, text: 0xffedd5 },
-  blue:     { frame: 0x3b82f6, text: 0xdbeafe },
-  lime:     { frame: 0x84cc16, text: 0xecfccb },
-  teal:     { frame: 0x14b8a6, text: 0xccfbf1 },
-  rose:     { frame: 0xfb7185, text: 0xfecdd3 },
+  cyan: { frame: 0x06b6d4, text: 0x67e8f9 },
+  magenta: { frame: 0xf472b6, text: 0xf9a8d4 },
+  amber: { frame: 0xf59e0b, text: 0xfef3c7 },
+  red: { frame: 0xef4444, text: 0xfecaca },
+  green: { frame: 0x22c55e, text: 0xdcfce7 },
+  purple: { frame: 0xa855f7, text: 0xe9d5ff },
+  pink: { frame: 0xec4899, text: 0xfce7f3 },
+  orange: { frame: 0xf97316, text: 0xffedd5 },
+  blue: { frame: 0x3b82f6, text: 0xdbeafe },
+  lime: { frame: 0x84cc16, text: 0xecfccb },
+  teal: { frame: 0x14b8a6, text: 0xccfbf1 },
+  rose: { frame: 0xfb7185, text: 0xfecdd3 },
 } as const;
 
 type NeonColorKey = keyof typeof NEON_COLORS;
@@ -636,286 +1065,407 @@ const NEON_COLOR_KEYS = Object.keys(NEON_COLORS) as NeonColorKey[];
 type SignEntry =
   | { kind: "text"; letters: string[]; colors?: NeonColorKey[] }
   | { kind: "blade"; glyphs: string[]; colors?: NeonColorKey[] }
-  | { kind: "icon"; draw: (g: Phaser.GameObjects.Graphics, x: number, y: number, color: number) => void; colors?: NeonColorKey[] };
+  | {
+      kind: "icon";
+      draw: (
+        g: Phaser.GameObjects.Graphics,
+        x: number,
+        y: number,
+        color: number,
+      ) => void;
+      colors?: NeonColorKey[];
+    };
 
 // 200 signs — mostly English, some Japanese, Korean, Chinese, Spanish
 const CYBERPUNK_SIGNS: SignEntry[] = [
   // ── English text signs (~130) ──
-  { kind: "text", letters: ["B","A","R"] },
-  { kind: "text", letters: ["P","A","W","N"] },
-  { kind: "text", letters: ["G","U","N","S"], colors: ["red","orange"] },
-  { kind: "text", letters: ["O","P","E","N"], colors: ["cyan","green","lime"] },
-  { kind: "text", letters: ["I","M","P","L"] },
-  { kind: "text", letters: ["D","O","C"], colors: ["green"] },
-  { kind: "text", letters: ["C","A","T"], colors: ["green","lime","teal"] },
-  { kind: "text", letters: ["R","X"], colors: ["cyan","blue"] },
-  { kind: "text", letters: ["H","A","C","K"] },
-  { kind: "text", letters: ["D","A","T","A"] },
-  { kind: "text", letters: ["N","E","O","N"] },
-  { kind: "text", letters: ["B","Y","T","E"] },
-  { kind: "text", letters: ["N","O","D","E"] },
-  { kind: "text", letters: ["C","O","D","E"] },
-  { kind: "text", letters: ["L","I","N","K"] },
-  { kind: "text", letters: ["Z","E","R","O"] },
-  { kind: "text", letters: ["V","O","I","D"] },
-  { kind: "text", letters: ["P","U","L","S","E"] },
-  { kind: "text", letters: ["G","R","I","D"] },
-  { kind: "text", letters: ["E","D","G","E"] },
-  { kind: "text", letters: ["D","U","S","K"] },
-  { kind: "text", letters: ["R","U","S","T"] },
-  { kind: "text", letters: ["I","N","K"] },
-  { kind: "text", letters: ["N","E","T"] },
-  { kind: "text", letters: ["H","U","B"] },
-  { kind: "text", letters: ["J","A","C","K"] },
-  { kind: "text", letters: ["D","E","N"] },
-  { kind: "text", letters: ["C","R","E","W"] },
-  { kind: "text", letters: ["F","U","E","L"] },
-  { kind: "text", letters: ["C","O","R","E"] },
-  { kind: "text", letters: ["D","R","O","P"] },
-  { kind: "text", letters: ["P","O","R","T"] },
-  { kind: "text", letters: ["S","L","O","T"] },
-  { kind: "text", letters: ["M","O","D","S"] },
-  { kind: "text", letters: ["V","E","N","D"] },
-  { kind: "text", letters: ["W","I","R","E"] },
-  { kind: "text", letters: ["T","U","N","E"] },
-  { kind: "text", letters: ["F","L","U","X"] },
-  { kind: "text", letters: ["R","A","V","E"] },
-  { kind: "text", letters: ["S","H","O","P"] },
-  { kind: "text", letters: ["C","A","F","E"] },
-  { kind: "text", letters: ["E","A","T","S"] },
-  { kind: "text", letters: ["B","E","E","R"] },
-  { kind: "text", letters: ["G","L","O","W"] },
-  { kind: "text", letters: ["B","U","R","N"] },
-  { kind: "text", letters: ["J","O","L","T"] },
-  { kind: "text", letters: ["B","O","O","T"] },
-  { kind: "text", letters: ["S","C","A","N"] },
-  { kind: "text", letters: ["D","I","A","L"] },
-  { kind: "text", letters: ["Z","O","N","E"] },
-  { kind: "text", letters: ["R","I","S","K"] },
-  { kind: "text", letters: ["C","L","U","B"] },
-  { kind: "text", letters: ["G","A","S"] },
-  { kind: "text", letters: ["A","R","M","S"] },
-  { kind: "text", letters: ["B","O","T","S"] },
-  { kind: "text", letters: ["D","I","G","S"] },
-  { kind: "text", letters: ["R","E","N","T"] },
-  { kind: "text", letters: ["P","A","D"] },
-  { kind: "text", letters: ["L","A","B"] },
-  { kind: "text", letters: ["C","H","I","P"] },
-  { kind: "text", letters: ["S","P","I","N"] },
-  { kind: "text", letters: ["D","A","S","H"] },
-  { kind: "text", letters: ["T","A","N","K"] },
-  { kind: "text", letters: ["V","A","U","L","T"] },
-  { kind: "text", letters: ["B","L","A","D","E"] },
-  { kind: "text", letters: ["S","T","E","E","L"] },
-  { kind: "text", letters: ["P","L","A","S","M","A"] },
-  { kind: "text", letters: ["C","H","R","O","M","E"] },
-  { kind: "text", letters: ["S","Y","N","T","H"] },
-  { kind: "text", letters: ["P","A","R","T","S"] },
-  { kind: "text", letters: ["F","I","X"] },
-  { kind: "text", letters: ["P","R","O","B","E"] },
-  { kind: "text", letters: ["S","U","R","G","E"] },
-  { kind: "text", letters: ["D","O","J","O"] },
-  { kind: "text", letters: ["Z","E","N"] },
-  { kind: "text", letters: ["R","A","M","E","N"] },
-  { kind: "text", letters: ["S","U","S","H","I"] },
-  { kind: "text", letters: ["W","O","K"] },
-  { kind: "text", letters: ["D","I","M"] },
-  { kind: "text", letters: ["G","Y","M"] },
-  { kind: "text", letters: ["S","P","A"] },
-  { kind: "text", letters: ["I","N","N"] },
-  { kind: "text", letters: ["T","A","X","I"] },
-  { kind: "text", letters: ["C","O","P","S"], colors: ["blue","cyan"] },
-  { kind: "text", letters: ["E","X","I","T"], colors: ["red","rose"] },
-  { kind: "text", letters: ["B","A","N","K"] },
-  { kind: "text", letters: ["S","A","F","E"] },
-  { kind: "text", letters: ["D","U","M","P"] },
-  { kind: "text", letters: ["P","R","I","N","T"] },
-  { kind: "text", letters: ["O","I","L"] },
-  { kind: "text", letters: ["H","O","T","E","L"] },
-  { kind: "text", letters: ["M","O","T","E","L"] },
-  { kind: "text", letters: ["C","L","I","N","I","C"] },
-  { kind: "text", letters: ["A","R","C","A","D","E"] },
-  { kind: "text", letters: ["T","E","C","H"] },
-  { kind: "text", letters: ["I","O","N"] },
-  { kind: "text", letters: ["F","L","A","S","H"] },
-  { kind: "text", letters: ["B","O","U","N","T","Y"] },
-  { kind: "text", letters: ["L","O","O","T"] },
-  { kind: "text", letters: ["P","I","X","E","L"] },
-  { kind: "text", letters: ["G","L","I","T","C","H"] },
-  { kind: "text", letters: ["W","A","S","T","E"] },
-  { kind: "text", letters: ["D","R","O","I","D"] },
-  { kind: "text", letters: ["C","Y","B","E","R"] },
-  { kind: "text", letters: ["N","I","G","H","T"] },
-  { kind: "text", letters: ["2","4","-","7"], colors: ["amber","orange","red"] },
-  { kind: "text", letters: ["L","I","V","E"] },
-  { kind: "text", letters: ["D","E","A","D"] },
-  { kind: "text", letters: ["K","I","L","L"] },
-  { kind: "text", letters: ["V","I","P"] },
-  { kind: "text", letters: ["S","A","L","E"] },
-  { kind: "text", letters: ["F","R","E","E"] },
-  { kind: "text", letters: ["N","E","W","!"] },
-  { kind: "text", letters: ["H","O","T","!"] },
+  { kind: "text", letters: ["B", "A", "R"] },
+  { kind: "text", letters: ["P", "A", "W", "N"] },
+  { kind: "text", letters: ["G", "U", "N", "S"], colors: ["red", "orange"] },
+  {
+    kind: "text",
+    letters: ["O", "P", "E", "N"],
+    colors: ["cyan", "green", "lime"],
+  },
+  { kind: "text", letters: ["I", "M", "P", "L"] },
+  { kind: "text", letters: ["D", "O", "C"], colors: ["green"] },
+  { kind: "text", letters: ["C", "A", "T"], colors: ["green", "lime", "teal"] },
+  { kind: "text", letters: ["R", "X"], colors: ["cyan", "blue"] },
+  { kind: "text", letters: ["H", "A", "C", "K"] },
+  { kind: "text", letters: ["D", "A", "T", "A"] },
+  { kind: "text", letters: ["N", "E", "O", "N"] },
+  { kind: "text", letters: ["B", "Y", "T", "E"] },
+  { kind: "text", letters: ["N", "O", "D", "E"] },
+  { kind: "text", letters: ["C", "O", "D", "E"] },
+  { kind: "text", letters: ["L", "I", "N", "K"] },
+  { kind: "text", letters: ["Z", "E", "R", "O"] },
+  { kind: "text", letters: ["V", "O", "I", "D"] },
+  { kind: "text", letters: ["P", "U", "L", "S", "E"] },
+  { kind: "text", letters: ["G", "R", "I", "D"] },
+  { kind: "text", letters: ["E", "D", "G", "E"] },
+  { kind: "text", letters: ["D", "U", "S", "K"] },
+  { kind: "text", letters: ["R", "U", "S", "T"] },
+  { kind: "text", letters: ["I", "N", "K"] },
+  { kind: "text", letters: ["N", "E", "T"] },
+  { kind: "text", letters: ["H", "U", "B"] },
+  { kind: "text", letters: ["J", "A", "C", "K"] },
+  { kind: "text", letters: ["D", "E", "N"] },
+  { kind: "text", letters: ["C", "R", "E", "W"] },
+  { kind: "text", letters: ["F", "U", "E", "L"] },
+  { kind: "text", letters: ["C", "O", "R", "E"] },
+  { kind: "text", letters: ["D", "R", "O", "P"] },
+  { kind: "text", letters: ["P", "O", "R", "T"] },
+  { kind: "text", letters: ["S", "L", "O", "T"] },
+  { kind: "text", letters: ["M", "O", "D", "S"] },
+  { kind: "text", letters: ["V", "E", "N", "D"] },
+  { kind: "text", letters: ["W", "I", "R", "E"] },
+  { kind: "text", letters: ["T", "U", "N", "E"] },
+  { kind: "text", letters: ["F", "L", "U", "X"] },
+  { kind: "text", letters: ["R", "A", "V", "E"] },
+  { kind: "text", letters: ["S", "H", "O", "P"] },
+  { kind: "text", letters: ["C", "A", "F", "E"] },
+  { kind: "text", letters: ["E", "A", "T", "S"] },
+  { kind: "text", letters: ["B", "E", "E", "R"] },
+  { kind: "text", letters: ["G", "L", "O", "W"] },
+  { kind: "text", letters: ["B", "U", "R", "N"] },
+  { kind: "text", letters: ["J", "O", "L", "T"] },
+  { kind: "text", letters: ["B", "O", "O", "T"] },
+  { kind: "text", letters: ["S", "C", "A", "N"] },
+  { kind: "text", letters: ["D", "I", "A", "L"] },
+  { kind: "text", letters: ["Z", "O", "N", "E"] },
+  { kind: "text", letters: ["R", "I", "S", "K"] },
+  { kind: "text", letters: ["C", "L", "U", "B"] },
+  { kind: "text", letters: ["G", "A", "S"] },
+  { kind: "text", letters: ["A", "R", "M", "S"] },
+  { kind: "text", letters: ["B", "O", "T", "S"] },
+  { kind: "text", letters: ["D", "I", "G", "S"] },
+  { kind: "text", letters: ["R", "E", "N", "T"] },
+  { kind: "text", letters: ["P", "A", "D"] },
+  { kind: "text", letters: ["L", "A", "B"] },
+  { kind: "text", letters: ["C", "H", "I", "P"] },
+  { kind: "text", letters: ["S", "P", "I", "N"] },
+  { kind: "text", letters: ["D", "A", "S", "H"] },
+  { kind: "text", letters: ["T", "A", "N", "K"] },
+  { kind: "text", letters: ["V", "A", "U", "L", "T"] },
+  { kind: "text", letters: ["B", "L", "A", "D", "E"] },
+  { kind: "text", letters: ["S", "T", "E", "E", "L"] },
+  { kind: "text", letters: ["P", "L", "A", "S", "M", "A"] },
+  { kind: "text", letters: ["C", "H", "R", "O", "M", "E"] },
+  { kind: "text", letters: ["S", "Y", "N", "T", "H"] },
+  { kind: "text", letters: ["P", "A", "R", "T", "S"] },
+  { kind: "text", letters: ["F", "I", "X"] },
+  { kind: "text", letters: ["P", "R", "O", "B", "E"] },
+  { kind: "text", letters: ["S", "U", "R", "G", "E"] },
+  { kind: "text", letters: ["D", "O", "J", "O"] },
+  { kind: "text", letters: ["Z", "E", "N"] },
+  { kind: "text", letters: ["R", "A", "M", "E", "N"] },
+  { kind: "text", letters: ["S", "U", "S", "H", "I"] },
+  { kind: "text", letters: ["W", "O", "K"] },
+  { kind: "text", letters: ["D", "I", "M"] },
+  { kind: "text", letters: ["G", "Y", "M"] },
+  { kind: "text", letters: ["S", "P", "A"] },
+  { kind: "text", letters: ["I", "N", "N"] },
+  { kind: "text", letters: ["T", "A", "X", "I"] },
+  { kind: "text", letters: ["C", "O", "P", "S"], colors: ["blue", "cyan"] },
+  { kind: "text", letters: ["E", "X", "I", "T"], colors: ["red", "rose"] },
+  { kind: "text", letters: ["B", "A", "N", "K"] },
+  { kind: "text", letters: ["S", "A", "F", "E"] },
+  { kind: "text", letters: ["D", "U", "M", "P"] },
+  { kind: "text", letters: ["P", "R", "I", "N", "T"] },
+  { kind: "text", letters: ["O", "I", "L"] },
+  { kind: "text", letters: ["H", "O", "T", "E", "L"] },
+  { kind: "text", letters: ["M", "O", "T", "E", "L"] },
+  { kind: "text", letters: ["C", "L", "I", "N", "I", "C"] },
+  { kind: "text", letters: ["A", "R", "C", "A", "D", "E"] },
+  { kind: "text", letters: ["T", "E", "C", "H"] },
+  { kind: "text", letters: ["I", "O", "N"] },
+  { kind: "text", letters: ["F", "L", "A", "S", "H"] },
+  { kind: "text", letters: ["B", "O", "U", "N", "T", "Y"] },
+  { kind: "text", letters: ["L", "O", "O", "T"] },
+  { kind: "text", letters: ["P", "I", "X", "E", "L"] },
+  { kind: "text", letters: ["G", "L", "I", "T", "C", "H"] },
+  { kind: "text", letters: ["W", "A", "S", "T", "E"] },
+  { kind: "text", letters: ["D", "R", "O", "I", "D"] },
+  { kind: "text", letters: ["C", "Y", "B", "E", "R"] },
+  { kind: "text", letters: ["N", "I", "G", "H", "T"] },
+  {
+    kind: "text",
+    letters: ["2", "4", "-", "7"],
+    colors: ["amber", "orange", "red"],
+  },
+  { kind: "text", letters: ["L", "I", "V", "E"] },
+  { kind: "text", letters: ["D", "E", "A", "D"] },
+  { kind: "text", letters: ["K", "I", "L", "L"] },
+  { kind: "text", letters: ["V", "I", "P"] },
+  { kind: "text", letters: ["S", "A", "L", "E"] },
+  { kind: "text", letters: ["F", "R", "E", "E"] },
+  { kind: "text", letters: ["N", "E", "W", "!"] },
+  { kind: "text", letters: ["H", "O", "T", "!"] },
   // ── Spanish text signs (~12) ──
-  { kind: "text", letters: ["C","A","N","T","I","N","A"] },
-  { kind: "text", letters: ["T","A","C","O","S"], colors: ["orange","amber"] },
-  { kind: "text", letters: ["B","O","D","E","G","A"] },
-  { kind: "text", letters: ["J","O","Y","A","S"] },
-  { kind: "text", letters: ["M","O","D","A"] },
-  { kind: "text", letters: ["L","U","Z"] },
-  { kind: "text", letters: ["S","O","L"] },
-  { kind: "text", letters: ["R","E","D"] },
-  { kind: "text", letters: ["V","I","D","A"] },
-  { kind: "text", letters: ["C","A","S","A"] },
-  { kind: "text", letters: ["A","G","U","A"] },
-  { kind: "text", letters: ["P","A","Z"] },
+  { kind: "text", letters: ["C", "A", "N", "T", "I", "N", "A"] },
+  {
+    kind: "text",
+    letters: ["T", "A", "C", "O", "S"],
+    colors: ["orange", "amber"],
+  },
+  { kind: "text", letters: ["B", "O", "D", "E", "G", "A"] },
+  { kind: "text", letters: ["J", "O", "Y", "A", "S"] },
+  { kind: "text", letters: ["M", "O", "D", "A"] },
+  { kind: "text", letters: ["L", "U", "Z"] },
+  { kind: "text", letters: ["S", "O", "L"] },
+  { kind: "text", letters: ["R", "E", "D"] },
+  { kind: "text", letters: ["V", "I", "D", "A"] },
+  { kind: "text", letters: ["C", "A", "S", "A"] },
+  { kind: "text", letters: ["A", "G", "U", "A"] },
+  { kind: "text", letters: ["P", "A", "Z"] },
   // ── Vertical blade signs (~30) ──
-  { kind: "blade", glyphs: ["カ","ラ","オ","ケ"], colors: ["magenta","pink"] },
-  { kind: "blade", glyphs: ["面","馆"], colors: ["red","rose","orange"] },
-  { kind: "blade", glyphs: ["S","Y","N"], colors: ["cyan"] },
-  { kind: "blade", glyphs: ["B","A","R"] },
-  { kind: "blade", glyphs: ["酒","店"] },
-  { kind: "blade", glyphs: ["茶","店"] },
-  { kind: "blade", glyphs: ["药","店"], colors: ["green"] },
-  { kind: "blade", glyphs: ["火","城"] },
-  { kind: "blade", glyphs: ["ネ","コ"], colors: ["green","lime"] },
-  { kind: "blade", glyphs: ["テ","ク","ノ"] },
-  { kind: "blade", glyphs: ["ビ","ル"] },
-  { kind: "blade", glyphs: ["빠","른"] },
-  { kind: "blade", glyphs: ["N","E","X"], colors: ["cyan","blue"] },
-  { kind: "blade", glyphs: ["D","A","T","A"] },
-  { kind: "blade", glyphs: ["E","D","G","E"] },
-  { kind: "blade", glyphs: ["R","X"], colors: ["cyan","green"] },
-  { kind: "blade", glyphs: ["城","店"] },
-  { kind: "blade", glyphs: ["A","R","C"] },
-  { kind: "blade", glyphs: ["C","O","D","E"] },
-  { kind: "blade", glyphs: ["X","E","N"] },
+  {
+    kind: "blade",
+    glyphs: ["カ", "ラ", "オ", "ケ"],
+    colors: ["magenta", "pink"],
+  },
+  { kind: "blade", glyphs: ["面", "馆"], colors: ["red", "rose", "orange"] },
+  { kind: "blade", glyphs: ["S", "Y", "N"], colors: ["cyan"] },
+  { kind: "blade", glyphs: ["B", "A", "R"] },
+  { kind: "blade", glyphs: ["酒", "店"] },
+  { kind: "blade", glyphs: ["茶", "店"] },
+  { kind: "blade", glyphs: ["药", "店"], colors: ["green"] },
+  { kind: "blade", glyphs: ["火", "城"] },
+  { kind: "blade", glyphs: ["ネ", "コ"], colors: ["green", "lime"] },
+  { kind: "blade", glyphs: ["テ", "ク", "ノ"] },
+  { kind: "blade", glyphs: ["ビ", "ル"] },
+  { kind: "blade", glyphs: ["빠", "른"] },
+  { kind: "blade", glyphs: ["N", "E", "X"], colors: ["cyan", "blue"] },
+  { kind: "blade", glyphs: ["D", "A", "T", "A"] },
+  { kind: "blade", glyphs: ["E", "D", "G", "E"] },
+  { kind: "blade", glyphs: ["R", "X"], colors: ["cyan", "green"] },
+  { kind: "blade", glyphs: ["城", "店"] },
+  { kind: "blade", glyphs: ["A", "R", "C"] },
+  { kind: "blade", glyphs: ["C", "O", "D", "E"] },
+  { kind: "blade", glyphs: ["X", "E", "N"] },
   // ── Icon signs (~20) ──
-  { kind: "icon", draw: (g, x, y, c) => drawMedicalCross(g, x, y, c), colors: ["green"] },
-  { kind: "icon", draw: (g, x, y, c) => drawLeafSign(g, x, y, c), colors: ["green","lime","teal"] },
-  { kind: "icon", draw: (g, x, y) => drawTacoSign(g, x, y), colors: ["orange","amber"] },
-  { kind: "icon", draw: (g, x, y, c) => drawCapsuleSign(g, x, y, c, 0xf472b6), colors: ["cyan","blue"] },
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => drawMedicalCross(g, x, y, c),
+    colors: ["green"],
+  },
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => drawLeafSign(g, x, y, c),
+    colors: ["green", "lime", "teal"],
+  },
+  {
+    kind: "icon",
+    draw: (g, x, y) => drawTacoSign(g, x, y),
+    colors: ["orange", "amber"],
+  },
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => drawCapsuleSign(g, x, y, c, 0xf472b6),
+    colors: ["cyan", "blue"],
+  },
   // Skull
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillRect(x-1, y-1, 14, 14);
-    g.fillStyle(c).fillRect(x+2, y, 8, 8).fillRect(x+1, y+8, 10, 4);
-    g.fillStyle(0x0f172a).fillRect(x+3, y+3, 2, 2).fillRect(x+7, y+3, 2, 2);
-    g.fillRect(x+4, y+9, 1, 2).fillRect(x+7, y+9, 1, 2);
-  }, colors: ["red","rose","purple"] },
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillRect(x - 1, y - 1, 14, 14);
+      g.fillStyle(c)
+        .fillRect(x + 2, y, 8, 8)
+        .fillRect(x + 1, y + 8, 10, 4);
+      g.fillStyle(0x0f172a)
+        .fillRect(x + 3, y + 3, 2, 2)
+        .fillRect(x + 7, y + 3, 2, 2);
+      g.fillRect(x + 4, y + 9, 1, 2).fillRect(x + 7, y + 9, 1, 2);
+    },
+    colors: ["red", "rose", "purple"],
+  },
   // Eye
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillEllipse(x+6, y+6, 18, 12);
-    g.fillStyle(c).fillEllipse(x+6, y+6, 14, 8);
-    g.fillStyle(0x0f172a).fillCircle(x+6, y+6, 3);
-    g.fillStyle(0xffffff, 0.7).fillRect(x+4, y+3, 2, 2);
-  }},
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillEllipse(x + 6, y + 6, 18, 12);
+      g.fillStyle(c).fillEllipse(x + 6, y + 6, 14, 8);
+      g.fillStyle(0x0f172a).fillCircle(x + 6, y + 6, 3);
+      g.fillStyle(0xffffff, 0.7).fillRect(x + 4, y + 3, 2, 2);
+    },
+  },
   // Lightning bolt
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillRect(x-1, y-1, 14, 16);
-    g.fillStyle(c);
-    g.fillRect(x+6, y, 4, 4).fillRect(x+4, y+4, 4, 3).fillRect(x+2, y+7, 6, 3);
-    g.fillRect(x+4, y+10, 4, 4);
-  }, colors: ["amber","orange"] },
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillRect(x - 1, y - 1, 14, 16);
+      g.fillStyle(c);
+      g.fillRect(x + 6, y, 4, 4)
+        .fillRect(x + 4, y + 4, 4, 3)
+        .fillRect(x + 2, y + 7, 6, 3);
+      g.fillRect(x + 4, y + 10, 4, 4);
+    },
+    colors: ["amber", "orange"],
+  },
   // Gear
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillCircle(x+6, y+6, 8);
-    g.fillStyle(c).fillCircle(x+6, y+6, 5);
-    g.fillStyle(0x0f172a).fillCircle(x+6, y+6, 2);
-    g.fillStyle(c).fillRect(x+5, y-1, 2, 3).fillRect(x+5, y+11, 2, 3);
-    g.fillRect(x-1, y+5, 3, 2).fillRect(x+11, y+5, 3, 2);
-  }},
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillCircle(x + 6, y + 6, 8);
+      g.fillStyle(c).fillCircle(x + 6, y + 6, 5);
+      g.fillStyle(0x0f172a).fillCircle(x + 6, y + 6, 2);
+      g.fillStyle(c)
+        .fillRect(x + 5, y - 1, 2, 3)
+        .fillRect(x + 5, y + 11, 2, 3);
+      g.fillRect(x - 1, y + 5, 3, 2).fillRect(x + 11, y + 5, 3, 2);
+    },
+  },
   // Radiation
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillCircle(x+6, y+7, 8);
-    g.fillStyle(c).fillTriangle(x+6, y, x+2, y+8, x+10, y+8);
-    g.fillTriangle(x+1, y+10, x+6, y+6, x+6, y+14);
-    g.fillTriangle(x+11, y+10, x+6, y+6, x+6, y+14);
-    g.fillStyle(0x0f172a).fillCircle(x+6, y+7, 2);
-  }, colors: ["amber","red","orange"] },
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillCircle(x + 6, y + 7, 8);
+      g.fillStyle(c).fillTriangle(x + 6, y, x + 2, y + 8, x + 10, y + 8);
+      g.fillTriangle(x + 1, y + 10, x + 6, y + 6, x + 6, y + 14);
+      g.fillTriangle(x + 11, y + 10, x + 6, y + 6, x + 6, y + 14);
+      g.fillStyle(0x0f172a).fillCircle(x + 6, y + 7, 2);
+    },
+    colors: ["amber", "red", "orange"],
+  },
   // DNA helix
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillRect(x, y, 12, 14);
-    g.fillStyle(c);
-    for (let i = 0; i < 7; i++) {
-      const off = Math.round(Math.sin(i * 0.9) * 3);
-      g.fillRect(x + 3 + off, y + i * 2, 2, 2);
-      g.fillRect(x + 5 - off, y + i * 2, 2, 2);
-    }
-  }, colors: ["cyan","green","purple"] },
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillRect(x, y, 12, 14);
+      g.fillStyle(c);
+      for (let i = 0; i < 7; i++) {
+        const off = Math.round(Math.sin(i * 0.9) * 3);
+        g.fillRect(x + 3 + off, y + i * 2, 2, 2);
+        g.fillRect(x + 5 - off, y + i * 2, 2, 2);
+      }
+    },
+    colors: ["cyan", "green", "purple"],
+  },
   // Circuit
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillRect(x-1, y-1, 14, 14);
-    g.fillStyle(c).fillRect(x+3, y+3, 6, 6);
-    g.fillStyle(0x0f172a).fillRect(x+4, y+4, 4, 4);
-    g.fillStyle(c).fillRect(x+5, y, 2, 3).fillRect(x+5, y+9, 2, 3);
-    g.fillRect(x, y+5, 3, 2).fillRect(x+9, y+5, 3, 2);
-  }},
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillRect(x - 1, y - 1, 14, 14);
+      g.fillStyle(c).fillRect(x + 3, y + 3, 6, 6);
+      g.fillStyle(0x0f172a).fillRect(x + 4, y + 4, 4, 4);
+      g.fillStyle(c)
+        .fillRect(x + 5, y, 2, 3)
+        .fillRect(x + 5, y + 9, 2, 3);
+      g.fillRect(x, y + 5, 3, 2).fillRect(x + 9, y + 5, 3, 2);
+    },
+  },
   // Diamond
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillRect(x, y, 12, 14);
-    g.fillStyle(c);
-    g.fillRect(x+4, y+1, 4, 2).fillRect(x+2, y+3, 8, 2);
-    g.fillRect(x+3, y+5, 6, 2).fillRect(x+4, y+7, 4, 2);
-    g.fillRect(x+5, y+9, 2, 2);
-  }, colors: ["cyan","blue","purple"] },
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillRect(x, y, 12, 14);
+      g.fillStyle(c);
+      g.fillRect(x + 4, y + 1, 4, 2).fillRect(x + 2, y + 3, 8, 2);
+      g.fillRect(x + 3, y + 5, 6, 2).fillRect(x + 4, y + 7, 4, 2);
+      g.fillRect(x + 5, y + 9, 2, 2);
+    },
+    colors: ["cyan", "blue", "purple"],
+  },
   // Star
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillRect(x, y, 12, 12);
-    g.fillStyle(c).fillRect(x+5, y, 2, 2);
-    g.fillRect(x+3, y+2, 6, 2).fillRect(x+1, y+4, 10, 2);
-    g.fillRect(x+3, y+6, 6, 2).fillRect(x+2, y+8, 3, 2).fillRect(x+7, y+8, 3, 2);
-  }, colors: ["amber","orange"] },
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillRect(x, y, 12, 12);
+      g.fillStyle(c).fillRect(x + 5, y, 2, 2);
+      g.fillRect(x + 3, y + 2, 6, 2).fillRect(x + 1, y + 4, 10, 2);
+      g.fillRect(x + 3, y + 6, 6, 2)
+        .fillRect(x + 2, y + 8, 3, 2)
+        .fillRect(x + 7, y + 8, 3, 2);
+    },
+    colors: ["amber", "orange"],
+  },
   // Heart
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillRect(x, y, 12, 12);
-    g.fillStyle(c).fillRect(x+1, y+2, 4, 4).fillRect(x+7, y+2, 4, 4);
-    g.fillRect(x+3, y+1, 2, 2).fillRect(x+7, y+1, 2, 2);
-    g.fillRect(x+2, y+6, 8, 2).fillRect(x+3, y+8, 6, 2).fillRect(x+4, y+10, 4, 1);
-  }, colors: ["red","rose","pink","magenta"] },
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillRect(x, y, 12, 12);
+      g.fillStyle(c)
+        .fillRect(x + 1, y + 2, 4, 4)
+        .fillRect(x + 7, y + 2, 4, 4);
+      g.fillRect(x + 3, y + 1, 2, 2).fillRect(x + 7, y + 1, 2, 2);
+      g.fillRect(x + 2, y + 6, 8, 2)
+        .fillRect(x + 3, y + 8, 6, 2)
+        .fillRect(x + 4, y + 10, 4, 1);
+    },
+    colors: ["red", "rose", "pink", "magenta"],
+  },
   // Arrow up
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillRect(x, y, 12, 14);
-    g.fillStyle(c).fillRect(x+5, y, 2, 12);
-    g.fillRect(x+3, y+2, 2, 2).fillRect(x+7, y+2, 2, 2);
-    g.fillRect(x+1, y+4, 2, 2).fillRect(x+9, y+4, 2, 2);
-  }},
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillRect(x, y, 12, 14);
+      g.fillStyle(c).fillRect(x + 5, y, 2, 12);
+      g.fillRect(x + 3, y + 2, 2, 2).fillRect(x + 7, y + 2, 2, 2);
+      g.fillRect(x + 1, y + 4, 2, 2).fillRect(x + 9, y + 4, 2, 2);
+    },
+  },
   // Lock
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillRect(x, y, 12, 14);
-    g.fillStyle(c).fillRect(x+3, y, 6, 2).fillRect(x+2, y+2, 2, 4).fillRect(x+8, y+2, 2, 4);
-    g.fillRect(x+1, y+6, 10, 7);
-    g.fillStyle(0x0f172a).fillRect(x+5, y+8, 2, 3);
-  }, colors: ["amber","red"] },
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillRect(x, y, 12, 14);
+      g.fillStyle(c)
+        .fillRect(x + 3, y, 6, 2)
+        .fillRect(x + 2, y + 2, 2, 4)
+        .fillRect(x + 8, y + 2, 2, 4);
+      g.fillRect(x + 1, y + 6, 10, 7);
+      g.fillStyle(0x0f172a).fillRect(x + 5, y + 8, 2, 3);
+    },
+    colors: ["amber", "red"],
+  },
   // Wifi
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillRect(x, y, 14, 12);
-    g.fillStyle(c).fillRect(x+1, y+2, 12, 2);
-    g.fillRect(x+3, y+4, 8, 2).fillRect(x+5, y+6, 4, 2);
-    g.fillRect(x+6, y+8, 2, 2);
-  }, colors: ["cyan","green"] },
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillRect(x, y, 14, 12);
+      g.fillStyle(c).fillRect(x + 1, y + 2, 12, 2);
+      g.fillRect(x + 3, y + 4, 8, 2).fillRect(x + 5, y + 6, 4, 2);
+      g.fillRect(x + 6, y + 8, 2, 2);
+    },
+    colors: ["cyan", "green"],
+  },
   // Atom
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillCircle(x+6, y+6, 8);
-    g.fillStyle(c).fillCircle(x+6, y+6, 2);
-    g.fillStyle(c, 0.7).fillEllipse(x+6, y+6, 16, 6);
-    g.fillStyle(c, 0.5).fillEllipse(x+6, y+6, 6, 14);
-  }, colors: ["cyan","purple","blue"] },
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillCircle(x + 6, y + 6, 8);
+      g.fillStyle(c).fillCircle(x + 6, y + 6, 2);
+      g.fillStyle(c, 0.7).fillEllipse(x + 6, y + 6, 16, 6);
+      g.fillStyle(c, 0.5).fillEllipse(x + 6, y + 6, 6, 14);
+    },
+    colors: ["cyan", "purple", "blue"],
+  },
   // Crown
-  { kind: "icon", draw: (g, x, y, c) => {
-    g.fillStyle(c, 0.2).fillRect(x, y, 14, 12);
-    g.fillStyle(c).fillRect(x+1, y+4, 12, 6);
-    g.fillRect(x+1, y+2, 2, 2).fillRect(x+6, y, 2, 4).fillRect(x+11, y+2, 2, 2);
-  }, colors: ["amber","orange","purple"] },
+  {
+    kind: "icon",
+    draw: (g, x, y, c) => {
+      g.fillStyle(c, 0.2).fillRect(x, y, 14, 12);
+      g.fillStyle(c).fillRect(x + 1, y + 4, 12, 6);
+      g.fillRect(x + 1, y + 2, 2, 2)
+        .fillRect(x + 6, y, 2, 4)
+        .fillRect(x + 11, y + 2, 2, 2);
+    },
+    colors: ["amber", "orange", "purple"],
+  },
 ];
 
 // Deterministic hash for sign selection per building-texture index
 function signHash(seed: number): number {
   let h = seed * 2654435761;
   h = ((h >>> 16) ^ h) * 0x45d9f3b;
-  h = ((h >>> 16) ^ h);
+  h = (h >>> 16) ^ h;
   return Math.abs(h);
 }
 
-function pickColor(sign: SignEntry, hash: number): { frame: number; text: number } {
+function pickColor(
+  sign: SignEntry,
+  hash: number,
+): { frame: number; text: number } {
   if (sign.colors && sign.colors.length > 0) {
     const key = sign.colors[hash % sign.colors.length];
     return NEON_COLORS[key];
@@ -932,7 +1482,10 @@ function pickColor(sign: SignEntry, hash: number): { frame: number; text: number
 function drawRandomSign(
   g: Phaser.GameObjects.Graphics,
   slotType: "front" | "blade",
-  x: number, y: number, w: number, h: number,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
   seed: number,
 ) {
   const hash1 = signHash(seed);
