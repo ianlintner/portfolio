@@ -290,6 +290,8 @@ export class MainMenu extends Scene {
       [GENERATED_TEXTURES.buildingShort]: 10,
       [GENERATED_TEXTURES.buildingTower]: 14,
       [GENERATED_TEXTURES.buildingPlant]: 20,
+      [GENERATED_TEXTURES.buildingNeonShop]: 14,
+      [GENERATED_TEXTURES.buildingHoloBar]: 18,
     };
 
     // Build an overlapping skyline so the cat always has rooftop coverage.
@@ -309,6 +311,11 @@ export class MainMenu extends Scene {
         scale: 2,
       },
       {
+        tex: GENERATED_TEXTURES.buildingNeonShop,
+        scroll: 0.71,
+        scale: 2,
+      },
+      {
         tex: GENERATED_TEXTURES.buildingShort,
         scroll: 0.7,
         scale: 2,
@@ -321,6 +328,11 @@ export class MainMenu extends Scene {
       {
         tex: GENERATED_TEXTURES.buildingTower,
         scroll: 0.64,
+        scale: 2,
+      },
+      {
+        tex: GENERATED_TEXTURES.buildingHoloBar,
+        scroll: 0.7,
         scale: 2,
       },
       {
@@ -442,6 +454,23 @@ export class MainMenu extends Scene {
         },
         { x: 76, y: 38, width: 8, height: 6, color: 0xfacc15 },
         { x: 18, y: 56, width: 4, height: 20, color: 0xfef08a },
+      ],
+      [GENERATED_TEXTURES.buildingNeonShop]: [
+        { x: 60, y: 20, width: 18, height: 4, color: 0x67e8f9 },
+        { x: 54, y: 58, width: 24, height: 2, color: 0xa78bfa },
+        { x: 84, y: 38, width: 10, height: 14, color: 0xfef08a },
+      ],
+      [GENERATED_TEXTURES.buildingHoloBar]: [
+        { x: 56, y: 22, width: 16, height: 4, color: 0xf9a8d4 },
+        {
+          x: 90,
+          y: 27,
+          width: 8,
+          height: 3,
+          shape: "ellipse",
+          color: 0x67e8f9,
+        },
+        { x: 56, y: 60, width: 24, height: 2, color: 0xe879f9 },
       ],
     };
 

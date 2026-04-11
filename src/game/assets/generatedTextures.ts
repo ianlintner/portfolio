@@ -398,7 +398,9 @@ function drawNeonFrame(
   height: number,
   color: number,
 ) {
-  g.fillStyle(color, 0.22).fillRect(x - 1, y - 1, width + 2, height + 2);
+  g.fillStyle(color, 0.08).fillRect(x - 4, y - 4, width + 8, height + 8);
+  g.fillStyle(color, 0.14).fillRect(x - 2, y - 2, width + 4, height + 4);
+  g.fillStyle(color, 0.24).fillRect(x - 1, y - 1, width + 2, height + 2);
   g.fillStyle(color, 0.8).fillRect(x, y, width, 1);
   g.fillRect(x, y + height - 1, width, 1);
   g.fillRect(x, y, 1, height);
@@ -463,6 +465,104 @@ function drawPixelWord(
       [1, 1, 0],
       [1, 0, 1],
     ],
+    C: [
+      [0, 1, 1],
+      [1, 0, 0],
+      [1, 0, 0],
+      [1, 0, 0],
+      [0, 1, 1],
+    ],
+    D: [
+      [1, 1, 0],
+      [1, 0, 1],
+      [1, 0, 1],
+      [1, 0, 1],
+      [1, 1, 0],
+    ],
+    G: [
+      [0, 1, 1],
+      [1, 0, 0],
+      [1, 0, 1],
+      [1, 0, 1],
+      [0, 1, 1],
+    ],
+    S: [
+      [0, 1, 1],
+      [1, 0, 0],
+      [0, 1, 0],
+      [0, 0, 1],
+      [1, 1, 0],
+    ],
+    U: [
+      [1, 0, 1],
+      [1, 0, 1],
+      [1, 0, 1],
+      [1, 0, 1],
+      [0, 1, 0],
+    ],
+    W: [
+      [1, 0, 0, 1],
+      [1, 0, 0, 1],
+      [1, 0, 1, 1],
+      [1, 1, 1, 1],
+      [1, 0, 1, 1],
+    ],
+    H: [
+      [1, 0, 1],
+      [1, 0, 1],
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 0, 1],
+    ],
+    I: [
+      [1, 1, 1],
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 1, 0],
+      [1, 1, 1],
+    ],
+    L: [
+      [1, 0, 0],
+      [1, 0, 0],
+      [1, 0, 0],
+      [1, 0, 0],
+      [1, 1, 1],
+    ],
+    M: [
+      [1, 0, 0, 1],
+      [1, 1, 1, 1],
+      [1, 0, 1, 1],
+      [1, 0, 0, 1],
+      [1, 0, 0, 1],
+    ],
+    T: [
+      [1, 1, 1],
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 1, 0],
+    ],
+    X: [
+      [1, 0, 1],
+      [1, 0, 1],
+      [0, 1, 0],
+      [1, 0, 1],
+      [1, 0, 1],
+    ],
+    Y: [
+      [1, 0, 1],
+      [1, 0, 1],
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 1, 0],
+    ],
+    Z: [
+      [1, 1, 1],
+      [0, 0, 1],
+      [0, 1, 0],
+      [1, 0, 0],
+      [1, 1, 1],
+    ],
   };
 
   let cursorX = x;
@@ -479,6 +579,167 @@ function drawPixelWord(
     });
     cursorX += 8;
   }
+}
+
+function drawCenteredPixelWord(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  letters: string[],
+  color: number,
+) {
+  const wordWidth = Math.max(0, letters.length * 8 - 2);
+  const wordHeight = 10;
+  const startX = x + Math.floor((width - wordWidth) / 2);
+  const startY = y + Math.floor((height - wordHeight) / 2);
+  drawPixelWord(g, startX, startY, letters, color);
+}
+
+function drawVerticalPixelGlyphs(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  glyphsToDraw: string[],
+  color: number,
+) {
+  g.fillStyle(color);
+
+  const glyphs: Record<string, number[][]> = {
+    S: [
+      [0, 1, 1, 0],
+      [1, 0, 0, 0],
+      [0, 1, 1, 0],
+      [0, 0, 0, 1],
+      [1, 1, 1, 0],
+    ],
+    Y: [
+      [1, 0, 0, 1],
+      [0, 1, 1, 0],
+      [0, 1, 1, 0],
+      [0, 0, 1, 0],
+      [0, 0, 1, 0],
+    ],
+    N: [
+      [1, 0, 0, 1],
+      [1, 1, 0, 1],
+      [1, 0, 1, 1],
+      [1, 0, 0, 1],
+      [1, 0, 0, 1],
+    ],
+    カ: [
+      [1, 0, 0, 1],
+      [1, 1, 1, 0],
+      [1, 0, 1, 0],
+      [1, 0, 0, 1],
+      [0, 0, 0, 1],
+    ],
+    ラ: [
+      [1, 1, 1, 1],
+      [0, 0, 0, 0],
+      [0, 1, 1, 1],
+      [0, 0, 0, 1],
+      [1, 1, 1, 0],
+    ],
+    オ: [
+      [0, 1, 1, 0],
+      [1, 1, 1, 1],
+      [0, 1, 1, 0],
+      [0, 1, 1, 0],
+      [1, 0, 0, 1],
+    ],
+    ケ: [
+      [1, 0, 0, 1],
+      [1, 0, 0, 1],
+      [1, 1, 1, 0],
+      [1, 0, 1, 0],
+      [0, 0, 0, 1],
+    ],
+    面: [
+      [1, 1, 1, 1],
+      [1, 0, 0, 1],
+      [1, 1, 1, 1],
+      [1, 0, 1, 1],
+      [1, 1, 1, 1],
+    ],
+    馆: [
+      [1, 0, 1, 1],
+      [1, 1, 1, 0],
+      [1, 0, 1, 1],
+      [1, 0, 0, 1],
+      [1, 0, 1, 0],
+    ],
+  };
+
+  let cursorY = y;
+  for (const glyphKey of glyphsToDraw) {
+    const glyph = glyphs[glyphKey];
+    if (!glyph) {
+      cursorY += 8;
+      continue;
+    }
+
+    glyph.forEach((row, rowIndex) => {
+      row.forEach((px, colIndex) => {
+        if (px) {
+          g.fillRect(x + colIndex * 2, cursorY + rowIndex * 2, 2, 2);
+        }
+      });
+    });
+
+    cursorY += 12;
+  }
+}
+
+function drawMedicalCross(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  color: number,
+) {
+  g.fillStyle(color, 0.2).fillRect(x - 3, y - 3, 14, 14);
+  g.fillStyle(color).fillRect(x + 3, y, 4, 8);
+  g.fillRect(x, y + 3, 10, 4);
+  g.fillStyle(0xdcfce7, 0.7).fillRect(x + 4, y + 1, 2, 2);
+}
+
+function drawLeafSign(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  color: number,
+) {
+  g.fillStyle(color, 0.18).fillEllipse(x + 6, y + 8, 18, 20);
+  g.fillStyle(color).fillEllipse(x + 6, y + 8, 12, 16);
+  g.fillStyle(0x166534, 0.9).fillRect(x + 5, y + 4, 2, 10);
+  g.fillStyle(0xdcfce7, 0.5).fillRect(x + 6, y + 5, 1, 7);
+}
+
+function drawCapsuleSign(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  leftColor: number,
+  rightColor: number,
+) {
+  g.fillStyle(leftColor, 0.18).fillRoundedRect(x - 2, y - 2, 24, 12, 6);
+  g.fillStyle(rightColor, 0.18).fillRoundedRect(x - 2, y - 2, 24, 12, 6);
+  g.fillStyle(leftColor).fillRoundedRect(x, y, 10, 8, 4);
+  g.fillStyle(rightColor).fillRoundedRect(x + 10, y, 10, 8, 4);
+  g.fillStyle(0xf8fafc, 0.85).fillRect(x + 10, y + 1, 1, 6);
+  g.fillStyle(0xffffff, 0.55).fillRect(x + 3, y + 1, 4, 1);
+  g.fillStyle(0xffffff, 0.55).fillRect(x + 13, y + 5, 4, 1);
+}
+
+function drawTacoSign(g: Phaser.GameObjects.Graphics, x: number, y: number) {
+  g.fillStyle(0xf59e0b, 0.2).fillEllipse(x + 8, y + 7, 22, 14);
+  g.fillStyle(0xfbbf24).fillEllipse(x + 8, y + 8, 18, 12);
+  g.fillStyle(0x78350f).fillRect(x + 2, y + 8, 12, 1);
+  g.fillStyle(0x22c55e).fillRect(x + 3, y + 6, 3, 2);
+  g.fillRect(x + 8, y + 5, 3, 2);
+  g.fillStyle(0xef4444).fillRect(x + 6, y + 8, 2, 2);
+  g.fillRect(x + 11, y + 7, 2, 2);
 }
 
 function createBuildingTextures(scene: Phaser.Scene) {
@@ -511,6 +772,14 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x64748b).fillRect(28, 58, 4, 28);
       g.fillStyle(0x94a3b8, 0.55).fillRect(29, 58, 2, 28);
       g.fillStyle(0x1e293b).fillRect(0, 96, 64, 2);
+      drawNeonFrame(g, 18, 24, 24, 12, 0xf59e0b);
+      drawCenteredPixelWord(g, 18, 24, 24, 12, ["P", "A", "W", "N"], 0xfef3c7);
+      g.fillStyle(0x06b6d4, 0.08).fillRect(42, 22, 14, 42);
+      g.fillStyle(0x0f172a, 0.95).fillRect(43, 24, 12, 38);
+      drawNeonFrame(g, 43, 24, 12, 38, 0x06b6d4);
+      g.fillStyle(0x94a3b8).fillRect(40, 28, 3, 2);
+      g.fillRect(40, 36, 3, 2);
+      drawVerticalPixelGlyphs(g, 45, 28, ["S", "Y", "N"], 0x67e8f9);
     },
     GENERATED_TEXTURES.buildingTall,
     64,
@@ -546,6 +815,10 @@ function createBuildingTextures(scene: Phaser.Scene) {
       drawWindows(g, 50, 68, 2, 1, 8, 8, 8, 0);
       drawPipeColumn(g, 74, 14, 82);
       g.fillStyle(0x111827).fillRect(0, 46, 80, 2);
+      drawNeonFrame(g, 42, 20, 30, 12, 0xa855f7);
+      drawCenteredPixelWord(g, 42, 20, 30, 12, ["I", "M", "P", "L"], 0xe9d5ff);
+      drawNeonFrame(g, 6, 50, 34, 12, 0xef4444);
+      drawCenteredPixelWord(g, 6, 50, 34, 12, ["G", "U", "N", "S"], 0xfecaca);
     },
     GENERATED_TEXTURES.buildingMedium,
     80,
@@ -585,6 +858,14 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x334155).fillRect(72, 26, 14, 24);
       drawPanelLines(g, 72, 26, 14, 24, 6);
       g.fillStyle(0x475569).fillRect(90, 14, 4, 50);
+      drawNeonFrame(g, 10, 15, 16, 16, 0x22c55e);
+      drawMedicalCross(g, 13, 18, 0x4ade80);
+      drawNeonFrame(g, 28, 17, 22, 12, 0x22c55e);
+      drawCenteredPixelWord(g, 28, 17, 22, 12, ["D", "O", "C"], 0xdcfce7);
+      drawNeonFrame(g, 48, 18, 18, 18, 0x22c55e);
+      drawLeafSign(g, 51, 21, 0x4ade80);
+      drawNeonFrame(g, 46, 48, 22, 12, 0x22c55e);
+      drawCenteredPixelWord(g, 46, 48, 22, 12, ["C", "A", "T"], 0xdcfce7);
     },
     GENERATED_TEXTURES.buildingShort,
     96,
@@ -612,6 +893,14 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x475569).fillRect(14, 112, 36, 6);
       g.fillStyle(0x0f172a).fillRect(24, 118, 18, 26);
       g.fillStyle(0x111827).fillRect(8, 72, 56, 2);
+      g.fillStyle(0xf472b6, 0.08).fillRect(47, 30, 15, 58);
+      g.fillStyle(0x0f172a, 0.92).fillRect(48, 32, 12, 54);
+      drawNeonFrame(g, 48, 32, 12, 54, 0xf472b6);
+      g.fillStyle(0x94a3b8).fillRect(45, 36, 3, 2);
+      g.fillRect(45, 46, 3, 2);
+      g.fillRect(45, 56, 3, 2);
+      g.fillStyle(0xe879f9, 0.18).fillRect(49, 33, 10, 52);
+      drawVerticalPixelGlyphs(g, 50, 36, ["カ", "ラ", "オ", "ケ"], 0xf9a8d4);
     },
     GENERATED_TEXTURES.buildingTower,
     72,
@@ -664,8 +953,6 @@ function createBuildingTextures(scene: Phaser.Scene) {
       drawWindows(g, 10, 20, 2, 1, 10, 8, 10, 0);
       g.fillStyle(0x1e293b).fillRect(48, 24, 58, 48);
       g.fillStyle(0x111827).fillRect(48, 52, 58, 2);
-      drawNeonFrame(g, 54, 18, 42, 12, 0x22d3ee);
-      drawPixelWord(g, 60, 21, ["O", "P", "E", "N"], 0x67e8f9);
       g.fillStyle(0x7c3aed, 0.35).fillRect(50, 56, 54, 6);
       g.fillStyle(0xa78bfa, 0.8).fillRect(52, 58, 50, 2);
       g.fillStyle(0x334155).fillRect(58, 34, 14, 18);
@@ -673,6 +960,15 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x334155).fillRect(78, 34, 20, 18);
       g.fillStyle(0xfef3c7, 0.45).fillRect(80, 36, 16, 14);
       g.fillStyle(0x475569).fillRect(0, 68, 112, 4);
+      drawNeonFrame(g, 54, 18, 42, 12, 0x22d3ee);
+      drawCenteredPixelWord(g, 54, 18, 42, 12, ["O", "P", "E", "N"], 0x67e8f9);
+      g.fillStyle(0xef4444, 0.08).fillRect(42, 22, 14, 32);
+      g.fillStyle(0x0f172a, 0.95).fillRect(43, 24, 12, 28);
+      drawNeonFrame(g, 43, 24, 12, 28, 0xef4444);
+      g.fillStyle(0x94a3b8).fillRect(40, 28, 3, 2);
+      g.fillRect(40, 36, 3, 2);
+      g.fillStyle(0xfb7185, 0.18).fillRect(44, 25, 10, 26);
+      drawVerticalPixelGlyphs(g, 45, 28, ["面", "馆"], 0xfecdd3);
     },
     GENERATED_TEXTURES.buildingNeonShop,
     112,
@@ -689,8 +985,6 @@ function createBuildingTextures(scene: Phaser.Scene) {
       drawBeaconStrip(g, 48, 18, 72);
       g.fillStyle(0x0f172a).fillRect(8, 36, 28, 40);
       g.fillStyle(0x243255).fillRect(42, 26, 70, 50);
-      drawNeonFrame(g, 50, 20, 34, 12, 0xf472b6);
-      drawPixelWord(g, 56, 23, ["B", "A", "R"], 0xf9a8d4);
       g.fillStyle(0x06b6d4, 0.22).fillEllipse(94, 28, 18, 8);
       g.fillStyle(0x67e8f9, 0.8).fillEllipse(94, 28, 10, 3);
       g.fillStyle(0xa855f7, 0.3).fillRect(44, 58, 64, 6);
@@ -701,6 +995,13 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0xfef3c7, 0.35).fillRect(72, 36, 10, 14);
       g.fillStyle(0x475569).fillRect(0, 72, 120, 4);
       drawVentGrille(g, 10, 44, 12, 16);
+      drawNeonFrame(g, 50, 20, 34, 12, 0xf472b6);
+      drawCenteredPixelWord(g, 50, 20, 34, 12, ["B", "A", "R"], 0xf9a8d4);
+      drawNeonFrame(g, 86, 18, 20, 12, 0xf97316);
+      drawTacoSign(g, 88, 20);
+      drawNeonFrame(g, 86, 34, 22, 12, 0x06b6d4);
+      drawCapsuleSign(g, 87, 36, 0x38bdf8, 0xf472b6);
+      drawCenteredPixelWord(g, 84, 48, 28, 12, ["R", "X"], 0xe0f2fe);
     },
     GENERATED_TEXTURES.buildingHoloBar,
     120,
