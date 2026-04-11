@@ -21,6 +21,9 @@ export const GENERATED_TEXTURES = {
   buildingArcade: "buildingArcade",
   buildingClinic: "buildingClinic",
   buildingTechShop: "buildingTechShop",
+  buildingMegaBlock: "buildingMegaBlock",
+  buildingTerminal: "buildingTerminal",
+  buildingComplex: "buildingComplex",
   streetLamp: "streetLamp",
 } as const;
 
@@ -1544,8 +1547,9 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x64748b).fillRect(28, 58, 4, 28);
       g.fillStyle(0x94a3b8, 0.55).fillRect(29, 58, 2, 28);
       g.fillStyle(0x1e293b).fillRect(0, 96, 64, 2);
-      // One sign: front text
+      // Signs
       drawRandomSign(g, "front", 14, 82, 34, 12, 100);
+      drawRandomSign(g, "blade", 52, 30, 10, 44, 111);
     },
     GENERATED_TEXTURES.buildingTall,
     64,
@@ -1581,8 +1585,9 @@ function createBuildingTextures(scene: Phaser.Scene) {
       drawWindows(g, 50, 68, 2, 1, 8, 8, 8, 0);
       drawPipeColumn(g, 74, 14, 82);
       g.fillStyle(0x111827).fillRect(0, 46, 80, 2);
-      // One sign: front text
+      // Signs
       drawRandomSign(g, "front", 6, 50, 34, 12, 201);
+      drawRandomSign(g, "front", 48, 68, 28, 10, 212);
     },
     GENERATED_TEXTURES.buildingMedium,
     80,
@@ -1622,8 +1627,9 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x334155).fillRect(72, 26, 14, 24);
       drawPanelLines(g, 72, 26, 14, 24, 6);
       g.fillStyle(0x475569).fillRect(90, 14, 4, 50);
-      // One sign: front text
+      // Signs
       drawRandomSign(g, "front", 46, 48, 30, 12, 302);
+      drawRandomSign(g, "front", 72, 28, 20, 10, 313);
     },
     GENERATED_TEXTURES.buildingShort,
     96,
@@ -1651,8 +1657,9 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x475569).fillRect(14, 112, 36, 6);
       g.fillStyle(0x0f172a).fillRect(24, 118, 18, 26);
       g.fillStyle(0x111827).fillRect(8, 72, 56, 2);
-      // One sign: vertical blade
+      // Signs
       drawRandomSign(g, "blade", 48, 32, 12, 54, 403);
+      drawRandomSign(g, "front", 14, 112, 30, 10, 414);
     },
     GENERATED_TEXTURES.buildingTower,
     72,
@@ -1687,8 +1694,9 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x475569).fillRect(96, 28, 6, 60);
       g.fillStyle(0x64748b).fillRect(96, 34, 14, 4);
       g.fillStyle(0x94a3b8).fillRect(100, 35, 8, 2);
-      // One sign: front text on the panel section
+      // Signs
       drawRandomSign(g, "front", 38, 46, 30, 12, 706);
+      drawRandomSign(g, "front", 74, 32, 22, 10, 717);
     },
     GENERATED_TEXTURES.buildingPlant,
     112,
@@ -1714,8 +1722,9 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x334155).fillRect(78, 34, 20, 18);
       g.fillStyle(0xfef3c7, 0.45).fillRect(80, 36, 16, 14);
       g.fillStyle(0x475569).fillRect(0, 68, 112, 4);
-      // One sign: front text
+      // Signs
       drawRandomSign(g, "front", 54, 18, 38, 12, 504);
+      drawRandomSign(g, "blade", 6, 30, 10, 32, 515);
     },
     GENERATED_TEXTURES.buildingNeonShop,
     112,
@@ -1742,8 +1751,9 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0xfef3c7, 0.35).fillRect(72, 36, 10, 14);
       g.fillStyle(0x475569).fillRect(0, 72, 120, 4);
       drawVentGrille(g, 10, 44, 12, 16);
-      // One sign: front text
+      // Signs
       drawRandomSign(g, "front", 50, 20, 34, 12, 605);
+      drawRandomSign(g, "front", 10, 38, 24, 10, 616);
     },
     GENERATED_TEXTURES.buildingHoloBar,
     120,
@@ -1772,8 +1782,9 @@ function createBuildingTextures(scene: Phaser.Scene) {
       drawPipeColumn(g, 66, 28, 60);
       // Sidewalk edge
       g.fillStyle(0x475569).fillRect(0, 92, 80, 4);
-      // One sign: blade on right edge
+      // Signs
       drawRandomSign(g, "blade", 68, 24, 10, 44, 807);
+      drawRandomSign(g, "front", 8, 30, 30, 10, 818);
     },
     GENERATED_TEXTURES.buildingArcade,
     80,
@@ -1802,8 +1813,9 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x64748b).fillRect(40, 6, 20, 2);
       // Sidewalk edge
       g.fillStyle(0x475569).fillRect(0, 60, 100, 4);
-      // One sign: front text above door
+      // Signs
       drawRandomSign(g, "front", 42, 18, 30, 12, 908);
+      drawRandomSign(g, "front", 8, 50, 28, 10, 919);
     },
     GENERATED_TEXTURES.buildingClinic,
     100,
@@ -1834,12 +1846,129 @@ function createBuildingTextures(scene: Phaser.Scene) {
       drawPipeColumn(g, 80, 28, 44);
       // Sidewalk edge
       g.fillStyle(0x475569).fillRect(0, 76, 88, 4);
-      // One sign: front text on upper fascia
+      // Signs
       drawRandomSign(g, "front", 6, 24, 34, 12, 1009);
+      drawRandomSign(g, "blade", 74, 34, 10, 36, 1020);
     },
     GENERATED_TEXTURES.buildingTechShop,
     88,
     80,
+  );
+
+  // Mega residential block — wide (140 x 100)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x19233d).fillRect(0, 16, 140, 84);
+      g.fillStyle(0x2a3658).fillRect(0, 12, 140, 8);
+      drawRoofRail(g, 8, 15, 120);
+      drawBeaconStrip(g, 0, 16, 70);
+      drawHazardBand(g, 70, 16, 70, 3);
+      // Rooftop units
+      g.fillStyle(0x334155).fillRect(20, 2, 26, 12);
+      g.fillStyle(0x64748b).fillRect(22, 4, 22, 2);
+      g.fillStyle(0x334155).fillRect(80, 4, 20, 10);
+      g.fillStyle(0x64748b).fillRect(82, 6, 16, 2);
+      drawPipeColumn(g, 110, 0, 16);
+      // Left window block
+      drawWindows(g, 6, 24, 3, 4, 8, 6, 10, 10);
+      // Center door
+      g.fillStyle(0x0f172a).fillRect(50, 56, 18, 44);
+      g.fillStyle(0x334155).fillRect(50, 56, 18, 2);
+      g.fillStyle(0xeab308).fillRect(62, 88, 2, 2);
+      // Right window block
+      drawWindows(g, 76, 24, 3, 4, 8, 6, 10, 10);
+      // Panel section
+      g.fillStyle(0x1e293b).fillRect(120, 30, 18, 50);
+      drawPanelLines(g, 120, 30, 18, 50, 8);
+      // Sidewalk edge
+      g.fillStyle(0x475569).fillRect(0, 96, 140, 4);
+      // Signs
+      drawRandomSign(g, "front", 8, 46, 34, 12, 1101);
+      drawRandomSign(g, "front", 76, 46, 34, 12, 1112);
+      drawRandomSign(g, "blade", 126, 32, 10, 40, 1123);
+    },
+    GENERATED_TEXTURES.buildingMegaBlock,
+    140,
+    100,
+  );
+
+  // Transit terminal — extra wide low (160 x 72)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x172038).fillRect(0, 18, 160, 54);
+      g.fillStyle(0x263451).fillRect(0, 14, 160, 8);
+      drawServiceCap(g, 0, 18, 80);
+      drawWarningNodes(g, 80, 18, 80);
+      drawRoofRail(g, 10, 17, 136);
+      // Canopy overhang
+      g.fillStyle(0x334155).fillRect(30, 10, 100, 8);
+      g.fillStyle(0x475569).fillRect(32, 12, 96, 2);
+      // Long window strip
+      g.fillStyle(0x0f172a).fillRect(6, 28, 148, 16);
+      g.fillStyle(0xfef3c7, 0.3).fillRect(8, 30, 32, 12);
+      g.fillStyle(0xfef3c7, 0.25).fillRect(44, 30, 28, 12);
+      g.fillStyle(0xfef3c7, 0.35).fillRect(76, 30, 32, 12);
+      g.fillStyle(0xfef3c7, 0.2).fillRect(112, 30, 38, 12);
+      // Doors
+      g.fillStyle(0x0f172a).fillRect(26, 48, 14, 24);
+      g.fillStyle(0x334155).fillRect(26, 48, 14, 2);
+      g.fillStyle(0x0f172a).fillRect(72, 48, 14, 24);
+      g.fillStyle(0x334155).fillRect(72, 48, 14, 2);
+      g.fillStyle(0x0f172a).fillRect(120, 48, 14, 24);
+      g.fillStyle(0x334155).fillRect(120, 48, 14, 2);
+      // Sidewalk edge
+      g.fillStyle(0x475569).fillRect(0, 68, 160, 4);
+      // Signs
+      drawRandomSign(g, "front", 8, 20, 36, 12, 1201);
+      drawRandomSign(g, "front", 92, 20, 36, 12, 1212);
+      drawRandomSign(g, "front", 50, 50, 20, 10, 1223);
+    },
+    GENERATED_TEXTURES.buildingTerminal,
+    160,
+    72,
+  );
+
+  // Commercial complex — wide tall (130 x 110)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x1b2240).fillRect(0, 20, 130, 90);
+      g.fillStyle(0x2d3a5c).fillRect(0, 16, 130, 8);
+      drawBeaconStrip(g, 0, 20, 130);
+      drawRoofRail(g, 8, 19, 110);
+      // Rooftop antenna + unit
+      g.fillStyle(0x475569).fillRect(18, 4, 2, 16);
+      g.fillStyle(0x64748b).fillRect(14, 2, 10, 4);
+      g.fillStyle(0xef4444, 0.8).fillRect(18, 0, 2, 2);
+      g.fillStyle(0x334155).fillRect(80, 6, 28, 12);
+      g.fillStyle(0x64748b).fillRect(82, 8, 24, 2);
+      drawPipeColumn(g, 120, 8, 12);
+      // Left section — windows
+      drawWindows(g, 6, 28, 3, 5, 8, 6, 10, 10);
+      // Center storefront
+      g.fillStyle(0x1e293b).fillRect(42, 40, 44, 46);
+      g.fillStyle(0x0f172a).fillRect(44, 42, 40, 42);
+      g.fillStyle(0xfef3c7, 0.35).fillRect(46, 44, 18, 18);
+      g.fillStyle(0xfef3c7, 0.25).fillRect(66, 44, 16, 18);
+      g.fillStyle(0x334155).fillRect(56, 66, 14, 20);
+      g.fillStyle(0xeab308).fillRect(66, 78, 2, 2);
+      // Right section — vent and pipes
+      g.fillStyle(0x243255).fillRect(92, 28, 36, 62);
+      drawVentGrille(g, 96, 34, 16, 20);
+      drawPanelLines(g, 92, 56, 36, 34, 7);
+      drawPipeColumn(g, 122, 28, 60);
+      // Sidewalk edge
+      g.fillStyle(0x475569).fillRect(0, 106, 130, 4);
+      // Signs
+      drawRandomSign(g, "front", 44, 28, 38, 12, 1301);
+      drawRandomSign(g, "blade", 6, 62, 10, 40, 1312);
+      drawRandomSign(g, "front", 96, 60, 26, 10, 1323);
+    },
+    GENERATED_TEXTURES.buildingComplex,
+    130,
+    110,
   );
 }
 

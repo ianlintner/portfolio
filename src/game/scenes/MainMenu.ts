@@ -295,6 +295,9 @@ export class MainMenu extends Scene {
       [GENERATED_TEXTURES.buildingArcade]: 12,
       [GENERATED_TEXTURES.buildingClinic]: 10,
       [GENERATED_TEXTURES.buildingTechShop]: 16,
+      [GENERATED_TEXTURES.buildingMegaBlock]: 16,
+      [GENERATED_TEXTURES.buildingTerminal]: 18,
+      [GENERATED_TEXTURES.buildingComplex]: 20,
     };
 
     // Build an overlapping skyline so the cat always has rooftop coverage.
@@ -303,6 +306,11 @@ export class MainMenu extends Scene {
       scroll: number;
       scale: number;
     }[] = [
+      {
+        tex: GENERATED_TEXTURES.buildingMegaBlock,
+        scroll: 0.64,
+        scale: 2,
+      },
       {
         tex: GENERATED_TEXTURES.buildingTall,
         scroll: 0.65,
@@ -314,6 +322,11 @@ export class MainMenu extends Scene {
         scale: 2,
       },
       {
+        tex: GENERATED_TEXTURES.buildingTerminal,
+        scroll: 0.71,
+        scale: 2,
+      },
+      {
         tex: GENERATED_TEXTURES.buildingNeonShop,
         scroll: 0.71,
         scale: 2,
@@ -321,6 +334,11 @@ export class MainMenu extends Scene {
       {
         tex: GENERATED_TEXTURES.buildingShort,
         scroll: 0.7,
+        scale: 2,
+      },
+      {
+        tex: GENERATED_TEXTURES.buildingComplex,
+        scroll: 0.62,
         scale: 2,
       },
       {
@@ -354,6 +372,11 @@ export class MainMenu extends Scene {
         scale: 2,
       },
       {
+        tex: GENERATED_TEXTURES.buildingMegaBlock,
+        scroll: 0.66,
+        scale: 2,
+      },
+      {
         tex: GENERATED_TEXTURES.buildingMedium,
         scroll: 0.62,
         scale: 2,
@@ -371,6 +394,16 @@ export class MainMenu extends Scene {
       {
         tex: GENERATED_TEXTURES.buildingTechShop,
         scroll: 0.63,
+        scale: 2,
+      },
+      {
+        tex: GENERATED_TEXTURES.buildingTerminal,
+        scroll: 0.68,
+        scale: 2,
+      },
+      {
+        tex: GENERATED_TEXTURES.buildingComplex,
+        scroll: 0.65,
         scale: 2,
       },
     ];
@@ -392,7 +425,7 @@ export class MainMenu extends Scene {
       });
       this._addBuildingTwinkles(img, cfg.tex, cfg.scale);
 
-      nextX += img.displayWidth - Phaser.Math.Between(40, 64);
+      nextX += img.displayWidth - Phaser.Math.Between(30, 52);
     }
 
     while (nextX < width + 240) {
@@ -411,7 +444,7 @@ export class MainMenu extends Scene {
       });
       this._addBuildingTwinkles(img, cfg.tex, cfg.scale);
 
-      nextX += img.displayWidth - Phaser.Math.Between(40, 64);
+      nextX += img.displayWidth - Phaser.Math.Between(30, 52);
     }
   }
 
@@ -502,6 +535,28 @@ export class MainMenu extends Scene {
         { x: 14, y: 0, width: 2, height: 2, color: 0xef4444 },
         { x: 16, y: 38, width: 5, height: 5, color: 0xfacc15 },
         { x: 64, y: 42, width: 4, height: 18, color: 0xfef08a },
+      ],
+      [GENERATED_TEXTURES.buildingMegaBlock]: [
+        { x: 20, y: 18, width: 6, height: 5, color: 0xfacc15 },
+        { x: 80, y: 22, width: 5, height: 5, color: 0xfbbf24 },
+        { x: 110, y: 50, width: 4, height: 18, color: 0xfef08a },
+      ],
+      [GENERATED_TEXTURES.buildingTerminal]: [
+        { x: 30, y: 18, width: 8, height: 4, color: 0x67e8f9 },
+        { x: 120, y: 18, width: 8, height: 4, color: 0xa78bfa },
+        { x: 70, y: 56, width: 16, height: 2, color: 0xfef08a },
+      ],
+      [GENERATED_TEXTURES.buildingComplex]: [
+        {
+          x: 30,
+          y: 14,
+          width: 4,
+          height: 4,
+          shape: "ellipse",
+          color: 0xef4444,
+        },
+        { x: 60, y: 40, width: 6, height: 5, color: 0xfacc15 },
+        { x: 100, y: 72, width: 5, height: 14, color: 0xfef08a },
       ],
     };
 
