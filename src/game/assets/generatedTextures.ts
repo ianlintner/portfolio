@@ -18,6 +18,9 @@ export const GENERATED_TEXTURES = {
   buildingPlant: "buildingPlant",
   buildingNeonShop: "buildingNeonShop",
   buildingHoloBar: "buildingHoloBar",
+  buildingArcade: "buildingArcade",
+  buildingClinic: "buildingClinic",
+  buildingTechShop: "buildingTechShop",
   streetLamp: "streetLamp",
 } as const;
 
@@ -407,6 +410,49 @@ function drawNeonFrame(
   g.fillRect(x + width - 1, y, 1, height);
 }
 
+// ── Pixel glyph tables (A-Z, 0-9, punctuation) ─────────────────────────────
+const PIXEL_GLYPHS: Record<string, number[][]> = {
+  A: [[0,1,0],[1,0,1],[1,1,1],[1,0,1],[1,0,1]],
+  B: [[1,1,0],[1,0,1],[1,1,0],[1,0,1],[1,1,0]],
+  C: [[0,1,1],[1,0,0],[1,0,0],[1,0,0],[0,1,1]],
+  D: [[1,1,0],[1,0,1],[1,0,1],[1,0,1],[1,1,0]],
+  E: [[1,1,1],[1,0,0],[1,1,0],[1,0,0],[1,1,1]],
+  F: [[1,1,1],[1,0,0],[1,1,0],[1,0,0],[1,0,0]],
+  G: [[0,1,1],[1,0,0],[1,0,1],[1,0,1],[0,1,1]],
+  H: [[1,0,1],[1,0,1],[1,1,1],[1,0,1],[1,0,1]],
+  I: [[1,1,1],[0,1,0],[0,1,0],[0,1,0],[1,1,1]],
+  J: [[0,0,1],[0,0,1],[0,0,1],[1,0,1],[0,1,0]],
+  K: [[1,0,1],[1,0,1],[1,1,0],[1,0,1],[1,0,1]],
+  L: [[1,0,0],[1,0,0],[1,0,0],[1,0,0],[1,1,1]],
+  M: [[1,0,0,1],[1,1,1,1],[1,0,1,1],[1,0,0,1],[1,0,0,1]],
+  N: [[1,0,1],[1,1,1],[1,1,1],[1,0,1],[1,0,1]],
+  O: [[1,1,1],[1,0,1],[1,0,1],[1,0,1],[1,1,1]],
+  P: [[1,1,1],[1,0,1],[1,1,1],[1,0,0],[1,0,0]],
+  Q: [[0,1,0],[1,0,1],[1,0,1],[1,1,0],[0,1,1]],
+  R: [[1,1,0],[1,0,1],[1,1,0],[1,1,0],[1,0,1]],
+  S: [[0,1,1],[1,0,0],[0,1,0],[0,0,1],[1,1,0]],
+  T: [[1,1,1],[0,1,0],[0,1,0],[0,1,0],[0,1,0]],
+  U: [[1,0,1],[1,0,1],[1,0,1],[1,0,1],[0,1,0]],
+  V: [[1,0,1],[1,0,1],[1,0,1],[0,1,0],[0,1,0]],
+  W: [[1,0,0,1],[1,0,0,1],[1,0,1,1],[1,1,1,1],[1,0,1,1]],
+  X: [[1,0,1],[1,0,1],[0,1,0],[1,0,1],[1,0,1]],
+  Y: [[1,0,1],[1,0,1],[0,1,0],[0,1,0],[0,1,0]],
+  Z: [[1,1,1],[0,0,1],[0,1,0],[1,0,0],[1,1,1]],
+  "0": [[1,1,1],[1,0,1],[1,0,1],[1,0,1],[1,1,1]],
+  "1": [[0,1,0],[1,1,0],[0,1,0],[0,1,0],[1,1,1]],
+  "2": [[1,1,1],[0,0,1],[1,1,1],[1,0,0],[1,1,1]],
+  "3": [[1,1,1],[0,0,1],[0,1,1],[0,0,1],[1,1,1]],
+  "4": [[1,0,1],[1,0,1],[1,1,1],[0,0,1],[0,0,1]],
+  "5": [[1,1,1],[1,0,0],[1,1,1],[0,0,1],[1,1,0]],
+  "6": [[0,1,1],[1,0,0],[1,1,1],[1,0,1],[1,1,1]],
+  "7": [[1,1,1],[0,0,1],[0,1,0],[0,1,0],[0,1,0]],
+  "8": [[1,1,1],[1,0,1],[1,1,1],[1,0,1],[1,1,1]],
+  "9": [[1,1,1],[1,0,1],[1,1,1],[0,0,1],[1,1,0]],
+  "+": [[0,0,0],[0,1,0],[1,1,1],[0,1,0],[0,0,0]],
+  "-": [[0,0,0],[0,0,0],[1,1,1],[0,0,0],[0,0,0]],
+  "!": [[0,1,0],[0,1,0],[0,1,0],[0,0,0],[0,1,0]],
+};
+
 function drawPixelWord(
   g: Phaser.GameObjects.Graphics,
   x: number,
@@ -415,159 +461,9 @@ function drawPixelWord(
   color: number,
 ) {
   g.fillStyle(color);
-  const glyphs: Record<string, number[][]> = {
-    O: [
-      [1, 1, 1],
-      [1, 0, 1],
-      [1, 0, 1],
-      [1, 0, 1],
-      [1, 1, 1],
-    ],
-    P: [
-      [1, 1, 1],
-      [1, 0, 1],
-      [1, 1, 1],
-      [1, 0, 0],
-      [1, 0, 0],
-    ],
-    E: [
-      [1, 1, 1],
-      [1, 0, 0],
-      [1, 1, 0],
-      [1, 0, 0],
-      [1, 1, 1],
-    ],
-    N: [
-      [1, 0, 1],
-      [1, 1, 1],
-      [1, 1, 1],
-      [1, 0, 1],
-      [1, 0, 1],
-    ],
-    B: [
-      [1, 1, 0],
-      [1, 0, 1],
-      [1, 1, 0],
-      [1, 0, 1],
-      [1, 1, 0],
-    ],
-    A: [
-      [0, 1, 0],
-      [1, 0, 1],
-      [1, 1, 1],
-      [1, 0, 1],
-      [1, 0, 1],
-    ],
-    R: [
-      [1, 1, 0],
-      [1, 0, 1],
-      [1, 1, 0],
-      [1, 1, 0],
-      [1, 0, 1],
-    ],
-    C: [
-      [0, 1, 1],
-      [1, 0, 0],
-      [1, 0, 0],
-      [1, 0, 0],
-      [0, 1, 1],
-    ],
-    D: [
-      [1, 1, 0],
-      [1, 0, 1],
-      [1, 0, 1],
-      [1, 0, 1],
-      [1, 1, 0],
-    ],
-    G: [
-      [0, 1, 1],
-      [1, 0, 0],
-      [1, 0, 1],
-      [1, 0, 1],
-      [0, 1, 1],
-    ],
-    S: [
-      [0, 1, 1],
-      [1, 0, 0],
-      [0, 1, 0],
-      [0, 0, 1],
-      [1, 1, 0],
-    ],
-    U: [
-      [1, 0, 1],
-      [1, 0, 1],
-      [1, 0, 1],
-      [1, 0, 1],
-      [0, 1, 0],
-    ],
-    W: [
-      [1, 0, 0, 1],
-      [1, 0, 0, 1],
-      [1, 0, 1, 1],
-      [1, 1, 1, 1],
-      [1, 0, 1, 1],
-    ],
-    H: [
-      [1, 0, 1],
-      [1, 0, 1],
-      [1, 1, 1],
-      [1, 0, 1],
-      [1, 0, 1],
-    ],
-    I: [
-      [1, 1, 1],
-      [0, 1, 0],
-      [0, 1, 0],
-      [0, 1, 0],
-      [1, 1, 1],
-    ],
-    L: [
-      [1, 0, 0],
-      [1, 0, 0],
-      [1, 0, 0],
-      [1, 0, 0],
-      [1, 1, 1],
-    ],
-    M: [
-      [1, 0, 0, 1],
-      [1, 1, 1, 1],
-      [1, 0, 1, 1],
-      [1, 0, 0, 1],
-      [1, 0, 0, 1],
-    ],
-    T: [
-      [1, 1, 1],
-      [0, 1, 0],
-      [0, 1, 0],
-      [0, 1, 0],
-      [0, 1, 0],
-    ],
-    X: [
-      [1, 0, 1],
-      [1, 0, 1],
-      [0, 1, 0],
-      [1, 0, 1],
-      [1, 0, 1],
-    ],
-    Y: [
-      [1, 0, 1],
-      [1, 0, 1],
-      [0, 1, 0],
-      [0, 1, 0],
-      [0, 1, 0],
-    ],
-    Z: [
-      [1, 1, 1],
-      [0, 0, 1],
-      [0, 1, 0],
-      [1, 0, 0],
-      [1, 1, 1],
-    ],
-  };
-
   let cursorX = x;
   for (const letter of letters) {
-    const glyph = glyphs[letter];
+    const glyph = PIXEL_GLYPHS[letter];
     if (!glyph) {
       cursorX += 4;
       continue;
@@ -577,8 +473,17 @@ function drawPixelWord(
         if (px) g.fillRect(cursorX + colIndex * 2, y + rowIndex * 2, 2, 2);
       });
     });
-    cursorX += 8;
+    cursorX += (glyph[0].length + 1) * 2;
   }
+}
+
+function measurePixelWord(letters: string[]): number {
+  let w = 0;
+  for (const letter of letters) {
+    const glyph = PIXEL_GLYPHS[letter];
+    w += glyph ? (glyph[0].length + 1) * 2 : 4;
+  }
+  return Math.max(0, w - 2);
 }
 
 function drawCenteredPixelWord(
@@ -590,12 +495,52 @@ function drawCenteredPixelWord(
   letters: string[],
   color: number,
 ) {
-  const wordWidth = Math.max(0, letters.length * 8 - 2);
+  const wordWidth = measurePixelWord(letters);
   const wordHeight = 10;
   const startX = x + Math.floor((width - wordWidth) / 2);
   const startY = y + Math.floor((height - wordHeight) / 2);
   drawPixelWord(g, startX, startY, letters, color);
 }
+
+// ── Vertical glyph table (4-wide CJK + Latin) ──────────────────────────────
+const VERTICAL_GLYPHS: Record<string, number[][]> = {
+  // Latin
+  S: [[0,1,1,0],[1,0,0,0],[0,1,1,0],[0,0,0,1],[1,1,1,0]],
+  Y: [[1,0,0,1],[0,1,1,0],[0,1,1,0],[0,0,1,0],[0,0,1,0]],
+  N: [[1,0,0,1],[1,1,0,1],[1,0,1,1],[1,0,0,1],[1,0,0,1]],
+  A: [[0,1,1,0],[1,0,0,1],[1,1,1,1],[1,0,0,1],[1,0,0,1]],
+  B: [[1,1,1,0],[1,0,0,1],[1,1,1,0],[1,0,0,1],[1,1,1,0]],
+  C: [[0,1,1,1],[1,0,0,0],[1,0,0,0],[1,0,0,0],[0,1,1,1]],
+  D: [[1,1,1,0],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,1,1,0]],
+  E: [[1,1,1,1],[1,0,0,0],[1,1,1,0],[1,0,0,0],[1,1,1,1]],
+  R: [[1,1,1,0],[1,0,0,1],[1,1,1,0],[1,0,1,0],[1,0,0,1]],
+  X: [[1,0,0,1],[0,1,1,0],[0,1,1,0],[0,1,1,0],[1,0,0,1]],
+  // Japanese katakana
+  カ: [[1,0,0,1],[1,1,1,0],[1,0,1,0],[1,0,0,1],[0,0,0,1]],
+  ラ: [[1,1,1,1],[0,0,0,0],[0,1,1,1],[0,0,0,1],[1,1,1,0]],
+  オ: [[0,1,1,0],[1,1,1,1],[0,1,1,0],[0,1,1,0],[1,0,0,1]],
+  ケ: [[1,0,0,1],[1,0,0,1],[1,1,1,0],[1,0,1,0],[0,0,0,1]],
+  ネ: [[0,1,1,0],[1,1,1,1],[0,1,0,0],[1,1,1,0],[0,1,0,1]],
+  コ: [[1,1,1,1],[0,0,0,1],[0,0,0,1],[0,0,0,1],[1,1,1,1]],
+  ン: [[0,1,0,0],[0,0,0,0],[1,0,0,1],[0,1,0,1],[0,0,1,0]],
+  ビ: [[0,1,0,1],[0,1,0,0],[1,1,1,0],[0,0,0,1],[1,1,1,0]],
+  ル: [[0,1,0,0],[0,1,0,1],[0,1,0,1],[0,1,0,1],[1,0,1,1]],
+  テ: [[1,1,1,1],[0,0,0,0],[0,1,1,0],[0,1,0,0],[0,1,0,0]],
+  ク: [[0,1,1,0],[0,0,1,0],[0,1,0,0],[1,0,0,0],[0,0,0,1]],
+  ノ: [[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0],[0,0,0,0]],
+  // Chinese simplified
+  面: [[1,1,1,1],[1,0,0,1],[1,1,1,1],[1,0,1,1],[1,1,1,1]],
+  馆: [[1,0,1,1],[1,1,1,0],[1,0,1,1],[1,0,0,1],[1,0,1,0]],
+  茶: [[0,1,1,0],[1,1,1,1],[0,1,1,0],[1,0,0,1],[0,1,1,0]],
+  酒: [[1,0,1,1],[1,0,1,0],[1,1,1,1],[1,0,0,1],[1,1,1,1]],
+  药: [[0,1,1,0],[1,1,1,1],[1,0,0,1],[0,1,1,0],[1,0,0,1]],
+  店: [[1,1,1,1],[1,0,0,0],[1,1,1,1],[1,0,1,0],[1,0,0,1]],
+  城: [[1,0,1,1],[1,1,1,0],[1,0,1,1],[1,0,1,0],[1,1,1,1]],
+  火: [[0,1,1,0],[0,1,1,0],[1,0,0,1],[1,0,0,1],[1,0,0,1]],
+  // Korean
+  빠: [[1,1,0,1],[1,0,0,1],[1,1,0,1],[1,0,0,1],[1,1,1,1]],
+  른: [[1,1,1,0],[1,0,0,0],[1,1,1,0],[0,0,0,1],[1,1,1,1]],
+};
 
 function drawVerticalPixelGlyphs(
   g: Phaser.GameObjects.Graphics,
@@ -605,89 +550,15 @@ function drawVerticalPixelGlyphs(
   color: number,
 ) {
   g.fillStyle(color);
-
-  const glyphs: Record<string, number[][]> = {
-    S: [
-      [0, 1, 1, 0],
-      [1, 0, 0, 0],
-      [0, 1, 1, 0],
-      [0, 0, 0, 1],
-      [1, 1, 1, 0],
-    ],
-    Y: [
-      [1, 0, 0, 1],
-      [0, 1, 1, 0],
-      [0, 1, 1, 0],
-      [0, 0, 1, 0],
-      [0, 0, 1, 0],
-    ],
-    N: [
-      [1, 0, 0, 1],
-      [1, 1, 0, 1],
-      [1, 0, 1, 1],
-      [1, 0, 0, 1],
-      [1, 0, 0, 1],
-    ],
-    カ: [
-      [1, 0, 0, 1],
-      [1, 1, 1, 0],
-      [1, 0, 1, 0],
-      [1, 0, 0, 1],
-      [0, 0, 0, 1],
-    ],
-    ラ: [
-      [1, 1, 1, 1],
-      [0, 0, 0, 0],
-      [0, 1, 1, 1],
-      [0, 0, 0, 1],
-      [1, 1, 1, 0],
-    ],
-    オ: [
-      [0, 1, 1, 0],
-      [1, 1, 1, 1],
-      [0, 1, 1, 0],
-      [0, 1, 1, 0],
-      [1, 0, 0, 1],
-    ],
-    ケ: [
-      [1, 0, 0, 1],
-      [1, 0, 0, 1],
-      [1, 1, 1, 0],
-      [1, 0, 1, 0],
-      [0, 0, 0, 1],
-    ],
-    面: [
-      [1, 1, 1, 1],
-      [1, 0, 0, 1],
-      [1, 1, 1, 1],
-      [1, 0, 1, 1],
-      [1, 1, 1, 1],
-    ],
-    馆: [
-      [1, 0, 1, 1],
-      [1, 1, 1, 0],
-      [1, 0, 1, 1],
-      [1, 0, 0, 1],
-      [1, 0, 1, 0],
-    ],
-  };
-
   let cursorY = y;
   for (const glyphKey of glyphsToDraw) {
-    const glyph = glyphs[glyphKey];
-    if (!glyph) {
-      cursorY += 8;
-      continue;
-    }
-
+    const glyph = VERTICAL_GLYPHS[glyphKey];
+    if (!glyph) { cursorY += 8; continue; }
     glyph.forEach((row, rowIndex) => {
       row.forEach((px, colIndex) => {
-        if (px) {
-          g.fillRect(x + colIndex * 2, cursorY + rowIndex * 2, 2, 2);
-        }
+        if (px) g.fillRect(x + colIndex * 2, cursorY + rowIndex * 2, 2, 2);
       });
     });
-
     cursorY += 12;
   }
 }
@@ -742,6 +613,354 @@ function drawTacoSign(g: Phaser.GameObjects.Graphics, x: number, y: number) {
   g.fillRect(x + 11, y + 7, 2, 2);
 }
 
+// ── Cyberpunk neon palette ───────────────────────────────────────────────────
+
+const NEON_COLORS = {
+  cyan:     { frame: 0x06b6d4, text: 0x67e8f9 },
+  magenta:  { frame: 0xf472b6, text: 0xf9a8d4 },
+  amber:    { frame: 0xf59e0b, text: 0xfef3c7 },
+  red:      { frame: 0xef4444, text: 0xfecaca },
+  green:    { frame: 0x22c55e, text: 0xdcfce7 },
+  purple:   { frame: 0xa855f7, text: 0xe9d5ff },
+  pink:     { frame: 0xec4899, text: 0xfce7f3 },
+  orange:   { frame: 0xf97316, text: 0xffedd5 },
+  blue:     { frame: 0x3b82f6, text: 0xdbeafe },
+  lime:     { frame: 0x84cc16, text: 0xecfccb },
+  teal:     { frame: 0x14b8a6, text: 0xccfbf1 },
+  rose:     { frame: 0xfb7185, text: 0xfecdd3 },
+} as const;
+
+type NeonColorKey = keyof typeof NEON_COLORS;
+const NEON_COLOR_KEYS = Object.keys(NEON_COLORS) as NeonColorKey[];
+
+type SignEntry =
+  | { kind: "text"; letters: string[]; colors?: NeonColorKey[] }
+  | { kind: "blade"; glyphs: string[]; colors?: NeonColorKey[] }
+  | { kind: "icon"; draw: (g: Phaser.GameObjects.Graphics, x: number, y: number, color: number) => void; colors?: NeonColorKey[] };
+
+// 200 signs — mostly English, some Japanese, Korean, Chinese, Spanish
+const CYBERPUNK_SIGNS: SignEntry[] = [
+  // ── English text signs (~130) ──
+  { kind: "text", letters: ["B","A","R"] },
+  { kind: "text", letters: ["P","A","W","N"] },
+  { kind: "text", letters: ["G","U","N","S"], colors: ["red","orange"] },
+  { kind: "text", letters: ["O","P","E","N"], colors: ["cyan","green","lime"] },
+  { kind: "text", letters: ["I","M","P","L"] },
+  { kind: "text", letters: ["D","O","C"], colors: ["green"] },
+  { kind: "text", letters: ["C","A","T"], colors: ["green","lime","teal"] },
+  { kind: "text", letters: ["R","X"], colors: ["cyan","blue"] },
+  { kind: "text", letters: ["H","A","C","K"] },
+  { kind: "text", letters: ["D","A","T","A"] },
+  { kind: "text", letters: ["N","E","O","N"] },
+  { kind: "text", letters: ["B","Y","T","E"] },
+  { kind: "text", letters: ["N","O","D","E"] },
+  { kind: "text", letters: ["C","O","D","E"] },
+  { kind: "text", letters: ["L","I","N","K"] },
+  { kind: "text", letters: ["Z","E","R","O"] },
+  { kind: "text", letters: ["V","O","I","D"] },
+  { kind: "text", letters: ["P","U","L","S","E"] },
+  { kind: "text", letters: ["G","R","I","D"] },
+  { kind: "text", letters: ["E","D","G","E"] },
+  { kind: "text", letters: ["D","U","S","K"] },
+  { kind: "text", letters: ["R","U","S","T"] },
+  { kind: "text", letters: ["I","N","K"] },
+  { kind: "text", letters: ["N","E","T"] },
+  { kind: "text", letters: ["H","U","B"] },
+  { kind: "text", letters: ["J","A","C","K"] },
+  { kind: "text", letters: ["D","E","N"] },
+  { kind: "text", letters: ["C","R","E","W"] },
+  { kind: "text", letters: ["F","U","E","L"] },
+  { kind: "text", letters: ["C","O","R","E"] },
+  { kind: "text", letters: ["D","R","O","P"] },
+  { kind: "text", letters: ["P","O","R","T"] },
+  { kind: "text", letters: ["S","L","O","T"] },
+  { kind: "text", letters: ["M","O","D","S"] },
+  { kind: "text", letters: ["V","E","N","D"] },
+  { kind: "text", letters: ["W","I","R","E"] },
+  { kind: "text", letters: ["T","U","N","E"] },
+  { kind: "text", letters: ["F","L","U","X"] },
+  { kind: "text", letters: ["R","A","V","E"] },
+  { kind: "text", letters: ["S","H","O","P"] },
+  { kind: "text", letters: ["C","A","F","E"] },
+  { kind: "text", letters: ["E","A","T","S"] },
+  { kind: "text", letters: ["B","E","E","R"] },
+  { kind: "text", letters: ["G","L","O","W"] },
+  { kind: "text", letters: ["B","U","R","N"] },
+  { kind: "text", letters: ["J","O","L","T"] },
+  { kind: "text", letters: ["B","O","O","T"] },
+  { kind: "text", letters: ["S","C","A","N"] },
+  { kind: "text", letters: ["D","I","A","L"] },
+  { kind: "text", letters: ["Z","O","N","E"] },
+  { kind: "text", letters: ["R","I","S","K"] },
+  { kind: "text", letters: ["C","L","U","B"] },
+  { kind: "text", letters: ["G","A","S"] },
+  { kind: "text", letters: ["A","R","M","S"] },
+  { kind: "text", letters: ["B","O","T","S"] },
+  { kind: "text", letters: ["D","I","G","S"] },
+  { kind: "text", letters: ["R","E","N","T"] },
+  { kind: "text", letters: ["P","A","D"] },
+  { kind: "text", letters: ["L","A","B"] },
+  { kind: "text", letters: ["C","H","I","P"] },
+  { kind: "text", letters: ["S","P","I","N"] },
+  { kind: "text", letters: ["D","A","S","H"] },
+  { kind: "text", letters: ["T","A","N","K"] },
+  { kind: "text", letters: ["V","A","U","L","T"] },
+  { kind: "text", letters: ["B","L","A","D","E"] },
+  { kind: "text", letters: ["S","T","E","E","L"] },
+  { kind: "text", letters: ["P","L","A","S","M","A"] },
+  { kind: "text", letters: ["C","H","R","O","M","E"] },
+  { kind: "text", letters: ["S","Y","N","T","H"] },
+  { kind: "text", letters: ["P","A","R","T","S"] },
+  { kind: "text", letters: ["F","I","X"] },
+  { kind: "text", letters: ["P","R","O","B","E"] },
+  { kind: "text", letters: ["S","U","R","G","E"] },
+  { kind: "text", letters: ["D","O","J","O"] },
+  { kind: "text", letters: ["Z","E","N"] },
+  { kind: "text", letters: ["R","A","M","E","N"] },
+  { kind: "text", letters: ["S","U","S","H","I"] },
+  { kind: "text", letters: ["W","O","K"] },
+  { kind: "text", letters: ["D","I","M"] },
+  { kind: "text", letters: ["G","Y","M"] },
+  { kind: "text", letters: ["S","P","A"] },
+  { kind: "text", letters: ["I","N","N"] },
+  { kind: "text", letters: ["T","A","X","I"] },
+  { kind: "text", letters: ["C","O","P","S"], colors: ["blue","cyan"] },
+  { kind: "text", letters: ["E","X","I","T"], colors: ["red","rose"] },
+  { kind: "text", letters: ["B","A","N","K"] },
+  { kind: "text", letters: ["S","A","F","E"] },
+  { kind: "text", letters: ["D","U","M","P"] },
+  { kind: "text", letters: ["P","R","I","N","T"] },
+  { kind: "text", letters: ["O","I","L"] },
+  { kind: "text", letters: ["H","O","T","E","L"] },
+  { kind: "text", letters: ["M","O","T","E","L"] },
+  { kind: "text", letters: ["C","L","I","N","I","C"] },
+  { kind: "text", letters: ["A","R","C","A","D","E"] },
+  { kind: "text", letters: ["T","E","C","H"] },
+  { kind: "text", letters: ["I","O","N"] },
+  { kind: "text", letters: ["F","L","A","S","H"] },
+  { kind: "text", letters: ["B","O","U","N","T","Y"] },
+  { kind: "text", letters: ["L","O","O","T"] },
+  { kind: "text", letters: ["P","I","X","E","L"] },
+  { kind: "text", letters: ["G","L","I","T","C","H"] },
+  { kind: "text", letters: ["W","A","S","T","E"] },
+  { kind: "text", letters: ["D","R","O","I","D"] },
+  { kind: "text", letters: ["C","Y","B","E","R"] },
+  { kind: "text", letters: ["N","I","G","H","T"] },
+  { kind: "text", letters: ["2","4","-","7"], colors: ["amber","orange","red"] },
+  { kind: "text", letters: ["L","I","V","E"] },
+  { kind: "text", letters: ["D","E","A","D"] },
+  { kind: "text", letters: ["K","I","L","L"] },
+  { kind: "text", letters: ["V","I","P"] },
+  { kind: "text", letters: ["S","A","L","E"] },
+  { kind: "text", letters: ["F","R","E","E"] },
+  { kind: "text", letters: ["N","E","W","!"] },
+  { kind: "text", letters: ["H","O","T","!"] },
+  // ── Spanish text signs (~12) ──
+  { kind: "text", letters: ["C","A","N","T","I","N","A"] },
+  { kind: "text", letters: ["T","A","C","O","S"], colors: ["orange","amber"] },
+  { kind: "text", letters: ["B","O","D","E","G","A"] },
+  { kind: "text", letters: ["J","O","Y","A","S"] },
+  { kind: "text", letters: ["M","O","D","A"] },
+  { kind: "text", letters: ["L","U","Z"] },
+  { kind: "text", letters: ["S","O","L"] },
+  { kind: "text", letters: ["R","E","D"] },
+  { kind: "text", letters: ["V","I","D","A"] },
+  { kind: "text", letters: ["C","A","S","A"] },
+  { kind: "text", letters: ["A","G","U","A"] },
+  { kind: "text", letters: ["P","A","Z"] },
+  // ── Vertical blade signs (~30) ──
+  { kind: "blade", glyphs: ["カ","ラ","オ","ケ"], colors: ["magenta","pink"] },
+  { kind: "blade", glyphs: ["面","馆"], colors: ["red","rose","orange"] },
+  { kind: "blade", glyphs: ["S","Y","N"], colors: ["cyan"] },
+  { kind: "blade", glyphs: ["B","A","R"] },
+  { kind: "blade", glyphs: ["酒","店"] },
+  { kind: "blade", glyphs: ["茶","店"] },
+  { kind: "blade", glyphs: ["药","店"], colors: ["green"] },
+  { kind: "blade", glyphs: ["火","城"] },
+  { kind: "blade", glyphs: ["ネ","コ"], colors: ["green","lime"] },
+  { kind: "blade", glyphs: ["テ","ク","ノ"] },
+  { kind: "blade", glyphs: ["ビ","ル"] },
+  { kind: "blade", glyphs: ["빠","른"] },
+  { kind: "blade", glyphs: ["N","E","X"], colors: ["cyan","blue"] },
+  { kind: "blade", glyphs: ["D","A","T","A"] },
+  { kind: "blade", glyphs: ["E","D","G","E"] },
+  { kind: "blade", glyphs: ["R","X"], colors: ["cyan","green"] },
+  { kind: "blade", glyphs: ["城","店"] },
+  { kind: "blade", glyphs: ["A","R","C"] },
+  { kind: "blade", glyphs: ["C","O","D","E"] },
+  { kind: "blade", glyphs: ["X","E","N"] },
+  // ── Icon signs (~20) ──
+  { kind: "icon", draw: (g, x, y, c) => drawMedicalCross(g, x, y, c), colors: ["green"] },
+  { kind: "icon", draw: (g, x, y, c) => drawLeafSign(g, x, y, c), colors: ["green","lime","teal"] },
+  { kind: "icon", draw: (g, x, y) => drawTacoSign(g, x, y), colors: ["orange","amber"] },
+  { kind: "icon", draw: (g, x, y, c) => drawCapsuleSign(g, x, y, c, 0xf472b6), colors: ["cyan","blue"] },
+  // Skull
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillRect(x-1, y-1, 14, 14);
+    g.fillStyle(c).fillRect(x+2, y, 8, 8).fillRect(x+1, y+8, 10, 4);
+    g.fillStyle(0x0f172a).fillRect(x+3, y+3, 2, 2).fillRect(x+7, y+3, 2, 2);
+    g.fillRect(x+4, y+9, 1, 2).fillRect(x+7, y+9, 1, 2);
+  }, colors: ["red","rose","purple"] },
+  // Eye
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillEllipse(x+6, y+6, 18, 12);
+    g.fillStyle(c).fillEllipse(x+6, y+6, 14, 8);
+    g.fillStyle(0x0f172a).fillCircle(x+6, y+6, 3);
+    g.fillStyle(0xffffff, 0.7).fillRect(x+4, y+3, 2, 2);
+  }},
+  // Lightning bolt
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillRect(x-1, y-1, 14, 16);
+    g.fillStyle(c);
+    g.fillRect(x+6, y, 4, 4).fillRect(x+4, y+4, 4, 3).fillRect(x+2, y+7, 6, 3);
+    g.fillRect(x+4, y+10, 4, 4);
+  }, colors: ["amber","orange"] },
+  // Gear
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillCircle(x+6, y+6, 8);
+    g.fillStyle(c).fillCircle(x+6, y+6, 5);
+    g.fillStyle(0x0f172a).fillCircle(x+6, y+6, 2);
+    g.fillStyle(c).fillRect(x+5, y-1, 2, 3).fillRect(x+5, y+11, 2, 3);
+    g.fillRect(x-1, y+5, 3, 2).fillRect(x+11, y+5, 3, 2);
+  }},
+  // Radiation
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillCircle(x+6, y+7, 8);
+    g.fillStyle(c).fillTriangle(x+6, y, x+2, y+8, x+10, y+8);
+    g.fillTriangle(x+1, y+10, x+6, y+6, x+6, y+14);
+    g.fillTriangle(x+11, y+10, x+6, y+6, x+6, y+14);
+    g.fillStyle(0x0f172a).fillCircle(x+6, y+7, 2);
+  }, colors: ["amber","red","orange"] },
+  // DNA helix
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillRect(x, y, 12, 14);
+    g.fillStyle(c);
+    for (let i = 0; i < 7; i++) {
+      const off = Math.round(Math.sin(i * 0.9) * 3);
+      g.fillRect(x + 3 + off, y + i * 2, 2, 2);
+      g.fillRect(x + 5 - off, y + i * 2, 2, 2);
+    }
+  }, colors: ["cyan","green","purple"] },
+  // Circuit
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillRect(x-1, y-1, 14, 14);
+    g.fillStyle(c).fillRect(x+3, y+3, 6, 6);
+    g.fillStyle(0x0f172a).fillRect(x+4, y+4, 4, 4);
+    g.fillStyle(c).fillRect(x+5, y, 2, 3).fillRect(x+5, y+9, 2, 3);
+    g.fillRect(x, y+5, 3, 2).fillRect(x+9, y+5, 3, 2);
+  }},
+  // Diamond
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillRect(x, y, 12, 14);
+    g.fillStyle(c);
+    g.fillRect(x+4, y+1, 4, 2).fillRect(x+2, y+3, 8, 2);
+    g.fillRect(x+3, y+5, 6, 2).fillRect(x+4, y+7, 4, 2);
+    g.fillRect(x+5, y+9, 2, 2);
+  }, colors: ["cyan","blue","purple"] },
+  // Star
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillRect(x, y, 12, 12);
+    g.fillStyle(c).fillRect(x+5, y, 2, 2);
+    g.fillRect(x+3, y+2, 6, 2).fillRect(x+1, y+4, 10, 2);
+    g.fillRect(x+3, y+6, 6, 2).fillRect(x+2, y+8, 3, 2).fillRect(x+7, y+8, 3, 2);
+  }, colors: ["amber","orange"] },
+  // Heart
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillRect(x, y, 12, 12);
+    g.fillStyle(c).fillRect(x+1, y+2, 4, 4).fillRect(x+7, y+2, 4, 4);
+    g.fillRect(x+3, y+1, 2, 2).fillRect(x+7, y+1, 2, 2);
+    g.fillRect(x+2, y+6, 8, 2).fillRect(x+3, y+8, 6, 2).fillRect(x+4, y+10, 4, 1);
+  }, colors: ["red","rose","pink","magenta"] },
+  // Arrow up
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillRect(x, y, 12, 14);
+    g.fillStyle(c).fillRect(x+5, y, 2, 12);
+    g.fillRect(x+3, y+2, 2, 2).fillRect(x+7, y+2, 2, 2);
+    g.fillRect(x+1, y+4, 2, 2).fillRect(x+9, y+4, 2, 2);
+  }},
+  // Lock
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillRect(x, y, 12, 14);
+    g.fillStyle(c).fillRect(x+3, y, 6, 2).fillRect(x+2, y+2, 2, 4).fillRect(x+8, y+2, 2, 4);
+    g.fillRect(x+1, y+6, 10, 7);
+    g.fillStyle(0x0f172a).fillRect(x+5, y+8, 2, 3);
+  }, colors: ["amber","red"] },
+  // Wifi
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillRect(x, y, 14, 12);
+    g.fillStyle(c).fillRect(x+1, y+2, 12, 2);
+    g.fillRect(x+3, y+4, 8, 2).fillRect(x+5, y+6, 4, 2);
+    g.fillRect(x+6, y+8, 2, 2);
+  }, colors: ["cyan","green"] },
+  // Atom
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillCircle(x+6, y+6, 8);
+    g.fillStyle(c).fillCircle(x+6, y+6, 2);
+    g.fillStyle(c, 0.7).fillEllipse(x+6, y+6, 16, 6);
+    g.fillStyle(c, 0.5).fillEllipse(x+6, y+6, 6, 14);
+  }, colors: ["cyan","purple","blue"] },
+  // Crown
+  { kind: "icon", draw: (g, x, y, c) => {
+    g.fillStyle(c, 0.2).fillRect(x, y, 14, 12);
+    g.fillStyle(c).fillRect(x+1, y+4, 12, 6);
+    g.fillRect(x+1, y+2, 2, 2).fillRect(x+6, y, 2, 4).fillRect(x+11, y+2, 2, 2);
+  }, colors: ["amber","orange","purple"] },
+];
+
+// Deterministic hash for sign selection per building-texture index
+function signHash(seed: number): number {
+  let h = seed * 2654435761;
+  h = ((h >>> 16) ^ h) * 0x45d9f3b;
+  h = ((h >>> 16) ^ h);
+  return Math.abs(h);
+}
+
+function pickColor(sign: SignEntry, hash: number): { frame: number; text: number } {
+  if (sign.colors && sign.colors.length > 0) {
+    const key = sign.colors[hash % sign.colors.length];
+    return NEON_COLORS[key];
+  }
+  return NEON_COLORS[NEON_COLOR_KEYS[hash % NEON_COLOR_KEYS.length]];
+}
+
+/**
+ * Draw a single random sign on a building.
+ * @param slotType  "front" for horizontal text / icon, "blade" for vertical blade
+ * @param x,y,w,h  sign slot rectangle
+ * @param seed      unique seed per building-texture to make choice deterministic
+ */
+function drawRandomSign(
+  g: Phaser.GameObjects.Graphics,
+  slotType: "front" | "blade",
+  x: number, y: number, w: number, h: number,
+  seed: number,
+) {
+  const hash1 = signHash(seed);
+  const hash2 = signHash(seed + 7919);
+
+  // Filter candidates to matching slot type
+  const candidates = CYBERPUNK_SIGNS.filter((s) =>
+    slotType === "blade" ? s.kind === "blade" : s.kind !== "blade",
+  );
+  const sign = candidates[hash1 % candidates.length];
+  const pal = pickColor(sign, hash2);
+
+  if (sign.kind === "text") {
+    drawNeonFrame(g, x, y, w, h, pal.frame);
+    drawCenteredPixelWord(g, x, y, w, h, sign.letters, pal.text);
+  } else if (sign.kind === "blade") {
+    // Glow backing
+    g.fillStyle(pal.frame, 0.08).fillRect(x - 1, y - 2, w + 2, h + 4);
+    g.fillStyle(0x0f172a, 0.92).fillRect(x, y, w, h);
+    drawNeonFrame(g, x, y, w, h, pal.frame);
+    g.fillStyle(pal.text, 0.18).fillRect(x + 1, y + 1, w - 2, h - 2);
+    drawVerticalPixelGlyphs(g, x + 2, y + 4, sign.glyphs, pal.text);
+  } else if (sign.kind === "icon") {
+    drawNeonFrame(g, x, y, w, h, pal.frame);
+    sign.draw(g, x + (w - 12) / 2, y + (h - 12) / 2, pal.text);
+  }
+}
+
 function createBuildingTextures(scene: Phaser.Scene) {
   // Tall factory building (64 x 128)
   withGraphics(
@@ -772,14 +991,8 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x64748b).fillRect(28, 58, 4, 28);
       g.fillStyle(0x94a3b8, 0.55).fillRect(29, 58, 2, 28);
       g.fillStyle(0x1e293b).fillRect(0, 96, 64, 2);
-      drawNeonFrame(g, 18, 24, 24, 12, 0xf59e0b);
-      drawCenteredPixelWord(g, 18, 24, 24, 12, ["P", "A", "W", "N"], 0xfef3c7);
-      g.fillStyle(0x06b6d4, 0.08).fillRect(42, 22, 14, 42);
-      g.fillStyle(0x0f172a, 0.95).fillRect(43, 24, 12, 38);
-      drawNeonFrame(g, 43, 24, 12, 38, 0x06b6d4);
-      g.fillStyle(0x94a3b8).fillRect(40, 28, 3, 2);
-      g.fillRect(40, 36, 3, 2);
-      drawVerticalPixelGlyphs(g, 45, 28, ["S", "Y", "N"], 0x67e8f9);
+      // One sign: front text
+      drawRandomSign(g, "front", 14, 82, 34, 12, 100);
     },
     GENERATED_TEXTURES.buildingTall,
     64,
@@ -815,10 +1028,8 @@ function createBuildingTextures(scene: Phaser.Scene) {
       drawWindows(g, 50, 68, 2, 1, 8, 8, 8, 0);
       drawPipeColumn(g, 74, 14, 82);
       g.fillStyle(0x111827).fillRect(0, 46, 80, 2);
-      drawNeonFrame(g, 42, 20, 30, 12, 0xa855f7);
-      drawCenteredPixelWord(g, 42, 20, 30, 12, ["I", "M", "P", "L"], 0xe9d5ff);
-      drawNeonFrame(g, 6, 50, 34, 12, 0xef4444);
-      drawCenteredPixelWord(g, 6, 50, 34, 12, ["G", "U", "N", "S"], 0xfecaca);
+      // One sign: front text
+      drawRandomSign(g, "front", 6, 50, 34, 12, 201);
     },
     GENERATED_TEXTURES.buildingMedium,
     80,
@@ -858,14 +1069,8 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x334155).fillRect(72, 26, 14, 24);
       drawPanelLines(g, 72, 26, 14, 24, 6);
       g.fillStyle(0x475569).fillRect(90, 14, 4, 50);
-      drawNeonFrame(g, 10, 15, 16, 16, 0x22c55e);
-      drawMedicalCross(g, 13, 18, 0x4ade80);
-      drawNeonFrame(g, 28, 17, 22, 12, 0x22c55e);
-      drawCenteredPixelWord(g, 28, 17, 22, 12, ["D", "O", "C"], 0xdcfce7);
-      drawNeonFrame(g, 48, 18, 18, 18, 0x22c55e);
-      drawLeafSign(g, 51, 21, 0x4ade80);
-      drawNeonFrame(g, 46, 48, 22, 12, 0x22c55e);
-      drawCenteredPixelWord(g, 46, 48, 22, 12, ["C", "A", "T"], 0xdcfce7);
+      // One sign: front text
+      drawRandomSign(g, "front", 46, 48, 30, 12, 302);
     },
     GENERATED_TEXTURES.buildingShort,
     96,
@@ -893,14 +1098,8 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x475569).fillRect(14, 112, 36, 6);
       g.fillStyle(0x0f172a).fillRect(24, 118, 18, 26);
       g.fillStyle(0x111827).fillRect(8, 72, 56, 2);
-      g.fillStyle(0xf472b6, 0.08).fillRect(47, 30, 15, 58);
-      g.fillStyle(0x0f172a, 0.92).fillRect(48, 32, 12, 54);
-      drawNeonFrame(g, 48, 32, 12, 54, 0xf472b6);
-      g.fillStyle(0x94a3b8).fillRect(45, 36, 3, 2);
-      g.fillRect(45, 46, 3, 2);
-      g.fillRect(45, 56, 3, 2);
-      g.fillStyle(0xe879f9, 0.18).fillRect(49, 33, 10, 52);
-      drawVerticalPixelGlyphs(g, 50, 36, ["カ", "ラ", "オ", "ケ"], 0xf9a8d4);
+      // One sign: vertical blade
+      drawRandomSign(g, "blade", 48, 32, 12, 54, 403);
     },
     GENERATED_TEXTURES.buildingTower,
     72,
@@ -935,6 +1134,8 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x475569).fillRect(96, 28, 6, 60);
       g.fillStyle(0x64748b).fillRect(96, 34, 14, 4);
       g.fillStyle(0x94a3b8).fillRect(100, 35, 8, 2);
+      // One sign: front text on the panel section
+      drawRandomSign(g, "front", 38, 46, 30, 12, 706);
     },
     GENERATED_TEXTURES.buildingPlant,
     112,
@@ -960,15 +1161,8 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x334155).fillRect(78, 34, 20, 18);
       g.fillStyle(0xfef3c7, 0.45).fillRect(80, 36, 16, 14);
       g.fillStyle(0x475569).fillRect(0, 68, 112, 4);
-      drawNeonFrame(g, 54, 18, 42, 12, 0x22d3ee);
-      drawCenteredPixelWord(g, 54, 18, 42, 12, ["O", "P", "E", "N"], 0x67e8f9);
-      g.fillStyle(0xef4444, 0.08).fillRect(42, 22, 14, 32);
-      g.fillStyle(0x0f172a, 0.95).fillRect(43, 24, 12, 28);
-      drawNeonFrame(g, 43, 24, 12, 28, 0xef4444);
-      g.fillStyle(0x94a3b8).fillRect(40, 28, 3, 2);
-      g.fillRect(40, 36, 3, 2);
-      g.fillStyle(0xfb7185, 0.18).fillRect(44, 25, 10, 26);
-      drawVerticalPixelGlyphs(g, 45, 28, ["面", "馆"], 0xfecdd3);
+      // One sign: front text
+      drawRandomSign(g, "front", 54, 18, 38, 12, 504);
     },
     GENERATED_TEXTURES.buildingNeonShop,
     112,
@@ -995,17 +1189,104 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0xfef3c7, 0.35).fillRect(72, 36, 10, 14);
       g.fillStyle(0x475569).fillRect(0, 72, 120, 4);
       drawVentGrille(g, 10, 44, 12, 16);
-      drawNeonFrame(g, 50, 20, 34, 12, 0xf472b6);
-      drawCenteredPixelWord(g, 50, 20, 34, 12, ["B", "A", "R"], 0xf9a8d4);
-      drawNeonFrame(g, 86, 18, 20, 12, 0xf97316);
-      drawTacoSign(g, 88, 20);
-      drawNeonFrame(g, 86, 34, 22, 12, 0x06b6d4);
-      drawCapsuleSign(g, 87, 36, 0x38bdf8, 0xf472b6);
-      drawCenteredPixelWord(g, 84, 48, 28, 12, ["R", "X"], 0xe0f2fe);
+      // One sign: front text
+      drawRandomSign(g, "front", 50, 20, 34, 12, 605);
     },
     GENERATED_TEXTURES.buildingHoloBar,
     120,
     76,
+  );
+
+  // Arcade building — tall narrow with marquee (80 x 96)
+  withGraphics(
+    scene,
+    (g) => {
+      // Main wall
+      g.fillStyle(0x1a1f3d).fillRect(0, 16, 80, 80);
+      g.fillStyle(0x252b52).fillRect(0, 12, 80, 8);
+      drawServiceCap(g, 0, 16, 80);
+      // Marquee band across top
+      g.fillStyle(0x7c3aed, 0.4).fillRect(4, 18, 72, 6);
+      g.fillStyle(0xa78bfa, 0.9).fillRect(6, 20, 68, 2);
+      // Windows
+      drawWindows(g, 8, 30, 3, 2, 8, 6, 10, 12);
+      // Door alcove
+      g.fillStyle(0x0f172a).fillRect(28, 60, 24, 36);
+      g.fillStyle(0x334155).fillRect(28, 60, 24, 2);
+      // Side vent
+      drawVentGrille(g, 4, 64, 16, 20);
+      // Pipes
+      drawPipeColumn(g, 66, 28, 60);
+      // Sidewalk edge
+      g.fillStyle(0x475569).fillRect(0, 92, 80, 4);
+      // One sign: blade on right edge
+      drawRandomSign(g, "blade", 68, 24, 10, 44, 807);
+    },
+    GENERATED_TEXTURES.buildingArcade,
+    80,
+    96,
+  );
+
+  // Clinic — wide, low, with cross motif (100 x 64)
+  withGraphics(
+    scene,
+    (g) => {
+      // Main wall
+      g.fillStyle(0x172035).fillRect(0, 14, 100, 50);
+      g.fillStyle(0x22304d).fillRect(0, 10, 100, 8);
+      drawRoofRail(g, 6, 13, 86);
+      drawHazardBand(g, 0, 14, 52, 3);
+      // Large window panels
+      g.fillStyle(0x0f172a).fillRect(8, 24, 32, 26);
+      g.fillStyle(0xfef3c7, 0.3).fillRect(10, 26, 28, 22);
+      g.fillStyle(0x0f172a).fillRect(60, 24, 32, 26);
+      g.fillStyle(0xfef3c7, 0.3).fillRect(62, 26, 28, 22);
+      // Center door
+      g.fillStyle(0x0f172a).fillRect(42, 32, 16, 32);
+      g.fillStyle(0x334155).fillRect(42, 32, 16, 2);
+      // Rooftop unit
+      g.fillStyle(0x334155).fillRect(38, 4, 24, 10);
+      g.fillStyle(0x64748b).fillRect(40, 6, 20, 2);
+      // Sidewalk edge
+      g.fillStyle(0x475569).fillRect(0, 60, 100, 4);
+      // One sign: front text above door
+      drawRandomSign(g, "front", 42, 18, 30, 12, 908);
+    },
+    GENERATED_TEXTURES.buildingClinic,
+    100,
+    64,
+  );
+
+  // Tech shop — medium with antenna cluster (88 x 80)
+  withGraphics(
+    scene,
+    (g) => {
+      // Main wall
+      g.fillStyle(0x161c38).fillRect(0, 20, 88, 60);
+      g.fillStyle(0x28335a).fillRect(0, 16, 88, 8);
+      drawServiceCap(g, 0, 20, 88);
+      drawWarningNodes(g, 0, 20, 44);
+      // Antenna cluster on roof
+      g.fillStyle(0x475569).fillRect(14, 2, 2, 18);
+      g.fillStyle(0x475569).fillRect(22, 6, 2, 14);
+      g.fillStyle(0x64748b).fillRect(10, 0, 8, 4);
+      g.fillStyle(0xef4444, 0.8).fillRect(14, 0, 2, 2); // Red beacon
+      // Storefront display
+      g.fillStyle(0x1e293b).fillRect(6, 32, 50, 30);
+      g.fillStyle(0x0f172a).fillRect(8, 34, 46, 26);
+      drawWindows(g, 10, 36, 2, 2, 6, 5, 10, 10);
+      // Side section with pipes
+      g.fillStyle(0x243255).fillRect(60, 28, 28, 52);
+      drawPanelLines(g, 60, 34, 28, 36, 6);
+      drawPipeColumn(g, 80, 28, 44);
+      // Sidewalk edge
+      g.fillStyle(0x475569).fillRect(0, 76, 88, 4);
+      // One sign: front text on upper fascia
+      drawRandomSign(g, "front", 6, 24, 34, 12, 1009);
+    },
+    GENERATED_TEXTURES.buildingTechShop,
+    88,
+    80,
   );
 }
 
