@@ -253,12 +253,15 @@ function drawWindows(
       const wx = startX + c * (winW + gapX);
       const wy = startY + r * (winH + gapY);
       const lit = (r + c) % 3 !== 0;
-      g.fillStyle(lit ? 0xfbbf24 : 0x1e293b, lit ? 0.85 : 0.6);
+      g.fillStyle(0x0f172a, 0.85);
       g.fillRect(wx, wy, winW, winH);
+      g.fillStyle(lit ? 0xfbbf24 : 0x22304b, lit ? 0.82 : 0.7);
+      g.fillRect(wx + 1, wy + 1, Math.max(1, winW - 2), Math.max(1, winH - 2));
+      g.fillStyle(0x111827, 0.65);
+      g.fillRect(wx, wy + winH - 1, winW, 1);
       if (lit) {
-        // Window shine
         g.fillStyle(0xfef3c7, 0.4);
-        g.fillRect(wx, wy, winW, 1);
+        g.fillRect(wx + 1, wy + 1, Math.max(1, winW - 3), 1);
       }
     }
   }
@@ -331,23 +334,18 @@ function drawCrossBracePanel(
   }
 }
 
-function drawSlitWindows(
+function drawVentGrille(
   g: Phaser.GameObjects.Graphics,
   x: number,
   y: number,
-  count: number,
-  spacing: number,
+  width: number,
   height: number,
 ) {
-  for (let i = 0; i < count; i++) {
-    const wx = x + i * spacing;
-    g.fillStyle(0x0f172a).fillRect(wx, y, 4, height);
-    g.fillStyle(0xfbbf24, i % 2 === 0 ? 0.85 : 0.5).fillRect(
-      wx + 1,
-      y + 1,
-      2,
-      height - 2,
-    );
+  g.fillStyle(0x23314d).fillRect(x, y, width, height);
+  g.fillStyle(0x475569).fillRect(x, y, width, 2);
+  g.fillStyle(0x111827, 0.65);
+  for (let yy = y + 3; yy < y + height - 1; yy += 3) {
+    g.fillRect(x + 2, yy, width - 4, 1);
   }
 }
 
@@ -367,7 +365,8 @@ function createBuildingTextures(scene: Phaser.Scene) {
       drawPipeColumn(g, 8, 0, 14);
       drawPipeColumn(g, 46, 2, 12);
       g.fillStyle(0x172038).fillRect(2, 36, 14, 54);
-      drawSlitWindows(g, 6, 42, 2, 6, 16);
+      drawVentGrille(g, 5, 42, 8, 18);
+      drawVentGrille(g, 5, 66, 8, 18);
       g.fillStyle(0x334155).fillRect(20, 20, 20, 82);
       drawPanelLines(g, 20, 20, 20, 82, 10);
       drawWindows(g, 4, 24, 2, 5, 8, 6, 12, 10);
@@ -445,7 +444,7 @@ function createBuildingTextures(scene: Phaser.Scene) {
         g.fillRect(42, y, 2, 4);
       }
       drawWindows(g, 54, 18, 2, 1, 10, 8, 10, 0);
-      drawSlitWindows(g, 56, 30, 2, 8, 10);
+      drawVentGrille(g, 54, 30, 18, 10);
       g.fillStyle(0x334155).fillRect(54, 40, 14, 8);
       g.fillStyle(0x1e293b);
       for (let x = 56; x < 66; x += 3) {
@@ -474,7 +473,8 @@ function createBuildingTextures(scene: Phaser.Scene) {
       g.fillStyle(0x334155).fillRect(16, 16, 24, 2);
       drawPipeColumn(g, 44, 0, 18);
       g.fillStyle(0x263451).fillRect(10, 52, 8, 60);
-      drawSlitWindows(g, 11, 58, 1, 4, 18);
+      drawVentGrille(g, 10, 58, 8, 18);
+      drawVentGrille(g, 10, 82, 8, 18);
       drawWindows(g, 14, 30, 2, 7, 10, 7, 12, 9);
       drawCrossBracePanel(g, 40, 82, 12, 24);
       g.fillStyle(0x475569).fillRect(14, 112, 36, 6);

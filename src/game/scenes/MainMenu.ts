@@ -18,6 +18,18 @@ interface MidgroundBuilding {
 }
 
 export class MainMenu extends Scene {
+  private static readonly CAT_FOOT_OFFSET = 10;
+  private static readonly ENEMY_FOOT_OFFSET: Record<string, number> = {
+    dog1: 8,
+    dog2: 8,
+    cat1: 8,
+    cat2: 8,
+    rat1: 4,
+    rat2: 4,
+    bird1: 0,
+    bird2: 0,
+  };
+
   private parallaxLayers: Phaser.GameObjects.GameObject[] = [];
   private floorTile!: Phaser.GameObjects.TileSprite;
   private cat!: Phaser.GameObjects.Sprite;
@@ -243,8 +255,9 @@ export class MainMenu extends Scene {
 
     for (const cfg of configs) {
       const tex = `enemy_${cfg.type}`;
+      const footOffset = MainMenu.ENEMY_FOOT_OFFSET[cfg.type] ?? 6;
       const sprite = this.add
-        .sprite(width + cfg.xOff, this.groundY - 16, tex)
+        .sprite(width + cfg.xOff, this.groundY + footOffset, tex)
         .setOrigin(0.5, 1)
         .setDepth(-7)
         .setFlipX(true)
@@ -252,7 +265,7 @@ export class MainMenu extends Scene {
 
       if (cfg.type.includes("bird")) {
         // Birds fly between rooftop and street level
-        sprite.setY(this.rooftopY - Phaser.Math.Between(10, 60));
+        sprite.setY(this.rooftopY + 6 - Phaser.Math.Between(10, 60));
         sprite.setDepth(-4);
       }
 
@@ -710,7 +723,7 @@ export class MainMenu extends Scene {
 
     // If cat is in a gap, use baseline rooftop path instead of nearest building
     // to avoid visual "air walking".
-    return (overlapRoofY ?? this.rooftopY) - 2;
+    return (overlapRoofY ?? this.rooftopY) + MainMenu.CAT_FOOT_OFFSET;
   }
 
   private _rightmostBuildingEdge(exclude?: Phaser.GameObjects.Image) {
@@ -804,9 +817,9 @@ export class MainMenu extends Scene {
       if (sprite.x < -100) {
         sprite.x = width + Phaser.Math.Between(150, 750);
         if (type.includes("bird")) {
-          sprite.setY(this.rooftopY - Phaser.Math.Between(10, 60));
+          sprite.setY(this.rooftopY + 6 - Phaser.Math.Between(10, 60));
         } else {
-          sprite.setY(this.groundY - 16);
+          sprite.setY(this.groundY + (MainMenu.ENEMY_FOOT_OFFSET[type] ?? 6));
         }
       }
     });
