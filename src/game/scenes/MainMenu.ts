@@ -17,6 +17,12 @@ interface MidgroundBuilding {
   roofInset: number;
 }
 
+interface BuildingTwinkle {
+  anchor: Phaser.GameObjects.Image;
+  light: Phaser.GameObjects.Rectangle | Phaser.GameObjects.Ellipse;
+  offsetX: number;
+}
+
 export class MainMenu extends Scene {
   private static readonly CAT_FOOT_OFFSET = 10;
   private static readonly ENEMY_FOOT_OFFSET: Record<string, number> = {
@@ -36,6 +42,7 @@ export class MainMenu extends Scene {
   private enemies: EnemyInstance[] = [];
   private collectibles: Phaser.GameObjects.Image[] = [];
   private buildings: MidgroundBuilding[] = [];
+  private buildingTwinkles: BuildingTwinkle[] = [];
   private streetLamps: Phaser.GameObjects.Image[] = [];
   private runSpeed = 1.5;
   private catIsJumping = false;
@@ -353,6 +360,7 @@ export class MainMenu extends Scene {
         scrollSpeed: cfg.scroll,
         roofInset: sourceInset * cfg.scale,
       });
+      this._addBuildingTwinkles(img, cfg.tex, cfg.scale);
 
       nextX += img.displayWidth - Phaser.Math.Between(40, 64);
     }
@@ -371,8 +379,122 @@ export class MainMenu extends Scene {
         scrollSpeed: cfg.scroll,
         roofInset: sourceInset * cfg.scale,
       });
+      this._addBuildingTwinkles(img, cfg.tex, cfg.scale);
 
       nextX += img.displayWidth - Phaser.Math.Between(40, 64);
+    }
+  }
+
+  private _addBuildingTwinkles(
+    image: Phaser.GameObjects.Image,
+    textureKey: string,
+    scale: number,
+  ) {
+    if (Phaser.Math.FloatBetween(0, 1) > 0.45) {
+      return;
+    }
+
+    const twinkleConfigs: Record<
+      string,
+      Array<{
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+        shape?: "rect" | "ellipse";
+        color?: number;
+      }>
+    > = {
+      [GENERATED_TEXTURES.buildingTall]: [
+        { x: 10, y: 28, width: 6, height: 5, color: 0xfacc15 },
+        { x: 48, y: 42, width: 5, height: 5, color: 0xfbbf24 },
+        { x: 30, y: 74, width: 4, height: 18, color: 0xfef08a },
+      ],
+      [GENERATED_TEXTURES.buildingMedium]: [
+        { x: 16, y: 24, width: 7, height: 5, color: 0xfacc15 },
+        {
+          x: 58,
+          y: 22,
+          width: 4,
+          height: 4,
+          shape: "ellipse",
+          color: 0xf59e0b,
+        },
+        { x: 52, y: 70, width: 8, height: 6, color: 0xfef08a },
+      ],
+      [GENERATED_TEXTURES.buildingShort]: [
+        { x: 60, y: 20, width: 8, height: 5, color: 0xfacc15 },
+        { x: 50, y: 32, width: 16, height: 4, color: 0xfef08a },
+      ],
+      [GENERATED_TEXTURES.buildingTower]: [
+        { x: 24, y: 8, width: 4, height: 4, shape: "ellipse", color: 0xf59e0b },
+        { x: 26, y: 36, width: 6, height: 5, color: 0xfacc15 },
+        { x: 24, y: 88, width: 6, height: 5, color: 0xfef08a },
+      ],
+      [GENERATED_TEXTURES.buildingPlant]: [
+        {
+          x: 86,
+          y: 26,
+          width: 6,
+          height: 4,
+          shape: "ellipse",
+          color: 0xf59e0b,
+        },
+        { x: 76, y: 38, width: 8, height: 6, color: 0xfacc15 },
+        { x: 18, y: 56, width: 4, height: 20, color: 0xfef08a },
+      ],
+    };
+
+    const candidates = Phaser.Utils.Array.Shuffle([
+      ...(twinkleConfigs[textureKey] ?? []),
+    ]);
+    const takeCount = Phaser.Math.Between(1, Math.min(2, candidates.length));
+
+    for (const cfg of candidates.slice(0, takeCount)) {
+      const localX = cfg.x * scale;
+      const localY = cfg.y * scale;
+      const widthPx = Math.max(2, cfg.width * scale);
+      const heightPx = Math.max(2, cfg.height * scale);
+      const worldX = image.x + localX;
+      const worldY = image.y - image.displayHeight + localY;
+
+      const light =
+        cfg.shape === "ellipse"
+          ? this.add.ellipse(
+              worldX,
+              worldY,
+              widthPx,
+              heightPx,
+              cfg.color ?? 0xfbbf24,
+              0.22,
+            )
+          : this.add.rectangle(
+              worldX,
+              worldY,
+              widthPx,
+              heightPx,
+              cfg.color ?? 0xfbbf24,
+              0.22,
+            );
+
+      light.setOrigin(0, 0).setDepth(-7.75);
+
+      this.tweens.add({
+        targets: light,
+        alpha: Phaser.Math.FloatBetween(0.08, 0.42),
+        duration: Phaser.Math.Between(2600, 5200),
+        delay: Phaser.Math.Between(0, 4200),
+        yoyo: true,
+        repeat: -1,
+        repeatDelay: Phaser.Math.Between(1800, 5200),
+        ease: "Sine.easeInOut",
+      });
+
+      this.buildingTwinkles.push({
+        anchor: image,
+        light,
+        offsetX: localX,
+      });
     }
   }
 
@@ -780,6 +902,10 @@ export class MainMenu extends Scene {
         const rightmost = this._rightmostBuildingEdge(b.image);
         b.image.x = rightmost - Phaser.Math.Between(40, 64);
       }
+    });
+
+    this.buildingTwinkles.forEach(({ anchor, light, offsetX }) => {
+      light.x = anchor.x + offsetX;
     });
 
     // Scroll street lamps
