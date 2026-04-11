@@ -298,6 +298,9 @@ export class MainMenu extends Scene {
       [GENERATED_TEXTURES.buildingMegaBlock]: 16,
       [GENERATED_TEXTURES.buildingTerminal]: 18,
       [GENERATED_TEXTURES.buildingComplex]: 20,
+      [GENERATED_TEXTURES.buildingTenementTall]: 22,
+      [GENERATED_TEXTURES.buildingHousingBlock]: 22,
+      [GENERATED_TEXTURES.buildingApartmentSpire]: 24,
     };
 
     // Build an overlapping skyline so the cat always has rooftop coverage.
@@ -307,8 +310,18 @@ export class MainMenu extends Scene {
       scale: number;
     }[] = [
       {
+        tex: GENERATED_TEXTURES.buildingApartmentSpire,
+        scroll: 0.6,
+        scale: 2,
+      },
+      {
         tex: GENERATED_TEXTURES.buildingMegaBlock,
         scroll: 0.64,
+        scale: 2,
+      },
+      {
+        tex: GENERATED_TEXTURES.buildingTenementTall,
+        scroll: 0.61,
         scale: 2,
       },
       {
@@ -347,6 +360,11 @@ export class MainMenu extends Scene {
         scale: 2,
       },
       {
+        tex: GENERATED_TEXTURES.buildingHousingBlock,
+        scroll: 0.6,
+        scale: 2,
+      },
+      {
         tex: GENERATED_TEXTURES.buildingTower,
         scroll: 0.64,
         scale: 2,
@@ -354,6 +372,11 @@ export class MainMenu extends Scene {
       {
         tex: GENERATED_TEXTURES.buildingHoloBar,
         scroll: 0.7,
+        scale: 2,
+      },
+      {
+        tex: GENERATED_TEXTURES.buildingApartmentSpire,
+        scroll: 0.62,
         scale: 2,
       },
       {
@@ -377,6 +400,11 @@ export class MainMenu extends Scene {
         scale: 2,
       },
       {
+        tex: GENERATED_TEXTURES.buildingTenementTall,
+        scroll: 0.63,
+        scale: 2,
+      },
+      {
         tex: GENERATED_TEXTURES.buildingMedium,
         scroll: 0.62,
         scale: 2,
@@ -394,6 +422,11 @@ export class MainMenu extends Scene {
       {
         tex: GENERATED_TEXTURES.buildingTechShop,
         scroll: 0.63,
+        scale: 2,
+      },
+      {
+        tex: GENERATED_TEXTURES.buildingHousingBlock,
+        scroll: 0.61,
         scale: 2,
       },
       {
@@ -557,6 +590,28 @@ export class MainMenu extends Scene {
         },
         { x: 60, y: 40, width: 6, height: 5, color: 0xfacc15 },
         { x: 100, y: 72, width: 5, height: 14, color: 0xfef08a },
+      ],
+      [GENERATED_TEXTURES.buildingTenementTall]: [
+        { x: 16, y: 34, width: 6, height: 5, color: 0xfacc15 },
+        { x: 70, y: 52, width: 4, height: 18, color: 0xfef08a },
+        { x: 42, y: 112, width: 8, height: 4, color: 0xa78bfa },
+      ],
+      [GENERATED_TEXTURES.buildingHousingBlock]: [
+        { x: 14, y: 34, width: 6, height: 5, color: 0xfbbf24 },
+        { x: 58, y: 70, width: 5, height: 5, color: 0xfacc15 },
+        { x: 82, y: 108, width: 4, height: 18, color: 0xfef08a },
+      ],
+      [GENERATED_TEXTURES.buildingApartmentSpire]: [
+        {
+          x: 24,
+          y: 20,
+          width: 4,
+          height: 4,
+          shape: "ellipse",
+          color: 0xef4444,
+        },
+        { x: 64, y: 64, width: 4, height: 16, color: 0xfef08a },
+        { x: 30, y: 116, width: 8, height: 4, color: 0x67e8f9 },
       ],
     };
 

@@ -24,6 +24,9 @@ export const GENERATED_TEXTURES = {
   buildingMegaBlock: "buildingMegaBlock",
   buildingTerminal: "buildingTerminal",
   buildingComplex: "buildingComplex",
+  buildingTenementTall: "buildingTenementTall",
+  buildingHousingBlock: "buildingHousingBlock",
+  buildingApartmentSpire: "buildingApartmentSpire",
   streetLamp: "streetLamp",
 } as const;
 
@@ -1701,6 +1704,113 @@ function createBuildingTextures(scene: Phaser.Scene) {
     GENERATED_TEXTURES.buildingPlant,
     112,
     88,
+  );
+
+  // Tall tenement tower (92 x 156)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x18213a).fillRect(6, 18, 80, 138);
+      g.fillStyle(0x111827).fillRect(72, 18, 14, 138);
+      g.fillStyle(0x2a3658).fillRect(4, 14, 84, 8);
+      drawWarningNodes(g, 6, 18, 80);
+      drawRoofRail(g, 12, 17, 64);
+
+      g.fillStyle(0x334155).fillRect(16, 2, 20, 14);
+      g.fillStyle(0x64748b).fillRect(18, 4, 16, 2);
+      drawPipeColumn(g, 58, 0, 18);
+
+      drawWindows(g, 10, 30, 3, 7, 8, 6, 8, 10);
+      drawWindows(g, 44, 30, 2, 7, 10, 6, 10, 10);
+
+      g.fillStyle(0x243255).fillRect(10, 116, 60, 18);
+      drawPanelLines(g, 10, 116, 60, 18, 6);
+
+      g.fillStyle(0x0f172a).fillRect(34, 132, 20, 24);
+      g.fillStyle(0x334155).fillRect(34, 132, 20, 2);
+      g.fillStyle(0xeab308).fillRect(48, 144, 2, 2);
+
+      g.fillStyle(0x475569).fillRect(6, 152, 80, 4);
+
+      drawRandomSign(g, "front", 14, 96, 34, 12, 1401);
+      drawRandomSign(g, "blade", 76, 46, 10, 46, 1412);
+      drawRandomSign(g, "front", 50, 112, 22, 10, 1423);
+    },
+    GENERATED_TEXTURES.buildingTenementTall,
+    92,
+    156,
+  );
+
+  // Brutalist housing block (96 x 164)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x19223d).fillRect(4, 20, 88, 144);
+      g.fillStyle(0x243255).fillRect(4, 16, 88, 8);
+      drawBeaconStrip(g, 4, 20, 88);
+      drawRoofRail(g, 10, 19, 72);
+
+      g.fillStyle(0x334155).fillRect(18, 4, 24, 12);
+      g.fillStyle(0x64748b).fillRect(20, 6, 20, 2);
+      g.fillStyle(0x334155).fillRect(56, 6, 18, 10);
+      g.fillStyle(0x64748b).fillRect(58, 8, 14, 2);
+      drawPipeColumn(g, 80, 2, 18);
+
+      drawWindows(g, 10, 30, 4, 7, 8, 6, 8, 10);
+      g.fillStyle(0x111827).fillRect(44, 30, 6, 108);
+
+      g.fillStyle(0x1e293b).fillRect(12, 122, 72, 20);
+      drawPanelLines(g, 12, 122, 72, 20, 6);
+
+      g.fillStyle(0x0f172a).fillRect(36, 140, 24, 24);
+      g.fillStyle(0x334155).fillRect(36, 140, 24, 2);
+      g.fillStyle(0xeab308).fillRect(52, 152, 2, 2);
+
+      g.fillStyle(0x475569).fillRect(4, 160, 88, 4);
+
+      drawRandomSign(g, "front", 12, 100, 34, 12, 1501);
+      drawRandomSign(g, "front", 52, 100, 30, 12, 1512);
+      drawRandomSign(g, "blade", 82, 54, 10, 48, 1523);
+    },
+    GENERATED_TEXTURES.buildingHousingBlock,
+    96,
+    164,
+  );
+
+  // Apartment spire (84 x 176)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x161f37).fillRect(10, 20, 64, 156);
+      g.fillStyle(0x101827).fillRect(62, 20, 12, 156);
+      g.fillStyle(0x2a3658).fillRect(8, 16, 68, 8);
+      drawWarningNodes(g, 10, 20, 64);
+      drawRoofRail(g, 14, 19, 52);
+
+      g.fillStyle(0x334155).fillRect(22, 2, 20, 14);
+      g.fillStyle(0x64748b).fillRect(24, 4, 16, 2);
+      drawPipeColumn(g, 50, 0, 20);
+
+      drawWindows(g, 14, 30, 2, 9, 10, 6, 12, 10);
+      drawWindows(g, 42, 30, 2, 9, 8, 6, 10, 10);
+
+      g.fillStyle(0x243255).fillRect(16, 138, 52, 18);
+      drawCrossBracePanel(g, 18, 140, 22, 14);
+      drawVentGrille(g, 44, 140, 22, 14);
+
+      g.fillStyle(0x0f172a).fillRect(30, 154, 20, 22);
+      g.fillStyle(0x334155).fillRect(30, 154, 20, 2);
+      g.fillStyle(0xeab308).fillRect(44, 166, 2, 2);
+
+      g.fillStyle(0x475569).fillRect(10, 172, 64, 4);
+
+      drawRandomSign(g, "blade", 64, 54, 10, 52, 1601);
+      drawRandomSign(g, "front", 16, 116, 28, 10, 1612);
+      drawRandomSign(g, "front", 46, 116, 24, 10, 1623);
+    },
+    GENERATED_TEXTURES.buildingApartmentSpire,
+    84,
+    176,
   );
 
   // Neon convenience storefront (112 x 72)
