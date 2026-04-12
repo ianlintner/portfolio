@@ -113,20 +113,62 @@ export class RogueRun extends Scene {
     });
     this.movingPlatformsList = [];
 
-    // Parallax background (simple + reliable)
-    createParallaxBackground(this, {
-      set: PARALLAX_SETS.industrial1,
-      worldWidth: 99999,
-      worldHeight: 600,
-      repeatX: true,
-      depthStart: -100,
-    });
-
-    // Procedural level
+    // Procedural level (generated first so layout drives parallax choice)
     const tileset = TILESETS.industrial;
     const level = generateLevel({ seed: this.seed, floor: this.floor });
     this.layout = level.layout;
     this.isBossFloor = level.isBossFloor;
+    this.worldWidthPx = level.widthTiles * level.tileSize;
+    this.worldHeightPx = level.heightTiles * level.tileSize;
+
+    // Parallax background — city layouts use generated city skyline layers;
+    // all other layouts use the industrial tile-based set.
+    const isCityLayout =
+      this.layout === "cityblock" ||
+      this.layout === "alleyrun" ||
+      this.layout === "rooftops";
+    if (isCityLayout) {
+      // Dark night-sky base
+      this.add
+        .rectangle(0, 0, 99999, this.worldHeightPx, 0x0f172a)
+        .setOrigin(0, 0)
+        .setScrollFactor(0, 0)
+        .setDepth(-130);
+      // Three parallax layers: distant → near, pinned to the bottom of the world
+      const cityParallaxLayers = [
+        {
+          key: GENERATED_TEXTURES.cityParallax1,
+          scrollX: 0.05,
+          depth: -125,
+        },
+        {
+          key: GENERATED_TEXTURES.cityParallax2,
+          scrollX: 0.2,
+          depth: -120,
+        },
+        {
+          key: GENERATED_TEXTURES.cityParallax3,
+          scrollX: 0.5,
+          depth: -115,
+        },
+      ] as const;
+      for (const l of cityParallaxLayers) {
+        this.add
+          .tileSprite(0, this.worldHeightPx, 99999, 600, l.key)
+          .setOrigin(0, 1)
+          .setScrollFactor(l.scrollX, 0)
+          .setDepth(l.depth);
+      }
+    } else {
+      // Industrial parallax for non-city layouts
+      createParallaxBackground(this, {
+        set: PARALLAX_SETS.industrial1,
+        worldWidth: 99999,
+        worldHeight: 600,
+        repeatX: true,
+        depthStart: -100,
+      });
+    }
     this.floorStartMs = this.time.now;
     this.tookDamageThisFloor = false;
     this.killsThisFloor = 0;
@@ -136,9 +178,6 @@ export class RogueRun extends Scene {
       (c) => c.type === "coin",
     ).length;
     this.registry.set("layout", this.layout);
-
-    this.worldWidthPx = level.widthTiles * level.tileSize;
-    this.worldHeightPx = level.heightTiles * level.tileSize;
 
     const { layer } = createTilemapFromData(this, {
       data: level.data,

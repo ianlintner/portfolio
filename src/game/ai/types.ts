@@ -32,6 +32,10 @@ export interface GameStateSnapshot {
   lives: number;
   coins: number;
   gems: number;
+  /** Normalised height: 0.0 = ground level, 1.0 = top of the level. */
+  altitude: number;
+  /** Vertical zone the player is currently in. */
+  zone: "street" | "mid" | "rooftop";
 }
 
 export const NULL_INPUT: VirtualInput = {

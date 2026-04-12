@@ -24,6 +24,8 @@ export class HeadlessLogger {
       goalDist: Math.round(
         Math.hypot(state.goalX - state.playerX, state.goalY - state.playerY),
       ),
+      altitude: Math.round(state.altitude * 100),
+      zone: state.zone,
       input: `${input.left ? "L" : "."}${input.right ? "R" : "."}${input.jump ? "J" : "."}${input.shoot ? "S" : "."}`,
     };
 

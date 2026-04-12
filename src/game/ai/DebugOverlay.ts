@@ -61,6 +61,7 @@ export class DebugOverlay {
       `Coins: ${state.coins}  Gems: ${state.gems}`,
       `Goal: (${state.goalX.toFixed(0)}, ${state.goalY.toFixed(0)})`,
       `GoalDist: ${Math.hypot(state.goalX - state.playerX, state.goalY - state.playerY).toFixed(0)}`,
+      `Altitude: ${(state.altitude * 100).toFixed(1)}%  Zone: ${state.zone}`,
       `── INPUT ─────────────`,
       `L:${input.left ? "■" : "□"} R:${input.right ? "■" : "□"} J:${input.jump ? "■" : "□"} S:${input.shoot ? "■" : "□"}`,
       `── NEARBY ────────────`,
