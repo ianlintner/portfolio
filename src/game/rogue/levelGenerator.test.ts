@@ -146,4 +146,90 @@ describe("generateLevel", () => {
     }
     expect(foundParkour).toBe(true);
   });
+
+  it("cityblock layout generates buildings with walls and rooftop platforms", () => {
+    let found = false;
+    for (let i = 0; i < 300 && !found; i++) {
+      const lvl = generateLevel({ seed: `city-${i}`, floor: 4 });
+      if (lvl.layout === "cityblock") {
+        found = true;
+        // Should have building footprints
+        expect(lvl.buildings.length).toBeGreaterThanOrEqual(1);
+        // Tile data must have WALL and PLATFORM tiles
+        const flat = lvl.data.flat();
+        expect(flat.includes(TILE.WALL)).toBe(true);
+        expect(flat.includes(TILE.PLATFORM)).toBe(true);
+        // All building footprints within tile bounds
+        for (const b of lvl.buildings) {
+          expect(b.x).toBeGreaterThanOrEqual(0);
+          expect(b.y).toBeGreaterThanOrEqual(0);
+          expect(b.x + b.w).toBeLessThanOrEqual(lvl.widthTiles);
+          expect(b.y + b.h).toBeLessThanOrEqual(lvl.heightTiles);
+        }
+      }
+    }
+    expect(found).toBe(true);
+  });
+
+  it("alleyrun layout generates building structures on canyon walls", () => {
+    let found = false;
+    for (let i = 0; i < 300 && !found; i++) {
+      const lvl = generateLevel({ seed: `alley-${i}`, floor: 3 });
+      if (lvl.layout === "alleyrun") {
+        found = true;
+        // Alleyrun has canyon walls — must include WALL tiles
+        const flat = lvl.data.flat();
+        expect(flat.includes(TILE.WALL)).toBe(true);
+        // Spawn inside bounds
+        expect(lvl.spawn.player.x).toBeGreaterThanOrEqual(0);
+        expect(lvl.spawn.player.y).toBeGreaterThanOrEqual(0);
+        // Level is the correct wide shape (90 tiles)
+        expect(lvl.widthTiles).toBe(90);
+      }
+    }
+    expect(found).toBe(true);
+  });
+
+  it("rooftops layout generates building columns with platforms at varying heights", () => {
+    let found = false;
+    for (let i = 0; i < 300 && !found; i++) {
+      const lvl = generateLevel({ seed: `roof-${i}`, floor: 4 });
+      if (lvl.layout === "rooftops") {
+        found = true;
+        // Rooftops layout: buildings contain footprints and PLATFORM tiles
+        const flat = lvl.data.flat();
+        expect(flat.includes(TILE.PLATFORM)).toBe(true);
+        // Should have multiple building footprints
+        expect(lvl.buildings.length).toBeGreaterThanOrEqual(1);
+        // All buildings within tile bounds
+        for (const b of lvl.buildings) {
+          expect(b.x).toBeGreaterThanOrEqual(0);
+          expect(b.y).toBeGreaterThanOrEqual(0);
+          expect(b.x + b.w).toBeLessThanOrEqual(lvl.widthTiles);
+          expect(b.y + b.h).toBeLessThanOrEqual(lvl.heightTiles);
+        }
+      }
+    }
+    expect(found).toBe(true);
+  });
+
+  it("city layouts include ONE_WAY tiles for fire escapes and bridges", () => {
+    const cityLayouts = ["cityblock", "alleyrun"] as const;
+    for (const targetLayout of cityLayouts) {
+      let found = false;
+      for (let i = 0; i < 300 && !found; i++) {
+        const lvl = generateLevel({
+          seed: `city-oneways-${targetLayout}-${i}`,
+          floor: 4,
+        });
+        if (lvl.layout === targetLayout) {
+          found = true;
+          const flat = lvl.data.flat();
+          // City layouts should have ONE_WAY tiles for fire escapes / bridges
+          expect(flat.includes(TILE.ONE_WAY)).toBe(true);
+        }
+      }
+      expect(found).toBe(true);
+    }
+  });
 });

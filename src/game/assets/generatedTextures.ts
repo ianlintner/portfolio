@@ -2531,6 +2531,159 @@ function createDecorationTextures(scene: Phaser.Scene) {
   );
 }
 
+function createCityParallaxTextures(scene: Phaser.Scene) {
+  // cityParallax1 — Full sky + stars + distant building silhouettes (800×600)
+  withGraphics(
+    scene,
+    (g) => {
+      // Dark sky background
+      g.fillStyle(0x0f172a).fillRect(0, 0, 800, 600);
+      // Horizon gradient (purple tint near horizon)
+      g.fillStyle(0x1e1b4b, 0.35).fillRect(0, 280, 800, 320);
+      // Stars
+      g.fillStyle(0xffffff);
+      for (let i = 0; i < 90; i++) {
+        const sx = (i * 137 + 17) % 800;
+        const sy = (i * 89 + 11) % 260;
+        g.fillRect(sx, sy, i % 5 === 0 ? 2 : 1, i % 5 === 0 ? 2 : 1);
+      }
+      // Moon
+      g.fillStyle(0xfde68a, 0.85).fillCircle(680, 55, 18);
+      g.fillStyle(0x0f172a, 0.25).fillCircle(672, 50, 14); // crescent shadow
+      // Very distant building silhouettes (dark, low contrast)
+      const silos = [
+        { x: 0, w: 55, h: 160 },
+        { x: 65, w: 35, h: 120 },
+        { x: 110, w: 75, h: 200 },
+        { x: 195, w: 45, h: 145 },
+        { x: 250, w: 28, h: 90 },
+        { x: 288, w: 68, h: 180 },
+        { x: 366, w: 42, h: 130 },
+        { x: 418, w: 88, h: 230 },
+        { x: 516, w: 32, h: 100 },
+        { x: 558, w: 58, h: 165 },
+        { x: 626, w: 38, h: 140 },
+        { x: 674, w: 86, h: 210 },
+        { x: 770, w: 30, h: 125 },
+      ];
+      g.fillStyle(0x0d1117);
+      for (const b of silos) {
+        g.fillRect(b.x, 600 - b.h, b.w, b.h);
+      }
+    },
+    GENERATED_TEXTURES.cityParallax1,
+    800,
+    600,
+  );
+
+  // cityParallax2 — Mid-city buildings with lit windows (transparent bg, 800×600)
+  withGraphics(
+    scene,
+    (g) => {
+      // Mid-distance buildings (semi-opaque background to blend with layer 1)
+      const midBuildings = [
+        { x: 20, w: 72, h: 300, color: 0x1e293b },
+        { x: 102, w: 52, h: 220, color: 0x172033 },
+        { x: 164, w: 95, h: 355, color: 0x1e293b },
+        { x: 269, w: 62, h: 265, color: 0x172033 },
+        { x: 341, w: 82, h: 315, color: 0x1e293b },
+        { x: 433, w: 57, h: 245, color: 0x172033 },
+        { x: 500, w: 105, h: 385, color: 0x1e293b },
+        { x: 615, w: 68, h: 280, color: 0x172033 },
+        { x: 693, w: 78, h: 325, color: 0x1e293b },
+        { x: 781, w: 19, h: 195, color: 0x172033 },
+      ];
+      for (const b of midBuildings) {
+        g.fillStyle(b.color).fillRect(b.x, 600 - b.h, b.w, b.h);
+        // Warm (yellow) lit windows
+        g.fillStyle(0xfbbf24, 0.55);
+        for (let wy = 600 - b.h + 14; wy < 600 - 22; wy += 20) {
+          for (let wx = b.x + 8; wx < b.x + b.w - 10; wx += 14) {
+            if ((wx + wy) % 3 !== 0) {
+              g.fillRect(wx, wy, 6, 8);
+            }
+          }
+        }
+        // Cool (blue) lit windows
+        g.fillStyle(0x93c5fd, 0.4);
+        for (let wy = 600 - b.h + 8; wy < 600 - 30; wy += 26) {
+          for (let wx = b.x + 5; wx < b.x + b.w - 9; wx += 19) {
+            if ((wx * wy) % 5 === 0) {
+              g.fillRect(wx, wy, 7, 9);
+            }
+          }
+        }
+      }
+    },
+    GENERATED_TEXTURES.cityParallax2,
+    800,
+    600,
+  );
+
+  // cityParallax3 — Near buildings with neon glow effects (transparent bg, 800×600)
+  withGraphics(
+    scene,
+    (g) => {
+      // Near buildings — tallest, most detailed
+      const nearBuildings = [
+        { x: 0, w: 82, h: 425, color: 0x1e293b },
+        { x: 92, w: 62, h: 345, color: 0x172033 },
+        { x: 164, w: 104, h: 465, color: 0x1e293b },
+        { x: 278, w: 77, h: 395, color: 0x172033 },
+        { x: 365, w: 88, h: 435, color: 0x1e293b },
+        { x: 463, w: 67, h: 355, color: 0x172033 },
+        { x: 540, w: 112, h: 485, color: 0x1e293b },
+        { x: 662, w: 82, h: 405, color: 0x172033 },
+        { x: 754, w: 46, h: 365, color: 0x1e293b },
+      ];
+      const neonPalette = [0x0ea5e9, 0x8b5cf6, 0xf97316, 0x10b981, 0xf43f5e];
+      for (const b of nearBuildings) {
+        g.fillStyle(b.color).fillRect(b.x, 600 - b.h, b.w, b.h);
+        // Dense warm windows
+        g.fillStyle(0xfde68a, 0.65);
+        for (let wy = 600 - b.h + 12; wy < 600 - 16; wy += 16) {
+          for (let wx = b.x + 6; wx < b.x + b.w - 8; wx += 12) {
+            if ((wx + wy) % 4 !== 0) {
+              g.fillRect(wx, wy, 5, 7);
+            }
+          }
+        }
+        // Neon sign strip near top of building
+        if (b.w > 60) {
+          const neonColor = neonPalette[b.x % neonPalette.length];
+          const signY = 600 - b.h + 35;
+          // Glow halo
+          g.fillStyle(neonColor, 0.2).fillRect(
+            b.x + 6,
+            signY - 4,
+            b.w - 12,
+            16,
+          );
+          // Sign bar
+          g.fillStyle(neonColor, 0.8).fillRect(b.x + 8, signY, b.w - 16, 7);
+        }
+        // Rooftop beacon light
+        g.fillStyle(0xef4444, 0.9).fillRect(
+          b.x + Math.floor(b.w / 2) - 2,
+          600 - b.h - 5,
+          4,
+          5,
+        );
+        // Rooftop antenna
+        g.fillStyle(0x475569).fillRect(
+          b.x + Math.floor(b.w / 2) - 1,
+          600 - b.h - 18,
+          2,
+          14,
+        );
+      }
+    },
+    GENERATED_TEXTURES.cityParallax3,
+    800,
+    600,
+  );
+}
+
 export function ensureGeneratedGameTextures(scene: Phaser.Scene) {
   createPlatformFallback(scene);
   createMovingPlatformTexture(scene);
@@ -2543,4 +2696,5 @@ export function ensureGeneratedGameTextures(scene: Phaser.Scene) {
   createPowerPoleTexture(scene);
   createBuildingTileTextures(scene);
   createDecorationTextures(scene);
+  createCityParallaxTextures(scene);
 }

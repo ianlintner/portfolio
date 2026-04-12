@@ -8,6 +8,13 @@ import { HeadlessLogger } from "./HeadlessLogger";
 import type { GameStateSnapshot, VirtualInput } from "./types";
 import { NULL_INPUT } from "./types";
 
+/** Map a normalised altitude (0–1) to a named vertical zone. */
+function altitudeToZone(altitude: number): "street" | "mid" | "rooftop" {
+  if (altitude > 0.65) return "rooftop";
+  if (altitude > 0.3) return "mid";
+  return "street";
+}
+
 export interface AutoplayControllerConfig {
   /** The RogueRun scene instance. */
   scene: Phaser.Scene;
@@ -164,6 +171,10 @@ export class AutoplayController {
       lives: Number(this.scene.registry.get("lives") ?? 3),
       coins: Number(this.scene.registry.get("coins") ?? 0),
       gems: Number(this.scene.registry.get("gems") ?? 0),
+      altitude: Number(this.scene.registry.get("playerAltitude") ?? 0),
+      zone: altitudeToZone(
+        Number(this.scene.registry.get("playerAltitude") ?? 0),
+      ),
     };
   }
 }
