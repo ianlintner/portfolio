@@ -29,6 +29,27 @@ export const GENERATED_TEXTURES = {
   buildingApartmentSpire: "buildingApartmentSpire",
   streetLamp: "streetLamp",
   powerPole: "powerPole",
+  // Building tile textures (32x32, for decoration alignment)
+  tileBrickWall: "tileBrickWall",
+  tileBrickWallDark: "tileBrickWallDark",
+  tileFireEscape: "tileFireEscape",
+  tileAwning: "tileAwning",
+  tileRooftop: "tileRooftop",
+  tileRooftopEdge: "tileRooftopEdge",
+  tileHVAC: "tileHVAC",
+  tileWindowLit: "tileWindowLit",
+  tileWindowDark: "tileWindowDark",
+  tileNeonSign: "tileNeonSign",
+  tilePipe: "tilePipe",
+  // Larger decoration elements
+  decoWaterTower: "decoWaterTower",
+  decoAntenna: "decoAntenna",
+  decoDumpster: "decoDumpster",
+  decoACUnit: "decoACUnit",
+  // City parallax layers (800×600 runtime-generated skylines)
+  cityParallax1: "cityParallax1",
+  cityParallax2: "cityParallax2",
+  cityParallax3: "cityParallax3",
 } as const;
 
 function withGraphics(
@@ -2141,6 +2162,375 @@ function createPowerPoleTexture(scene: Phaser.Scene) {
   );
 }
 
+/* ── Building tile textures (32×32) ────────────────────────────── */
+
+function createBuildingTileTextures(scene: Phaser.Scene) {
+  // tileBrickWall — Dark brick with mortar lines (32×32)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x1e293b).fillRect(0, 0, 32, 32);
+      // Brick rows (offset every other row)
+      for (let row = 0; row < 4; row++) {
+        const y = row * 8;
+        const offset = row % 2 === 0 ? 0 : 8;
+        g.fillStyle(0x334155);
+        for (let bx = offset; bx < 32; bx += 16) {
+          g.fillRect(bx + 1, y + 1, 14, 6);
+        }
+        // Mortar lines
+        g.fillStyle(0x0f172a);
+        g.fillRect(0, y, 32, 1);
+        for (let mx = offset; mx < 32; mx += 16) {
+          g.fillRect(mx, y, 1, 8);
+        }
+      }
+      // Subtle highlight
+      g.fillStyle(0x475569).fillRect(5, 5, 6, 1);
+      g.fillStyle(0x475569).fillRect(21, 21, 6, 1);
+    },
+    GENERATED_TEXTURES.tileBrickWall,
+    32,
+    32,
+  );
+
+  // tileBrickWallDark — Darker variant with moss hints (32×32)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x111827).fillRect(0, 0, 32, 32);
+      for (let row = 0; row < 4; row++) {
+        const y = row * 8;
+        const offset = row % 2 === 0 ? 0 : 8;
+        g.fillStyle(0x1e293b);
+        for (let bx = offset; bx < 32; bx += 16) {
+          g.fillRect(bx + 1, y + 1, 14, 6);
+        }
+        g.fillStyle(0x0a0f1a);
+        g.fillRect(0, y, 32, 1);
+        for (let mx = offset; mx < 32; mx += 16) {
+          g.fillRect(mx, y, 1, 8);
+        }
+      }
+      // Moss accents
+      g.fillStyle(0x166534).fillRect(2, 25, 3, 2);
+      g.fillStyle(0x14532d).fillRect(18, 29, 4, 2);
+    },
+    GENERATED_TEXTURES.tileBrickWallDark,
+    32,
+    32,
+  );
+
+  // tileFireEscape — Metal grate platform (32×32)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x374151).fillRect(0, 0, 32, 32);
+      // Metal grate pattern
+      g.fillStyle(0x4b5563);
+      for (let y = 0; y < 32; y += 4) {
+        g.fillRect(0, y, 32, 2);
+      }
+      for (let x = 0; x < 32; x += 4) {
+        g.fillRect(x, 0, 2, 32);
+      }
+      // Railing top
+      g.fillStyle(0x6b7280).fillRect(0, 0, 32, 3);
+      g.fillStyle(0x9ca3af).fillRect(0, 0, 32, 1);
+      // Support brackets
+      g.fillStyle(0x1f2937).fillRect(0, 28, 32, 4);
+      g.fillStyle(0x374151).fillRect(2, 29, 6, 2);
+      g.fillStyle(0x374151).fillRect(24, 29, 6, 2);
+    },
+    GENERATED_TEXTURES.tileFireEscape,
+    32,
+    32,
+  );
+
+  // tileAwning — Striped canvas overhang (32×32)
+  withGraphics(
+    scene,
+    (g) => {
+      // Awning canopy
+      g.fillStyle(0xdc2626).fillRect(0, 4, 32, 20);
+      // Stripes
+      g.fillStyle(0xfef2f2);
+      for (let x = 0; x < 32; x += 8) {
+        g.fillRect(x, 4, 4, 20);
+      }
+      // Shadow underneath
+      g.fillStyle(0x0f172a).fillRect(0, 24, 32, 4);
+      // Top mounting bar
+      g.fillStyle(0x6b7280).fillRect(0, 0, 32, 4);
+      g.fillStyle(0x9ca3af).fillRect(0, 0, 32, 2);
+      // Bottom edge
+      g.fillStyle(0x991b1b).fillRect(0, 22, 32, 2);
+    },
+    GENERATED_TEXTURES.tileAwning,
+    32,
+    32,
+  );
+
+  // tileRooftop — Flat concrete with edge lip (32×32)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x374151).fillRect(0, 0, 32, 32);
+      // Concrete texture noise
+      g.fillStyle(0x4b5563).fillRect(3, 4, 8, 2);
+      g.fillStyle(0x4b5563).fillRect(18, 12, 10, 2);
+      g.fillStyle(0x4b5563).fillRect(6, 22, 12, 2);
+      // Top lip/edge
+      g.fillStyle(0x6b7280).fillRect(0, 0, 32, 4);
+      g.fillStyle(0x9ca3af).fillRect(0, 0, 32, 2);
+      // Tar seam
+      g.fillStyle(0x1f2937).fillRect(0, 16, 32, 1);
+    },
+    GENERATED_TEXTURES.tileRooftop,
+    32,
+    32,
+  );
+
+  // tileRooftopEdge — Rooftop with railing (32×32)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x374151).fillRect(0, 8, 32, 24);
+      // Railing posts
+      g.fillStyle(0x6b7280);
+      g.fillRect(2, 0, 2, 10);
+      g.fillRect(14, 0, 2, 10);
+      g.fillRect(28, 0, 2, 10);
+      // Rail bar
+      g.fillStyle(0x9ca3af).fillRect(0, 0, 32, 2);
+      g.fillStyle(0x6b7280).fillRect(0, 2, 32, 1);
+      // Concrete surface
+      g.fillStyle(0x4b5563).fillRect(4, 12, 6, 2);
+      g.fillStyle(0x4b5563).fillRect(20, 18, 8, 2);
+    },
+    GENERATED_TEXTURES.tileRooftopEdge,
+    32,
+    32,
+  );
+
+  // tileHVAC — AC unit / vent box (32×32)
+  withGraphics(
+    scene,
+    (g) => {
+      // Unit body
+      g.fillStyle(0x475569).fillRect(2, 8, 28, 22);
+      g.fillStyle(0x334155).fillRect(4, 10, 24, 18);
+      // Vent slats
+      g.fillStyle(0x1e293b);
+      for (let y = 12; y < 26; y += 3) {
+        g.fillRect(6, y, 20, 1);
+      }
+      // Top cap
+      g.fillStyle(0x64748b).fillRect(0, 4, 32, 6);
+      g.fillStyle(0x9ca3af).fillRect(0, 4, 32, 2);
+      // Fan circle
+      g.fillStyle(0x1e293b).fillCircle(16, 20, 6);
+      g.fillStyle(0x374151).fillCircle(16, 20, 4);
+      g.fillStyle(0x64748b).fillCircle(16, 20, 1);
+      // Base
+      g.fillStyle(0x374151).fillRect(4, 28, 24, 4);
+    },
+    GENERATED_TEXTURES.tileHVAC,
+    32,
+    32,
+  );
+
+  // tileWindowLit — Lit window in brick frame (32×32)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x1e293b).fillRect(0, 0, 32, 32);
+      // Window frame
+      g.fillStyle(0x475569).fillRect(4, 4, 24, 24);
+      // Glass (lit warm)
+      g.fillStyle(0xfbbf24).fillRect(6, 6, 20, 20);
+      g.fillStyle(0xfde68a).fillRect(8, 8, 8, 8);
+      // Window cross bars
+      g.fillStyle(0x374151).fillRect(15, 6, 2, 20);
+      g.fillStyle(0x374151).fillRect(6, 15, 20, 2);
+      // Sill
+      g.fillStyle(0x64748b).fillRect(3, 28, 26, 3);
+    },
+    GENERATED_TEXTURES.tileWindowLit,
+    32,
+    32,
+  );
+
+  // tileWindowDark — Unlit window (32×32)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x1e293b).fillRect(0, 0, 32, 32);
+      g.fillStyle(0x475569).fillRect(4, 4, 24, 24);
+      // Dark glass
+      g.fillStyle(0x0f172a).fillRect(6, 6, 20, 20);
+      g.fillStyle(0x1e293b).fillRect(8, 8, 6, 6);
+      // Cross bars
+      g.fillStyle(0x374151).fillRect(15, 6, 2, 20);
+      g.fillStyle(0x374151).fillRect(6, 15, 20, 2);
+      // Sill
+      g.fillStyle(0x64748b).fillRect(3, 28, 26, 3);
+    },
+    GENERATED_TEXTURES.tileWindowDark,
+    32,
+    32,
+  );
+
+  // tileNeonSign — Glowing neon rectangle (32×32)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x1e293b).fillRect(0, 0, 32, 32);
+      // Neon border glow
+      g.fillStyle(0x0ea5e9).fillRect(2, 6, 28, 20);
+      g.fillStyle(0x0f172a).fillRect(4, 8, 24, 16);
+      // Neon text (abstract bars)
+      g.fillStyle(0x0ea5e9).fillRect(7, 12, 18, 2);
+      g.fillStyle(0x38bdf8).fillRect(10, 17, 12, 2);
+      // Glow effect
+      g.fillStyle(0x0ea5e9).fillRect(1, 5, 1, 22);
+      g.fillStyle(0x0ea5e9).fillRect(30, 5, 1, 22);
+    },
+    GENERATED_TEXTURES.tileNeonSign,
+    32,
+    32,
+  );
+
+  // tilePipe — Exposed horizontal pipe (32×32)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x1e293b).fillRect(0, 0, 32, 32);
+      // Pipe body
+      g.fillStyle(0x475569).fillRect(0, 12, 32, 8);
+      g.fillStyle(0x64748b).fillRect(0, 12, 32, 3);
+      g.fillStyle(0x334155).fillRect(0, 18, 32, 2);
+      // Brackets
+      g.fillStyle(0x374151).fillRect(4, 8, 4, 16);
+      g.fillStyle(0x374151).fillRect(24, 8, 4, 16);
+      // Rivets
+      g.fillStyle(0x9ca3af).fillRect(5, 10, 2, 2);
+      g.fillStyle(0x9ca3af).fillRect(25, 10, 2, 2);
+    },
+    GENERATED_TEXTURES.tilePipe,
+    32,
+    32,
+  );
+}
+
+/* ── Larger decoration textures ───────────────────────────────── */
+
+function createDecorationTextures(scene: Phaser.Scene) {
+  // decoWaterTower — Rooftop water tower (48×64)
+  withGraphics(
+    scene,
+    (g) => {
+      // Legs
+      g.fillStyle(0x374151);
+      g.fillRect(8, 40, 4, 24);
+      g.fillRect(36, 40, 4, 24);
+      g.fillRect(22, 44, 4, 20);
+      // Cross bracing
+      g.fillStyle(0x475569);
+      g.fillRect(10, 50, 28, 2);
+      // Tank body
+      g.fillStyle(0x64748b).fillRect(4, 8, 40, 34);
+      g.fillStyle(0x475569).fillRect(6, 10, 36, 30);
+      // Wood slat lines
+      g.fillStyle(0x374151);
+      for (let y = 14; y < 38; y += 4) {
+        g.fillRect(6, y, 36, 1);
+      }
+      // Metal bands
+      g.fillStyle(0x9ca3af).fillRect(4, 16, 40, 2);
+      g.fillStyle(0x9ca3af).fillRect(4, 30, 40, 2);
+      // Cone top
+      g.fillStyle(0x64748b).fillRect(8, 4, 32, 6);
+      g.fillStyle(0x475569).fillTriangle(14, 4, 24, 0, 34, 4);
+      // Pipe
+      g.fillStyle(0x374151).fillRect(38, 34, 6, 4);
+    },
+    GENERATED_TEXTURES.decoWaterTower,
+    48,
+    64,
+  );
+
+  // decoAntenna — Radio antenna / satellite dish (16×80)
+  withGraphics(
+    scene,
+    (g) => {
+      // Main pole
+      g.fillStyle(0x6b7280).fillRect(6, 0, 4, 80);
+      g.fillStyle(0x9ca3af).fillRect(7, 0, 2, 80);
+      // Cross arms
+      g.fillStyle(0x475569).fillRect(0, 10, 16, 2);
+      g.fillStyle(0x475569).fillRect(2, 24, 12, 2);
+      g.fillStyle(0x475569).fillRect(0, 40, 16, 2);
+      // Beacon light
+      g.fillStyle(0xef4444).fillRect(6, 0, 4, 4);
+      g.fillStyle(0xfca5a5).fillRect(7, 1, 2, 2);
+      // Dish at mid
+      g.fillStyle(0x64748b).fillRect(0, 30, 14, 8);
+      g.fillStyle(0x475569).fillRect(2, 32, 10, 4);
+      // Base mount
+      g.fillStyle(0x374151).fillRect(4, 76, 8, 4);
+    },
+    GENERATED_TEXTURES.decoAntenna,
+    16,
+    80,
+  );
+
+  // decoDumpster — Street-level obstacle (32×24)
+  withGraphics(
+    scene,
+    (g) => {
+      // Body
+      g.fillStyle(0x166534).fillRect(2, 4, 28, 18);
+      g.fillStyle(0x15803d).fillRect(4, 6, 24, 14);
+      // Lid
+      g.fillStyle(0x14532d).fillRect(0, 0, 32, 6);
+      g.fillStyle(0x166534).fillRect(2, 0, 28, 4);
+      // Handle
+      g.fillStyle(0x6b7280).fillRect(14, 0, 4, 2);
+      // Rust spots
+      g.fillStyle(0x92400e).fillRect(8, 10, 3, 2);
+      g.fillStyle(0x92400e).fillRect(22, 14, 2, 2);
+      // Wheels
+      g.fillStyle(0x1f2937).fillRect(6, 20, 4, 4);
+      g.fillStyle(0x1f2937).fillRect(22, 20, 4, 4);
+    },
+    GENERATED_TEXTURES.decoDumpster,
+    32,
+    24,
+  );
+
+  // decoACUnit — Wall-mounted AC unit (24×16)
+  withGraphics(
+    scene,
+    (g) => {
+      g.fillStyle(0x475569).fillRect(0, 0, 24, 16);
+      g.fillStyle(0x374151).fillRect(2, 2, 20, 12);
+      // Vent slats
+      g.fillStyle(0x1e293b);
+      for (let y = 4; y < 12; y += 2) {
+        g.fillRect(4, y, 16, 1);
+      }
+      // Mounting bracket
+      g.fillStyle(0x6b7280).fillRect(0, 14, 24, 2);
+      // Drip
+      g.fillStyle(0x38bdf8).fillRect(18, 14, 2, 2);
+    },
+    GENERATED_TEXTURES.decoACUnit,
+    24,
+    16,
+  );
+}
+
 export function ensureGeneratedGameTextures(scene: Phaser.Scene) {
   createPlatformFallback(scene);
   createMovingPlatformTexture(scene);
@@ -2151,4 +2541,6 @@ export function ensureGeneratedGameTextures(scene: Phaser.Scene) {
   createBuildingTextures(scene);
   createStreetLampTexture(scene);
   createPowerPoleTexture(scene);
+  createBuildingTileTextures(scene);
+  createDecorationTextures(scene);
 }

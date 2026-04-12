@@ -1,5 +1,10 @@
 import { Rng, type Seed } from "./rng";
-import { TILE, type GeneratedLevel, type LayoutType } from "./types";
+import {
+  TILE,
+  type GeneratedLevel,
+  type LayoutType,
+  type BuildingFootprint,
+} from "./types";
 import type { EnemyType } from "@/game/objects/Enemy";
 import type { MovingPlatformSpawn } from "./types";
 
@@ -91,6 +96,12 @@ function layoutDimensions(
       return { w: 40, h: Math.min(50, 35 + floor) };
     case "boss":
       return { w: 40, h: 20 };
+    case "cityblock":
+      return { w: 60, h: 50 };
+    case "alleyrun":
+      return { w: 90, h: 35 };
+    case "rooftops":
+      return { w: 90, h: 40 };
     default:
       // standard / parkour / vertical keep caller defaults
       return { w: 90, h: 20 };
@@ -99,6 +110,10 @@ function layoutDimensions(
 
 function pickLayout(rng: Rng, floor: number): LayoutType {
   if (floor % 5 === 0) return "boss";
+  // Building layouts unlock progressively
+  if (floor >= 4 && rng.chance(0.18)) return "rooftops";
+  if (floor >= 3 && rng.chance(0.2)) return "cityblock";
+  if (floor >= 2 && rng.chance(0.15)) return "alleyrun";
   // New vertical layouts unlock progressively
   if (floor >= 8 && rng.chance(0.12)) return "zigzag";
   if (floor >= 5 && rng.chance(0.15)) return "tower";
@@ -264,6 +279,7 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
   const rng = new Rng(`${options.seed}::floor:${options.floor}`);
   const data = emptyGrid(widthTiles, heightTiles);
   const isBossFloor = layout === "boss";
+  const buildings: BuildingFootprint[] = [];
 
   const groundY = heightTiles - 3;
 
@@ -445,6 +461,216 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
       if (stepX > widthTiles - 10) break;
     }
   }
+  // ── Cityblock layout ─────────────────────────────────────────────
+  else if (layout === "cityblock") {
+    // Ground strip at the very bottom
+    for (let tx = 0; tx < widthTiles; tx++) setGroundColumn(data, tx, groundY);
+
+    // Generate 3-5 buildings side by side with alleys between them
+    const buildingCount = rng.int(3, 5);
+    let cursor = 2; // starting x position
+    const cityBuildings: { x: number; w: number; h: number; roofY: number }[] =
+      [];
+
+    for (let b = 0; b < buildingCount; b++) {
+      const bw = rng.int(8, 16); // building width
+      const bh = rng.int(15, Math.min(40, heightTiles - 8)); // building height
+      const roofY = groundY - bh;
+      if (cursor + bw >= widthTiles - 2) break;
+
+      cityBuildings.push({ x: cursor, w: bw, h: bh, roofY });
+      buildings.push({ x: cursor, y: roofY, w: bw, h: bh });
+
+      // WALL on left edge
+      for (let ty = roofY; ty <= groundY; ty++) {
+        data[ty][cursor] = WALL_TILE;
+      }
+      // WALL on right edge
+      for (let ty = roofY; ty <= groundY; ty++) {
+        data[ty][cursor + bw - 1] = WALL_TILE;
+      }
+      // PLATFORM rooftop
+      for (let tx = cursor; tx < cursor + bw; tx++) {
+        data[roofY][tx] = PLATFORM_TILE;
+      }
+      // Interior floors every 5-7 tiles with ONE_WAY (like floors inside building)
+      const floorSpacing = rng.int(5, 7);
+      for (
+        let fy = groundY - floorSpacing;
+        fy > roofY + 2;
+        fy -= floorSpacing
+      ) {
+        for (let tx = cursor + 1; tx < cursor + bw - 1; tx++) {
+          // Leave a 2-tile gap for traversal
+          const gapX = cursor + rng.int(2, bw - 4);
+          if (tx >= gapX && tx <= gapX + 1) continue;
+          data[fy][tx] = ONE_WAY_TILE;
+        }
+      }
+
+      // Fire escape (ONE_WAY platforms) on exterior every 4-6 tiles
+      const escapeSpacing = rng.int(4, 6);
+      const escapeOnLeft = rng.chance(0.5);
+      const escapeX = escapeOnLeft ? cursor - 1 : cursor + bw;
+      if (escapeX > 0 && escapeX < widthTiles - 1) {
+        for (
+          let fy = groundY - escapeSpacing;
+          fy > roofY;
+          fy -= escapeSpacing
+        ) {
+          // 2-tile wide fire escape ledge
+          const feStart = escapeOnLeft ? Math.max(1, escapeX - 1) : escapeX;
+          const feEnd = escapeOnLeft
+            ? escapeX + 1
+            : Math.min(widthTiles - 1, escapeX + 2);
+          for (let tx = feStart; tx < feEnd; tx++) {
+            if (data[fy][tx] === EMPTY_TILE) {
+              data[fy][tx] = ONE_WAY_TILE;
+            }
+          }
+        }
+      }
+
+      // Alley between buildings (3-5 tiles wide)
+      cursor += bw + rng.int(3, 5);
+    }
+
+    // Inter-building connecting platforms (bridge between rooftops)
+    for (let i = 0; i < cityBuildings.length - 1; i++) {
+      const a = cityBuildings[i];
+      const b = cityBuildings[i + 1];
+      const bridgeY = Math.min(a.roofY, b.roofY) + rng.int(0, 2);
+      const bridgeStart = a.x + a.w;
+      const bridgeEnd = b.x;
+      if (bridgeEnd - bridgeStart <= MAX_JUMP_HORIZONTAL_TILES) continue; // jumpable
+      // Place ONE_WAY bridge in the middle of the alley
+      const midX = Math.floor((bridgeStart + bridgeEnd) / 2);
+      for (let dx = -1; dx <= 1; dx++) {
+        const tx = midX + dx;
+        if (tx > 0 && tx < widthTiles - 1 && bridgeY > 1) {
+          data[bridgeY][tx] = ONE_WAY_TILE;
+        }
+      }
+    }
+  }
+  // ── Alleyrun layout ──────────────────────────────────────────────
+  else if (layout === "alleyrun") {
+    // Canyon-style corridor between two tall walls
+    for (let tx = 0; tx < widthTiles; tx++) setGroundColumn(data, tx, groundY);
+
+    // Tall walls on both sides forming a narrow canyon
+    const canyonTop = 3;
+    const wallHeight = groundY - canyonTop;
+
+    // Left wall: runs most of the level with gaps for entry/exit
+    for (let ty = canyonTop; ty <= groundY; ty++) {
+      for (let tx = 0; tx < 3; tx++) data[ty][tx] = WALL_TILE;
+    }
+    // Right wall
+    for (let ty = canyonTop; ty <= groundY; ty++) {
+      for (let tx = widthTiles - 3; tx < widthTiles; tx++)
+        data[ty][tx] = WALL_TILE;
+    }
+
+    // Building-like structures jutting from walls at intervals
+    const structCount = rng.int(4, 7);
+    for (let s = 0; s < structCount; s++) {
+      const fromLeft = rng.chance(0.5);
+      const sx = fromLeft ? 3 : widthTiles - 3 - rng.int(4, 8);
+      const sw = rng.int(4, 8);
+      const sh = rng.int(6, Math.min(15, wallHeight - 4));
+      const sy = rng.int(canyonTop + 2, groundY - sh - 2);
+
+      buildings.push({ x: sx, y: sy, w: sw, h: sh });
+
+      for (let ty = sy; ty < sy + sh; ty++) {
+        for (let tx = sx; tx < sx + sw && tx < widthTiles - 1 && tx > 0; tx++) {
+          if (ty === sy) {
+            data[ty][tx] = PLATFORM_TILE; // roof
+          } else if (tx === sx || tx === sx + sw - 1) {
+            data[ty][tx] = WALL_TILE; // walls
+          }
+        }
+      }
+
+      // ONE_WAY ledges on exterior for wall-jumps
+      const ledgeCount = rng.int(1, 3);
+      for (let l = 0; l < ledgeCount; l++) {
+        const ly = sy + rng.int(2, Math.max(3, sh - 2));
+        const lx = fromLeft ? sx + sw : sx - 2;
+        if (lx > 1 && lx < widthTiles - 2 && ly < groundY - 1) {
+          data[ly][lx] = ONE_WAY_TILE;
+          if (lx + 1 < widthTiles - 2) data[ly][lx + 1] = ONE_WAY_TILE;
+        }
+      }
+    }
+
+    // Scattered platforms in the alley for navigation
+    const alleyPlats = rng.int(6, 10);
+    for (let i = 0; i < alleyPlats; i++) {
+      const px = rng.int(5, widthTiles - 7);
+      const py = rng.int(canyonTop + 3, groundY - 3);
+      const plen = rng.int(2, 4);
+      for (let dx = 0; dx < plen; dx++) {
+        const tx = px + dx;
+        if (tx > 3 && tx < widthTiles - 4 && data[py][tx] === EMPTY_TILE) {
+          data[py][tx] = ONE_WAY_TILE;
+        }
+      }
+    }
+  }
+  // ── Rooftops layout ──────────────────────────────────────────────
+  else if (layout === "rooftops") {
+    // Building-top hopping — a sequence of flat rooftops at varying heights
+    // Minimal ground, must jump across rooftops
+    // Small ground at start
+    for (let tx = 0; tx < 8; tx++) setGroundColumn(data, tx, groundY);
+
+    const rooftopCount = rng.int(6, 10);
+    let rx = 9;
+    let prevRoofY = groundY - 4;
+
+    for (let r = 0; r < rooftopCount; r++) {
+      const rw = rng.int(5, 12); // rooftop width
+      // Height variation: up or down from previous, within jump range
+      const dy = rng.int(-MAX_JUMP_HEIGHT_TILES + 1, MAX_JUMP_HEIGHT_TILES - 1);
+      const roofY = Math.max(4, Math.min(groundY - 3, prevRoofY + dy));
+
+      if (rx + rw >= widthTiles - 8) break;
+
+      buildings.push({ x: rx, y: roofY, w: rw, h: groundY - roofY });
+
+      // Rooftop platform
+      for (let tx = rx; tx < rx + rw; tx++) {
+        data[roofY][tx] = PLATFORM_TILE;
+      }
+
+      // Building body below rooftop (walls on edges, fill to ground)
+      for (let ty = roofY + 1; ty <= groundY + 2; ty++) {
+        if (ty < heightTiles) {
+          data[ty][rx] = WALL_TILE;
+          if (rx + rw - 1 < widthTiles) data[ty][rx + rw - 1] = WALL_TILE;
+        }
+      }
+
+      // Optional HVAC/obstacle on rooftop (1-tile wall block)
+      if (rng.chance(0.3)) {
+        const ox = rx + rng.int(2, rw - 3);
+        if (ox > 0 && ox < widthTiles - 1 && roofY - 1 > 1) {
+          data[roofY - 1][ox] = WALL_TILE;
+        }
+      }
+
+      prevRoofY = roofY;
+      // Gap between buildings (must be jumpable)
+      rx += rw + rng.int(2, MAX_JUMP_HORIZONTAL_TILES - 1);
+    }
+
+    // Safe landing area at end
+    for (let tx = Math.max(0, widthTiles - 8); tx < widthTiles; tx++) {
+      setGroundColumn(data, tx, groundY);
+    }
+  }
   // ── Standard layout ──────────────────────────────────────────────
   else {
     let x = 0;
@@ -527,7 +753,10 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
 
   // Ensure end platform is safe (horizontal layouts)
   const isVerticalLayout =
-    layout === "tower" || layout === "climb" || layout === "zigzag";
+    layout === "tower" ||
+    layout === "climb" ||
+    layout === "zigzag" ||
+    layout === "cityblock";
 
   if (!isVerticalLayout) {
     for (let tx = widthTiles - 7; tx < widthTiles; tx++) {
@@ -564,6 +793,19 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
     goalTile = { x: Math.floor(widthTiles / 2), y: topSwitchY - 1 };
   } else if (layout === "vertical") {
     goalTile = { x: widthTiles - 6, y: Math.max(2, groundY - 10) };
+  } else if (layout === "cityblock") {
+    // Goal at the top of the tallest building (scan for highest PLATFORM)
+    let highestY = groundY;
+    let highestX = Math.floor(widthTiles / 2);
+    for (let ty = 0; ty < heightTiles; ty++) {
+      for (let tx = 0; tx < widthTiles; tx++) {
+        if (data[ty][tx] === PLATFORM_TILE && ty < highestY) {
+          highestY = ty;
+          highestX = tx;
+        }
+      }
+    }
+    goalTile = { x: highestX + 2, y: Math.max(1, highestY - 1) };
   } else {
     goalTile = { x: widthTiles - 4, y: groundY - 1 };
   }
@@ -764,6 +1006,29 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
         }
       }
     }
+
+    // Building hazards — steam vents on building rooftops/platforms
+    if (
+      buildings.length > 0 &&
+      (layout === "cityblock" || layout === "rooftops")
+    ) {
+      const buildingHazardCount = Math.min(
+        buildings.length * 2,
+        2 + Math.floor(options.floor / 3),
+      );
+      for (let i = 0; i < buildingHazardCount; i++) {
+        const bld = rng.pick(buildings);
+        const hx = bld.x + rng.int(1, Math.max(2, bld.w - 2));
+        // Place on rooftop
+        const hy = bld.y - 1;
+        if (hy > 0 && hx > 0 && hx < widthTiles - 1) {
+          hazards.push({
+            type: rng.chance(0.5) ? "steam" : "spike",
+            pos: toPx(hx, hy, tileSize),
+          });
+        }
+      }
+    }
   }
 
   const collectibles: GeneratedLevel["collectibles"] = [];
@@ -862,5 +1127,6 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
     hazards,
     collectibles,
     movingPlatforms,
+    buildings,
   };
 }

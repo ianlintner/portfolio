@@ -40,6 +40,13 @@ export type MovingPlatformSpawn = {
   widthTiles?: number;
 };
 
+export type BuildingFootprint = {
+  x: number; // tile x
+  y: number; // tile y (rooftop row)
+  w: number; // width in tiles
+  h: number; // height in tiles
+};
+
 export type LayoutType =
   | "standard"
   | "parkour"
@@ -47,7 +54,10 @@ export type LayoutType =
   | "boss"
   | "tower"
   | "climb"
-  | "zigzag";
+  | "zigzag"
+  | "cityblock"
+  | "alleyrun"
+  | "rooftops";
 
 /** Tile indices used by the level generator. */
 export const TILE = {
@@ -89,4 +99,5 @@ export type GeneratedLevel = {
   hazards: HazardSpawn[];
   collectibles: CollectibleSpawn[];
   movingPlatforms: MovingPlatformSpawn[];
+  buildings: BuildingFootprint[];
 };

@@ -17,6 +17,7 @@ import { installArcadeDebugToggle } from "../utils/arcadeDebugToggle";
 import { AudioManager } from "../audio/AudioManager";
 import { TILE } from "../rogue/types";
 import { DeathSequence } from "../systems/DeathSequence";
+import { BuildingDecorator } from "../systems/BuildingDecorator";
 import type { LayoutType } from "../rogue/types";
 import { AutoplayController } from "../ai/AutoplayController";
 import { getBootOptions } from "../bootOptions";
@@ -157,6 +158,15 @@ export class RogueRun extends Scene {
       TILE.ONE_WAY,
       TILE.WALL,
     ]);
+
+    // Building decorations (behind tilemap) for city layouts
+    if (level.buildings.length > 0) {
+      const decorator = new BuildingDecorator(
+        this,
+        `${this.seed}::deco::${this.floor}`,
+      );
+      decorator.decorate(level.buildings, level.layout, level.tileSize);
+    }
 
     // Player
     this.player = new Player(this, level.spawn.player.x, level.spawn.player.y);
@@ -487,6 +497,14 @@ export class RogueRun extends Scene {
     for (const mp of this.movingPlatformsList) {
       mp.update();
     }
+
+    // Publish altitude for UIScene (0 = ground, 1 = top)
+    const altitude = Math.max(
+      0,
+      Math.min(1, 1 - this.player.y / this.worldHeightPx),
+    );
+    this.registry.set("playerAltitude", altitude);
+    this.registry.set("worldHeightPx", this.worldHeightPx);
 
     // Fall death (pits are instant life loss)
     if (this.player.y > this.worldHeightPx + 64) {

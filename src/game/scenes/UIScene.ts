@@ -17,6 +17,17 @@ export class UIScene extends Scene {
   private bossBarFill!: Phaser.GameObjects.Rectangle;
   private bossBarText!: Phaser.GameObjects.Text;
 
+  // Altitude indicator elements
+  private altBarBg!: Phaser.GameObjects.Rectangle;
+  private altBarFill!: Phaser.GameObjects.Rectangle;
+  private altCatIcon!: Phaser.GameObjects.Text;
+  private altGoalIcon!: Phaser.GameObjects.Text;
+  private altLabelTop!: Phaser.GameObjects.Text;
+  private altLabelBot!: Phaser.GameObjects.Text;
+  private altContainer!: Phaser.GameObjects.Container;
+  private zoneLabel!: Phaser.GameObjects.Text;
+  private lastZone = "";
+
   constructor() {
     super("UIScene");
   }
@@ -191,6 +202,69 @@ export class UIScene extends Scene {
       .setOrigin(0.5)
       .setVisible(false);
 
+    // Altitude indicator (right edge, only visible for building/vertical layouts)
+    {
+      const altBarH = 200;
+      const altBarW = 10;
+      const altX = this.scale.width - 24;
+      const altY = this.scale.height / 2 - altBarH / 2;
+
+      this.altBarBg = this.add
+        .rectangle(altX, altY, altBarW, altBarH, 0x1e293b, 0.8)
+        .setOrigin(0.5, 0);
+      this.altBarFill = this.add
+        .rectangle(altX, altY + altBarH, altBarW - 2, 0, 0x0ea5e9, 0.9)
+        .setOrigin(0.5, 1);
+      this.altCatIcon = this.add
+        .text(altX - 14, altY + altBarH, "🐱", { fontSize: "12px" })
+        .setOrigin(1, 0.5);
+      this.altGoalIcon = this.add
+        .text(altX + 14, altY, "★", {
+          fontSize: "14px",
+          color: "#fde68a",
+        })
+        .setOrigin(0, 0.5);
+      this.altLabelTop = this.add
+        .text(altX, altY - 10, "ROOF", {
+          fontSize: "9px",
+          color: "#94a3b8",
+          fontFamily: "Arial",
+        })
+        .setOrigin(0.5);
+      this.altLabelBot = this.add
+        .text(altX, altY + altBarH + 10, "ST", {
+          fontSize: "9px",
+          color: "#94a3b8",
+          fontFamily: "Arial",
+        })
+        .setOrigin(0.5);
+
+      this.altContainer = this.add.container(0, 0, [
+        this.altBarBg,
+        this.altBarFill,
+        this.altCatIcon,
+        this.altGoalIcon,
+        this.altLabelTop,
+        this.altLabelBot,
+      ]);
+      this.altContainer.setDepth(100).setVisible(false);
+    }
+
+    // Zone transition label (centered flash)
+    this.zoneLabel = this.add
+      .text(this.scale.width / 2, this.scale.height / 2 - 60, "", {
+        fontSize: "28px",
+        color: "#0ea5e9",
+        fontFamily: "Arial",
+        fontStyle: "bold",
+        stroke: "#0f172a",
+        strokeThickness: 4,
+      })
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .setDepth(101);
+    this.lastZone = "";
+
     const render = () => {
       const score = Number(this.registry.get("score") ?? 0);
       const hearts = Number(this.registry.get("playerHearts") ?? 3);
@@ -237,6 +311,47 @@ export class UIScene extends Scene {
         this.bossBarBg.setVisible(false);
         this.bossBarFill.setVisible(false);
         this.bossBarText.setVisible(false);
+      }
+
+      // Altitude indicator for building/vertical layouts
+      const isBuildingLayout =
+        layout === "cityblock" ||
+        layout === "alleyrun" ||
+        layout === "rooftops" ||
+        layout === "tower" ||
+        layout === "climb" ||
+        layout === "zigzag";
+      const altitude = Number(this.registry.get("playerAltitude") ?? 0);
+
+      if (isBuildingLayout) {
+        this.altContainer.setVisible(true);
+        const altBarH = 200;
+        const altBaseY = this.scale.height / 2 - altBarH / 2;
+        const fillH = Math.max(0, Math.min(altBarH, altitude * altBarH));
+        this.altBarFill.setDisplaySize(8, fillH);
+        // Position the cat icon along the bar
+        const catY = altBaseY + altBarH - fillH;
+        this.altCatIcon.setY(catY);
+
+        // Zone labels
+        let zone = "STREET LEVEL";
+        if (altitude > 0.65) zone = "ROOFTOPS";
+        else if (altitude > 0.3) zone = "MID BUILDING";
+
+        if (zone !== this.lastZone && this.lastZone !== "") {
+          this.zoneLabel.setText(zone);
+          this.zoneLabel.setAlpha(1);
+          this.tweens.add({
+            targets: this.zoneLabel,
+            alpha: 0,
+            duration: 2000,
+            delay: 800,
+            ease: "Power2",
+          });
+        }
+        this.lastZone = zone;
+      } else {
+        this.altContainer.setVisible(false);
       }
     };
 
