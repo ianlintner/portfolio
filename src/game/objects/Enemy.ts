@@ -25,6 +25,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   private isBossEnemy = false;
   private lastActionAt = 0;
   private baseY = 0;
+  private hoverPhase = 0;
+  private nextBirdDirSwitchAt = 0;
 
   // Dropper state
   private dropperState: "waiting" | "dropping" | "patrolling" = "patrolling";
@@ -61,6 +63,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.enemyType = type;
     this.scene = scene;
     this.baseY = y;
+    this.hoverPhase = Phaser.Math.FloatBetween(0, Math.PI * 2);
+    this.nextBirdDirSwitchAt = scene.time.now;
 
     scene.add.existing(this);
     scene.physics.add.existing(this);
@@ -323,11 +327,26 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     // Flyers: hovering sine-wave motion.
     if (this.enemyType === "bird1" || this.enemyType === "bird2") {
       const t = this.scene.time.now * 0.004;
-      const sine = Math.sin(t + this.x * 0.02) * 40;
+      const amplitude = this.enemyType === "bird1" ? 34 : 28;
+      const sine = Math.sin(t + this.hoverPhase) * amplitude;
       this.setY(this.baseY + sine);
+
       if (player) {
-        this.direction = player.x >= this.x ? 1 : -1;
+        const dxSigned = player.x - this.x;
+        const wantsDirection: 1 | -1 = dxSigned >= 0 ? 1 : -1;
+        const deadzone = 28;
+
+        // Add hysteresis/cooldown so birds don't rapidly flip when near cat.
+        if (
+          Math.abs(dxSigned) > deadzone &&
+          wantsDirection !== this.direction &&
+          this.scene.time.now >= this.nextBirdDirSwitchAt
+        ) {
+          this.direction = wantsDirection;
+          this.nextBirdDirSwitchAt = this.scene.time.now + 220;
+        }
       }
+
       body.setVelocityX(this.direction * (this.isBossEnemy ? 180 : 130));
       this.setFlipX(this.direction === -1);
       if (this.anims.currentAnim?.key !== this.animKey("move")) {

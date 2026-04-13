@@ -5,15 +5,18 @@ import { Rng } from "@/game/rogue/rng";
 
 const TILE_SIZE = 32;
 
-const BRICK_TEXTURES = [
-  GENERATED_TEXTURES.tileBrickWall,
-  GENERATED_TEXTURES.tileBrickWallDark,
+const SKYLINE_TEXTURES = [
+  GENERATED_TEXTURES.buildingTall,
+  GENERATED_TEXTURES.buildingMedium,
+  GENERATED_TEXTURES.buildingShort,
+  GENERATED_TEXTURES.buildingTower,
+  GENERATED_TEXTURES.buildingPlant,
+  GENERATED_TEXTURES.buildingTenementTall,
+  GENERATED_TEXTURES.buildingHousingBlock,
+  GENERATED_TEXTURES.buildingApartmentSpire,
 ] as const;
 
-const WINDOW_TEXTURES = [
-  GENERATED_TEXTURES.tileWindowLit,
-  GENERATED_TEXTURES.tileWindowDark,
-] as const;
+const SKYLINE_TINTS = [0x7c8fab, 0x7489a8, 0x6f85a3, 0x8394ae] as const;
 
 const ROOFTOP_DECO_TEXTURES = [
   GENERATED_TEXTURES.tileHVAC,
@@ -39,7 +42,7 @@ export class BuildingDecorator {
     const ts = tileSize || TILE_SIZE;
 
     for (const b of buildings) {
-      this.decorateBuilding(b, ts);
+      this.decorateBuilding(b, layout, ts);
     }
 
     // Add street-level decorations for cityblock and alleyrun
@@ -51,42 +54,48 @@ export class BuildingDecorator {
     this.group.setDepth(-5);
   }
 
-  private decorateBuilding(b: BuildingFootprint, ts: number) {
+  private decorateBuilding(
+    b: BuildingFootprint,
+    layout: LayoutType,
+    ts: number,
+  ) {
     const px = b.x * ts;
     const py = b.y * ts;
+    const footprintWidthPx = Math.max(ts * 2, b.w * ts);
+    const footprintHeightPx = Math.max(ts * 3, b.h * ts);
+    const baseY = (b.y + b.h) * ts;
 
-    // Fill building interior with brick textures
-    for (let ty = 1; ty < b.h - 1; ty++) {
-      for (let tx = 1; tx < b.w - 1; tx++) {
-        const worldX = px + tx * ts;
-        const worldY = py + ty * ts;
+    const textureKey = this.pickSkylineTexture(b);
+    const sourceImage = this.scene.textures
+      .get(textureKey)
+      .getSourceImage() as HTMLImageElement;
 
-        // Windows every 2-3 tiles, skipping edges
-        if (tx % 3 === 1 && ty % 3 === 1 && ty > 1 && ty < b.h - 2) {
-          const key = this.rng.pick([...WINDOW_TEXTURES]);
-          const img = this.scene.add.image(
-            worldX + ts / 2,
-            worldY + ts / 2,
-            key,
-          );
-          img.setDepth(-5);
-          this.group.add(img);
-        } else if (this.rng.chance(0.6)) {
-          // Brick fill
-          const key = this.rng.pick([...BRICK_TEXTURES]);
-          const img = this.scene.add.image(
-            worldX + ts / 2,
-            worldY + ts / 2,
-            key,
-          );
-          img.setDepth(-6);
-          this.group.add(img);
-        }
-      }
-    }
+    const sourceW = Math.max(1, sourceImage.width || footprintWidthPx);
+    const sourceH = Math.max(1, sourceImage.height || footprintHeightPx);
+    const scaleX = footprintWidthPx / sourceW;
+    const scaleY = footprintHeightPx / sourceH;
+    const isCityLayout =
+      layout === "cityblock" || layout === "alleyrun" || layout === "rooftops";
+    const tint = this.rng.pick([...SKYLINE_TINTS]);
 
-    // Fire escape on one side
-    if (b.h > 10 && this.rng.chance(0.7)) {
+    const buildingImage = this.scene.add.image(
+      px + footprintWidthPx / 2,
+      baseY,
+      textureKey,
+    );
+    buildingImage
+      .setOrigin(0.5, 1)
+      .setScale(scaleX, scaleY)
+      .setDepth(-6)
+      .setAlpha(isCityLayout ? 0.96 : 0.9)
+      .setTint(tint);
+    this.group.add(buildingImage);
+
+    // For non-city layouts, keep visuals close to intro style: silhouette-only.
+    if (!isCityLayout) return;
+
+    // Fire escape on one side for traversal readability.
+    if (b.h > 8 && this.rng.chance(0.6)) {
       const onRight = this.rng.chance(0.5);
       const feX = onRight ? px + (b.w - 1) * ts : px;
       for (let ty = 3; ty < b.h - 2; ty += 4) {
@@ -102,7 +111,7 @@ export class BuildingDecorator {
 
     // Rooftop edge decoration
     for (let tx = 0; tx < b.w; tx++) {
-      if (this.rng.chance(0.4)) {
+      if (this.rng.chance(0.22)) {
         const img = this.scene.add.image(
           px + tx * ts + ts / 2,
           py - ts / 2,
@@ -114,7 +123,7 @@ export class BuildingDecorator {
     }
 
     // Rooftop equipment (HVAC, antenna, water tower)
-    if (b.w >= 6 && this.rng.chance(0.6)) {
+    if (b.w >= 5 && this.rng.chance(0.52)) {
       const decoX = px + this.rng.int(2, b.w - 3) * ts;
       const decoY = py - ts;
       if (this.rng.chance(0.3)) {
@@ -144,8 +153,8 @@ export class BuildingDecorator {
       }
     }
 
-    // Neon sign on occasionally
-    if (b.h > 8 && this.rng.chance(0.35)) {
+    // Neon sign overlay (city layouts only)
+    if (b.h > 7 && this.rng.chance(0.22)) {
       const signTy = this.rng.int(2, Math.min(5, b.h - 3));
       const signTx = this.rng.int(1, b.w - 2);
       const img = this.scene.add.image(
@@ -158,7 +167,7 @@ export class BuildingDecorator {
     }
 
     // Awning at ground level
-    if (this.rng.chance(0.4)) {
+    if (this.rng.chance(0.2)) {
       const awningTx = this.rng.int(1, Math.max(2, b.w - 2));
       const img = this.scene.add.image(
         px + awningTx * ts + ts / 2,
@@ -170,7 +179,7 @@ export class BuildingDecorator {
     }
 
     // Pipe running vertically
-    if (b.h > 12 && this.rng.chance(0.3)) {
+    if (b.h > 10 && this.rng.chance(0.16)) {
       const pipeTx = this.rng.chance(0.5) ? 0 : b.w - 1;
       for (let ty = 2; ty < b.h - 1; ty += 2) {
         const img = this.scene.add.image(
@@ -182,6 +191,37 @@ export class BuildingDecorator {
         this.group.add(img);
       }
     }
+  }
+
+  private pickSkylineTexture(b: BuildingFootprint) {
+    // Bias tall footprints to taller intro textures.
+    if (b.h >= 12) {
+      return this.rng.pick([
+        GENERATED_TEXTURES.buildingApartmentSpire,
+        GENERATED_TEXTURES.buildingTenementTall,
+        GENERATED_TEXTURES.buildingHousingBlock,
+        GENERATED_TEXTURES.buildingTower,
+      ]);
+    }
+
+    if (b.h >= 9) {
+      return this.rng.pick([
+        GENERATED_TEXTURES.buildingTall,
+        GENERATED_TEXTURES.buildingTower,
+        GENERATED_TEXTURES.buildingTenementTall,
+        GENERATED_TEXTURES.buildingHousingBlock,
+      ]);
+    }
+
+    if (b.w >= 8) {
+      return this.rng.pick([
+        GENERATED_TEXTURES.buildingMedium,
+        GENERATED_TEXTURES.buildingShort,
+        GENERATED_TEXTURES.buildingPlant,
+      ]);
+    }
+
+    return this.rng.pick([...SKYLINE_TEXTURES]);
   }
 
   private addStreetDecorations(buildings: BuildingFootprint[], ts: number) {

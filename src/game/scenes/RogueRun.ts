@@ -62,6 +62,22 @@ export class RogueRun extends Scene {
   private autoplayDebug = false;
   private autoplayHeadless = false;
 
+  private shouldUseHybridSkylineTheme(hasBuildings: boolean): boolean {
+    if (!hasBuildings) return false;
+
+    // Deterministic per-floor/theme mix so some building floors are skyline
+    // (intro-like) and some remain industrial for visual variety.
+    const key = `${this.seed}::${this.floor}::theme`;
+    let hash = 2166136261;
+    for (let i = 0; i < key.length; i++) {
+      hash ^= key.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+
+    const roll = Math.abs(hash) % 100;
+    return roll < 52;
+  }
+
   constructor() {
     super("RogueRun");
   }
@@ -121,13 +137,16 @@ export class RogueRun extends Scene {
     this.worldWidthPx = level.widthTiles * level.tileSize;
     this.worldHeightPx = level.heightTiles * level.tileSize;
 
-    // Parallax background — city layouts use generated city skyline layers;
-    // all other layouts use the industrial tile-based set.
+    // Parallax background — city layouts always use skyline; hybrid building
+    // floors only use skyline on some runs so industrial remains in rotation.
     const isCityLayout =
       this.layout === "cityblock" ||
       this.layout === "alleyrun" ||
       this.layout === "rooftops";
-    if (isCityLayout) {
+    const useCitySkyline =
+      isCityLayout ||
+      this.shouldUseHybridSkylineTheme(level.buildings.length > 0);
+    if (useCitySkyline) {
       // Dark night-sky base
       this.add
         .rectangle(0, 0, 99999, this.worldHeightPx, 0x0f172a)
@@ -198,8 +217,11 @@ export class RogueRun extends Scene {
       TILE.WALL,
     ]);
 
-    // Building decorations (behind tilemap) for city layouts
-    if (level.buildings.length > 0) {
+    // Building facade decorations only for explicit city layouts.
+    // Standard/parkour can still generate rooftop gameplay footprints, but
+    // we keep their visuals closer to intro skyline by avoiding dense facade
+    // overlays in those layouts.
+    if (isCityLayout && level.buildings.length > 0) {
       const decorator = new BuildingDecorator(
         this,
         `${this.seed}::deco::${this.floor}`,

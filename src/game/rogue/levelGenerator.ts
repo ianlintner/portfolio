@@ -110,8 +110,10 @@ function layoutDimensions(
 
 function pickLayout(rng: Rng, floor: number): LayoutType {
   if (floor % 5 === 0) return "boss";
+  // Periodic guaranteed rooftop-focused floor for intro-like traversal feel.
+  if (floor >= 3 && floor % 7 === 0) return "rooftops";
   // Building layouts unlock progressively
-  if (floor >= 4 && rng.chance(0.18)) return "rooftops";
+  if (floor >= 3 && rng.chance(0.24)) return "rooftops";
   if (floor >= 3 && rng.chance(0.2)) return "cityblock";
   if (floor >= 2 && rng.chance(0.15)) return "alleyrun";
   // New vertical layouts unlock progressively
@@ -443,6 +445,56 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
         if (hx + dx < widthTiles - 2) data[hy][hx + dx] = ONE_WAY_TILE;
       }
     }
+
+    // Minimal decorative buildings with rooftop/firescape routes.
+    // Keep collision light (no full-height skinny columns) to avoid visual jank.
+    const useParkourBuildings = rng.chance(0.62);
+    if (useParkourBuildings) {
+      const parkourBuildings = rng.int(1, 3);
+      const usedParkourRanges: { start: number; end: number }[] = [];
+      for (let b = 0; b < parkourBuildings; b++) {
+        const bw = rng.int(5, 8);
+        const bh = rng.int(5, 10);
+        const by = groundY - bh;
+        if (by < 3) continue;
+
+        let placed = false;
+        for (let attempt = 0; attempt < 16; attempt++) {
+          const bx = rng.int(12, Math.max(13, widthTiles - bw - 12));
+          const spanStart = bx - 3;
+          const spanEnd = bx + bw + 3;
+          const overlaps = usedParkourRanges.some(
+            (r) => !(spanEnd < r.start || spanStart > r.end),
+          );
+          if (overlaps || bx + bw >= widthTiles - 3) continue;
+
+          usedParkourRanges.push({ start: spanStart, end: spanEnd });
+          buildings.push({ x: bx, y: by, w: bw, h: bh });
+
+          // Rooftop run surface.
+          for (let tx = bx; tx < bx + bw; tx++) {
+            data[by][tx] = PLATFORM_TILE;
+          }
+
+          // Side fire-escape ledges for alternate ascent/descent.
+          const feSide = rng.chance(0.5) ? bx - 1 : bx + bw;
+          if (feSide > 1 && feSide < widthTiles - 2) {
+            for (
+              let ty = by + 2;
+              ty < Math.min(groundY - 1, by + bh - 1);
+              ty += 3
+            ) {
+              data[ty][feSide] = ONE_WAY_TILE;
+            }
+          }
+
+          placed = true;
+          break;
+        }
+
+        if (!placed) continue;
+      }
+    }
   }
   // ── Vertical layout (original) ──────────────────────────────────
   else if (layout === "vertical") {
@@ -742,6 +794,68 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
           if (rng.chance(0.15)) continue;
           data[altY][ax] = ONE_WAY_TILE;
         }
+      }
+    }
+
+    // Minimal decorative buildings with intentional traversal surfaces.
+    // Wider footprints + short support columns prevent awkward thin wall spikes.
+    const useStandardBuildings =
+      options.floor >= 4 ? rng.chance(0.58) : rng.chance(0.34);
+    if (useStandardBuildings) {
+      const buildingCount = rng.int(2, 4);
+      const usedRanges: { start: number; end: number }[] = [];
+      for (let b = 0; b < buildingCount; b++) {
+        const bw = rng.int(6, 11);
+        const bh = rng.int(6, 12);
+        const by = groundY - bh;
+        if (by < 3) continue;
+
+        let placed = false;
+        for (let attempt = 0; attempt < 18; attempt++) {
+          const bx = rng.int(12, Math.max(13, widthTiles - bw - 14));
+          const spanStart = bx - 4;
+          const spanEnd = bx + bw + 4;
+          const nearSpawnOrGoal = bx < 12 || bx + bw > widthTiles - 12;
+          const overlaps = usedRanges.some(
+            (r) => !(spanEnd < r.start || spanStart > r.end),
+          );
+          if (nearSpawnOrGoal || overlaps || bx + bw >= widthTiles - 3) {
+            continue;
+          }
+
+          usedRanges.push({ start: spanStart, end: spanEnd });
+          buildings.push({ x: bx, y: by, w: bw, h: bh });
+
+          // Rooftop platform as the main building challenge surface.
+          for (let tx = bx; tx < bx + bw; tx++) {
+            data[by][tx] = PLATFORM_TILE;
+          }
+
+          // Internal mezzanine one-way ledges (light collision, better flow).
+          if (bh >= 8 && rng.chance(0.65)) {
+            const midY = by + Math.floor(bh / 2);
+            for (let tx = bx + 1; tx < bx + bw - 1; tx++) {
+              if ((tx - bx) % 4 !== 0) data[midY][tx] = ONE_WAY_TILE;
+            }
+          }
+
+          // Fire escape one-way ledges on one exterior side.
+          const feSide = rng.chance(0.5) ? bx - 1 : bx + bw;
+          if (feSide > 1 && feSide < widthTiles - 2) {
+            for (
+              let ty = by + 2;
+              ty < Math.min(groundY - 1, by + bh - 1);
+              ty += 3
+            ) {
+              data[ty][feSide] = ONE_WAY_TILE;
+            }
+          }
+
+          placed = true;
+          break;
+        }
+
+        if (!placed) continue;
       }
     }
   }
