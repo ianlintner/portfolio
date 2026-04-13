@@ -28,6 +28,14 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   private hoverPhase = 0;
   private nextBirdDirSwitchAt = 0;
 
+  // Bird swoop state machine (Red Arremer / Ghosts 'n Goblins style)
+  private birdState: "hovering" | "swooping" | "retreating" = "hovering";
+  private birdHoverY = 0; // high-altitude rest position
+  private birdMaxDepthY = 0; // lowest Y the bird will swoop to
+  private birdNextSwoopAt = 0; // timestamp for next dive
+  private birdSwoopTargetX = 0;
+  private birdSwoopTargetY = 0;
+
   // Dropper state
   private dropperState: "waiting" | "dropping" | "patrolling" = "patrolling";
 
@@ -104,6 +112,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     if (type === "bird1" || type === "bird2") {
       body.setAllowGravity(false);
       body.setVelocityY(0);
+      // Red Arremer style: hover well above spawn, swoop down limited depth
+      this.birdHoverY = y - 140; // ~4.5 tiles above spawn
+      this.birdMaxDepthY = y - 16; // never go below spawn level
+      this.birdState = "hovering";
+      this.birdNextSwoopAt = scene.time.now + Phaser.Math.Between(1200, 2800);
     }
 
     // Dropper: clings to ceiling, no gravity, waits for player below
@@ -324,30 +337,82 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       }
     }
 
-    // Flyers: hovering sine-wave motion.
+    // ── Bird AI: Red Arremer swoop pattern ───────────────────────────
+    // Hover high, swoop down toward player (limited depth), retreat
+    // back up with a cooldown before diving again.
     if (this.enemyType === "bird1" || this.enemyType === "bird2") {
-      const t = this.scene.time.now * 0.004;
-      const amplitude = this.enemyType === "bird1" ? 34 : 28;
-      const sine = Math.sin(t + this.hoverPhase) * amplitude;
-      this.setY(this.baseY + sine);
+      const now = this.scene.time.now;
 
-      if (player) {
-        const dxSigned = player.x - this.x;
-        const wantsDirection: 1 | -1 = dxSigned >= 0 ? 1 : -1;
-        const deadzone = 28;
+      if (this.birdState === "hovering") {
+        // Gentle sine hover at high altitude
+        const t = now * 0.003;
+        const amplitude = 14;
+        const sine = Math.sin(t + this.hoverPhase) * amplitude;
+        const targetY = this.birdHoverY + sine;
 
-        // Add hysteresis/cooldown so birds don't rapidly flip when near cat.
-        if (
-          Math.abs(dxSigned) > deadzone &&
-          wantsDirection !== this.direction &&
-          this.scene.time.now >= this.nextBirdDirSwitchAt
-        ) {
-          this.direction = wantsDirection;
-          this.nextBirdDirSwitchAt = this.scene.time.now + 220;
+        // Smoothly glide toward hover altitude
+        const yDiff = targetY - this.y;
+        body.setVelocityY(Phaser.Math.Clamp(yDiff * 3, -120, 120));
+
+        // Drift horizontally toward player loosely
+        if (player) {
+          const dxSigned = player.x - this.x;
+          this.direction = dxSigned >= 0 ? 1 : -1;
+          body.setVelocityX(this.direction * 70);
+        } else {
+          body.setVelocityX(this.direction * 50);
+        }
+
+        // Initiate a swoop when cooldown expires and player is in range
+        if (player && now >= this.birdNextSwoopAt) {
+          const dx = Math.abs(player.x - this.x);
+          if (dx < 320) {
+            this.birdState = "swooping";
+            this.birdSwoopTargetX = player.x;
+            // Swoop toward player but cap depth
+            this.birdSwoopTargetY = Math.min(player.y - 20, this.birdMaxDepthY);
+          }
+        }
+      } else if (this.birdState === "swooping") {
+        // Dive diagonally toward the locked-in target
+        const dx = this.birdSwoopTargetX - this.x;
+        const dy = this.birdSwoopTargetY - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < 28 || this.y >= this.birdMaxDepthY) {
+          // Reached target or max depth → retreat
+          this.birdState = "retreating";
+        } else {
+          const swoopSpeed = this.isBossEnemy ? 280 : 220;
+          const angle = Math.atan2(dy, dx);
+          body.setVelocityX(Math.cos(angle) * swoopSpeed);
+          body.setVelocityY(Math.sin(angle) * swoopSpeed);
+          this.direction = dx >= 0 ? 1 : -1;
+        }
+      } else if (this.birdState === "retreating") {
+        // Fly back up to hover altitude
+        const dy = this.birdHoverY - this.y;
+
+        if (Math.abs(dy) < 24) {
+          // Close enough to hover position → resume hovering with cooldown
+          this.birdState = "hovering";
+          const cooldown =
+            this.enemyType === "bird1"
+              ? Phaser.Math.Between(2200, 3800)
+              : Phaser.Math.Between(1800, 3200);
+          this.birdNextSwoopAt = now + cooldown;
+          body.setVelocityY(0);
+        } else {
+          // Climb back up, drifting slightly away from player
+          body.setVelocityY(Math.sign(dy) * 150);
+          if (player) {
+            const awayDir = this.x > player.x ? 1 : -1;
+            body.setVelocityX(awayDir * 55);
+            this.direction = awayDir;
+          }
         }
       }
 
-      body.setVelocityX(this.direction * (this.isBossEnemy ? 180 : 130));
       this.setFlipX(this.direction === -1);
       if (this.anims.currentAnim?.key !== this.animKey("move")) {
         this.play(this.animKey("move"));
