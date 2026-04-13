@@ -1,7 +1,10 @@
+import type { LayoutType } from "./rogue/types";
+
 export type GameBootOptions = {
   autoplay?: boolean;
   headless?: boolean;
   debug?: boolean;
+  layoutOverride?: LayoutType;
 };
 
 const GLOBAL_KEY = "__PHASER_BOOT_OPTIONS__";

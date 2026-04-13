@@ -4,6 +4,7 @@ import { PARALLAX_SETS, TILESETS } from "../assets/manifest";
 import { createParallaxBackground } from "../assets/parallax";
 import { GENERATED_TEXTURES } from "../assets/generatedTextures";
 import { getBootOptions } from "../bootOptions";
+import type { LayoutType } from "../rogue/types";
 
 interface EnemyInstance {
   sprite: Phaser.GameObjects.Sprite;
@@ -56,6 +57,22 @@ export class MainMenu extends Scene {
   private groundY = 0;
   private rooftopY = 0;
   private catRunY = 0;
+  private selectedLayout: LayoutType | "random" = "random";
+
+  private static readonly LAYOUT_OPTIONS: ReadonlyArray<LayoutType | "random"> =
+    [
+      "random",
+      "standard",
+      "parkour",
+      "vertical",
+      "tower",
+      "climb",
+      "zigzag",
+      "cityblock",
+      "alleyrun",
+      "rooftops",
+      "boss",
+    ];
 
   constructor() {
     super("MainMenu");
@@ -65,6 +82,18 @@ export class MainMenu extends Scene {
     const { width, height } = this.scale;
     const audio = AudioManager.instance;
     const bootOptions = getBootOptions();
+
+    // Initialize layout selection from query string / boot options
+    if (
+      bootOptions.layoutOverride &&
+      MainMenu.LAYOUT_OPTIONS.includes(
+        bootOptions.layoutOverride as LayoutType | "random",
+      )
+    ) {
+      this.selectedLayout = bootOptions.layoutOverride as LayoutType;
+    } else {
+      this.selectedLayout = "random";
+    }
 
     this.groundY = height - 32;
     // Rooftop where the cat walks — roughly 60% down the viewport
@@ -933,8 +962,63 @@ export class MainMenu extends Scene {
         watchAIBtn.setStyle({ color: "#94a3b8", backgroundColor: "#0f172a" }),
       );
 
+    // ── Level type selector ──────────────────────────────────────────
+    const selectorY = btnY + 100;
+    const selectorLabel = this.add
+      .text(width / 2 - 90, selectorY, "LEVEL:", {
+        fontSize: "12px",
+        color: "#64748b",
+        fontFamily: "Arial",
+        fontStyle: "bold",
+        letterSpacing: 2,
+      })
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .setDepth(10);
+
+    const selectorValue = this.add
+      .text(width / 2 + 20, selectorY, this.selectedLayout.toUpperCase(), {
+        fontSize: "13px",
+        color: "#38bdf8",
+        fontFamily: "Arial",
+        fontStyle: "bold",
+        backgroundColor: "#0f172a",
+        padding: { x: 12, y: 4 },
+      })
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .setDepth(10)
+      .setInteractive({ useHandCursor: true });
+
+    const arrows = this.add
+      .text(width / 2 + 90, selectorY, "◀ ▶", {
+        fontSize: "12px",
+        color: "#475569",
+        fontFamily: "Arial",
+      })
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .setDepth(10);
+
+    const cycleLayout = (dir: number) => {
+      const opts = MainMenu.LAYOUT_OPTIONS;
+      const cur = opts.indexOf(this.selectedLayout);
+      const next = (cur + dir + opts.length) % opts.length;
+      this.selectedLayout = opts[next];
+      selectorValue.setText(this.selectedLayout.toUpperCase());
+      audio.sfx.menuHover();
+    };
+
+    selectorValue.on("pointerdown", () => cycleLayout(1));
+    selectorValue.on("pointerover", () =>
+      selectorValue.setStyle({ color: "#fbbf24" }),
+    );
+    selectorValue.on("pointerout", () =>
+      selectorValue.setStyle({ color: "#38bdf8" }),
+    );
+
     // "Press any key" hint — blinks
-    const anyKeyY = btnY + 128;
+    const anyKeyY = btnY + 140;
     const anyKey = this.add
       .text(width / 2, anyKeyY, "PRESS  ANY  KEY  TO  START", {
         fontSize: "13px",
@@ -1033,6 +1117,14 @@ export class MainMenu extends Scene {
       delay: 1350,
     });
 
+    // 4c. Level selector fades in
+    this.tweens.add({
+      targets: [selectorLabel, selectorValue, arrows],
+      alpha: 1,
+      duration: 400,
+      delay: 1400,
+    });
+
     // 5. Hint + desc fade in, then hint blinks
     this.tweens.add({
       targets: [anyKey, desc],
@@ -1051,10 +1143,21 @@ export class MainMenu extends Scene {
       },
     });
 
-    // Any key → start
-    this.input.keyboard?.on("keydown", () => {
-      if (startButton.active) this._startGame(audio);
-    });
+    // Any key → start (except left/right which cycle the layout selector)
+    this.input.keyboard?.on(
+      "keydown",
+      (e: { key: string; keyCode: number }) => {
+        if (e.key === "ArrowLeft") {
+          cycleLayout(-1);
+          return;
+        }
+        if (e.key === "ArrowRight") {
+          cycleLayout(1);
+          return;
+        }
+        if (startButton.active) this._startGame(audio);
+      },
+    );
   }
 
   // ── Start game ────────────────────────────────────────────────────────────
@@ -1063,6 +1166,8 @@ export class MainMenu extends Scene {
     audio: AudioManager,
     options: { autoplay?: boolean; debug?: boolean; headless?: boolean } = {},
   ) {
+    const layoutOverride =
+      this.selectedLayout === "random" ? undefined : this.selectedLayout;
     const seed = Math.random().toString(36).slice(2, 10);
     this.registry.set("runSeed", seed);
     this.registry.set("runFloor", 1);
@@ -1076,6 +1181,11 @@ export class MainMenu extends Scene {
     this.registry.set("autoplayEnabled", Boolean(options.autoplay));
     this.registry.set("autoplayDebug", Boolean(options.debug));
     this.registry.set("autoplayHeadless", Boolean(options.headless));
+    if (layoutOverride) {
+      this.registry.set("layoutOverride", layoutOverride);
+    } else {
+      this.registry.remove("layoutOverride");
+    }
     audio.sfx.menuSelect();
     this.scene.start("RogueRun", {
       seed,
@@ -1083,6 +1193,7 @@ export class MainMenu extends Scene {
       autoplay: Boolean(options.autoplay),
       debug: Boolean(options.debug),
       headless: Boolean(options.headless),
+      layoutOverride,
     });
     this.scene.launch("UIScene");
     this.scene.bringToTop("UIScene");

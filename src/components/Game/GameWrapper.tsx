@@ -12,6 +12,7 @@ export default function GameWrapper() {
     let disposed = false;
     let stop: (() => void) | null = null;
 
+    const layoutParam = searchParams.get("layout") ?? undefined;
     const bootOptions = {
       autoplay:
         searchParams.get("autoplay") === "1" ||
@@ -19,6 +20,7 @@ export default function GameWrapper() {
         searchParams.get("headless") === "1",
       headless: searchParams.get("headless") === "1",
       debug: searchParams.get("debug") === "1",
+      ...(layoutParam ? { layoutOverride: layoutParam } : {}),
     };
 
     async function boot() {

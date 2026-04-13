@@ -28,6 +28,7 @@ type RogueRunInit = {
   autoplay?: boolean;
   debug?: boolean;
   headless?: boolean;
+  layoutOverride?: LayoutType;
 };
 
 export class RogueRun extends Scene {
@@ -48,6 +49,7 @@ export class RogueRun extends Scene {
   private seed = "run";
   private floor = 1;
   private layout: LayoutType = "standard";
+  private layoutOverride: LayoutType | undefined = undefined;
   private isBossFloor = false;
   private floorStartMs = 0;
   private tookDamageThisFloor = false;
@@ -101,11 +103,23 @@ export class RogueRun extends Scene {
       data?.headless ??
       Boolean(this.registry.get("autoplayHeadless") ?? bootOptions.headless);
 
+    // Layout override: explicit selection from UI or ?layout= query string.
+    this.layoutOverride =
+      (data?.layoutOverride as LayoutType | undefined) ??
+      (this.registry.get("layoutOverride") as LayoutType | undefined) ??
+      (bootOptions.layoutOverride as LayoutType | undefined) ??
+      undefined;
+
     this.registry.set("runSeed", this.seed);
     this.registry.set("runFloor", this.floor);
     this.registry.set("autoplayEnabled", this.autoplayEnabled);
     this.registry.set("autoplayDebug", this.autoplayDebug);
     this.registry.set("autoplayHeadless", this.autoplayHeadless);
+    if (this.layoutOverride) {
+      this.registry.set("layoutOverride", this.layoutOverride);
+    } else {
+      this.registry.remove("layoutOverride");
+    }
 
     // Groups
     this.enemies = this.physics.add.group();
@@ -131,7 +145,11 @@ export class RogueRun extends Scene {
 
     // Procedural level (generated first so layout drives parallax choice)
     const tileset = TILESETS.industrial;
-    const level = generateLevel({ seed: this.seed, floor: this.floor });
+    const level = generateLevel({
+      seed: this.seed,
+      floor: this.floor,
+      layoutOverride: this.layoutOverride,
+    });
     this.layout = level.layout;
     this.isBossFloor = level.isBossFloor;
     this.worldWidthPx = level.widthTiles * level.tileSize;
@@ -670,6 +688,7 @@ export class RogueRun extends Scene {
           autoplay: this.autoplayEnabled,
           debug: this.autoplayDebug,
           headless: this.autoplayHeadless,
+          layoutOverride: this.layoutOverride,
         } satisfies RogueRunInit);
       },
       onGameOver: () => {
@@ -753,6 +772,7 @@ export class RogueRun extends Scene {
       autoplay: this.autoplayEnabled,
       debug: this.autoplayDebug,
       headless: this.autoplayHeadless,
+      layoutOverride: this.layoutOverride,
     } satisfies RogueRunInit);
   }
 }

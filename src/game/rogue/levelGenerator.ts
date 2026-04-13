@@ -14,6 +14,7 @@ export type GenerateLevelOptions = {
   widthTiles?: number;
   heightTiles?: number;
   tileSize?: number;
+  layoutOverride?: LayoutType;
 };
 
 const EMPTY_TILE = TILE.EMPTY;
@@ -270,10 +271,12 @@ function ensureReachability(
 
 export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
   const tileSize = options.tileSize ?? 32;
-  const layout = pickLayout(
-    new Rng(`${options.seed}::floor:${options.floor}`),
-    options.floor,
-  );
+  const layout =
+    options.layoutOverride ??
+    pickLayout(
+      new Rng(`${options.seed}::floor:${options.floor}`),
+      options.floor,
+    );
   const dims = layoutDimensions(layout, options.floor);
   const widthTiles = options.widthTiles ?? dims.w;
   const heightTiles = options.heightTiles ?? dims.h;
@@ -863,6 +866,15 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
   // Ensure start platform is safe
   for (let tx = 0; tx < Math.min(6, widthTiles - 1); tx++) {
     setGroundColumn(data, tx, groundY);
+  }
+  // Clear spawn area above ground so the player doesn't spawn inside a wall
+  // (cityblock / alleyrun place WALL tiles that overlap the spawn column).
+  for (let tx = 0; tx < Math.min(6, widthTiles - 1); tx++) {
+    for (let ty = Math.max(0, groundY - 3); ty < groundY; ty++) {
+      if (data[ty][tx] !== EMPTY_TILE) {
+        data[ty][tx] = EMPTY_TILE;
+      }
+    }
   }
 
   // Ensure end platform is safe (horizontal layouts)
