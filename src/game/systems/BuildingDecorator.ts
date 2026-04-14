@@ -240,6 +240,20 @@ export class BuildingDecorator {
             );
             img.setDepth(-4).setAlpha(lit ? 0.75 : 0.5);
             this.group.add(img);
+
+            if (lit && this.rng.chance(0.5)) {
+              // Add a subtle warm glow pointlight to lit windows
+              const windowLight = this.scene.add.pointlight(
+                px + tx * ts + ts / 2,
+                py + ty * ts + ts / 2,
+                0xffaa44,
+                ts * 1.5,
+                0.2, // intensity
+                0.05, // attenuation
+              );
+              windowLight.setDepth(-3);
+              this.group.add(windowLight);
+            }
           }
         }
       }
