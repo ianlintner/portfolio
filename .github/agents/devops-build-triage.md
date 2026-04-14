@@ -35,13 +35,13 @@ deduplication; do not remove it.
 
 ## Failure categories — hints
 
-| Category       | Common causes                           | Where to look                         |
-| -------------- | --------------------------------------- | ------------------------------------- |
-| `lint`         | ESLint rule violation                   | The file mentioned in the log         |
-| `type_error`   | TypeScript type mismatch                | The file + its imports                |
-| `test_failure` | assertion error or unexpected exception | The test file + source it tests       |
-| `import_error` | missing module or circular import       | `package.json`, index files           |
-| `unknown`      | check the raw log excerpt               | Search broadly                        |
+| Category       | Common causes                           | Where to look                   |
+| -------------- | --------------------------------------- | ------------------------------- |
+| `lint`         | ESLint rule violation                   | The file mentioned in the log   |
+| `type_error`   | TypeScript type mismatch                | The file + its imports          |
+| `test_failure` | assertion error or unexpected exception | The test file + source it tests |
+| `import_error` | missing module or circular import       | `package.json`, index files     |
+| `unknown`      | check the raw log excerpt               | Search broadly                  |
 
 ## Constraints
 

@@ -83,9 +83,9 @@ The failure couldn't be automatically classified.
 
 ## Useful files
 
-| File                                  | Purpose                                  |
-| ------------------------------------- | ---------------------------------------- |
-| `.github/maintainer/config.yml`       | Live caretaker config for this repo      |
-| `.github/workflows/maintainer.yml`    | Caretaker orchestrator workflow          |
-| `.github/agents/maintainer-pr.md`     | PR agent instructions                    |
-| `.github/agents/maintainer-issue.md`  | Issue agent instructions                 |
+| File                                 | Purpose                             |
+| ------------------------------------ | ----------------------------------- |
+| `.github/maintainer/config.yml`      | Live caretaker config for this repo |
+| `.github/workflows/maintainer.yml`   | Caretaker orchestrator workflow     |
+| `.github/agents/maintainer-pr.md`    | PR agent instructions               |
+| `.github/agents/maintainer-issue.md` | Issue agent instructions            |
