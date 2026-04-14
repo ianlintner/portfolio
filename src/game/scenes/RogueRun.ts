@@ -286,6 +286,25 @@ export class RogueRun extends Scene {
       this,
     );
 
+    // Weather Effects (Particle Rain on some floors)
+    const rng = new Rng(`${this.seed}::weather::${this.floor}`);
+    if (rng.chance(0.3)) {
+      // 30% chance for rain
+      const rainEmitter = this.add.particles(0, 0, "smoke", {
+        x: { min: 0, max: this.worldWidthPx },
+        y: 0,
+        lifespan: 1500,
+        speedY: { min: 300, max: 500 },
+        speedX: { min: -50, max: 50 },
+        scale: { start: 0.1, end: 0.3 },
+        quantity: 3,
+        blendMode: "SCREEN",
+        alpha: { start: 0.2, end: 0 },
+        tint: 0x4a6ebf, // blue tint
+      });
+      rainEmitter.setDepth(-10); // in front of buildings, behind tiles
+    }
+
     this.deathSequence = new DeathSequence(this);
 
     // Goal
