@@ -147,7 +147,7 @@ describe("generateLevel", () => {
     expect(foundParkour).toBe(true);
   });
 
-  it("cityblock layout generates buildings with walls and rooftop platforms", () => {
+  it("cityblock layout generates buildings with platforms and one-way floors", () => {
     let found = false;
     for (let i = 0; i < 300 && !found; i++) {
       const lvl = generateLevel({ seed: `city-${i}`, floor: 4 });
@@ -155,9 +155,9 @@ describe("generateLevel", () => {
         found = true;
         // Should have building footprints
         expect(lvl.buildings.length).toBeGreaterThanOrEqual(1);
-        // Tile data must have WALL and PLATFORM tiles
+        // Tile data must have ONE_WAY and PLATFORM tiles (no WALL outlines)
         const flat = lvl.data.flat();
-        expect(flat.includes(TILE.WALL)).toBe(true);
+        expect(flat.includes(TILE.ONE_WAY)).toBe(true);
         expect(flat.includes(TILE.PLATFORM)).toBe(true);
         // All building footprints within tile bounds
         for (const b of lvl.buildings) {

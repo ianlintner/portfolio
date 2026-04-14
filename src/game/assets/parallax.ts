@@ -86,6 +86,12 @@ export function createParallaxBackground(
     return rankBgToFg / Math.max(1, set.layerCount - 1);
   };
 
+  const createdLayers: (
+    | Phaser.GameObjects.TileSprite
+    | Phaser.GameObjects.Image
+    | Phaser.GameObjects.Rectangle
+  )[] = [];
+
   for (
     let layerIndex1Based = 1;
     layerIndex1Based <= set.layerCount;
@@ -165,7 +171,10 @@ export function createParallaxBackground(
     obj.setY(y);
 
     layers.push(obj);
+    createdLayers.push(
+      obj as Phaser.GameObjects.Image | Phaser.GameObjects.TileSprite,
+    );
   }
 
-  return layers;
+  return createdLayers;
 }

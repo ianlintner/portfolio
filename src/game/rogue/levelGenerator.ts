@@ -536,52 +536,46 @@ export function generateLevel(options: GenerateLevelOptions): GeneratedLevel {
       cityBuildings.push({ x: cursor, w: bw, h: bh, roofY });
       buildings.push({ x: cursor, y: roofY, w: bw, h: bh });
 
-      // WALL on left edge
-      for (let ty = roofY; ty <= groundY; ty++) {
-        data[ty][cursor] = WALL_TILE;
-      }
-      // WALL on right edge
-      for (let ty = roofY; ty <= groundY; ty++) {
-        data[ty][cursor + bw - 1] = WALL_TILE;
-      }
-      // PLATFORM rooftop
+      // PLATFORM rooftop (solid — player lands here)
       for (let tx = cursor; tx < cursor + bw; tx++) {
         data[roofY][tx] = PLATFORM_TILE;
       }
-      // Interior floors every 5-7 tiles with ONE_WAY (like floors inside building)
-      const floorSpacing = rng.int(5, 7);
+
+      // Interior ONE_WAY floors with alternating gaps for consistent
+      // vertical traversal — no WALL outlines, just open platforms.
+      const floorSpacing = rng.int(4, 6);
+      let gapOnLeft = rng.chance(0.5);
       for (
         let fy = groundY - floorSpacing;
         fy > roofY + 2;
         fy -= floorSpacing
       ) {
-        for (let tx = cursor + 1; tx < cursor + bw - 1; tx++) {
-          // Leave a 2-tile gap for traversal
-          const gapX = cursor + rng.int(2, bw - 4);
-          if (tx >= gapX && tx <= gapX + 1) continue;
+        const gapSize = 3;
+        const gapStart = gapOnLeft ? cursor + 1 : cursor + bw - 1 - gapSize;
+        for (let tx = cursor; tx < cursor + bw; tx++) {
+          if (tx >= gapStart && tx < gapStart + gapSize) continue;
           data[fy][tx] = ONE_WAY_TILE;
         }
+        gapOnLeft = !gapOnLeft;
       }
 
-      // Fire escape (ONE_WAY platforms) on exterior every 4-6 tiles
-      const escapeSpacing = rng.int(4, 6);
-      const escapeOnLeft = rng.chance(0.5);
-      const escapeX = escapeOnLeft ? cursor - 1 : cursor + bw;
-      if (escapeX > 0 && escapeX < widthTiles - 1) {
-        for (
-          let fy = groundY - escapeSpacing;
-          fy > roofY;
-          fy -= escapeSpacing
-        ) {
-          // 2-tile wide fire escape ledge
-          const feStart = escapeOnLeft ? Math.max(1, escapeX - 1) : escapeX;
-          const feEnd = escapeOnLeft
-            ? escapeX + 1
-            : Math.min(widthTiles - 1, escapeX + 2);
-          for (let tx = feStart; tx < feEnd; tx++) {
-            if (data[fy][tx] === EMPTY_TILE) {
-              data[fy][tx] = ONE_WAY_TILE;
-            }
+      // Fire escape ledges on both sides for exterior vertical traversal
+      const escapeSpacing = rng.int(4, 5);
+      for (let fy = groundY - escapeSpacing; fy > roofY; fy -= escapeSpacing) {
+        // Left side ledge
+        const leftX = cursor - 1;
+        if (leftX >= 0 && data[fy][leftX] === EMPTY_TILE) {
+          data[fy][leftX] = ONE_WAY_TILE;
+          if (leftX - 1 >= 0 && data[fy][leftX - 1] === EMPTY_TILE) {
+            data[fy][leftX - 1] = ONE_WAY_TILE;
+          }
+        }
+        // Right side ledge
+        const rightX = cursor + bw;
+        if (rightX < widthTiles && data[fy][rightX] === EMPTY_TILE) {
+          data[fy][rightX] = ONE_WAY_TILE;
+          if (rightX + 1 < widthTiles && data[fy][rightX + 1] === EMPTY_TILE) {
+            data[fy][rightX + 1] = ONE_WAY_TILE;
           }
         }
       }

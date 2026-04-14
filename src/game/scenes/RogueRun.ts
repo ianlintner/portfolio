@@ -191,20 +191,32 @@ export class RogueRun extends Scene {
       ] as const;
       for (const l of cityParallaxLayers) {
         this.add
-          .tileSprite(0, this.worldHeightPx, 99999, 600, l.key)
+          .tileSprite(0, this.worldHeightPx, 99999, 900, l.key)
           .setOrigin(0, 1)
-          .setScrollFactor(l.scrollX, 0)
+          .setScrollFactor(l.scrollX, l.scrollX * 0.5)
           .setDepth(l.depth);
       }
     } else {
       // Industrial parallax for non-city layouts
-      createParallaxBackground(this, {
+      const parallaxLayers = createParallaxBackground(this, {
         set: PARALLAX_SETS.industrial1,
         worldWidth: 99999,
         worldHeight: 600,
         repeatX: true,
         depthStart: -100,
       });
+      // Apply slight vertical parallax scrolling to industrial layers
+      if (parallaxLayers) {
+        parallaxLayers.forEach((layer) => {
+          if (
+            layer instanceof Phaser.GameObjects.TileSprite ||
+            layer instanceof Phaser.GameObjects.Image
+          ) {
+            const sx = layer.scrollFactorX;
+            layer.setScrollFactor(sx, sx * 0.5);
+          }
+        });
+      }
     }
     this.floorStartMs = this.time.now;
     this.tookDamageThisFloor = false;
@@ -244,7 +256,13 @@ export class RogueRun extends Scene {
         this,
         `${this.seed}::deco::${this.floor}`,
       );
-      decorator.decorate(level.buildings, level.layout, level.tileSize);
+      decorator.decorate(
+        level.buildings,
+        level.layout,
+        level.tileSize,
+        level.widthTiles,
+        level.heightTiles,
+      );
     }
 
     // Player

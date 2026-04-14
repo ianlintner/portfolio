@@ -38,6 +38,8 @@ export class BuildingDecorator {
     buildings: BuildingFootprint[],
     layout: LayoutType,
     tileSize: number,
+    levelWidthTiles?: number,
+    levelHeightTiles?: number,
   ) {
     const ts = tileSize || TILE_SIZE;
 
@@ -47,7 +49,13 @@ export class BuildingDecorator {
 
     // Add street-level decorations for cityblock and alleyrun
     if (layout === "cityblock" || layout === "alleyrun") {
-      this.addStreetDecorations(buildings, ts);
+      this.addStreetDecorations(buildings, ts, layout);
+    }
+
+    // Alleyrun canyon-wall dressing (windows, pipes, fire escapes)
+    if (layout === "alleyrun" && levelWidthTiles && levelHeightTiles) {
+      const groundY = levelHeightTiles - 4;
+      this.addAlleyWallDecorations(levelWidthTiles, groundY, ts);
     }
 
     // Set all decorations behind the tilemap
@@ -72,8 +80,17 @@ export class BuildingDecorator {
 
     const sourceW = Math.max(1, sourceImage.width || footprintWidthPx);
     const sourceH = Math.max(1, sourceImage.height || footprintHeightPx);
-    const scaleX = footprintWidthPx / sourceW;
-    const scaleY = footprintHeightPx / sourceH;
+    let scaleX = footprintWidthPx / sourceW;
+    let scaleY = footprintHeightPx / sourceH;
+
+    // Cap aspect-ratio distortion so baked-in signs don't get extremely stretched
+    const distortion = scaleX / scaleY;
+    if (distortion > 1.5) {
+      scaleX = scaleY * 1.5;
+    } else if (distortion < 0.667) {
+      scaleY = scaleX * 1.5;
+    }
+
     const isCityLayout =
       layout === "cityblock" || layout === "alleyrun" || layout === "rooftops";
     const tint = this.rng.pick([...SKYLINE_TINTS]);
@@ -94,18 +111,21 @@ export class BuildingDecorator {
     // For non-city layouts, keep visuals close to intro style: silhouette-only.
     if (!isCityLayout) return;
 
-    // Fire escape on one side for traversal readability.
-    if (b.h > 8 && this.rng.chance(0.6)) {
-      const onRight = this.rng.chance(0.5);
-      const feX = onRight ? px + (b.w - 1) * ts : px;
-      for (let ty = 3; ty < b.h - 2; ty += 4) {
-        const img = this.scene.add.image(
-          feX + ts / 2,
-          py + ty * ts + ts / 2,
-          GENERATED_TEXTURES.tileFireEscape,
-        );
-        img.setDepth(-4);
-        this.group.add(img);
+    // Fire escape visuals on both sides for traversal readability.
+    if (b.h > 8) {
+      const sides = [px, px + (b.w - 1) * ts];
+      for (const feX of sides) {
+        if (this.rng.chance(0.55)) {
+          for (let ty = 3; ty < b.h - 2; ty += 4) {
+            const img = this.scene.add.image(
+              feX + ts / 2,
+              py + ty * ts + ts / 2,
+              GENERATED_TEXTURES.tileFireEscape,
+            );
+            img.setDepth(-4);
+            this.group.add(img);
+          }
+        }
       }
     }
 
@@ -163,6 +183,18 @@ export class BuildingDecorator {
         GENERATED_TEXTURES.tileNeonSign,
       );
       img.setDepth(-3);
+
+      // Random flicker to bring life to the city
+      this.scene.tweens.add({
+        targets: img,
+        alpha: { from: 1, to: 0.5 },
+        duration: this.rng.int(50, 150),
+        yoyo: true,
+        repeat: -1,
+        repeatDelay: this.rng.int(500, 3000),
+        ease: "Stepped",
+      });
+
       this.group.add(img);
     }
 
@@ -191,29 +223,57 @@ export class BuildingDecorator {
         this.group.add(img);
       }
     }
+
+    // Lit / dark windows scattered on the building facade
+    if (b.h > 4 && b.w > 2) {
+      const windowChance = layout === "alleyrun" ? 0.3 : 0.18;
+      for (let ty = 2; ty < b.h - 2; ty += 2) {
+        for (let tx = 1; tx < b.w - 1; tx += 2) {
+          if (this.rng.chance(windowChance)) {
+            const lit = this.rng.chance(0.6);
+            const img = this.scene.add.image(
+              px + tx * ts + ts / 2,
+              py + ty * ts + ts / 2,
+              lit
+                ? GENERATED_TEXTURES.tileWindowLit
+                : GENERATED_TEXTURES.tileWindowDark,
+            );
+            img.setDepth(-4).setAlpha(lit ? 0.75 : 0.5);
+            this.group.add(img);
+          }
+        }
+      }
+    }
   }
 
   private pickSkylineTexture(b: BuildingFootprint) {
-    // Bias tall footprints to taller intro textures.
-    if (b.h >= 12) {
+    // Use the footprint's aspect ratio to pick a texture whose proportions
+    // are close, preventing extreme stretching of baked-in signs and windows.
+    const ratio = b.w / b.h;
+
+    if (ratio < 0.55) {
+      // Very tall / narrow
       return this.rng.pick([
         GENERATED_TEXTURES.buildingApartmentSpire,
         GENERATED_TEXTURES.buildingTenementTall,
         GENERATED_TEXTURES.buildingHousingBlock,
         GENERATED_TEXTURES.buildingTower,
+        GENERATED_TEXTURES.buildingTall,
       ]);
     }
 
-    if (b.h >= 9) {
+    if (ratio < 0.85) {
+      // Tall
       return this.rng.pick([
         GENERATED_TEXTURES.buildingTall,
         GENERATED_TEXTURES.buildingTower,
         GENERATED_TEXTURES.buildingTenementTall,
-        GENERATED_TEXTURES.buildingHousingBlock,
+        GENERATED_TEXTURES.buildingMedium,
       ]);
     }
 
-    if (b.w >= 8) {
+    if (ratio < 1.2) {
+      // Roughly square
       return this.rng.pick([
         GENERATED_TEXTURES.buildingMedium,
         GENERATED_TEXTURES.buildingShort,
@@ -221,10 +281,19 @@ export class BuildingDecorator {
       ]);
     }
 
-    return this.rng.pick([...SKYLINE_TEXTURES]);
+    // Wide
+    return this.rng.pick([
+      GENERATED_TEXTURES.buildingShort,
+      GENERATED_TEXTURES.buildingPlant,
+      GENERATED_TEXTURES.buildingMedium,
+    ]);
   }
 
-  private addStreetDecorations(buildings: BuildingFootprint[], ts: number) {
+  private addStreetDecorations(
+    buildings: BuildingFootprint[],
+    ts: number,
+    layout: LayoutType,
+  ) {
     // Add dumpsters and other street-level items between buildings
     for (let i = 0; i < buildings.length - 1; i++) {
       const a = buildings[i];
@@ -245,6 +314,111 @@ export class BuildingDecorator {
           GENERATED_TEXTURES.decoDumpster,
         );
         img.setDepth(-3);
+        this.group.add(img);
+      }
+    }
+
+    // Street lamps between buildings for city layouts
+    if (layout === "alleyrun" || layout === "cityblock") {
+      for (const b of buildings) {
+        const groundPx = (b.y + b.h + 1) * ts;
+        if (this.rng.chance(0.4)) {
+          const lampX = (b.x + b.w) * ts + ts;
+          const img = this.scene.add.image(
+            lampX,
+            groundPx - 24,
+            GENERATED_TEXTURES.streetLamp,
+          );
+          img.setDepth(-3).setAlpha(0.85);
+
+          // Subtle glow oscillation for lamp
+          this.scene.tweens.add({
+            targets: img,
+            alpha: { from: 0.85, to: 0.65 },
+            duration: this.rng.int(1000, 2000),
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.easeInOut",
+          });
+
+          this.group.add(img);
+        }
+      }
+    }
+  }
+
+  /**
+   * Dress the canyon walls in alleyrun with windows, pipes, and fire escapes
+   * so the tall flat walls don't look bare.
+   */
+  private addAlleyWallDecorations(
+    widthTiles: number,
+    groundY: number,
+    ts: number,
+  ) {
+    const canyonTop = 3;
+
+    // Left wall inner face (column 2) and right wall inner face
+    const faces = [
+      { tx: 2, dir: 1 },
+      { tx: widthTiles - 3, dir: -1 },
+    ];
+
+    for (const face of faces) {
+      // Scattered lit / dark windows
+      for (let ty = canyonTop + 1; ty < groundY - 1; ty += 2) {
+        if (this.rng.chance(0.28)) {
+          const lit = this.rng.chance(0.55);
+          const img = this.scene.add.image(
+            face.tx * ts + ts / 2,
+            ty * ts + ts / 2,
+            lit
+              ? GENERATED_TEXTURES.tileWindowLit
+              : GENERATED_TEXTURES.tileWindowDark,
+          );
+          img.setDepth(-4).setAlpha(lit ? 0.7 : 0.45);
+          this.group.add(img);
+        }
+      }
+
+      // Vertical pipe run
+      if (this.rng.chance(0.65)) {
+        const pipeTx = face.tx;
+        const pipeStartTy = canyonTop + this.rng.int(1, 4);
+        for (let ty = pipeStartTy; ty < groundY - 1; ty += 2) {
+          const img = this.scene.add.image(
+            pipeTx * ts + ts * 0.2 * face.dir + ts / 2,
+            ty * ts + ts / 2,
+            GENERATED_TEXTURES.tilePipe,
+          );
+          img.setDepth(-4).setAlpha(0.6);
+          this.group.add(img);
+        }
+      }
+
+      // Fire escape segments
+      if (this.rng.chance(0.55)) {
+        const feStartTy = canyonTop + this.rng.int(2, 6);
+        for (let ty = feStartTy; ty < groundY - 2; ty += 4) {
+          const img = this.scene.add.image(
+            face.tx * ts + ts / 2,
+            ty * ts + ts / 2,
+            GENERATED_TEXTURES.tileFireEscape,
+          );
+          img.setDepth(-4).setAlpha(0.65);
+          this.group.add(img);
+        }
+      }
+
+      // Awning near ground
+      if (this.rng.chance(0.35)) {
+        const awningTy = groundY - this.rng.int(2, 4);
+        const img = this.scene.add.image(
+          face.tx * ts + ts / 2,
+          awningTy * ts + ts / 2,
+          GENERATED_TEXTURES.tileAwning,
+        );
+        img.setDepth(-3).setAlpha(0.7);
         this.group.add(img);
       }
     }
