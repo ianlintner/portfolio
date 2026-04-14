@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import type { LayoutType } from "@/game/rogue/types";
 
 export default function GameWrapper() {
   const gameRef = useRef<HTMLDivElement>(null);
@@ -20,7 +21,7 @@ export default function GameWrapper() {
         searchParams.get("headless") === "1",
       headless: searchParams.get("headless") === "1",
       debug: searchParams.get("debug") === "1",
-      ...(layoutParam ? { layoutOverride: layoutParam } : {}),
+      ...(layoutParam ? { layoutOverride: layoutParam as LayoutType } : {}),
     };
 
     async function boot() {

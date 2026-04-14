@@ -308,3 +308,42 @@ Use GitHub Flavored Markdown tables — enabled via `remarkGfm` in the rendering
 ```
 
 Common uses: comparison matrices, decision frameworks, complexity tables, feature checklists. Tables are automatically styled by Tailwind Typography prose classes.
+
+<!-- Added by caretaker -->
+
+## Caretaker System
+
+This repository uses the [caretaker](https://github.com/ianlintner/caretaker) system for automated maintenance.
+
+### How it works
+
+- An orchestrator runs weekly via GitHub Actions (`.github/workflows/maintainer.yml`)
+- It creates issues and assigns them to @copilot for execution
+- When @copilot opens PRs, the orchestrator monitors them through CI, review, and merge
+- The orchestrator communicates with @copilot via structured issue/PR comments
+
+### When assigned an issue by caretaker
+
+- Read the full issue body carefully — it contains structured instructions
+- Follow the instructions exactly as written
+- If unclear, comment on the issue asking for clarification
+- Always ensure CI passes before considering work complete
+- Reference the agent file for your role: `.github/agents/maintainer-pr.md` or `maintainer-issue.md`
+
+### Pre-push checklist
+
+Before pushing any commits, **always** run the full CI validation locally and confirm every step passes:
+
+1. `pnpm lint` — ESLint
+2. `pnpm format` — Prettier check
+3. `pnpm run test:ci` — Jest tests
+4. `pnpm next build` — Next.js production build
+
+If any step fails, fix it before committing/pushing. Do not push code that has not passed all checks.
+
+### Conventions
+
+- Branch naming: `maintainer/{type}-{description}`
+- Commit messages: `chore(maintainer): {description}`
+- Always run existing tests before pushing
+- Do not modify `.github/maintainer/` files unless explicitly instructed
