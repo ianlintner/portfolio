@@ -42,7 +42,7 @@ jobs:
 
       - name: Install caretaker
         run: |
-          pip install "caretaker @ git+https://github.com/ianlintner/caretaker.git@main"
+          pip install "caretaker @ git+https://github.com/ianlintner/caretaker.git@v0.2.0"
 
       - name: Run
         env:
@@ -73,7 +73,7 @@ jobs:
 
       - name: Install caretaker
         run: |
-          pip install "caretaker @ git+https://github.com/ianlintner/caretaker.git@main"
+          pip install "caretaker @ git+https://github.com/ianlintner/caretaker.git@v0.2.0"
 
       - name: Self-heal — analyse own failure
         env:

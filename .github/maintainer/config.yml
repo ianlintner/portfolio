@@ -27,7 +27,7 @@ pr_agent:
 
 issue_agent:
   enabled: true
-  auto_assign_bugs: true
+  auto_assign_bugs: false
   auto_assign_features: false
   auto_close_stale_days: 30
   auto_close_questions: true
@@ -41,7 +41,7 @@ upgrade_agent:
   strategy: auto-minor
 
 devops_agent:
-  enabled: true
+  enabled: false
   target_branch: main
   max_issues_per_run: 3
   dedup_open_issues: true
