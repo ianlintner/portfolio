@@ -1,4 +1,4 @@
-import { Scene } from "phaser";
+import { GameObjects, Scene } from "phaser";
 import type * as Phaser from "phaser";
 
 import { PARALLAX_SETS, TILESETS } from "../assets/manifest";
@@ -210,8 +210,8 @@ export class RogueRun extends Scene {
       if (parallaxLayers) {
         parallaxLayers.forEach((layer) => {
           if (
-            layer instanceof Phaser.GameObjects.TileSprite ||
-            layer instanceof Phaser.GameObjects.Image
+            layer instanceof GameObjects.TileSprite ||
+            layer instanceof GameObjects.Image
           ) {
             const sx = layer.scrollFactorX;
             layer.setScrollFactor(sx, sx * 0.5);
