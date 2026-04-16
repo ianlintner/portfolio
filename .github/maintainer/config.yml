@@ -49,7 +49,6 @@ devops_agent:
 self_heal_agent:
   enabled: true
   report_upstream: true
-  is_upstream_repo: false
 
 security_agent:
   enabled: true
@@ -72,6 +71,18 @@ docs_agent:
   lookback_days: 7
   changelog_path: CHANGELOG.md
   update_readme: false
+
+charlie_agent:
+  enabled: true
+  stale_days: 14
+  close_duplicate_issues: true
+  close_duplicate_prs: true
+  close_stale_issues: true
+  close_stale_prs: true
+  exempt_labels:
+    - pinned
+    - maintainer:escalated
+    - maintainer:escalation-digest
 
 stale_agent:
   enabled: true
