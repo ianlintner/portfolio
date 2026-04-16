@@ -21,6 +21,7 @@ import { BuildingDecorator } from "../systems/BuildingDecorator";
 import type { LayoutType } from "../rogue/types";
 import { AutoplayController } from "../ai/AutoplayController";
 import { getBootOptions } from "../bootOptions";
+import { Rng } from "../rogue/rng";
 
 type RogueRunInit = {
   seed?: string;
