@@ -25,27 +25,25 @@ on:
         default: "full"
         type: choice
         options:
-          [
-            full,
-            pr-only,
-            issue-only,
-            upgrade-only,
-            devops,
-            self-heal,
-            security,
-            deps,
-            docs,
-            stale,
-            escalation,
-            dry-run,
-          ]
+          - full
+          - pr-only
+          - issue-only
+          - upgrade-only
+          - devops
+          - self-heal
+          - security
+          - deps
+          - docs
+          - stale
+          - escalation
+          - dry-run
 
 # Prevent duplicate runs for the same PR / branch.  Concurrent check_suite,
 # pull_request, and workflow_run events for the same head can fire within
 # seconds of each other; without this guard every run posts its own @copilot
 # comment.
 concurrency:
-  group: caretaker-${{ github.event.pull_request.number || github.event.check_suite.head_branch || github.event.workflow_run.head_branch || github.ref }}
+  group: caretaker-${{ github.event.pull_request.number || github.event.issue.number || github.event.check_suite.head_branch || github.event.workflow_run.head_branch || github.ref }}
   cancel-in-progress: true
 
 permissions:
