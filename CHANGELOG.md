@@ -5,4 +5,3 @@
 - Pin caretaker to v0.2.0 and harden maintainer config against Copilot assignment failures (#124)
 - Upgrade caretaker to v0.2.1 and sync maintainer workflow with upstream v0.2.1 template (#134)
 - Upgrade caretaker to v0.5.2 and sync maintainer workflow with upstream v0.5.2 template
-
