@@ -1,3 +1,10 @@
+## [2026-W17] — 2026-04-20
+
+- docs: reconcile CHANGELOG for 2026-W16 (#140)
+- Upgrade caretaker version pin to v0.7.2 (#152)
+- Fix caretaker workflow: rename `upgrade-only` mode to `upgrade`, switch install package to `caretaker-github`, and bump to v0.10.0 (#156)
+- blog: Rust OAuth2 Server four-month progress update — v0.0.3 → v0.5.2 (#159)
+
 ## [2026-W16] — 2026-04-16
 
 - Game: add city parallax backgrounds, AI altitude/zone awareness tracking, and city layout tests (#114)
