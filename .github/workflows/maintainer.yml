@@ -28,7 +28,7 @@ on:
           - full
           - pr-only
           - issue-only
-          - upgrade-only
+          - upgrade
           - devops
           - self-heal
           - security
