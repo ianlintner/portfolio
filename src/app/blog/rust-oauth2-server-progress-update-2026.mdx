@@ -21,7 +21,7 @@ image: /images/rust-oauth2-actor-model-social.png
 imageAlt: Abstract representation of an OAuth2 server built in Rust with actors and message passing
 ---
 
-It has been a busy four months for the [Rust OAuth2 Server](https://github.com/ianlintner/rust-oauth2-server). When I last wrote about the project at the end of December 2025 ([Actor-Model Concurrency for Secure OAuth2](/blog/rust-oauth2-server-actor-model-security)), it was a single-crate Actix app with the core grants, introspection, revocation, discovery, and a minimally usable admin surface. Sixteen releases and ~180 PRs later, it looks very different.
+It has been a busy four months for the [Rust OAuth2 Server](https://github.com/ianlintner/rust-oauth2-server). When I last wrote about the project at the end of December 2025 ([Actor-Model Concurrency for Secure OAuth2](/blog/rust-oauth2-server-actor-model-security)), it was a single-crate Actix app with the core grants, introspection, revocation, discovery, and a minimally usable admin surface. Sixteen releases and over 150 PRs later, it looks very different.
 
 This post is a progress update: what shipped, why it matters, and what the control plane looks like now.
 
@@ -31,22 +31,22 @@ This post is a progress update: what shipped, why it matters, and what the contr
 
 ## TL;DR
 
-| Area                 | Then (2025-12-30)                                   | Now (2026-04-20, `main`)                                                                              |
-| -------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| **Shape**            | Single crate                                        | Cargo workspace — 12 crates (`oauth2-core`, `oauth2-actix`, `oauth2-storage-*`, `oauth2-ratelimit`, `oauth2-resilience`, `oauth2-events`, etc.) |
-| **RFC coverage**     | Core grants, introspection, revocation, discovery   | + Device flow (RFC 8628), PAR (RFC 9126), JAR (RFC 9101), JWT introspection response (RFC 9701), Dynamic Client Registration (RFC 7591/7592), JWT client auth (RFC 7523), OIDC Session Mgmt + back/front-channel logout |
-| **Storage**          | Postgres/MySQL via SQLx                             | + MongoDB / CosmosDB backend with compatibility fixes                                                 |
-| **Admin UI**         | Minimal HTML + HTMX                                 | Tailwind overhaul, dark mode, server-side paging, drawers, bearer-token API, MCP admin tools          |
-| **Keys**             | Static JWKS                                         | `KeySet` with rotation, AES-256-GCM at-rest encryption, grace period, `POST /admin/api/keys/rotate`   |
-| **Rate limiting**    | None                                                | `oauth2-ratelimit` crate — token bucket, in-memory or Redis, Actix middleware, Prometheus metrics     |
-| **Resilience**       | None                                                | `oauth2-resilience` crate — circuit breaker, bulkheads, back-pressure with Prometheus observability   |
-| **Security**         | Baseline                                            | CORS fail-closed, CSP, session-ID renewal on login, HTTP security headers, insecure-default guards, RUSTSEC patches, `StdRng::from_os_rng()`, Semgrep + CodeQL + Snyk in CI |
-| **Benchmarks**       | Manual                                              | Weekly k6 CI across 5 servers (see [this post](/blog/weekly-k6-benchmark-ci-trend-detection))         |
-| **Ops**              | Kustomize manifests                                 | + Caretaker agentic repo maintenance, LLM-driven security scan framework, MCP server, weekly doc reconciliation |
+| Area              | Then (2025-12-30)                                 | Now (2026-04-20, `main`)                                                                                                                                                                                                |
+| ----------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Shape**         | Single crate                                      | Cargo workspace — 12 crates (`oauth2-core`, `oauth2-actix`, `oauth2-storage-*`, `oauth2-ratelimit`, `oauth2-resilience`, `oauth2-events`, etc.)                                                                         |
+| **RFC coverage**  | Core grants, introspection, revocation, discovery | + Device flow (RFC 8628), PAR (RFC 9126), JAR (RFC 9101), JWT introspection response (RFC 9701), Dynamic Client Registration (RFC 7591/7592), JWT client auth (RFC 7523), OIDC Session Mgmt + back/front-channel logout |
+| **Storage**       | Postgres/MySQL via SQLx                           | + MongoDB / CosmosDB backend with compatibility fixes                                                                                                                                                                   |
+| **Admin UI**      | Minimal HTML admin                                | Tailwind overhaul, dark mode, server-side paging, drawers, bearer-token API, MCP admin tools                                                                                                                            |
+| **Keys**          | Static JWKS                                       | `KeySet` with rotation, AES-256-GCM at-rest encryption, grace period, `POST /admin/api/keys/rotate`                                                                                                                     |
+| **Rate limiting** | None                                              | `oauth2-ratelimit` crate — token bucket, in-memory or Redis, Actix middleware, Prometheus metrics                                                                                                                       |
+| **Resilience**    | None                                              | `oauth2-resilience` crate — circuit breaker, bulkheads, back-pressure with Prometheus observability                                                                                                                     |
+| **Security**      | Baseline                                          | CORS fail-closed, CSP, session-ID renewal on login, HTTP security headers, insecure-default guards, RUSTSEC patches, `StdRng::from_os_rng()`, Semgrep + CodeQL + Snyk in CI                                             |
+| **Benchmarks**    | Manual                                            | Weekly k6 CI across 5 servers (see [this post](/blog/weekly-k6-benchmark-ci-trend-detection))                                                                                                                           |
+| **Ops**           | Kustomize manifests                               | + Caretaker agentic repo maintenance, LLM-driven security scan framework, MCP server, weekly doc reconciliation                                                                                                         |
 
 ## The Admin Control Plane
 
-The most visible change is the operator experience. The previous admin UI was a working-but-plain HTMX surface. In April it was rewritten on top of Tailwind + Alpine.js, with server-side paging, a proper dark mode, and a live dashboard that reads the same `/metrics` endpoint Prometheus scrapes.
+The most visible change is the operator experience. The previous admin UI was a working-but-plain HTML surface. In April it was rewritten on top of Tailwind + Alpine.js, with server-side paging, a proper dark mode, and a live dashboard that reads the same `/metrics` endpoint Prometheus scrapes.
 
 ![Rust OAuth2 Server — admin dashboard overview showing registered clients, end users, active tokens, device authorizations, token activity, and HTTP response classes](/images/rust-oauth2-admin-dashboard.png)
 
@@ -59,8 +59,8 @@ A dedicated Telemetry view shows the histogram-derived latency quantiles and tok
 Under the hood:
 
 - **Bearer-token auth** on the admin API, with a separate admin MCP server so Claude Code / Copilot agents can operate the control plane through structured tools rather than scraping HTML.
-- **Admin role guard** keyed off a `role` column added to the users table (migration V17) — non-admins get a real 403 page instead of a silent redirect.
-- **CSP**: admin HTML now ships with `unsafe-eval` only where Alpine expressions need it, with an SRI-pinned Alpine bundle; drawers use `x-if` so state is fully removed from the DOM when closed.
+- **Admin role guard** keyed off a `role` column on the users table — non-admins get a real 403 page instead of a silent redirect.
+- **CSP**: admin HTML ships with a locked-down Content-Security-Policy and an SRI-pinned Alpine bundle; drawers use `x-if` so state is fully removed from the DOM when closed.
 - **Key rotation UI**: the JWKS page has a rotate action gated behind a real modal (moved to `body` level so it escapes any ancestor `overflow: hidden`), with backdrop + Escape dismissal.
 
 ## Waves 2–5: RFC Conformance Plan
@@ -68,6 +68,7 @@ Under the hood:
 A recurring theme has been a phased conformance plan. The [OAuth 2.0 spec audit](https://github.com/ianlintner/rust-oauth2-server/blob/main/docs/oauth2-spec-audit.md) catalogues ~30 RFCs and stack-ranks the gaps. Each "wave" picks a thematic slice:
 
 **Wave 2 — OIDC Core & refresh-token security**
+
 - Refresh-token **rotation with replay detection** via token-family lineage (a reused refresh token revokes the whole family)
 - **`nonce` round-trip** verification end-to-end
 - **`c_hash` claim** in ID tokens for hybrid-flow binding
@@ -75,17 +76,20 @@ A recurring theme has been a phased conformance plan. The [OAuth 2.0 spec audit]
 - JWT client authentication ([RFC 7523](https://datatracker.ietf.org/doc/html/rfc7523)) — `private_key_jwt` + `client_secret_jwt`
 
 **Wave 3 — security hardening**
+
 - Rate limiting (in-memory + Redis) with token bucket and atomic Lua INCR+EXPIRE
 - JWT signing-key rotation with AES-256-GCM at-rest encryption and a grace period
 - Stricter redirect-URI validation; CORS fail-closed default; session renewal on login
 
 **Wave 4 — protocol features**
+
 - **Device Authorization Grant** ([RFC 8628](https://datatracker.ietf.org/doc/html/rfc8628)) — the `/oauth/device_authorization` + `/device` user-verification flow
 - **Pushed Authorization Requests** (PAR, [RFC 9126](https://datatracker.ietf.org/doc/html/rfc9126))
 - **Opaque access tokens** alongside JWTs, with configuration toggles
 - Client authentication enforcement on `/introspect` and `/revoke` (public introspection optional)
 
 **Wave 5 — advanced flows**
+
 - **JWT-Secured Authorization Request** ([RFC 9101](https://datatracker.ietf.org/doc/html/rfc9101)) — the `request`/`request_uri` params
 - **Hybrid response types** (`code id_token`, `code token`, `code id_token token`)
 - **JWT Response for token introspection** ([RFC 9701](https://datatracker.ietf.org/doc/html/rfc9701))
