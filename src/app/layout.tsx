@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Navigation } from "../components/Navigation";
 import { Footer } from "../components/Footer";
+import { ChatWidgetLoader } from "../components/ChatWidgetLoader";
 import { Providers } from "./providers";
 import { getAbsoluteUrl, getDefaultSocialImage } from "@/lib/metadata";
 
@@ -69,6 +70,7 @@ export default function RootLayout({
             <main className="flex-1">{children}</main>
             <Footer />
           </div>
+          <ChatWidgetLoader />
         </Providers>
       </body>
     </html>
