@@ -8,15 +8,25 @@ import {
   ArrowRight,
   Github,
   ExternalLink,
+  Clock,
+  Sparkles,
+  Smile,
+  Film,
+  Gamepad2,
+  BookOpen,
+  Target,
 } from "lucide-react";
 import { ChatWidgetMount } from "./ChatWidgetMount";
 
 export const metadata: Metadata = {
-  title: "Cat-Herding AI Chat | Ian Lintner",
+  title: "Cat-Herding AI — On-Hold Multi-Agent Chat | Ian Lintner",
   description:
-    "A live multi-agent chat demo protected by the Rust OAuth2 Server. Sign in with the floating chat bubble to try the agents.",
+    "A live on-hold entertainment demo: multi-agent chat that keeps you company while you wait, with goal-seeking agents (story teller, game host, YouTube guru, joke teller) and OAuth2 sign-in via the Rust OAuth2 Server.",
   keywords: [
     "chat widget",
+    "multi-agent",
+    "goal seeking",
+    "on-hold",
     "OAuth2",
     "PKCE",
     "AI agents",
@@ -25,9 +35,9 @@ export const metadata: Metadata = {
     "Socket.IO",
   ],
   openGraph: {
-    title: "Cat-Herding AI Chat",
+    title: "Cat-Herding AI — On-Hold Multi-Agent Chat",
     description:
-      "Live multi-agent chat demo, gated by OAuth2 + PKCE against the Rust OAuth2 Server.",
+      "Multi-agent chat that keeps you company while you wait. Live demo gated by OAuth2 + PKCE.",
     type: "website",
     url: "/chat",
   },
@@ -41,26 +51,36 @@ export default function ChatPage() {
       <section className="border-b">
         <div className="max-w-5xl mx-auto px-6 py-20">
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-            <MessageSquare className="h-4 w-4" />
+            <Clock className="h-4 w-4" />
             <span>Live demo</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-            Cat-Herding AI Chat
+            You&apos;re on hold.
+            <br />
+            Let the agents entertain you.
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">
-            A floating chat widget, embedded right on this page, that connects
-            to a multi-agent backend hosted at{" "}
-            <code className="px-1.5 py-0.5 rounded bg-muted text-sm">
-              chat.cat-herding.net
-            </code>
-            . Access is gated by OAuth2 + PKCE against my own{" "}
+            <strong className="text-foreground">Cat-Herding AI</strong> is a
+            multi-agent chat backend I built to explore what happens when an LLM
+            &ldquo;customer-service queue&rdquo; isn&apos;t elevator music —
+            it&apos;s a rotation of specialist AI agents whose job is to keep
+            you entertained until the thing you were actually waiting for
+            arrives. Jokes. GIFs. YouTube picks. A round of 20 Questions. A
+            bedtime story if it&apos;s that kind of night.
+          </p>
+          <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed mt-4">
+            Sign in through the bubble in the corner and the hold-flow
+            bootstraps. The agents pass you around between themselves, each
+            staying in character, each aware of the shared conversation — a
+            small but honest multi-agent system with handoffs, goal-seeking, and
+            rich tool use. The sign-in itself runs against my{" "}
             <Link
               href="/blog/rust-oauth2-server-progress-update-2026"
               className="underline underline-offset-4 hover:text-foreground"
             >
               Rust OAuth2 Server
-            </Link>
-            . Click the bubble in the lower-right to sign in and start chatting.
+            </Link>{" "}
+            over OAuth2 + PKCE, entirely in the browser.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
@@ -96,31 +116,144 @@ export default function ChatPage() {
       </section>
 
       <section className="max-w-5xl mx-auto px-6 py-16">
-        <h2 className="text-2xl font-semibold mb-8">
-          What&apos;s going on here
+        <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+          <Clock className="h-6 w-6" />
+          The scenario: 20 minutes on hold
         </h2>
-        <div className="grid gap-6 md:grid-cols-3">
-          <FeatureCard
-            icon={<ShieldCheck className="h-5 w-5" />}
-            title="OAuth2 + PKCE, all client-side"
-            body="The widget runs the full Authorization Code + PKCE flow in the browser: popup opens roauth2.cat-herding.net, user signs in, the popup posts the code back, and a same-origin proxy on the chat backend exchanges it for a JWT. No client secret ships in the bundle."
-          />
-          <FeatureCard
-            icon={<Boxes className="h-5 w-5" />}
-            title="Multi-agent backend"
-            body="Socket.IO streams tokens from a Node backend that routes prompts across several agent personas (story teller, game host, YouTube guru, joke teller…) backed by Azure AI Foundry and Claude. Rich media — GIFs, audio, YouTube embeds — flows through as tool calls."
-          />
-          <FeatureCard
-            icon={<Cloud className="h-5 w-5" />}
-            title="Kubernetes-native"
-            body="Both the Rust OAuth2 server and the chat backend run in AKS behind Istio with managed certs, JWT-aware AuthorizationPolicies, and RequestAuthentication binding the audience to chat-backend."
-          />
+        <p className="text-muted-foreground leading-relaxed mb-6 max-w-3xl">
+          Pretend you called support, or you&apos;re queued for a long-running
+          AI task, or a batch job kicks off at 3am. You have dead time. The
+          classic product answer is &ldquo;show a spinner.&rdquo; The better
+          product answer is &ldquo;give people something to do.&rdquo; This demo
+          is me asking: what if the hold experience was itself the product?
+        </p>
+        <p className="text-muted-foreground leading-relaxed mb-6 max-w-3xl">
+          Concretely, when you sign in on this page the widget goes into{" "}
+          <code className="px-1.5 py-0.5 rounded bg-muted text-sm">
+            mode: &apos;demo&apos;
+          </code>{" "}
+          and the backend runs its hold-flow bootstrap: a welcome, an
+          introduction of the agents on shift, and a proactive opener from
+          whichever agent matches the moment. Every other page on this site
+          mounts the same widget in{" "}
+          <code className="px-1.5 py-0.5 rounded bg-muted text-sm">
+            mode: &apos;lean&apos;
+          </code>
+          , so it sits quietly in the corner without pinging you until you click
+          it.
+        </p>
+      </section>
+
+      <section className="border-t">
+        <div className="max-w-5xl mx-auto px-6 py-16">
+          <h2 className="text-2xl font-semibold mb-8 flex items-center gap-2">
+            <Sparkles className="h-6 w-6" />
+            The agents on shift
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <AgentCard
+              icon={<Smile className="h-5 w-5" />}
+              name="Joke Teller"
+              body="Clean-ish one-liners, callbacks to earlier jokes in the conversation, won't run out."
+            />
+            <AgentCard
+              icon={<Film className="h-5 w-5" />}
+              name="YouTube Guru"
+              body="Tool-driven: picks a curated video based on your vibe, embeds it inline via youtube-nocookie."
+            />
+            <AgentCard
+              icon={<Gamepad2 className="h-5 w-5" />}
+              name="Game Host"
+              body="Runs 20 Questions, Would You Rather, trivia. Keeps score. Routes from ‘play a game’ intents."
+            />
+            <AgentCard
+              icon={<BookOpen className="h-5 w-5" />}
+              name="Story Teller"
+              body="Short interactive fiction. Will not hallucinate images — that was a bug fix (PR #172, if you're curious)."
+            />
+            <AgentCard
+              icon={<MessageSquare className="h-5 w-5" />}
+              name="GIF Buddy"
+              body="Reacts with a curated GIF when the vibe calls for one. Attachment flows through as an inline image."
+            />
+            <AgentCard
+              icon={<Target className="h-5 w-5" />}
+              name="Orchestrator"
+              body="Picks which agent speaks next, issues `handoff_event` messages, keeps the conversation coherent across personas."
+            />
+          </div>
+          <p className="text-sm text-muted-foreground mt-6 max-w-3xl">
+            Under the hood these are separate prompt+tool bundles behind a
+            router. Streaming is Socket.IO; each token arrives individually so
+            you see the response typed out. Handoffs surface as{" "}
+            <code className="px-1.5 py-0.5 rounded bg-muted text-xs">
+              handoff_event
+            </code>{" "}
+            frames and show up as a small &ldquo;Transferring you to
+            <em>Agent Name</em>…&rdquo; message in the transcript.
+          </p>
         </div>
       </section>
 
       <section className="border-t">
         <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="text-2xl font-semibold mb-6">The request path</h2>
+          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+            <Target className="h-6 w-6" />
+            Goal-seeking without a monolith
+          </h2>
+          <p className="text-muted-foreground leading-relaxed mb-4 max-w-3xl">
+            Each agent has its own lane — jokes, games, videos, stories — but
+            the system as a whole is goal-seeking: keep the user engaged, and
+            track any explicit goal they mention (&ldquo;I just need a status
+            update&rdquo;, &ldquo;I actually want to book a meeting&rdquo;) so
+            the right escalation path is always one intent away. The router and
+            the per-agent tools make it possible to add a new persona without
+            teaching every other agent about it.
+          </p>
+          <p className="text-muted-foreground leading-relaxed mb-4 max-w-3xl">
+            I wrote about the broader pattern — small, cooperating, goal-aware
+            agents instead of one giant prompt — in{" "}
+            <Link
+              href="/blog/goal-seeking-ai-architecture-multi-agent-systems"
+              className="underline underline-offset-4 hover:text-foreground"
+            >
+              Goal-Seeking AI Architecture
+            </Link>
+            . This widget is one of the reference implementations.
+          </p>
+        </div>
+      </section>
+
+      <section className="border-t">
+        <div className="max-w-5xl mx-auto px-6 py-16">
+          <h2 className="text-2xl font-semibold mb-8">
+            What&apos;s going on under the hood
+          </h2>
+          <div className="grid gap-6 md:grid-cols-3">
+            <FeatureCard
+              icon={<ShieldCheck className="h-5 w-5" />}
+              title="OAuth2 + PKCE, all client-side"
+              body="The widget runs the full Authorization Code + PKCE flow in the browser: popup opens roauth2.cat-herding.net, user signs in, the popup posts the code back, and a same-origin proxy on the chat backend exchanges it for a JWT. No client secret ships in the bundle."
+            />
+            <FeatureCard
+              icon={<Boxes className="h-5 w-5" />}
+              title="Multi-LLM backend"
+              body="Claude (via Azure AI Foundry) + OpenAI for routing, tools, and rich media. Each agent is a prompt + tool bundle; the orchestrator picks who speaks next and issues handoffs."
+            />
+            <FeatureCard
+              icon={<Cloud className="h-5 w-5" />}
+              title="Kubernetes-native"
+              body="Rust OAuth2 server and chat backend both run in AKS behind Istio — managed certs, JWT-aware AuthorizationPolicies, RequestAuthentication binding the token audience to chat-backend."
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t">
+        <div className="max-w-5xl mx-auto px-6 py-16">
+          <h2 className="text-2xl font-semibold mb-6">
+            The sign-in request path
+          </h2>
           <ol className="space-y-4 text-muted-foreground leading-relaxed">
             <Step
               n={1}
@@ -140,7 +273,7 @@ export default function ChatPage() {
             />
             <Step
               n={5}
-              text="Widget stores the access token in sessionStorage, reconnects its Socket.IO client with the token in the handshake, and Istio RequestAuthentication validates the JWT against the in-cluster JWKS before forwarding to the chat backend."
+              text="Widget stores the access token in sessionStorage, reconnects its Socket.IO client with the token in the handshake, and Istio RequestAuthentication validates the JWT against the in-cluster JWKS before forwarding to the chat backend. Hold flow starts."
             />
           </ol>
         </div>
@@ -149,9 +282,14 @@ export default function ChatPage() {
       <section className="border-t">
         <div className="max-w-5xl mx-auto px-6 py-16">
           <h2 className="text-2xl font-semibold mb-4">Embed it anywhere</h2>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-6 max-w-3xl">
             The widget is a ~20 KB gzipped IIFE that mounts inside a Shadow DOM
-            so host CSS can&apos;t bleed in. Drop it into any site:
+            so host CSS can&apos;t bleed in. The same bundle is running on every
+            page of this site right now — in{" "}
+            <code className="px-1.5 py-0.5 rounded bg-muted text-sm">lean</code>{" "}
+            mode elsewhere,{" "}
+            <code className="px-1.5 py-0.5 rounded bg-muted text-sm">demo</code>{" "}
+            mode here. Drop it into any site:
           </p>
           <pre className="bg-muted p-4 rounded-md overflow-x-auto text-sm">
             <code>{`<script src="https://chat.cat-herding.net/embed/cat-herding-chat.js" defer></script>
@@ -182,16 +320,16 @@ export default function ChatPage() {
               title="Rust OAuth2 Server: Four Months of Progress"
             />
             <PostLink
+              href="/blog/goal-seeking-ai-architecture-multi-agent-systems"
+              title="Goal-Seeking AI Architecture: Multi-Agent Systems"
+            />
+            <PostLink
               href="/blog/rust-oauth2-server-actor-model-security"
               title="Actor-Model Concurrency for Secure OAuth2"
             />
             <PostLink
-              href="/blog/oauth2-proxy-sidecar-decentralized-auth-pattern"
-              title="OAuth2 Proxy Sidecar: Decentralized Auth"
-            />
-            <PostLink
-              href="/blog/weekly-k6-benchmark-ci-trend-detection"
-              title="Weekly k6 Benchmarks in CI"
+              href="/blog/multi-agent-ai-parallel-execution-copilot-agents"
+              title="Multi-Agent AI: Parallel Execution"
             />
           </div>
         </div>
@@ -214,6 +352,26 @@ function FeatureCard({
       <div className="flex items-center gap-2 text-sm font-medium mb-2">
         {icon}
         <span>{title}</span>
+      </div>
+      <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
+    </div>
+  );
+}
+
+function AgentCard({
+  icon,
+  name,
+  body,
+}: {
+  icon: React.ReactNode;
+  name: string;
+  body: string;
+}) {
+  return (
+    <div className="border rounded-lg p-4 bg-card">
+      <div className="flex items-center gap-2 text-sm font-semibold mb-1.5">
+        <span className="text-primary">{icon}</span>
+        <span>{name}</span>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
     </div>
