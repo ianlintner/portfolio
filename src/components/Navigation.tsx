@@ -59,6 +59,11 @@ export function Navigation() {
                   Projects
                 </NavLink>
               </Link>
+              <Link href="/chat" className="block">
+                <NavLink as="span" active={isActivePrefix("/chat")}>
+                  Chat
+                </NavLink>
+              </Link>
             </div>
           </div>
 
@@ -157,6 +162,15 @@ export function Navigation() {
               >
                 <NavLink as="span" active={isActivePrefix("/demos")}>
                   Projects
+                </NavLink>
+              </Link>
+              <Link
+                href="/chat"
+                className="block"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <NavLink as="span" active={isActivePrefix("/chat")}>
+                  Chat
                 </NavLink>
               </Link>
               <div className="pt-3 border-t flex flex-col space-y-3">
