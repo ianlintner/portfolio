@@ -32,7 +32,7 @@ pnpm dev          # http://localhost:3000
 - **Blog** — MDX posts in `src/app/blog/*.mdx`, parsed with `gray-matter`, rendered with `react-markdown` + `rehype-highlight` + Mermaid diagrams
 - **Resume** — Static resume page with PDF export
 - **Demos** — Project showcase with links to live demos and repos
-- **Game** — Phaser 3 browser game at `/game` (Cat Adventure roguelite)
+- **Games** — Playable Cat Adventure Phaser 3 browser game at `/game`, plus links to standalone game launches such as Star Freight Tycoon
 - **Docs** — MkDocs-generated documentation site served at `/docs`
 - **Theme Package** — Shared UI components published as `@ianlintner/theme` (`packages/theme`)
 

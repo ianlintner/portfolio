@@ -49,9 +49,9 @@ export function Navigation() {
                   Docs
                 </NavLink>
               </Link>
-              <Link href="/game" className="block" hidden>
+              <Link href="/game" className="block">
                 <NavLink as="span" active={isActivePrefix("/game")}>
-                  Game
+                  Games
                 </NavLink>
               </Link>
               <Link href="/demos" className="block">
@@ -148,11 +148,10 @@ export function Navigation() {
               <Link
                 href="/game"
                 className="block"
-                hidden
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <NavLink as="span" active={isActivePrefix("/game")}>
-                  Game
+                  Games
                 </NavLink>
               </Link>
               <Link
