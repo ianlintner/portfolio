@@ -114,19 +114,33 @@ escalation:
 # orchestrator POSTs a heartbeat to the central registry after every run so
 # the fleet page at https://caretaker.cat-herding.net shows live status.
 #
-# Requirements:
-#   1. Set CARETAKER_FLEET_SECRET as a GitHub Actions secret in this repo.
-#   2. Ensure your workflow exports CARETAKER_FLEET_SECRET (v0.19.6+ templates
-#      do this automatically; older installs need a one-line workflow edit).
+# Authentication: OAuth2 client_credentials (v0.20.0+). To opt in:
+#   1. Provision a per-repo OAuth2 client (see docs/fleet-opt-in-runbook.md).
+#   2. Set OAUTH2_CLIENT_ID + OAUTH2_CLIENT_SECRET as repo secrets and
+#      OAUTH2_TOKEN_URL + OAUTH2_SCOPE as repo variables.
+#   3. Flip fleet_registry.enabled: true below.
 fleet_registry:
-  enabled: true
+  enabled: false
   endpoint: https://caretaker.cat-herding.net/api/fleet/heartbeat
-  secret_env: CARETAKER_FLEET_SECRET
   timeout_seconds: 5.0
   include_full_summary: false
+  # OAuth2 client_credentials — the only auth mode supported by v0.20.0+.
+  # Set OAUTH2_CLIENT_ID + OAUTH2_CLIENT_SECRET as repo secrets and
+  # OAUTH2_TOKEN_URL + OAUTH2_SCOPE as repo variables, then flip
+  # enabled: true to register with the admin dashboard.
+  oauth2:
+    enabled: true
+    client_id_env: OAUTH2_CLIENT_ID
+    client_secret_env: OAUTH2_CLIENT_SECRET
+    token_url_env: OAUTH2_TOKEN_URL
+    scope_env: OAUTH2_SCOPE
+    default_scope: "fleet:heartbeat"
+    timeout_seconds: 10.0
 
 llm:
   claude_enabled: auto
+  provider: litellm
+  default_model: azure_ai/gpt-4o
   claude_features:
     - ci_log_analysis
     - architectural_review
