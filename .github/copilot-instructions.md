@@ -82,7 +82,7 @@ date: 2025-06-15
 excerpt: "A concise 1-2 sentence summary for the blog index and SEO."
 tags: ["AI", "Kubernetes", "TypeScript"]
 author: "Ian Lintner"
-image: "/images/your-slug-social.svg"
+image: "/images/your-slug-social.png"
 imageAlt: "Descriptive alt text for the hero/social image"
 ---
 ```
@@ -145,7 +145,7 @@ Raw MDX string
 - [ ] Run `pnpm dev`, open `/blog/<slug>`, confirm rendering, links, and images.
 - [ ] Front-matter date is valid ISO format; sorting depends on `new Date(date)`.
 - [ ] Slug is unique, `kebab-case`, no spaces or uppercase.
-- [ ] Hero image (if any) is 1200×630 SVG in `/public/images/`.
+- [ ] Hero image (if any) is 1200×630 PNG in `/public/images/` (generated via AI image generation or `scripts/generate-hero-image.py`).
 - [ ] Mermaid diagrams render in both light and dark themes.
 - [ ] Code blocks have explicit language tags and display correct highlighting.
 - [ ] Run `pnpm lint` and `pnpm build` — no errors.
@@ -209,8 +209,9 @@ flowchart TD
 
 ### Hero / social images
 
-- Stored in `/public/images/` and referenced in front-matter as `/images/<slug>-social.svg`.
-- Naming convention: `<blog-slug>-social.svg` (e.g., `ai-coding-agents-social.svg`).
+- Stored in `/public/images/` and referenced in front-matter as `/images/<slug>-social.png`.
+- Naming convention: `<blog-slug>-social.png` (e.g., `ai-coding-agents-social.png`).
+- **Use AI image generation (e.g., Pillow/Python scripts, DALL-E, or other AI tooling) to create hero images. Do NOT create hand-coded SVGs for hero/social images.**
 - If no custom image is provided, the site falls back to `/images/social-default.svg` (see `src/lib/metadata.ts`).
 - Images are used for OpenGraph/Twitter cards and optionally displayed in the post header.
 
@@ -224,78 +225,54 @@ Use standard Markdown image syntax within post content:
 
 - Store images in `/public/images/`.
 - Always provide meaningful alt text for accessibility and SEO.
-- SVG is preferred for diagrams and illustrations; use PNG/WebP for photos or screenshots.
+- PNG is preferred for hero/social images (generated via AI tooling); SVG is acceptable for inline diagrams only.
 
 ### Image specifications
 
-| Property   | Value                          |
-| ---------- | ------------------------------ |
-| Dimensions | 1200 × 630 px (hero/social)    |
-| Format     | SVG preferred; PNG/WebP/JPG OK |
-| Location   | `/public/images/`              |
-| Reference  | `/images/filename.ext`         |
+| Property   | Value                                  |
+| ---------- | -------------------------------------- |
+| Dimensions | 1200 × 630 px (hero/social)            |
+| Format     | PNG (hero/social); SVG for inline only |
+| Location   | `/public/images/`                      |
+| Reference  | `/images/filename.ext`                 |
 
-## SVG & Hero Image Generation
+## Hero Image Generation (AI / Programmatic)
 
-When creating hero/social images for blog posts, follow this template:
+**Do NOT create hand-coded SVGs for hero/social images.** Use AI image generation tooling instead.
 
-### Standard structure
+### Preferred methods (in order)
 
-```xml
-<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
-  <!-- Dark background -->
-  <rect width="1200" height="630" fill="#0f172a"/>
-
-  <!-- Grid pattern (optional, adds subtle texture) -->
-  <defs>
-    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="1"/>
-    </pattern>
-  </defs>
-  <rect width="1200" height="630" fill="url(#grid)" opacity="0.5"/>
-
-  <!-- Gradient overlay (subtle color wash) -->
-  <defs>
-    <linearGradient id="overlay" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.15"/>
-      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0.15"/>
-    </linearGradient>
-  </defs>
-  <rect width="1200" height="630" fill="url(#overlay)"/>
-
-  <!-- Visual elements: abstract geometric shapes representing the topic -->
-  <!-- Examples: nodes/edges for AI, gears for DevOps, brackets for code -->
-
-  <!-- Title (bottom-left or centered) -->
-  <text x="80" y="480" font-family="Arial, sans-serif" font-size="64"
-        font-weight="bold" fill="white">Your Post Title</text>
-
-  <!-- Subtitle -->
-  <text x="80" y="540" font-family="Arial, sans-serif" font-size="40"
-        fill="#94a3b8">Subtitle or tagline</text>
-
-  <!-- Author credit (bottom-right) -->
-  <text x="1000" y="580" font-family="Arial, sans-serif" font-size="24"
-        fill="#64748b">by Ian Lintner</text>
-</svg>
-```
+1. **Python + Pillow script** — Write a Python script using `PIL`/`Pillow` to programmatically generate a 1200×630 PNG. See `scripts/generate-hero-image.py` for a reference implementation.
+2. **AI image generation APIs** — Use DALL-E, Midjourney, or similar services to generate a hero image, then resize/crop to 1200×630.
+3. **`scripts/generate-hero-image.py`** — Adapt the existing script for new posts by changing the title, subtitle, and visual elements.
 
 ### Design rules
 
-- **Dimensions**: Always `width="1200" height="630"` (OpenGraph standard).
-- **Background**: `#0f172a` (Slate 900).
-- **Grid pattern**: `<pattern>` with `width="40" height="40"`, stroke `#1e293b`.
-- **Overlay**: Subtle linear gradient (purple `#8b5cf6` → blue `#3b82f6`) at ~0.15 opacity.
+- **Dimensions**: Always 1200×630 px (OpenGraph standard).
+- **Format**: PNG. Do not use SVG for hero/social images.
+- **Background**: `#0f172a` (Slate 900) with subtle grid pattern.
+- **Overlay**: Subtle gradient (purple `#8b5cf6` → blue `#3b82f6`) at ~0.15 opacity.
 - **Typography**:
-  - Font: `Arial, sans-serif`.
-  - Title: `font-size="64" font-weight="bold" fill="white"`, positioned ~`y="480"`.
-  - Subtitle: `font-size="40" fill="#94a3b8"`.
-  - Author: `font-size="24" fill="#64748b"`, bottom-right (`x="1000" y="580"`).
-  - **Always escape** special characters: `&amp;` for `&`, `&lt;` for `<`, etc.
-- **Graphics**: Abstract geometric shapes (circles, lines, nodes) representing the topic.
-  - Filters: Use `<feDropShadow>` or `<feGaussianBlur>` defined in `<defs>` for depth.
+  - Font: Helvetica/Arial or system sans-serif.
+  - Title: ~48px bold white, positioned in the lower-left area.
+  - Subtitle: ~32px `#94a3b8`.
+  - Author: ~20px `#64748b`, bottom-right.
+- **Graphics**: Abstract geometric shapes, icons, or AI-generated visuals representing the topic.
   - Palette: Blue `#3b82f6`, Purple `#8b5cf6`, Green `#10b981`, Orange `#f97316`, Red `#ef4444`, Cyan `#0ea5e9`.
-- **Output**: Full, valid XML SVG with no unescaped entities.
+- **Output**: PNG file saved to `/public/images/<slug>-social.png`.
+
+### Example: generating with Pillow
+
+```python
+from PIL import Image, ImageDraw, ImageFont
+
+img = Image.new("RGB", (1200, 630), "#0f172a")
+draw = ImageDraw.Draw(img)
+# ... add grid, stars, shapes, text ...
+img.save("public/images/my-post-social.png", "PNG")
+```
+
+See `scripts/generate-hero-image.py` for a complete working example.
 
 ## Tables
 
