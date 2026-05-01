@@ -5,6 +5,17 @@
 - Fix caretaker workflow: rename `upgrade-only` mode to `upgrade`, switch install package to `caretaker-github`, and bump to v0.10.0 (#156)
 - blog: Rust OAuth2 Server four-month progress update — v0.0.3 → v0.5.2 (#159)
 
+## [2026-W18] — 2026-04-28
+
+- add /chat page mounting the OAuth2-gated chat widget (#166)
+- sitewide widget + on-hold multi-agent demo narrative (#173)
+- [codex] add Star Freight Tycoon to games page (#185)
+- enable fleet registry heartbeats (#186)
+- adopt v0.20.0 fleet workflow (OAuth2 envs) (#189)
+- adopt OAuth2 fleet_registry config (v0.20) (#194)
+- upgrade pin v0.19.4 → v0.25.0 + thin workflow template (#199)
+- drop pip cache from setup-python (#200)
+
 ## [2026-W16] — 2026-04-16
 
 - Game: add city parallax backgrounds, AI altitude/zone awareness tracking, and city layout tests (#114)
