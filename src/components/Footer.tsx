@@ -111,6 +111,17 @@ export function Footer() {
                     Projects
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    href="/about"
+                    className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1 group"
+                  >
+                    <span className="group-hover:translate-x-1 transition-transform inline-block">
+                      →
+                    </span>
+                    About & Support
+                  </Link>
+                </li>
                 <li>{/* Admin link removed for static site */}</li>
               </ul>
             </div>
@@ -132,8 +143,8 @@ export function Footer() {
           <Divider className="my-8" />
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
             <p>
-              &copy; {new Date().getFullYear()} Ian Lintner. Built with Next.js,
-              TypeScript, and ❤️
+              &copy; {new Date().getFullYear()} Ian Lintner / Lintner Consulting
+              LLC. Built with Next.js, TypeScript, and ❤️
             </p>
             <div className="flex gap-6">
               <a
