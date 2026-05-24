@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -212,6 +213,70 @@ export default function AboutPage() {
               </Card>
             </div>
           </div>
+        </Container>
+      </Section>
+
+      {/* Featured Applications Section */}
+      <Section
+        spacing="lg"
+        className="border-t bg-gradient-to-b from-background to-accent/5"
+      >
+        <Container>
+          <div className="max-w-3xl mx-auto text-center mb-8">
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-3">
+              Our Featured Applications
+            </h2>
+            <p className="text-muted-foreground">
+              Explore the mobile and web experiences built and published by Ian
+              Lintner / Lintner Consulting LLC.
+            </p>
+          </div>
+          <Card className="glass-glow max-w-4xl mx-auto overflow-hidden hover:border-primary/30 transition-all duration-300">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+              <div
+                className="md:col-span-1 h-full min-h-[200px] relative bg-cover bg-center"
+                style={{
+                  backgroundImage: "url('/images/metrognome-hero.png')",
+                }}
+              >
+                {/* Visual side card */}
+              </div>
+              <div className="md:col-span-2 p-6 space-y-4">
+                <div className="space-y-1">
+                  <h3 className="text-2xl font-bold text-foreground">
+                    Metrognome
+                  </h3>
+                  <p className="text-sm text-primary font-medium">
+                    Whimsical 3D Gnomecore Metronome
+                  </p>
+                </div>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Metrognome is a delightful, feature-rich 3D metronome built
+                  with the Godot engine. Featuring procedural audio synthesis,
+                  time-signature responsive bouncing gnomes, and animated forest
+                  wildlife, it makes rhythm practice an engaging, cozy
+                  adventure.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    href="/metrognome"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+                  >
+                    View App Details
+                  </Link>
+                  <a
+                    href="https://growlbear.itch.io/metrognomes"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-border text-muted-foreground hover:text-foreground text-sm font-medium hover:bg-accent transition-all"
+                  >
+                    Play on Itch.io
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </Card>
         </Container>
       </Section>
     </div>
