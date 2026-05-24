@@ -161,7 +161,7 @@ export default function HomePage() {
                   <SiLinkedin className="h-5 w-5 group-hover:text-primary group-hover:scale-110 transition-all" />
                 </a>
                 <a
-                  href="mailto:lintner.ian@gmail.com"
+                  href="mailto:dev@codelintner.com"
                   className="p-3 rounded-full bg-card border border-border hover:border-primary hover:bg-primary/10 hover:shadow-lg transition-all duration-300 group"
                   aria-label="Email"
                 >

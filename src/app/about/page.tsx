@@ -113,10 +113,10 @@ export default function AboutPage() {
                           Email Support
                         </p>
                         <a
-                          href="mailto:lintner.ian@gmail.com"
+                          href="mailto:dev@codelintner.com"
                           className="text-sm text-primary hover:underline font-medium inline-flex items-center gap-1 mt-0.5"
                         >
-                          lintner.ian@gmail.com
+                          dev@codelintner.com
                           <ExternalLink className="h-3 w-3" />
                         </a>
                       </div>

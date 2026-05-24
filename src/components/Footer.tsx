@@ -53,7 +53,7 @@ export function Footer() {
                 </Button>
                 <Button variant="outline" size="sm" asChild aria-label="Email">
                   <a
-                    href="mailto:lintner.ian@gmail.com"
+                    href="mailto:dev@codelintner.com"
                     aria-label="Email"
                     title="Email"
                   >
