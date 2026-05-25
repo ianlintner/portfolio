@@ -50,7 +50,7 @@ export default function TermsPage() {
                 Terms of Service
               </span>
             }
-            description="Effective Date: May 25, 2026. Governing terms for software applications and websites published by Ian Lintner / Lintner Consulting LLC."
+            description="Effective Date: May 25, 2026. Governing terms for downloaded and distributed software applications (iOS, Android, itch.io, Steam, etc.) published by Ian Lintner / Lintner Consulting LLC."
           />
         </Container>
       </Section>
@@ -68,15 +68,16 @@ export default function TermsPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-muted-foreground leading-relaxed">
-                By downloading, installing, running, or accessing applications,
-                source code repositories, or websites published by{" "}
+                By downloading, installing, running, or accessing downloaded and
+                distributed software applications (including iOS, Android,
+                itch.io, Steam, and desktop builds) published by{" "}
                 <strong className="text-foreground">Ian Lintner</strong> and{" "}
                 <strong className="text-foreground">
                   Lintner Consulting LLC
                 </strong>
                 , you acknowledge that you have read, understood, and agree to
                 be bound by these Terms of Service. If you do not agree, please
-                do not use our software or websites.
+                do not use or download our software.
               </CardContent>
             </Card>
 

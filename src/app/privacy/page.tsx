@@ -43,7 +43,7 @@ export default function PrivacyPage() {
                 Privacy Policy
               </span>
             }
-            description="Effective Date: May 25, 2026. Standard non-collection policy for applications and websites built by Ian Lintner / Lintner Consulting LLC."
+            description="Effective Date: May 25, 2026. Standard non-collection policy for downloaded and distributed software applications (iOS, Android, itch.io, Steam, etc.) built by Ian Lintner / Lintner Consulting LLC."
           />
         </Container>
       </Section>
@@ -63,8 +63,9 @@ export default function PrivacyPage() {
               <CardContent className="text-muted-foreground leading-relaxed space-y-3">
                 <p>
                   We believe that software should respect its users. All
-                  applications and websites published by
-                  <strong> Ian Lintner</strong> and{" "}
+                  downloaded and distributed software applications (including
+                  iOS, Android, itch.io, Steam, and desktop builds) published by{" "}
+                  <strong>Ian Lintner</strong> and{" "}
                   <strong>Lintner Consulting LLC</strong> are designed from the
                   ground up with a strict privacy-first model.
                 </p>
