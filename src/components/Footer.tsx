@@ -147,6 +147,18 @@ export function Footer() {
               LLC. Built with Next.js, TypeScript, and ❤️
             </p>
             <div className="flex gap-6">
+              <Link
+                href="/privacy"
+                className="hover:text-primary transition-colors"
+              >
+                Privacy
+              </Link>
+              <Link
+                href="/terms"
+                className="hover:text-primary transition-colors"
+              >
+                Terms
+              </Link>
               <a
                 href="https://github.com/ianlintner/portfolio"
                 target="_blank"
