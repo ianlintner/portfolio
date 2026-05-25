@@ -183,6 +183,16 @@ export default function AboutPage() {
                       </p>
                     </div>
                   </div>
+                  <Divider className="my-3" />
+                  <div className="pt-2 text-center sm:text-left">
+                    <Link
+                      href="/privacy"
+                      className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1.5"
+                    >
+                      View Full Privacy Policy
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -209,6 +219,16 @@ export default function AboutPage() {
                     of, or in connection with the software or the use or other
                     dealings in the software.
                   </p>
+                  <Divider className="my-3" />
+                  <div className="pt-2 text-center sm:text-left">
+                    <Link
+                      href="/terms"
+                      className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1.5"
+                    >
+                      View Full Terms of Service
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
                 </CardContent>
               </Card>
             </div>
