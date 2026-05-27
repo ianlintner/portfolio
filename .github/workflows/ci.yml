@@ -45,11 +45,6 @@ jobs:
           node-version: 20
           cache: "pnpm"
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-
       - name: Get pnpm store directory
         shell: bash
         run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
@@ -67,11 +62,6 @@ jobs:
 
       - name: Build theme package
         run: pnpm --filter @ianlintner/theme run build
-
-      - name: Install mkdocs tooling
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
 
       - name: Lint
         run: pnpm lint

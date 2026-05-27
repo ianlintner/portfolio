@@ -78,12 +78,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: portfolio-config
-            - secretRef:
-                name: portfolio-secrets
-            - secretRef:
-                name: portfolio-db-secret
-            - secretRef:
-                name: nextauth-secret
           env:
             - name: HOST
               value: "0.0.0.0"

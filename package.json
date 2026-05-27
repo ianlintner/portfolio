@@ -4,17 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "pnpm docs:build && astro build",
-    "build:static": "pnpm docs:build && astro build",
+    "build": "astro build",
+    "build:static": "astro build",
     "preview": "astro preview",
     "lint": "eslint .",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "test": "jest",
     "test:ci": "jest --ci --passWithNoTests",
-    "test:e2e": "playwright test",
-    "docs:build": "python3 -m mkdocs build -d public/docs",
-    "docs:serve": "python3 -m mkdocs serve"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@tailwindcss/typography": "latest",

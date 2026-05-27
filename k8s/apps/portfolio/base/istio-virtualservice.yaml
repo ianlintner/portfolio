@@ -46,7 +46,7 @@ spec:
         allowHeaders:
           - "*"
         allowCredentials: true
-    # Root and all other paths (Next.js handles routing)
+    # Root and all other paths (Astro handles routing)
     - match:
         - uri:
             prefix: /
