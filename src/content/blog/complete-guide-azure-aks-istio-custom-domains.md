@@ -88,7 +88,7 @@ Service mesh adoption represents a significant architectural commitment. Underst
 
 | Use Service Mesh When...             | Skip Service Mesh When...            |
 | ------------------------------------ | ------------------------------------ |
-| Operating 50+ microservices          | Running monolith or &lt;10 services     |
+| Operating 50+ microservices          | Running monolith or &lt;10 services  |
 | Need mTLS without app changes        | Can enforce security at app layer    |
 | Require advanced traffic routing     | Simple load balancing suffices       |
 | Multiple teams need traffic policies | Single team owns all services        |
@@ -470,7 +470,7 @@ Expected Scaling:
 | Standard_B2s    | 2    | 4GB  | $30      | Dev/test only        | **Not recommended**: Burstable, inconsistent performance |
 | Standard_D2s_v3 | 2    | 8GB  | $70      | Small prod workloads | **Recommended starter**: Good balance, upgradeable       |
 | Standard_D4s_v3 | 4    | 16GB | $140     | Medium prod          | Better pod density, more headroom                        |
-| Standard_D8s_v3 | 8    | 32GB | $280     | Large prod           | Best pod density, overkill for &lt;20 services              |
+| Standard_D8s_v3 | 8    | 32GB | $280     | Large prod           | Best pod density, overkill for &lt;20 services           |
 | Standard_E2s_v3 | 2    | 16GB | $109     | Memory-intensive     | Higher memory-to-CPU ratio                               |
 
 **Decision Framework:**
