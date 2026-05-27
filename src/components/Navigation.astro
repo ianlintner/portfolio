@@ -30,6 +30,7 @@ const isActivePrefix = (prefix: string) => {
         {/* Desktop Navigation */}
         <div class="hidden md:flex items-center space-x-1">
           <NavLink href="/" active={isActive("/")}>Home</NavLink>
+          <NavLink href="/about" active={isActivePrefix("/about")}>About</NavLink>
           <NavLink href="/resume" active={isActivePrefix("/resume")}>Resume</NavLink>
           <NavLink href="/blog" active={isActivePrefix("/blog")}>Blog</NavLink>
           <NavLink href="/game" active={isActivePrefix("/game")}>Games</NavLink>
@@ -85,6 +86,7 @@ const isActivePrefix = (prefix: string) => {
     <div id="mobile-menu" class="hidden md:hidden py-4 border-t animate-in slide-in-from-top">
       <div class="flex flex-col space-y-3">
         <NavLink href="/" active={isActive("/")}>Home</NavLink>
+        <NavLink href="/about" active={isActivePrefix("/about")}>About</NavLink>
         <NavLink href="/resume" active={isActivePrefix("/resume")}>Resume</NavLink>
         <NavLink href="/blog" active={isActivePrefix("/blog")}>Blog</NavLink>
         <NavLink href="/game" active={isActivePrefix("/game")}>Games</NavLink>
