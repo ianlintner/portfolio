@@ -1,0 +1,220 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const externalGames = [
+  {
+    title: "Star Freight Tycoon",
+    eyebrow: "Standalone strategy sim",
+    href: "https://space-tycoon.cat-herding.net/",
+    image: "/images/star-freight-tycoon-screenshot.png",
+    imageAlt: "Star Freight Tycoon playable command deck with a retro sci-fi cargo terminal.",
+    description: "A turn-driven sci-fi freight management game about building profitable trade routes, assigning ships, and reading the quarterly operating report before the next expansion decision.",
+    facts: ["Playable site", "Strategy manual", "Retro command deck"],
+  },
+];
+---
+
+<Layout
+  title="Cat Adventure & Standalone Games | Ian Lintner"
+  description="A Phaser roguelite platformer about a determined cat chasing the food bowl, and other standalone game launches."
+>
+  <div class="min-h-screen bg-zinc-950 text-white">
+    <section class="border-b border-cyan-300/20 bg-[linear-gradient(135deg,#050505_0%,#101018_45%,#160d12_100%)] px-4 py-8 sm:px-6 lg:px-8">
+      <div class="mx-auto w-full max-w-6xl">
+        <section
+          aria-labelledby="cat-adventure-title"
+          class="rounded-lg border border-cyan-300/20 bg-black/40 p-4 shadow-2xl shadow-cyan-950/40 sm:p-6"
+        >
+          <div class="mb-5 flex flex-col gap-4 text-left lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <div class="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.2em] text-amber-200">
+                <svg class="h-4 w-4 stroke-current fill-none text-amber-200" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                  <path d="M6 12h4m2-4v8m4-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"></path>
+                </svg>
+                Featured playable
+              </div>
+              <h1
+                id="cat-adventure-title"
+                class="text-3xl font-bold tracking-tight text-white sm:text-5xl"
+              >
+                Cat Adventure
+              </h1>
+              <p class="mt-3 max-w-2xl text-base leading-7 text-zinc-300">
+                A Phaser platformer about a determined cat chasing the food bowl through city rooftops, hazards, and powerups.
+              </p>
+            </div>
+            <div class="rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-zinc-300">
+              WASD / Arrows to move | Space to jump | F to shoot when powered up
+            </div>
+          </div>
+
+          <div class="w-full overflow-x-auto pb-2">
+            <div class="relative rounded-lg overflow-hidden shadow-2xl mx-auto w-[800px] h-[600px] bg-zinc-950">
+              <div id="boot-error" class="hidden absolute inset-0 bg-slate-950/90 text-slate-100 flex items-center justify-center p-6 text-center z-10">
+                <div class="max-w-[680px]">
+                  <div class="text-lg font-semibold">Game failed to start</div>
+                  <div class="mt-2 text-sm text-slate-300">
+                    Check the browser console for details.
+                  </div>
+                  <div id="error-message" class="mt-3 text-xs text-slate-400 break-words"></div>
+                </div>
+              </div>
+              <div
+                id="game-container"
+                class="w-full h-full [&>canvas]:block"
+              ></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="px-4 py-12 sm:px-6 lg:px-8">
+      <div class="mx-auto w-full max-w-6xl">
+        <div class="mb-6 flex flex-col gap-3 text-left sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div class="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.2em] text-cyan-200">
+              <svg class="h-4 w-4 stroke-current fill-none text-cyan-200" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M4.5 16.5c-1.5 1.26-2.5 3.19-2.5 5.5h20c0-2.31-1-4.24-2.5-5.5"></path>
+                <path d="M12 2C7.58 2 4 5.58 4 10c0 4.25 4 9 8 11.5 4-2.5 8-7.25 8-11.5 0-4.42-3.58-8-8-8z"></path>
+              </svg>
+              More games
+            </div>
+            <h2 class="text-3xl font-bold tracking-tight text-white">
+              Standalone launches
+            </h2>
+          </div>
+          <p class="max-w-2xl text-sm leading-6 text-zinc-400">
+            Smaller experiments, finished sites, and upcoming games can live here without displacing the embedded arcade build.
+          </p>
+        </div>
+
+        <div class="grid gap-6">
+          {externalGames.map((game) => (
+            <article
+              class="grid overflow-hidden rounded-lg border border-white/10 bg-zinc-900/80 shadow-xl shadow-black/30 lg:grid-cols-[1.25fr_1fr]"
+            >
+              <a
+                href={game.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group relative block min-h-[240px] bg-black"
+                aria-label={`Open ${game.title}`}
+              >
+                <img
+                  src={game.image}
+                  alt={game.imageAlt}
+                  class="h-full min-h-[240px] w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+                />
+                <div class="absolute inset-0 border border-cyan-300/10" />
+              </a>
+
+              <div class="flex flex-col justify-between gap-6 p-6 sm:p-8">
+                <div>
+                  <p class="text-sm font-semibold uppercase tracking-[0.2em] text-amber-200">
+                    {game.eyebrow}
+                  </p>
+                  <h3 class="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                    {game.title}
+                  </h3>
+                  <p class="mt-4 text-base leading-7 text-zinc-300">
+                    {game.description}
+                  </p>
+                </div>
+
+                <div class="flex flex-col gap-5">
+                  <div class="flex flex-wrap gap-2">
+                    {game.facts.map((fact) => (
+                      <span
+                        class="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-zinc-200"
+                      >
+                        {fact}
+                      </span>
+                    ))}
+                  </div>
+
+                  <a
+                    href={game.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex h-11 w-fit items-center justify-center gap-2 rounded-lg bg-cyan-300 px-5 text-sm font-bold text-zinc-950 transition hover:bg-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200"
+                  >
+                    <svg class="h-4 w-4 stroke-current fill-none text-zinc-950" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                      <polyline points="15 3 21 3 21 9"></polyline>
+                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                    Play Star Freight Tycoon
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  let stop: (() => void) | null = null;
+
+  async function bootGame() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const layoutParam = urlParams.get("layout") || undefined;
+    const bootOptions = {
+      autoplay:
+        urlParams.get("autoplay") === "1" ||
+        urlParams.get("watch") === "1" ||
+        urlParams.get("headless") === "1",
+      headless: urlParams.get("headless") === "1",
+      debug: urlParams.get("debug") === "1",
+      ...(layoutParam ? { layoutOverride: layoutParam } : {}),
+    };
+
+    try {
+      const errorDiv = document.getElementById('boot-error');
+      if (errorDiv) errorDiv.classList.add('hidden');
+
+      // Lazy-load PhaserGame bootstrap
+      const { PhaserGame } = await import("../game/PhaserGame");
+      
+      // Stop prior game if still active
+      if (stop) {
+        stop();
+        stop = null;
+      }
+      PhaserGame.stop();
+      PhaserGame.start(bootOptions);
+      stop = () => PhaserGame.stop();
+    } catch (err) {
+      console.error("Failed to start Phaser game", err);
+      const errorDiv = document.getElementById('boot-error');
+      const errorMsg = document.getElementById('error-message');
+      if (errorDiv && errorMsg) {
+        errorDiv.classList.remove('hidden');
+        errorMsg.textContent = err instanceof Error ? err.message : String(err);
+      }
+    }
+  }
+
+  function cleanupGame() {
+    if (stop) {
+      try {
+        stop();
+        stop = null;
+      } catch (err) {
+        console.warn("Failed to stop Phaser game", err);
+      }
+    }
+  }
+
+  // Initial load
+  bootGame();
+
+  // Lifecycle events for page swaps
+  document.addEventListener('astro:after-swap', bootGame);
+  document.body?.addEventListener('htmx:load', bootGame);
+  document.body?.addEventListener('htmx:beforeSwap', cleanupGame);
+</script>

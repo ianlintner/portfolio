@@ -1,0 +1,258 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+const { title, excerpt, date, tags, author = "Ian Lintner", image, imageAlt } = post.data;
+---
+
+<Layout title={`${title} | Ian Lintner`} description={excerpt}>
+  <div class="min-h-screen bg-background text-foreground transition-colors">
+    <div class="container mx-auto px-4 py-8">
+      <div class="max-w-4xl mx-auto">
+        {/* Navigation */}
+        <div class="mb-8">
+          <a
+            href="/blog"
+            class="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <svg class="mr-2 h-4 w-4 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Blog
+          </a>
+        </div>
+
+        {/* Article Header */}
+        <header class="mb-12">
+          <div class="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+            <div class="flex items-center gap-1">
+              <svg class="h-4 w-4 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span>
+                {new Date(date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
+            </div>
+            <div class="flex items-center gap-1">
+              <svg class="h-4 w-4 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>5 min read</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <svg class="h-4 w-4 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>{author}</span>
+            </div>
+          </div>
+
+          <h1 class="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
+            {title}
+          </h1>
+
+          {/* Hero Image */}
+          {image && (
+            <div class="relative w-full aspect-[2.4/1] rounded-lg overflow-hidden mb-8 bg-muted">
+              <img
+                src={image}
+                alt={imageAlt || title}
+                class="w-full h-full object-cover"
+                loading="eager"
+              />
+            </div>
+          )}
+
+          {/* Tags */}
+          {tags && tags.length > 0 && (
+            <div class="flex flex-wrap gap-2 mb-6">
+              {tags.map((tag) => (
+                <span class="inline-flex items-center gap-1 px-3 py-1 text-sm bg-primary/10 text-primary rounded-full">
+                  <svg class="h-3 w-3 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                  </svg>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Share Button */}
+          <div class="flex items-center gap-4 pt-6 border-t border-border">
+            <span class="text-sm text-muted-foreground">
+              Share this article:
+            </span>
+            <button
+              id="share-btn"
+              class="inline-flex items-center gap-1 px-3 py-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <svg class="h-4 w-4 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+              Share
+            </button>
+          </div>
+        </header>
+
+        {/* Article Content */}
+        <div class="prose prose-lg max-w-none dark:prose-invert transition-colors mb-16">
+          <Content />
+        </div>
+
+        {/* Article Footer */}
+        <footer class="mt-16 pt-8 border-t border-border">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                <span class="text-lg font-semibold text-primary">
+                  {author.charAt(0)}
+                </span>
+              </div>
+              <div>
+                <h3 class="font-semibold">{author}</h3>
+                <p class="text-sm text-muted-foreground">
+                  Full Stack Developer
+                </p>
+              </div>
+            </div>
+
+            <div class="text-right">
+              <p class="text-sm text-muted-foreground">Published on</p>
+              <p class="font-medium">
+                {new Date(date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  function initShare() {
+    const shareBtn = document.getElementById('share-btn');
+    if (!shareBtn) return;
+    shareBtn.addEventListener('click', async () => {
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: document.title,
+            url: window.location.href
+          });
+        } else {
+          await navigator.clipboard.writeText(window.location.href);
+          alert('Link copied to clipboard!');
+        }
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    });
+  }
+
+  async function renderMermaid() {
+    const elements = document.querySelectorAll('pre.language-mermaid, pre code.language-mermaid');
+    if (elements.length === 0) return;
+
+    try {
+      const mermaid = (await import('mermaid')).default;
+      const isDark = document.documentElement.classList.contains('dark');
+      
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: isDark ? 'dark' : 'default',
+        themeVariables: isDark
+          ? {
+              fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI"',
+              primaryColor: '#0ea5e9',
+              primaryBorderColor: '#0284c7',
+              primaryTextColor: '#e2e8f0',
+              lineColor: '#64748b',
+              secondaryColor: '#1f2937',
+              tertiaryColor: '#0b1220',
+              nodeBorder: '#334155',
+              clusterBkg: '#111827',
+              clusterBorder: '#334155',
+            }
+          : {
+              fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI"',
+              primaryColor: '#0ea5e9',
+              primaryBorderColor: '#0284c7',
+              primaryTextColor: '#0f172a',
+              lineColor: '#94a3b8',
+              secondaryColor: '#f8fafc',
+              tertiaryColor: '#ffffff',
+              nodeBorder: '#cbd5e1',
+              clusterBkg: '#f1f5f9',
+              clusterBorder: '#cbd5e1',
+            },
+      });
+
+      for (let i = 0; i < elements.length; i++) {
+        const el = elements[i];
+        const target = el.tagName.toLowerCase() === 'code' ? el.parentElement : el;
+        if (!target || target.getAttribute('data-mermaid-rendered') === 'true') continue;
+
+        const codeContent = el.textContent || '';
+        const id = `mermaid-${Math.random().toString(36).substring(2, 9)}`;
+        
+        try {
+          const { svg } = await mermaid.render(id, codeContent);
+          const wrapper = document.createElement('div');
+          wrapper.className = 'mermaid-chart my-6 flex justify-center w-full overflow-x-auto';
+          wrapper.innerHTML = svg;
+          target.replaceWith(wrapper);
+          wrapper.setAttribute('data-mermaid-rendered', 'true');
+        } catch (err) {
+          console.error('Mermaid render error:', err);
+          const errorPre = document.createElement('pre');
+          errorPre.className = 'p-4 bg-red-950/20 text-red-500 rounded border border-red-500/30 text-sm overflow-x-auto';
+          errorPre.textContent = (err as Error)?.message || 'Failed to render mermaid diagram';
+          target.replaceWith(errorPre);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load mermaid:', err);
+    }
+  }
+
+  // Initialize both utilities
+  const init = () => {
+    initShare();
+    renderMermaid();
+  };
+
+  init();
+  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('astro:after-swap', init);
+  document.body?.addEventListener('htmx:load', init);
+</script>

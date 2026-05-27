@@ -1,0 +1,178 @@
+---
+import Container from './Container.astro';
+import NavLink from './NavLink.astro';
+import ThemeSwitcher from './ThemeSwitcher.astro';
+
+const pathname = Astro.url.pathname;
+const isActive = (path: string) => {
+  const normPath = pathname === '/' ? '/' : pathname.replace(/\/$/, '');
+  const normTarget = path === '/' ? '/' : path.replace(/\/$/, '');
+  return normPath === normTarget;
+};
+const isActivePrefix = (prefix: string) => {
+  const normPath = pathname === '/' ? '/' : pathname.replace(/\/$/, '');
+  const normPrefix = prefix.replace(/\/$/, '');
+  return normPath.startsWith(normPrefix);
+};
+---
+
+<nav class="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75 transition-colors shadow-sm">
+  <Container>
+    <div class="flex h-16 items-center justify-between">
+      {/* Logo/Brand */}
+      <div class="flex items-center space-x-8">
+        <a href="/" class="flex items-center space-x-2 group">
+          <span class="font-bold text-xl bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent group-hover:from-primary/80 group-hover:to-primary transition-all">
+            Ian Lintner
+          </span>
+        </a>
+
+        {/* Desktop Navigation */}
+        <div class="hidden md:flex items-center space-x-1">
+          <NavLink href="/" active={isActive("/")}>Home</NavLink>
+          <NavLink href="/resume" active={isActivePrefix("/resume")}>Resume</NavLink>
+          <NavLink href="/blog" active={isActivePrefix("/blog")}>Blog</NavLink>
+          <NavLink href="/docs" active={isActivePrefix("/docs")}>Docs</NavLink>
+          <NavLink href="/game" active={isActivePrefix("/game")}>Games</NavLink>
+          <NavLink href="/demos" active={isActivePrefix("/demos")}>Projects</NavLink>
+          <NavLink href="/chat" active={isActivePrefix("/chat")}>Chat</NavLink>
+        </div>
+      </div>
+
+      {/* Desktop Actions */}
+      <div class="hidden md:flex items-center space-x-4">
+        <ThemeSwitcher />
+        <a
+          href="https://github.com/ianlintner"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="p-2 rounded-lg hover:bg-accent transition-colors"
+          aria-label="GitHub"
+        >
+          <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          </svg>
+        </a>
+        <a
+          href="https://linkedin.com/in/ianlintner/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 hover:scale-105"
+          aria-label="Connect on LinkedIn"
+        >
+          <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+          </svg>
+          <span>Connect</span>
+        </a>
+      </div>
+
+      {/* Mobile menu button */}
+      <button
+        id="mobile-menu-toggle"
+        class="md:hidden p-2 rounded-lg hover:bg-accent transition-colors"
+        aria-label="Toggle menu"
+      >
+        <svg id="menu-icon" class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <svg id="close-icon" class="h-6 w-6 hidden" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    {/* Mobile Navigation */}
+    <div id="mobile-menu" class="hidden md:hidden py-4 border-t animate-in slide-in-from-top">
+      <div class="flex flex-col space-y-3">
+        <NavLink href="/" active={isActive("/")}>Home</NavLink>
+        <NavLink href="/resume" active={isActivePrefix("/resume")}>Resume</NavLink>
+        <NavLink href="/blog" active={isActivePrefix("/blog")}>Blog</NavLink>
+        <NavLink href="/docs" active={isActivePrefix("/docs")}>Docs</NavLink>
+        <NavLink href="/game" active={isActivePrefix("/game")}>Games</NavLink>
+        <NavLink href="/demos" active={isActivePrefix("/demos")}>Projects</NavLink>
+        <NavLink href="/chat" active={isActivePrefix("/chat")}>Chat</NavLink>
+        <div class="pt-3 border-t flex flex-col space-y-3">
+          <div class="px-3">
+            <ThemeSwitcher />
+          </div>
+          <a
+            href="https://linkedin.com/in/ianlintner/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg font-medium text-sm bg-primary text-primary-foreground hover:bg-primary/90 w-full transition-all"
+          >
+            <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+            <span>Connect on LinkedIn</span>
+          </a>
+          <div class="flex items-center justify-center gap-4">
+            <a
+              href="https://github.com/ianlintner"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="p-2 rounded-lg hover:bg-accent transition-colors"
+              aria-label="GitHub"
+            >
+              <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Container>
+</nav>
+
+<script>
+  function initNav() {
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
+
+    if (!toggleBtn || !mobileMenu) return;
+
+    // Remove existing event listener if any to avoid multiple bindings
+    const newToggleBtn = toggleBtn.cloneNode(true);
+    toggleBtn.parentNode?.replaceChild(newToggleBtn, toggleBtn);
+
+    newToggleBtn.addEventListener('click', () => {
+      const isHidden = mobileMenu.classList.contains('hidden');
+      const newMenuIcon = document.getElementById('menu-icon');
+      const newCloseIcon = document.getElementById('close-icon');
+      
+      if (isHidden) {
+        mobileMenu.classList.remove('hidden');
+        newMenuIcon?.classList.add('hidden');
+        newCloseIcon?.classList.remove('hidden');
+      } else {
+        mobileMenu.classList.add('hidden');
+        newMenuIcon?.classList.remove('hidden');
+        newCloseIcon?.classList.add('hidden');
+      }
+    });
+
+    // Close mobile menu on clicking any links inside it
+    const links = mobileMenu.querySelectorAll('a');
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        const newMenuIcon = document.getElementById('menu-icon');
+        const newCloseIcon = document.getElementById('close-icon');
+        mobileMenu.classList.add('hidden');
+        newMenuIcon?.classList.remove('hidden');
+        newCloseIcon?.classList.add('hidden');
+      });
+    });
+  }
+
+  // Run on first load
+  initNav();
+
+  // Run on subsequent page transitions (both HTMX swaps and Astro swap events)
+  document.addEventListener('DOMContentLoaded', initNav);
+  document.addEventListener('astro:after-swap', initNav);
+  document.body?.addEventListener('htmx:load', initNav);
+</script>

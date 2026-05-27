@@ -129,3 +129,6 @@ public/assets/game/2-Background/raw/
 
 # Superpowers brainstorm sessions
 .superpowers/
+
+# Astro cache
+.astro/

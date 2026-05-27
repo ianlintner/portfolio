@@ -1,0 +1,62 @@
+---
+import { themes } from '../config/themes';
+
+const themeNames = Object.keys(themes) as Array<keyof typeof themes>;
+---
+
+<select
+  id="theme-select"
+  title="Select color theme"
+  class="px-3 py-1.5 rounded-lg bg-glass border border-glass-light text-foreground text-sm cursor-pointer hover:border-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary"
+>
+  {themeNames.map((name) => (
+    <option value={name}>
+      {name
+        .split("-")
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(" ")}
+    </option>
+  ))}
+</select>
+
+<script>
+  import { themes, themeToCSSVars } from '../config/themes';
+
+  function applyTheme(themeName: string) {
+    const theme = themes[themeName as keyof typeof themes];
+    if (!theme) return;
+    const cssVars = themeToCSSVars(theme);
+    const root = document.documentElement;
+    Object.entries(cssVars).forEach(([key, value]) => {
+      root.style.setProperty(key, value);
+    });
+  }
+
+  function initSwitcher() {
+    const select = document.getElementById('theme-select') as HTMLSelectElement;
+    const storedTheme = localStorage.getItem('custom-theme') || 'dark-glassy';
+    if (select) {
+      select.value = storedTheme;
+      
+      // Remove old listeners to avoid multiple attachments on page swap
+      select.removeEventListener('change', handleThemeChange);
+      select.addEventListener('change', handleThemeChange);
+    }
+    applyTheme(storedTheme);
+  }
+
+  function handleThemeChange(e: Event) {
+    const target = e.target as HTMLSelectElement;
+    const themeName = target.value;
+    localStorage.setItem('custom-theme', themeName);
+    applyTheme(themeName);
+  }
+
+  // Initialize on load
+  initSwitcher();
+
+  // Listen to HTMX page load/swap to re-initialize select element references
+  document.addEventListener('DOMContentLoaded', initSwitcher);
+  document.addEventListener('astro:after-swap', initSwitcher);
+  document.body?.addEventListener('htmx:load', initSwitcher);
+</script>

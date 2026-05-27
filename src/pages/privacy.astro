@@ -1,0 +1,193 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/Container.astro';
+import Section from '../components/Section.astro';
+import Divider from '../components/Divider.astro';
+---
+
+<Layout
+  title="Privacy Policy | Ian Lintner / Lintner Consulting LLC"
+  description="Official Privacy Policy detailing our standard non-collection practices, open-source model, and donationware support policy."
+>
+  <div class="min-h-screen bg-background">
+    {/* Header Section */}
+    <Section
+      spacing="lg"
+      class="border-b bg-gradient-to-br from-background via-primary/5 to-background"
+    >
+      <Container>
+        <div class="space-y-4 text-center sm:text-left py-4">
+          <h1 class="text-4xl sm:text-5xl font-bold tracking-tight">
+            <span class="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              Privacy Policy
+            </span>
+          </h1>
+          <p class="text-lg text-muted-foreground max-w-3xl leading-relaxed">
+            Effective Date: May 25, 2026. Standard non-collection policy for downloaded and distributed software applications built by Ian Lintner / Lintner Consulting LLC.
+          </p>
+        </div>
+      </Container>
+    </Section>
+
+    {/* Main Content */}
+    <Section spacing="lg">
+      <Container class="max-w-4xl">
+        <div class="space-y-6">
+          {/* Core Philosophy */}
+          <div class="bg-card border border-border rounded-xl overflow-hidden glass-elevated">
+            <div class="p-6 pb-4 flex flex-col space-y-1.5">
+              <h3 class="text-lg font-semibold leading-none tracking-tight flex items-center gap-2 text-primary">
+                <svg class="h-5 w-5 stroke-current fill-none text-primary" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Privacy by Default
+              </h3>
+            </div>
+            <div class="p-6 pt-0 text-muted-foreground leading-relaxed space-y-3 text-sm">
+              <p>
+                We believe that software should respect its users. All
+                downloaded and distributed software applications (including
+                iOS, Android, itch.io, Steam, and desktop builds) published by{" "}
+                <strong class="text-foreground font-semibold">Ian Lintner</strong> and{" "}
+                <strong class="text-foreground font-semibold">Lintner Consulting LLC</strong> are designed from the
+                ground up with a strict privacy-first model.
+              </p>
+              <p>
+                We do not monetarily track our users, serve third-party ads,
+                or collect diagnostic details beyond standard, opt-in platform
+                statistics.
+              </p>
+            </div>
+          </div>
+
+          {/* Non-Collection Details */}
+          <div class="bg-card border border-border rounded-xl overflow-hidden glass-elevated">
+            <div class="p-6 pb-4 flex flex-col space-y-1.5">
+              <h3 class="text-lg font-semibold leading-none tracking-tight flex items-center gap-2 text-primary">
+                <svg class="h-5 w-5 stroke-current fill-none text-primary" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                Data We Do Not Collect
+              </h3>
+            </div>
+            <div class="p-6 pt-0 space-y-4 text-sm">
+              <p class="text-muted-foreground leading-relaxed">
+                Our software operates on a{" "}
+                <strong class="text-foreground font-semibold">non-collection model</strong>. We do not gather,
+                store, log, share, or sell:
+              </p>
+              <ul class="list-disc pl-5 text-muted-foreground space-y-2 leading-relaxed">
+                <li>
+                  <strong class="text-foreground font-semibold">Personal Information:</strong> Names, email addresses, phone numbers, or account usernames (unless you choose to contact support directly).
+                </li>
+                <li>
+                  <strong class="text-foreground font-semibold">Activity & Usage Data:</strong> Interactivity logs, settings preferences, or click paths inside our software.
+                </li>
+                <li>
+                  <strong class="text-foreground font-semibold">Device Identifiers:</strong> IP addresses, MAC addresses, device locations, or unique advertising IDs.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Open Source details */}
+          <div class="bg-card border border-border rounded-xl overflow-hidden glass-elevated">
+            <div class="p-6 pb-4 flex flex-col space-y-1.5">
+              <h3 class="text-lg font-semibold leading-none tracking-tight flex items-center gap-2 text-primary">
+                <svg class="h-5 w-5 stroke-current fill-none text-primary" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <polyline points="16 18 22 12 16 6"></polyline>
+                  <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                Open Source & Auditable
+              </h3>
+            </div>
+            <div class="p-6 pt-0 text-muted-foreground leading-relaxed space-y-3 text-sm">
+              <p>
+                All of our applications are open-source. Because the full
+                source code is publicly accessible (hosted on GitHub), our
+                claims of non-collection are entirely transparent and
+                verifiable by the developer community.
+              </p>
+              <p>
+                We do not insert hidden tracking libraries, analytical SDKs,
+                or data brokers into our builds.
+              </p>
+            </div>
+          </div>
+
+          {/* Donationware payments */}
+          <div class="bg-card border border-border rounded-xl overflow-hidden glass-elevated">
+            <div class="p-6 pb-4 flex flex-col space-y-1.5">
+              <h3 class="text-lg font-semibold leading-none tracking-tight flex items-center gap-2 text-primary">
+                <svg class="h-5 w-5 stroke-current fill-none text-primary" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                Free & Donationware Model
+              </h3>
+            </div>
+            <div class="p-6 pt-0 text-muted-foreground leading-relaxed space-y-3 text-sm">
+              <p>
+                Our software is distributed free of charge. Supporting our
+                development is completely optional and handled via voluntary
+                contributions (donationware).
+              </p>
+              <p>
+                All payments and sponsorships are processed securely through
+                trusted third-party platforms (e.g., itch.io, GitHub Sponsors,
+                or PayPal). We do not collect, process, or store credit card
+                numbers, billing addresses, or other payment transaction
+                details.
+              </p>
+            </div>
+          </div>
+
+          {/* Telemetry info */}
+          <div class="bg-card border border-border rounded-xl overflow-hidden glass-elevated">
+            <div class="p-6 pb-4 flex flex-col space-y-1.5">
+              <h3 class="text-lg font-semibold leading-none tracking-tight flex items-center gap-2 text-primary">
+                <svg class="h-5 w-5 stroke-current fill-none text-primary" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                Platform Diagnostics
+              </h3>
+            </div>
+            <div class="p-6 pt-0 text-muted-foreground leading-relaxed space-y-3 text-sm">
+              <p>
+                For mobile applications published on the Apple App Store,
+                Google Play, or other platforms, anonymized crash logs and
+                system statistics may be collected by the platform provider.
+              </p>
+              <p>
+                This data is only shared with us if you have explicitly opted
+                into sharing diagnostic data in your system settings. This
+                information is completely anonymous and used solely to repair
+                software bugs.
+              </p>
+            </div>
+          </div>
+
+          {/* Footer note */}
+          <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-card border border-border p-6 rounded-xl">
+            <div class="space-y-1">
+              <h4 class="font-semibold text-foreground text-sm">
+                Have privacy questions?
+              </h4>
+              <p class="text-xs text-muted-foreground">
+                Get in touch with us regarding our data policies.
+              </p>
+            </div>
+            <a
+              href="mailto:dev@codelintner.com"
+              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-secondary text-secondary-foreground text-xs font-medium hover:bg-secondary/90 transition-colors"
+            >
+              Contact Support
+            </a>
+          </div>
+        </div>
+      </Container>
+    </Section>
+  </div>
+</Layout>

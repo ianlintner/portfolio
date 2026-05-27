@@ -83,15 +83,13 @@ jobs:
         run: pnpm run test:ci
 
       - name: Build static site
-        env:
-          NEXT_PUBLIC_SITE_URL: https://cat-herding.net
-        run: pnpm docs:build && pnpm next build
+        run: pnpm run build
 
       - name: Upload static artifact
         uses: actions/upload-artifact@v4
         with:
           name: static-site
-          path: out
+          path: dist
 
   static-deploy:
     name: Deploy Static Web App
@@ -110,7 +108,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: static-site
-          path: out
+          path: dist
 
       - name: Azure Login (OIDC)
         uses: azure/login@v2
@@ -185,7 +183,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
           skip_app_build: true
-          app_location: out
+          app_location: dist
 
   analyze-failure:
     name: AI Failure Analysis
@@ -209,12 +207,12 @@ jobs:
           create-issue: "true"
           issue-label: "ci-failure"
           custom-system-prompt: |
-            You are a senior full-stack engineer specializing in Next.js, TypeScript, and CI/CD.
+            You are a senior full-stack engineer specializing in Astro, HTMX, TypeScript, and CI/CD.
             Focus on:
-            - Next.js 15 App Router issues
-            - TypeScript compilation errors
-            - tRPC API failures
-            - Database connection issues (PostgreSQL/Drizzle ORM)
+            - Astro static site compilation issues
+            - HTML/CSS/JS syntax and template errors in .astro components
+            - Vanilla JS event handling and lifecycles (e.g. Phaser/chat)
+            - HTMX navigation and booster issues
             - GitHub Actions workflow problems
             - Docker build failures
             - Kubernetes deployment issues

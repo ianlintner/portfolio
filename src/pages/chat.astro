@@ -1,0 +1,353 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Cat-Herding AI — On-Hold Multi-Agent Chat | Ian Lintner"
+  description="A live on-hold entertainment demo: multi-agent chat that keeps you company while you wait, with goal-seeking agents and OAuth2 sign-in via the Rust OAuth2 Server."
+>
+  <div class="min-h-screen bg-background">
+    <section class="border-b">
+      <div class="max-w-5xl mx-auto px-6 py-20">
+        <div class="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+          <svg class="h-4 w-4 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>Live demo</span>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-6 leading-tight">
+          You're on hold.<br />
+          Let the agents entertain you.
+        </h1>
+        <p class="text-lg text-muted-foreground max-w-3xl leading-relaxed">
+          <strong class="text-foreground">Cat-Herding AI</strong> is a
+          multi-agent chat backend I built to explore what happens when an LLM
+          &ldquo;customer-service queue&rdquo; isn't elevator music —
+          it's a rotation of specialist AI agents whose job is to keep
+          you entertained until the thing you were actually waiting for
+          arrives. Jokes. GIFs. YouTube picks. A round of 20 Questions. A
+          bedtime story if it's that kind of night.
+        </p>
+        <p class="text-lg text-muted-foreground max-w-3xl leading-relaxed mt-4">
+          Sign in through the bubble in the corner and the hold-flow
+          bootstraps. The agents pass you around between themselves, each
+          staying in character, each aware of the shared conversation — a
+          small but honest multi-agent system with handoffs, goal-seeking, and
+          rich tool use. The sign-in itself runs against my 
+          <a
+            href="/blog/rust-oauth2-server-progress-update-2026"
+            class="underline underline-offset-4 hover:text-foreground"
+          >
+            Rust OAuth2 Server
+          </a> 
+          over OAuth2 + PKCE, entirely in the browser.
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a
+            href="https://github.com/ianlintner/Example-React-AI-Chat-App"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-foreground text-background text-sm font-medium hover:opacity-90"
+          >
+            Chat app source
+          </a>
+          <a
+            href="https://github.com/ianlintner/rust-oauth2-server"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-md border text-sm font-medium hover:bg-accent"
+          >
+            Auth server source
+          </a>
+          <a
+            href="https://roauth2.cat-herding.net/.well-known/openid-configuration"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-md border text-sm font-medium hover:bg-accent"
+          >
+            OIDC discovery
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 py-16">
+      <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+        <svg class="h-6 w-6 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        The scenario: 20 minutes on hold
+      </h2>
+      <p class="text-muted-foreground leading-relaxed mb-6 max-w-3xl">
+        Pretend you called support, or you're queued for a long-running
+        AI task, or a batch job kicks off at 3am. You have dead time. The
+        classic product answer is &ldquo;show a spinner.&rdquo; The better
+        product answer is &ldquo;give people something to do.&rdquo; This demo
+        is me asking: what if the hold experience was itself the product?
+      </p>
+      <p class="text-muted-foreground leading-relaxed mb-6 max-w-3xl">
+        Concretely, when you sign in on this page the widget goes into 
+        <code class="px-1.5 py-0.5 rounded bg-muted text-sm">
+          mode: 'demo'
+        </code> 
+        and the backend runs its hold-flow bootstrap: a welcome, an
+        introduction of the agents on shift, and a proactive opener from
+        whichever agent matches the moment. Every other page on this site
+        mounts the same widget in 
+        <code class="px-1.5 py-0.5 rounded bg-muted text-sm">
+          mode: 'lean'
+        </code>
+        , so it sits quietly in the corner without pinging you until you click
+        it.
+      </p>
+    </section>
+
+    <section class="border-t bg-card/10">
+      <div class="max-w-5xl mx-auto px-6 py-16">
+        <h2 class="text-2xl font-semibold mb-8 flex items-center gap-2">
+          <svg class="h-6 w-6 stroke-current fill-none text-primary" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          The agents on shift
+        </h2>
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div class="border rounded-lg p-4 bg-card">
+            <div class="flex items-center gap-2 text-sm font-semibold mb-1.5 text-primary">
+              <span>Joke Teller</span>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">Clean-ish one-liners, callbacks to earlier jokes in the conversation, won't run out.</p>
+          </div>
+          <div class="border rounded-lg p-4 bg-card">
+            <div class="flex items-center gap-2 text-sm font-semibold mb-1.5 text-primary">
+              <span>YouTube Guru</span>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">Tool-driven: picks a curated video based on your vibe, embeds it inline via youtube-nocookie.</p>
+          </div>
+          <div class="border rounded-lg p-4 bg-card">
+            <div class="flex items-center gap-2 text-sm font-semibold mb-1.5 text-primary">
+              <span>Game Host</span>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">Runs 20 Questions, Would You Rather, trivia. Keeps score. Routes from ‘play a game’ intents.</p>
+          </div>
+          <div class="border rounded-lg p-4 bg-card">
+            <div class="flex items-center gap-2 text-sm font-semibold mb-1.5 text-primary">
+              <span>Story Teller</span>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">Short interactive fiction. Will not hallucinate images — that was a bug fix (PR #172, if you're curious).</p>
+          </div>
+          <div class="border rounded-lg p-4 bg-card">
+            <div class="flex items-center gap-2 text-sm font-semibold mb-1.5 text-primary">
+              <span>GIF Buddy</span>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">Reacts with a curated GIF when the vibe calls for one. Attachment flows through as an inline image.</p>
+          </div>
+          <div class="border rounded-lg p-4 bg-card">
+            <div class="flex items-center gap-2 text-sm font-semibold mb-1.5 text-primary">
+              <span>Orchestrator</span>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">Picks which agent speaks next, issues handoff_event messages, keeps the conversation coherent.</p>
+          </div>
+        </div>
+        <p class="text-sm text-muted-foreground mt-6 max-w-3xl">
+          Under the hood these are separate prompt+tool bundles behind a
+          router. Streaming is Socket.IO; each token arrives individually so
+          you see the response typed out. Handoffs surface as 
+          <code class="px-1.5 py-0.5 rounded bg-muted text-xs">
+            handoff_event
+          </code> 
+          frames and show up as a small &ldquo;Transferring you to
+          <em>Agent Name</em>…&rdquo; message in the transcript.
+        </p>
+      </div>
+    </section>
+
+    <section class="border-t">
+      <div class="max-w-5xl mx-auto px-6 py-16">
+        <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+          <svg class="h-6 w-6 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="22" y1="12" x2="18" y2="12"></line>
+            <line x1="6" y1="12" x2="2" y2="12"></line>
+            <line x1="12" y1="6" x2="12" y2="2"></line>
+            <line x1="12" y1="22" x2="12" y2="18"></line>
+          </svg>
+          Goal-seeking without a monolith
+        </h2>
+        <p class="text-muted-foreground leading-relaxed mb-4 max-w-3xl">
+          Each agent has its own lane — jokes, games, videos, stories — but
+          the system as a whole is goal-seeking: keep the user engaged, and
+          track any explicit goal they mention (&ldquo;I just need a status
+          update&rdquo;, &ldquo;I actually want to book a meeting&rdquo;) so
+          the right escalation path is always one intent away. The router and
+          the per-agent tools make it possible to add a new persona without
+          teaching every other agent about it.
+        </p>
+        <p class="text-muted-foreground leading-relaxed mb-4 max-w-3xl">
+          I wrote about the broader pattern — small, cooperating, goal-aware
+          agents instead of one giant prompt — in 
+          <a
+            href="/blog/goal-seeking-ai-architecture-multi-agent-systems"
+            class="underline underline-offset-4 hover:text-foreground"
+          >
+            Goal-Seeking AI Architecture
+          </a>
+          . This widget is one of the reference implementations.
+        </p>
+      </div>
+    </section>
+
+    <section class="border-t bg-card/10">
+      <div class="max-w-5xl mx-auto px-6 py-16">
+        <h2 class="text-2xl font-semibold mb-8">
+          What's going on under the hood
+        </h2>
+        <div class="grid gap-6 md:grid-cols-3">
+          <div class="border rounded-lg p-5 bg-card">
+            <div class="flex items-center gap-2 text-sm font-medium mb-2">
+              <span>OAuth2 + PKCE, all client-side</span>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">The widget runs the full Authorization Code + PKCE flow in the browser: popup opens roauth2.cat-herding.net, user signs in, the popup posts the code back, and a same-origin proxy on the chat backend exchanges it for a JWT.</p>
+          </div>
+          <div class="border rounded-lg p-5 bg-card">
+            <div class="flex items-center gap-2 text-sm font-medium mb-2">
+              <span>Multi-LLM backend</span>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">Claude (via Azure AI Foundry) + OpenAI for routing, tools, and rich media. Each agent is a prompt + tool bundle; the orchestrator picks who speaks next.</p>
+          </div>
+          <div class="border rounded-lg p-5 bg-card">
+            <div class="flex items-center gap-2 text-sm font-medium mb-2">
+              <span>Kubernetes-native</span>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">Rust OAuth2 server and chat backend both run in AKS behind Istio — managed certs, JWT-aware policies, RequestAuthentication binding.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t">
+      <div class="max-w-5xl mx-auto px-6 py-16">
+        <h2 class="text-2xl font-semibold mb-6">
+          The sign-in request path
+        </h2>
+        <ol class="space-y-4 text-muted-foreground leading-relaxed">
+          <li class="flex gap-4">
+            <span class="flex-shrink-0 w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-sm font-semibold">1</span>
+            <span class="pt-1">You click the floating chat bubble, then Sign in. The widget generates a PKCE verifier and challenge in the browser and opens a popup.</span>
+          </li>
+          <li class="flex gap-4">
+            <span class="flex-shrink-0 w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-sm font-semibold">2</span>
+            <span class="pt-1">Popup lands on roauth2.cat-herding.net/oauth/authorize. You authenticate (optionally via GitHub or Google federation) and approve the scopes.</span>
+          </li>
+          <li class="flex gap-4">
+            <span class="flex-shrink-0 w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-sm font-semibold">3</span>
+            <span class="pt-1">The auth server redirects the popup to chat.cat-herding.net/embed/callback.html with an authorization code. Callback postMessages the code back to the widget.</span>
+          </li>
+          <li class="flex gap-4">
+            <span class="flex-shrink-0 w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-sm font-semibold">4</span>
+            <span class="pt-1">Widget POSTs verifier data to exchange it for a JWT. No client secrets are shipped in the client bundle.</span>
+          </li>
+          <li class="flex gap-4">
+            <span class="flex-shrink-0 w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-sm font-semibold">5</span>
+            <span class="pt-1">Widget stores the token, connects to Socket.IO, and starts the multi-agent chat.</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="border-t bg-card/10">
+      <div class="max-w-5xl mx-auto px-6 py-16">
+        <h2 class="text-2xl font-semibold mb-4">Embed it anywhere</h2>
+        <p class="text-muted-foreground mb-6 max-w-3xl">
+          The widget is a ~20 KB gzipped IIFE that mounts inside a Shadow DOM
+          so host CSS can't bleed in. Drop it into any site:
+        </p>
+        <pre class="bg-muted p-4 rounded-md overflow-x-auto text-sm"><code is:raw>&lt;script src="https://chat.cat-herding.net/embed/cat-herding-chat.js" defer&gt;&lt;/script&gt;
+&lt;script&gt;
+  window.addEventListener('load', () => {
+    window.CatHerdingChat.init({
+      apiUrl: 'https://chat.cat-herding.net',
+      mode: 'lean',
+      auth: {
+        type: 'oauth2',
+        issuer: 'https://roauth2.cat-herding.net',
+        clientId: 'cat-herding-chat-embed',
+        scopes: 'openid profile email',
+      },
+    });
+  });
+&lt;/script&gt;</code></pre>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  function swapToDemo() {
+    if (window.CatHerdingChat) {
+      const instance = window.CatHerdingChat.init({
+        apiUrl: "https://chat.cat-herding.net",
+        title: "Cat-Herding AI",
+        subtitle: "Hold-flow demo",
+        mode: "demo",
+        accentColor: "#6366f1",
+        openOnLoad: true,
+        welcomeMessage:
+          "You're on hold. Sign in and the agents will keep you company — jokes, GIFs, YouTube, games, whatever keeps your wait interesting.",
+        auth: {
+          type: "oauth2",
+          issuer: "https://roauth2.cat-herding.net",
+          clientId: "cat-herding-chat-embed",
+          scopes: "openid profile email",
+          tokenStorage: "session",
+        },
+      });
+      if (instance && typeof instance === "object" && "open" in instance) {
+        instance.open?.();
+      }
+    }
+  }
+
+  function cleanupDemo() {
+    if (window.CatHerdingChat) {
+      window.CatHerdingChat.init({
+        apiUrl: "https://chat.cat-herding.net",
+        title: "Cat-Herding AI",
+        subtitle: "Multi-agent demo",
+        mode: "lean",
+        accentColor: "#6366f1",
+        auth: {
+          type: "oauth2",
+          issuer: "https://roauth2.cat-herding.net",
+          clientId: "cat-herding-chat-embed",
+          scopes: "openid profile email",
+          tokenStorage: "session",
+        },
+      });
+    }
+  }
+
+  // Hook into loading and transitioning
+  function setupChatPage() {
+    if (window.CatHerdingChat) {
+      swapToDemo();
+    } else {
+      const interval = setInterval(() => {
+        if (window.CatHerdingChat) {
+          clearInterval(interval);
+          swapToDemo();
+        }
+      }, 100);
+      
+      // Cleanup interval on page exit
+      document.body?.addEventListener('htmx:beforeSwap', () => clearInterval(interval), { once: true });
+    }
+  }
+
+  setupChatPage();
+  document.addEventListener('astro:after-swap', setupChatPage);
+  document.body?.addEventListener('htmx:load', setupChatPage);
+  document.body?.addEventListener('htmx:beforeSwap', cleanupDemo);
+</script>

@@ -1,0 +1,295 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Dark Glassy Theme - Modern 2025 Design */
+  :root {
+    --background: 210 40% 4%;
+    --foreground: 210 40% 98%;
+    --card: 210 40% 8%;
+    --card-foreground: 210 40% 98%;
+    --popover: 210 40% 10%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217 100% 60%;
+    --primary-foreground: 210 40% 4%;
+    --secondary: 215 32% 20%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 32% 18%;
+    --muted-foreground: 210 40% 70%;
+    --accent: 270 100% 60%;
+    --accent-foreground: 210 40% 4%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 32% 18%;
+    --input: 215 32% 16%;
+    --ring: 217 100% 60%;
+    --glass: 210 40% 15%;
+    --glass-light: 210 40% 20%;
+    --glass-dark: 210 40% 8%;
+    --glow-primary: 217 100% 60%;
+    --glow-secondary: 270 100% 60%;
+    --glow-accent: 190 100% 50%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--background)),
+      hsl(210, 40%, 6%)
+    );
+    min-height: 100vh;
+  }
+}
+
+/* Custom scrollbar - modern glassy style */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full;
+  background: hsl(var(--glass));
+  box-shadow: inset 0 0 6px hsla(var(--glow-primary), 0.3);
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-opacity-80;
+  box-shadow: inset 0 0 10px hsla(var(--glow-primary), 0.5);
+}
+
+/* Glass effect utility classes */
+.glass {
+  background: hsla(var(--glass) / 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid hsla(var(--glass-light) / 0.3);
+}
+
+.glass-elevated {
+  background: hsla(var(--glass) / 0.6);
+  backdrop-filter: blur(30px);
+  border: 1px solid hsla(var(--glass-light) / 0.4);
+  box-shadow: 0 8px 32px hsla(var(--glow-primary), 0.1);
+}
+
+.glass-glow {
+  background: hsla(var(--glass) / 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid hsla(var(--glow-primary) / 0.3);
+  box-shadow: 0 0 20px hsla(var(--glow-primary), 0.15);
+}
+
+/* --- Footer sprite cats (simple 64x64 sprites) --- */
+
+.footer-sprite-cats {
+  position: relative;
+  height: 96px;
+  overflow: hidden;
+  border-top: 1px solid hsla(var(--border), 0.4);
+  background: hsla(var(--background), 0.3);
+  pointer-events: none;
+}
+
+.footer-sprite-cats__ground {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 8px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsla(var(--border), 0.8),
+    transparent
+  );
+  opacity: 0.6;
+}
+
+.footer-sprite-cats__cat {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  will-change: transform;
+}
+
+@keyframes footer-sprite-cats-pan-l2r {
+  from {
+    transform: translateX(-10vw);
+  }
+  to {
+    transform: translateX(110vw);
+  }
+}
+
+@keyframes footer-sprite-cats-pan-r2l {
+  from {
+    transform: translateX(110vw);
+  }
+  to {
+    transform: translateX(-10vw);
+  }
+}
+
+.footer-sprite-cats__cat--l2r {
+  animation: footer-sprite-cats-pan-l2r 14s linear infinite;
+}
+
+.footer-sprite-cats__cat--r2l {
+  animation: footer-sprite-cats-pan-r2l 16s linear infinite;
+  animation-delay: -8s;
+}
+
+.footer-sprite-cats__sprite {
+  --frame: 64px;
+  --scale: 1;
+  --sheet-cols: 14;
+  --sheet-rows: 72;
+  --x-offset: -8px;
+  --anim-frames: 6;
+  --anim-ms: 900ms;
+  --x-start: calc(var(--x-offset));
+  --dir-col: 0;
+  --row: 0;
+
+  display: block;
+  width: calc(var(--frame) * var(--scale));
+  height: calc(var(--frame) * var(--scale));
+  background-image: var(--sprite-url);
+  background-repeat: no-repeat;
+  background-size: calc(var(--sheet-cols) * var(--frame) * var(--scale))
+    calc(var(--sheet-rows) * var(--frame) * var(--scale));
+  background-position-x: var(--x-start);
+  background-position-y: calc(var(--row) * var(--frame) * var(--scale) * -1);
+  image-rendering: pixelated;
+}
+
+.footer-sprite-cats__sprite[data-cat="1"] {
+  --sprite-url: url("/images/cats/cat 1 (64х64).png");
+}
+
+.footer-sprite-cats__sprite[data-cat="2"] {
+  --sprite-url: url("/images/cats/cat 2 (64х64).png");
+}
+
+.footer-sprite-cats__sprite[data-cat="3"] {
+  --sprite-url: url("/images/cats/cat 3 (64х64).png");
+}
+
+.footer-sprite-cats__sprite[data-dir="down"] {
+  --dir-col: 0;
+}
+
+.footer-sprite-cats__sprite[data-dir="up"] {
+  --dir-col: 1;
+}
+
+.footer-sprite-cats__sprite[data-dir="right"] {
+  --dir-col: 2;
+}
+
+.footer-sprite-cats__sprite[data-dir="left"] {
+  --dir-col: 3;
+}
+
+.footer-sprite-cats__sprite[data-action="sit"] {
+  --row: 0;
+  background-position-x: calc(
+    var(--x-offset) + var(--dir-col) * var(--frame) * var(--scale) * -1
+  );
+}
+
+.footer-sprite-cats__sprite[data-action="stand"] {
+  --row: 1;
+  background-position-x: calc(
+    var(--x-offset) + var(--dir-col) * var(--frame) * var(--scale) * -1
+  );
+}
+
+.footer-sprite-cats__sprite[data-action="walk"][data-dir="down"] {
+  --row: 2;
+}
+
+.footer-sprite-cats__sprite[data-action="walk"][data-dir="up"] {
+  --row: 3;
+}
+
+.footer-sprite-cats__sprite[data-action="walk"][data-dir="right"] {
+  --row: 5;
+}
+
+.footer-sprite-cats__sprite[data-action="walk"][data-dir="left"] {
+  --row: 4;
+}
+
+.footer-sprite-cats__sprite[data-action="sleep"] {
+  --row: 6;
+  --anim-frames: 8;
+  --anim-ms: 1100ms;
+}
+
+.footer-sprite-cats__sprite[data-action="run"][data-dir="down"] {
+  --row: 8;
+  --anim-frames: 6;
+  --anim-ms: 520ms;
+}
+
+.footer-sprite-cats__sprite[data-action="run"][data-dir="up"] {
+  --row: 9;
+  --anim-frames: 6;
+  --anim-ms: 520ms;
+}
+
+.footer-sprite-cats__sprite[data-action="run"][data-dir="right"] {
+  --row: 10;
+  --anim-frames: 6;
+  --anim-ms: 520ms;
+}
+
+.footer-sprite-cats__sprite[data-action="run"][data-dir="left"] {
+  --row: 11;
+  --anim-frames: 6;
+  --anim-ms: 520ms;
+}
+
+@keyframes footer-sprite-cats-walk {
+  from {
+    background-position-x: var(--x-start);
+  }
+  to {
+    background-position-x: calc(
+      var(--x-start) + var(--anim-frames) * var(--frame) * var(--scale) * -1
+    );
+  }
+}
+
+.footer-sprite-cats__sprite[data-animated="true"] {
+  animation: footer-sprite-cats-walk var(--anim-ms) steps(var(--anim-frames))
+    infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-sprite-cats__cat,
+  .footer-sprite-cats__sprite[data-animated="true"] {
+    animation: none !important;
+  }
+
+  .footer-sprite-cats__sprite {
+    background-position-x: 0px !important;
+  }
+}
