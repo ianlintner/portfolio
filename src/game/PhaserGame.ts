@@ -16,7 +16,7 @@ export class PhaserGame {
 
       // Helpful for Playwright E2E/visual tests and local debugging.
       // Keep this out of production to avoid leaking internals.
-      if (process.env.NODE_ENV !== "production") {
+      if (import.meta.env.DEV) {
         (globalThis as any).__PHASER_GAME__ = this.game;
         (globalThis as any).__PHASER_QA__ = {
           mode: options,
@@ -32,7 +32,7 @@ export class PhaserGame {
       this.game.destroy(true);
       this.game = null;
 
-      if (process.env.NODE_ENV !== "production") {
+      if (import.meta.env.DEV) {
         (globalThis as any).__PHASER_GAME__ = null;
         (globalThis as any).__PHASER_QA__ = null;
       }
