@@ -161,6 +161,11 @@ const externalGames = [
   let stop: (() => void) | null = null;
 
   async function bootGame() {
+    if (!document.getElementById('game-container')) {
+      cleanupGame();
+      return;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const layoutParam = urlParams.get("layout") || undefined;
     const bootOptions = {

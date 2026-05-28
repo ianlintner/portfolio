@@ -6,7 +6,7 @@ import Layout from '../layouts/Layout.astro';
   title="Cat-Herding AI — On-Hold Multi-Agent Chat | Ian Lintner"
   description="A live on-hold entertainment demo: multi-agent chat that keeps you company while you wait, with goal-seeking agents and OAuth2 sign-in via the Rust OAuth2 Server."
 >
-  <div class="min-h-screen bg-background">
+  <div id="chat-demo-page" class="min-h-screen bg-background">
     <section class="border-b">
       <div class="max-w-5xl mx-auto px-6 py-20">
         <div class="flex items-center gap-2 text-sm text-muted-foreground mb-4">
@@ -331,6 +331,11 @@ import Layout from '../layouts/Layout.astro';
 
   // Hook into loading and transitioning
   function setupChatPage() {
+    if (!document.getElementById('chat-demo-page')) {
+      cleanupDemo();
+      return;
+    }
+
     if (window.CatHerdingChat) {
       swapToDemo();
     } else {
