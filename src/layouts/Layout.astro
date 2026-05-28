@@ -71,6 +71,11 @@ const {
       document.addEventListener('DOMContentLoaded', initChat);
       document.addEventListener('astro:after-swap', initChat);
       document.body?.addEventListener('htmx:load', initChat);
+
+      // Reset scroll position to top on boosted page swaps
+      document.body?.addEventListener('htmx:afterSwap', () => {
+        window.scrollTo(0, 0);
+      });
     </script>
   </body>
 </html>
