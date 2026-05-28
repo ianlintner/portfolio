@@ -170,6 +170,7 @@ const externalGames = [
         urlParams.get("headless") === "1",
       headless: urlParams.get("headless") === "1",
       debug: urlParams.get("debug") === "1",
+      visualQA: urlParams.get("visualQA") === "1",
       ...(layoutParam ? { layoutOverride: layoutParam } : {}),
     };
 

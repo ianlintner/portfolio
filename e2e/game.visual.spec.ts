@@ -112,19 +112,9 @@ test.describe("/game visual QA", () => {
   test("renders main menu", async ({ page }) => {
     const dbg = attachDebugCapture(page);
 
-    await page.goto("/game", { waitUntil: "domcontentloaded" });
+    await page.goto("/game?visualQA=1", { waitUntil: "domcontentloaded" });
     await waitForGame(page);
     await waitForSceneActive(page, "MainMenu");
-
-    // Instantly complete all tweens so the UI is visible, then freeze
-    // immediately to keep background elements at their starting positions.
-    await page.evaluate(() => {
-      const game = (globalThis as any).__PHASER_GAME__ as any;
-      const mainMenu = game?.scene?.getScene?.("MainMenu");
-      if (mainMenu?.tweens?.completeAll) {
-        mainMenu.tweens.completeAll();
-      }
-    });
 
     await freezeGameLoop(page);
     await expect(page.locator("#game-container canvas")).toHaveScreenshot(
