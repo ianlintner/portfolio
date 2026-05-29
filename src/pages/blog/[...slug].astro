@@ -180,7 +180,9 @@ const { title, excerpt, date, tags, author = "Ian Lintner", image, imageAlt } = 
   }
 
   async function renderMermaid() {
-    const elements = document.querySelectorAll('pre.language-mermaid, pre code.language-mermaid');
+    const elements = document.querySelectorAll(
+      'pre.language-mermaid, pre code.language-mermaid, pre[data-language="mermaid"], pre code[data-language="mermaid"]'
+    );
     if (elements.length === 0) return;
 
     try {
