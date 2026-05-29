@@ -234,6 +234,31 @@ const { title, excerpt, date, tags, author = "Ian Lintner", image, imageAlt } = 
           wrapper.innerHTML = svg;
           target.replaceWith(wrapper);
           wrapper.setAttribute('data-mermaid-rendered', 'true');
+
+          // Dynamically adjust text color for contrast compliance in both light & dark mode
+          const nodes = wrapper.querySelectorAll('.node');
+          nodes.forEach(node => {
+            const shape = node.querySelector('.label-container, rect, polygon, path, circle');
+            if (shape) {
+              const fill = window.getComputedStyle(shape).fill;
+              if (fill && fill !== 'none' && fill !== 'transparent') {
+                const rgb = fill.match(/\d+/g);
+                if (rgb && rgb.length >= 3) {
+                  const r = parseInt(rgb[0], 10);
+                  const g = parseInt(rgb[1], 10);
+                  const b = parseInt(rgb[2], 10);
+                  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                  const textColor = brightness > 128 ? '#0f172a' : '#f8fafc';
+                  
+                  const labelElements = node.querySelectorAll('.label, text, span');
+                  labelElements.forEach(el => {
+                    el.style.setProperty('color', textColor, 'important');
+                    el.style.setProperty('fill', textColor, 'important');
+                  });
+                }
+              }
+            }
+          });
         } catch (err) {
           console.error('Mermaid render error:', err);
           const errorPre = document.createElement('pre');
