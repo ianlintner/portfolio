@@ -76,37 +76,37 @@ Shipping sensor data from an Arduino behind home WiFi to a cloud-hosted Promethe
 
 ```mermaid
 flowchart TD
-    subgraph Arduino["🔌 Arduino UNO R4 WiFi"]
-        SENSORS["DHT22 + 2× Soil Probes"]
-        MCU["Renesas RA4M1<br/>+ ESP32-S3 WiFi"]
+    subgraph Arduino["Arduino UNO R4 WiFi"]
+        SENSORS["DHT22 + 2 soil probes"]
+        MCU["Renesas RA4M1 + ESP32-S3 WiFi"]
         SENSORS --> MCU
     end
 
-    subgraph Cloud["☁️ AKS Cluster (bigboy)"]
-        INGEST["garden-ingest<br/>(FastAPI)"]
+    subgraph Cloud["AKS Cluster - bigboy"]
+        INGEST["garden-ingest FastAPI"]
         PGW["Pushgateway"]
         PROM["Prometheus"]
         GRAFANA["Grafana"]
         INGEST --> PGW
-        PGW -->|"scrape 30s"| PROM
+        PGW -->|scrape 30s| PROM
         PROM --> GRAFANA
     end
 
-    subgraph Auth["🔐 Auth"]
-        ROAUTH["roauth2.cat-herding.net<br/>(OAuth2 server)"]
+    subgraph Auth["Auth"]
+        ROAUTH["roauth2 OAuth2 server"]
     end
 
-    MCU -->|"1. POST /oauth/token<br/>(client_credentials)"| ROAUTH
-    ROAUTH -->|"JWT"| MCU
-    MCU -->|"2. POST /ingest<br/>+ Bearer JWT"| INGEST
+    MCU -->|get JWT| ROAUTH
+    ROAUTH -->|JWT| MCU
+    MCU -->|POST readings| INGEST
 
-    subgraph Gateway["🛡️ istio ingress"]
+    subgraph Gateway["istio ingress"]
         VS["VirtualService"]
-        JWT["RequestAuthentication<br/>+ AuthorizationPolicy"]
+        JWT["JWT auth policy"]
     end
 
     INGEST -.-> Gateway
-    Gateway -.->|"validates JWT"| INGEST
+    Gateway -.->|validates JWT| INGEST
 ```
 
 The board authenticates with **OAuth2 client credentials** (HTTP Basic auth, as required by the server). It gets a JWT, caches it, and POSTs JSON readings to `garden.cat-herding.net/ingest`. Istio validates the JWT at the gateway edge before the request reaches the service — the ingest service itself trusts the edge.
@@ -254,34 +254,34 @@ The full stack, from garden to dashboard:
 
 ```mermaid
 graph TD
-    subgraph Outdoor["🌿 Garden"]
-        BOARD["Arduino UNO R4 WiFi<br/>+ DHT22 + 2× soil probes"]
-        T1["RF Water Timer 1<br/>(Herb bed)"]
-        T2["RF Water Timer 2<br/>(Veggie bed)"]
+    subgraph Outdoor["Garden"]
+        BOARD["Arduino UNO R4 WiFi + sensors"]
+        T1["RF Water Timer 1 - Herb bed"]
+        T2["RF Water Timer 2 - Veggie bed"]
     end
 
-    subgraph AKS["☁️ AKS Cluster"]
-        INGEST["garden-ingest (FastAPI)<br/>+ Pushgateway + Prometheus"]
-        GRAFANA["Grafana<br/>Garden Overview dashboard"]
-        OPENCLAW["OpenClaw AI Agent<br/>garden CLI"]
+    subgraph AKS["AKS Cluster"]
+        INGEST["garden-ingest + Pushgateway + Prometheus"]
+        GRAFANA["Grafana - Garden Overview"]
+        OPENCLAW["OpenClaw AI Agent + garden CLI"]
         ROAUTH["roauth2 OAuth2 server"]
     end
 
-    TUYA["Smart Life Cloud<br/>(Tuya OpenAPI)"]
-    DISCORD["Discord<br/>#garden channel"]
-    WEATHER["Open-Meteo<br/>weather + ET₀"]
+    TUYA["Smart Life Cloud - Tuya API"]
+    DISCORD["Discord garden channel"]
+    WEATHER["Open-Meteo weather + ET0"]
 
-    BOARD -->|"OAuth2 + HTTPS"| INGEST
+    BOARD -->|OAuth2 HTTPS| INGEST
     INGEST --> GRAFANA
-    OPENCLAW -->|"reads"| INGEST
-    OPENCLAW -->|"fetches"| WEATHER
-    OPENCLAW -->|"proposes → awaits approval"| DISCORD
-    DISCORD -->|"approve zone1"| OPENCLAW
-    OPENCLAW -->|"Tuya API"| TUYA
-    TUYA -->|"RF command"| T1
-    TUYA -->|"RF command"| T2
-    ROAUTH -->|"JWT"| BOARD
-    ROAUTH -->|"validates JWT"| INGEST
+    OPENCLAW -->|reads| INGEST
+    OPENCLAW -->|fetches| WEATHER
+    OPENCLAW -->|proposes then approval| DISCORD
+    DISCORD -->|approve zone1| OPENCLAW
+    OPENCLAW -->|Tuya API| TUYA
+    TUYA -->|RF command| T1
+    TUYA -->|RF command| T2
+    ROAUTH -->|JWT| BOARD
+    ROAUTH -->|validates JWT| INGEST
 ```
 
 ---
