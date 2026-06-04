@@ -4,13 +4,17 @@ on:
   push:
     branches: [main, develop, staging]
     paths-ignore:
-      - "**.md"
+      # Root-level docs only (README, CHANGELOG, THEME_*) — note "*.md" does NOT
+      # match nested paths, so src/content/blog/*.md still triggers CI + deploy.
+      - "*.md"
+      - ".github/**/*.md" # AI instructions / agent docs
       - "docs/**"
       - ".github/workflows/docker.yml"
   pull_request:
     branches: [main, develop, staging]
     paths-ignore:
-      - "**.md"
+      - "*.md"
+      - ".github/**/*.md"
       - "docs/**"
   # Manual trigger: lets you run CI + deploy on demand (e.g. after a docs/blog-only
   # change that paths-ignore skips, so new posts still get built and deployed).
