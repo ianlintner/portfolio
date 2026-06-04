@@ -36,3 +36,11 @@ If any checks fail, resolve them before making git commits.
 - **Docker**: The multi-stage `Dockerfile` compiles the static site and launches `node server.js` to run the container.
 - **CI/CD**: Pushes to `main` compile the project and deploy it to **Azure Static Web Apps** automatically via OIDC token resolution.
 - **Kubernetes manifests** in `k8s/apps/portfolio/base` define deployment, services, and Istio routing.
+
+## Blog posts & social cards
+
+- Posts are Markdown in `src/content/blog/<slug>.md`. Frontmatter schema lives in `src/content/config.ts`: `title`, `date`, `excerpt`, `tags[]`, `author`, `image`, `imageAlt`.
+- **Every post has a 1200×630 social card** at `public/images/<slug>-social.png`, referenced by the `image` frontmatter field as `/images/<slug>-social.png`. **Never reference an `image` you have not actually created** — a dangling path ships a broken social card.
+- Hand-authored cards also keep a matching `<slug>-social.svg` source: dark `#0f172a` background, 40px grid pattern, a themed glyph/illustration, white bold title + slate (`#94a3b8`) subtitle, and `by Ian Lintner` bottom-right. AI-generated cards are **PNG-only** (no SVG source — that's expected).
+- **To generate a card with AI**: use **fal.ai FLUX** (`fal-ai/flux/dev` via `fal_client`; `FAL_KEY` is in `~/.zshrc`). Generate at 1216×640 (FLUX wants multiples of 32), cover-crop to exactly 1200×630, then composite the title/subtitle/byline with **PIL** over a bottom gradient scrim. **Prompt the model with "no text, no watermark"** — diffusion garbles lettering, so overlay the real text afterward. Match the dark-slate + emerald/violet accent style of the existing cards.
+- **Writing voice**: opinionated first-person hook (not a summary), emoji section headers, `mermaid` diagrams for architecture, real system detail (actual names/configs/bugs), and a "what I'd do differently" section. See existing posts like `caretaker-agentic-repo-maintenance.md` for the template.

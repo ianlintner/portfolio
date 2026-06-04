@@ -52,6 +52,7 @@ No open ports on the Arduino. No polling. A full OAuth2/JWT-protected cloud path
 ## 🛠️ The Hardware Stack
 
 **Arduino UNO R4 WiFi** is the right board for this. It has:
+
 - Built-in WiFi (ESP32-S3 radio, 2.4 GHz only — important if your IoT network is 5 GHz)
 - A 12×8 monochrome LED matrix for at-a-glance status
 - 14-bit ADC for smooth analog reads
@@ -59,11 +60,11 @@ No open ports on the Arduino. No polling. A full OAuth2/JWT-protected cloud path
 
 Sensors wired to the board:
 
-| Sensor | Pin | Notes |
-|---|---|---|
-| DHT22 (air temp + humidity) | D7 (digital) | Proprietary 1-wire protocol |
-| Soil probe — herb bed (bed1) | A0 (analog) | Capacitive, 5V. Dry ≈ 16374, wet ≈ 10700 |
-| Soil probe — veggie bed (bed2) | A1 (analog) | Same type, same calibration |
+| Sensor                         | Pin          | Notes                                    |
+| ------------------------------ | ------------ | ---------------------------------------- |
+| DHT22 (air temp + humidity)    | D7 (digital) | Proprietary 1-wire protocol              |
+| Soil probe — herb bed (bed1)   | A0 (analog)  | Capacitive, 5V. Dry ≈ 16374, wet ≈ 10700 |
+| Soil probe — veggie bed (bed2) | A1 (analog)  | Same type, same calibration              |
 
 One important lesson from calibration: **capacitive probes aren't plug-and-play.** You need to measure the raw ADC values at dry (in air) and wet (in freshly watered soil), then set those endpoints. They also need 5V power and the sensor needs to be energized only during reads — otherwise it corrodes. We gate power through a GPIO pin.
 
@@ -165,6 +166,7 @@ The LLM's role is **orchestration and communication**, not valve control. It rea
 > 🌱 Zone 1 (herb bed): water 8 min — soil at 22%, no rain forecast, ET₀ 6.9mm (hot day). To approve: reply `approve zone1`
 
 I reply ✅ or `approve zone1`. The agent then runs `garden water`, which:
+
 - Re-clamps to the caps (so even if the proposal gets modified, the valve can't run wild)
 - Sends the Tuya RF command via the Smart Life cloud API
 - Confirms the countdown DP was accepted (the auto-off mechanism)
@@ -179,7 +181,7 @@ The approval gate is enforced **in code**, not just by prompt: `garden water` wo
 The two RF water timers are standard Smart Life / Tuya devices. From the cloud API side they look like this:
 
 ```json
-{"switch_1": false, "countdown_1": 600, "smart_weather": "sunny"}
+{ "switch_1": false, "countdown_1": 600, "smart_weather": "sunny" }
 ```
 
 `switch_1` is the on/off state. `countdown_1` is the hardware auto-off timer in seconds. Critically: **we verify the countdown DP was accepted** after sending the open command. If the device ignores the countdown code (wrong DP name for that model), the valve opens and never auto-closes. That's the worst failure mode — so we check it, and if it fails, we immediately send an explicit off command as a failsafe.
@@ -236,6 +238,7 @@ The update flow:
 A GitHub Actions workflow builds the firmware on every `v*` tag push, compresses the `.bin` to `.ota` (the R4 requires LZSS compression — a raw `.bin` fails verification), and publishes a release with both `version.txt` and `garden-node.ota`.
 
 Releasing a new firmware version is now:
+
 ```bash
 ./scripts/release-firmware.sh 1.0.1
 # CI handles compile → compress → publish → board self-updates on next reboot
