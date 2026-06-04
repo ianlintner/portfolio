@@ -12,6 +12,9 @@ on:
     paths-ignore:
       - "**.md"
       - "docs/**"
+  # Manual trigger: lets you run CI + deploy on demand (e.g. after a docs/blog-only
+  # change that paths-ignore skips, so new posts still get built and deployed).
+  workflow_dispatch:
 
 permissions:
   contents: read
