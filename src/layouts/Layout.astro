@@ -27,7 +27,6 @@ const {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
-    <script is:inline src="https://chat.cat-herding.net/embed/cat-herding-chat.js" defer async></script>
   </head>
   <body class="bg-background text-foreground" hx-boost="true">
     <div class="min-h-screen font-sans antialiased flex flex-col">
@@ -38,39 +37,9 @@ const {
       <Footer />
     </div>
 
-    <!-- Script to bundle htmx.org and initialize the chat widget -->
+    <!-- Script to bundle htmx.org and set up route hooks -->
     <script>
       import 'htmx.org';
-
-      function initChat() {
-        if (window.CatHerdingChat) {
-          window.CatHerdingChat.init({
-            apiUrl: "https://chat.cat-herding.net",
-            title: "Cat-Herding AI",
-            subtitle: "Multi-agent demo",
-            mode: "lean",
-            accentColor: "#6366f1",
-            auth: {
-              type: "oauth2",
-              issuer: "https://roauth2.cat-herding.net",
-              clientId: "cat-herding-chat-embed",
-              scopes: "openid profile email",
-              tokenStorage: "session",
-            },
-          });
-        } else {
-          const script = document.querySelector('script[src="https://chat.cat-herding.net/embed/cat-herding-chat.js"]');
-          script?.addEventListener('load', initChat, { once: true });
-        }
-      }
-
-      // Initialize on load
-      initChat();
-
-      // Hook into both HTMX swaps and Astro swap events
-      document.addEventListener('DOMContentLoaded', initChat);
-      document.addEventListener('astro:after-swap', initChat);
-      document.body?.addEventListener('htmx:load', initChat);
 
       // Reset scroll position to top on boosted page swaps
       document.body?.addEventListener('htmx:afterSwap', () => {
