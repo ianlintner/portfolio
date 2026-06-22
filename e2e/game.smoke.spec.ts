@@ -22,7 +22,7 @@ test.describe("/game", () => {
     ).toBeVisible();
 
     // If our bootstrap throws, we surface an explicit overlay. Treat that as failure.
-    await expect(page.getByText("Game failed to start")).toHaveCount(0);
+    await expect(page.locator("#boot-error")).toBeHidden();
 
     const container = page.locator("#game-container");
     try {

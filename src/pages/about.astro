@@ -1,0 +1,311 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/Container.astro';
+import Section from '../components/Section.astro';
+import Divider from '../components/Divider.astro';
+---
+
+<Layout
+  title="About & Support | Ian Lintner / Lintner Consulting LLC"
+  description="Developer information, application support, and privacy policies for projects built by Ian Lintner and Lintner Consulting LLC."
+>
+  <div class="min-h-screen bg-background">
+    {/* Header Section */}
+    <Section
+      spacing="lg"
+      class="border-b bg-gradient-to-br from-background via-primary/5 to-background"
+    >
+      <Container>
+        <div class="space-y-4 text-center sm:text-left py-4">
+          <h1 class="text-4xl sm:text-5xl font-bold tracking-tight">
+            <span class="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              About & Support
+            </span>
+          </h1>
+          <p class="text-lg text-muted-foreground max-w-3xl leading-relaxed">
+            Official developer profile, application support, and legal information for projects built by Ian Lintner and Lintner Consulting LLC.
+          </p>
+        </div>
+      </Container>
+    </Section>
+
+    {/* Main Content Section */}
+    <Section spacing="lg">
+      <Container>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          {/* Left Column: Organization & Support */}
+          <div class="space-y-6">
+            {/* Organization Profile */}
+            <div class="bg-card border border-border rounded-xl overflow-hidden glass-elevated hover:border-primary/20 transition-all duration-300">
+              <div class="p-6 pb-4 flex flex-col space-y-1.5">
+                <h3 class="text-lg font-semibold leading-none tracking-tight flex items-center gap-2 text-primary">
+                  <svg class="h-5 w-5 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                    <line x1="9" y1="22" x2="9" y2="16"></line>
+                    <line x1="9" y1="16" x2="15" y2="16"></line>
+                    <line x1="15" y1="16" x2="15" y2="22"></line>
+                    <line x1="9" y1="8" x2="9.01" y2="8"></line>
+                    <line x1="15" y1="8" x2="15.01" y2="8"></line>
+                    <line x1="9" y1="12" x2="9.01" y2="12"></line>
+                    <line x1="15" y1="12" x2="15.01" y2="12"></line>
+                  </svg>
+                  Developer Information
+                </h3>
+              </div>
+              <div class="p-6 pt-0 space-y-4">
+                <p class="text-muted-foreground leading-relaxed text-sm">
+                  This website and its associated projects are developed and
+                  maintained by{" "}
+                  <strong class="text-foreground font-semibold">
+                    Ian Lintner
+                  </strong>{" "}
+                  under{" "}
+                  <strong class="text-foreground font-semibold">
+                    Lintner Consulting LLC
+                  </strong>
+                  , a software consultancy specializing in secure cloud
+                  platform architecture, scalable systems engineering, and
+                  AI-augmented developer workflows.
+                </p>
+                <p class="text-muted-foreground leading-relaxed text-sm">
+                  With over 20 years of engineering leadership, our mission is
+                  to deliver high-quality, high-reliability software
+                  components and production-ready architectures.
+                </p>
+              </div>
+            </div>
+
+            {/* App Support */}
+            <div class="bg-card border border-border rounded-xl overflow-hidden glass-glow hover:border-primary/30 transition-all duration-300">
+              <div class="p-6 pb-4 flex flex-col space-y-1.5">
+                <h3 class="text-lg font-semibold leading-none tracking-tight flex items-center gap-2 text-primary">
+                  <svg class="h-5 w-5 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                  Application Support
+                </h3>
+              </div>
+              <div class="p-6 pt-0 space-y-4">
+                <p class="text-muted-foreground leading-relaxed text-sm">
+                  Need help, have questions, or want to submit feedback for
+                  any of our applications? We are dedicated to providing
+                  support and hearing your suggestions.
+                </p>
+                <div class="rounded-lg bg-accent/20 p-4 border border-accent/30 space-y-3">
+                  <div class="flex items-start gap-3">
+                    <svg class="h-5 w-5 text-primary mt-0.5 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                      <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                    </svg>
+                    <div>
+                      <p class="text-sm font-semibold text-foreground">
+                        Email Support
+                      </p>
+                      <a
+                        href="mailto:dev@codelintner.com"
+                        class="text-sm text-primary hover:underline font-medium inline-flex items-center gap-1 mt-0.5"
+                      >
+                        dev@codelintner.com
+                        <svg class="h-3 w-3 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                          <polyline points="15 3 21 3 21 9"></polyline>
+                          <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-xs text-muted-foreground italic">
+                  Support response timeframe: We typically respond to support
+                  queries within 2 to 3 business days.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Privacy & Legal */}
+          <div class="space-y-6">
+            {/* Privacy Policy */}
+            <div class="bg-card border border-border rounded-xl overflow-hidden glass-elevated hover:border-primary/20 transition-all duration-300">
+              <div class="p-6 pb-4 flex flex-col space-y-1.5">
+                <h3 class="text-lg font-semibold leading-none tracking-tight flex items-center gap-2 text-primary">
+                  <svg class="h-5 w-5 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                  Privacy Policy
+                </h3>
+              </div>
+              <div class="p-6 pt-0 space-y-4">
+                <p class="text-muted-foreground leading-relaxed text-sm">
+                  We take your privacy seriously. This privacy policy applies
+                  to all applications published under the developer account of
+                  Ian Lintner / Lintner Consulting LLC.
+                </p>
+                <Divider class="my-2" />
+                <div class="space-y-3 text-sm text-muted-foreground">
+                  <div>
+                    <h4 class="font-semibold text-foreground mb-1">
+                      Data Collection
+                    </h4>
+                    <p class="leading-relaxed text-xs">
+                      Our applications are designed with privacy by default.
+                      We do not collect, store, transmit, or sell any
+                      personally identifiable information (PII) or sensitive
+                      user data.
+                    </p>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-foreground mb-1">
+                      App Store Diagnostics
+                    </h4>
+                    <p class="leading-relaxed text-xs">
+                      Anonymized performance logs, crash telemetry, and
+                      general usage statistics may be collected automatically
+                      by Apple Inc. on our behalf if you have opted into
+                      sharing diagnostic information. This data contains no
+                      personal identifiers and is used solely to improve apps.
+                    </p>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-foreground mb-1">
+                      Third-Party Services
+                    </h4>
+                    <p class="leading-relaxed text-xs">
+                      Our applications do not integrate third-party ad
+                      networks, tracking scripts, or data brokers.
+                    </p>
+                  </div>
+                </div>
+                <Divider class="my-3" />
+                <div class="pt-2 text-center sm:text-left">
+                  <a
+                    href="/privacy"
+                    class="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1.5"
+                  >
+                    View Full Privacy Policy
+                    <svg class="h-3.5 w-3.5 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                      <polyline points="15 3 21 3 21 9"></polyline>
+                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Legal & Terms */}
+            <div class="bg-card border border-border rounded-xl overflow-hidden glass-elevated hover:border-primary/20 transition-all duration-300">
+              <div class="p-6 pb-4 flex flex-col space-y-1.5">
+                <h3 class="text-lg font-semibold leading-none tracking-tight flex items-center gap-2 text-primary">
+                  <svg class="h-5 w-5 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  Terms of Use
+                </h3>
+              </div>
+              <div class="p-6 pt-0 space-y-3 text-sm text-muted-foreground leading-relaxed">
+                <p class="text-xs">
+                  Applications developed and published by Ian Lintner /
+                  Lintner Consulting LLC are provided &ldquo;as is&rdquo;,
+                  without warranty of any kind, express or implied, including
+                  but not limited to the warranties of merchantability,
+                  fitness for a particular purpose, and non-infringement.
+                </p>
+                <p class="text-xs">
+                  In no event shall the authors or copyright holders be liable
+                  for any claim, damages, or other liability, whether in an
+                  action of contract, tort, or otherwise, arising from, out
+                  of, or in connection with the software.
+                </p>
+                <Divider class="my-3" />
+                <div class="pt-2 text-center sm:text-left">
+                  <a
+                    href="/terms"
+                    class="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1.5"
+                  >
+                    View Full Terms of Service
+                    <svg class="h-3.5 w-3.5 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                      <polyline points="15 3 21 3 21 9"></polyline>
+                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </Section>
+
+    {/* Featured Applications Section */}
+    <Section
+      spacing="lg"
+      class="border-t bg-gradient-to-b from-background to-accent/5"
+    >
+      <Container>
+        <div class="max-w-3xl mx-auto text-center mb-8">
+          <h2 class="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-3">
+            Our Featured Applications
+          </h2>
+          <p class="text-muted-foreground">
+            Explore the mobile and web experiences built and published by Ian
+            Lintner / Lintner Consulting LLC.
+          </p>
+        </div>
+        <div class="bg-card border border-border rounded-xl overflow-hidden glass-glow max-w-4xl mx-auto hover:border-primary/30 transition-all duration-300">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+            <div
+              class="md:col-span-1 h-full min-h-[200px] relative bg-cover bg-center"
+              style="background-image: url('/images/metrognome-hero.png');"
+            >
+              {/* Visual side card */}
+            </div>
+            <div class="md:col-span-2 p-6 space-y-4">
+              <div class="space-y-1">
+                <h3 class="text-2xl font-bold text-foreground">
+                  Metrognome
+                </h3>
+                <p class="text-sm text-primary font-medium">
+                  Whimsical 3D Gnomecore Metronome
+                </p>
+              </div>
+              <p class="text-muted-foreground text-sm leading-relaxed">
+                Metrognome is a delightful, feature-rich 3D metronome built
+                with the Godot engine. Featuring procedural audio synthesis,
+                time-signature responsive bouncing gnomes, and animated forest
+                wildlife, it makes rhythm practice an engaging, cozy
+                adventure.
+              </p>
+              <div class="flex flex-wrap gap-3">
+                <a
+                  href="/metrognome"
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+                >
+                  View App Details
+                </a>
+                <a
+                  href="https://growlbear.itch.io/metrognomes"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-border text-muted-foreground hover:text-foreground text-sm font-medium hover:bg-accent transition-all"
+                >
+                  Play on Itch.io
+                  <svg class="h-4 w-4 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </Section>
+  </div>
+</Layout>

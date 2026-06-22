@@ -1,0 +1,680 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/Container.astro';
+import Section from '../components/Section.astro';
+import Divider from '../components/Divider.astro';
+
+const LINKS = {
+  github: "https://github.com/ianlintner",
+  linkedin: "https://linkedin.com/in/ianlintner/",
+  portfolio: "https://portfolio.hugecat.net",
+} as const;
+
+const COMPANIES = {
+  carvana: { name: "Carvana", url: "https://www.carvana.com" },
+  smartthings: {
+    name: "Samsung SmartThings",
+    url: "https://www.smartthings.com",
+  },
+  workiva: { name: "Workiva", url: "https://www.workiva.com" },
+  twoRivers: {
+    name: "Two Rivers Marketing",
+    url: "https://www.tworiversmarketing.com",
+  },
+  drake: { name: "Drake University", url: "https://www.drake.edu" },
+} as const;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Ian Lintner",
+  jobTitle: "Lead Engineer / Team Lead",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Minneapolis",
+    addressRegion: "MN",
+    addressCountry: "US",
+  },
+  url: LINKS.portfolio,
+  sameAs: [LINKS.github, LINKS.linkedin],
+  knowsAbout: [
+    "Distributed Systems",
+    "Event-driven Architecture",
+    "Microservices",
+    "Scala",
+    "ZIO",
+    "Akka",
+    "Kafka",
+    "OpenTelemetry",
+    "Kubernetes",
+    "Terraform",
+    "Cloud Platforms (AWS, GCP)",
+    "LLM systems",
+    "Observability",
+    "Security",
+  ],
+};
+---
+
+<Layout
+  title="Resume | Ian Lintner — Lead Engineer (Distributed Systems, AI Platforms)"
+  description="Software engineering resume for Ian Lintner — Lead Engineer focused on distributed systems, cloud platforms, and LLM-enabled products."
+>
+  <div class="min-h-screen bg-background text-foreground">
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+    <Section
+      spacing="lg"
+      class="border-b bg-gradient-to-br from-background via-primary/5 to-background"
+    >
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 py-4">
+        <div class="space-y-2">
+          <h1 class="text-4xl sm:text-5xl font-bold tracking-tight">
+            <span class="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              Ian Lintner
+            </span>
+          </h1>
+          <p class="text-lg text-muted-foreground">
+            Lead Engineer · Full Stack · Distributed Systems · AI Platforms · Functional Programming
+          </p>
+        </div>
+        
+        {/* Resume Actions */}
+        <div class="flex flex-wrap gap-2 print:hidden">
+          <button
+            id="print-btn"
+            class="inline-flex items-center justify-center font-medium transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-8 px-3 text-sm gap-1.5 rounded-md"
+            aria-label="Print or save as PDF"
+          >
+            <svg class="h-4 w-4 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Print / Save PDF
+          </button>
+          <a
+            href="#resume-plain-text"
+            class="inline-flex items-center justify-center font-medium transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background border border-border bg-transparent text-foreground hover:bg-accent/10 hover:border-accent active:bg-accent/20 focus-visible:ring-accent h-8 px-3 text-sm gap-1.5 rounded-md"
+            aria-label="Download resume as plain text"
+          >
+            <svg class="h-4 w-4 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Plain text
+          </a>
+        </div>
+      </div>
+
+      <div class="bg-card border border-border rounded-xl p-6 mt-6">
+        <h2 class="text-lg font-bold mb-3">Executive Summary</h2>
+        <ul class="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+          <li>
+            Lead Engineer with 20+ years building cloud-native, event-driven
+            systems and secure APIs.
+          </li>
+          <li>
+            Recent focus: AI communications platform (LLM chat/routing,
+            orchestration, summarization).
+          </li>
+          <li>
+            Strong in Scala (ZIO/Akka), Kafka, Kubernetes, Terraform, and
+            OpenTelemetry end-to-end tracing.
+          </li>
+          <li>
+            Track record: performance + reliability wins, migrations, and
+            mentoring teams.
+          </li>
+        </ul>
+      </div>
+
+      <div class="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div class="space-y-4">
+          <div class="flex flex-wrap gap-2">
+            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary/10 text-primary border border-transparent">
+              Distributed Systems
+            </span>
+            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary/10 text-primary border border-transparent">
+              Event-Driven
+            </span>
+            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary/10 text-primary border border-transparent">
+              AI / LLM Products
+            </span>
+            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary/10 text-primary border border-transparent">
+              Platform + Security
+            </span>
+            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-secondary text-secondary-foreground border border-transparent">
+              Scala
+            </span>
+            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-secondary text-secondary-foreground border border-transparent">
+              Kubernetes
+            </span>
+            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-secondary text-secondary-foreground border border-transparent">
+              OpenTelemetry
+            </span>
+          </div>
+
+          <div class="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+            <span class="inline-flex items-center gap-2">
+              <svg class="h-4 w-4 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg> Minneapolis, MN
+            </span>
+            <a
+              href={LINKS.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 text-primary underline underline-offset-4 hover:opacity-90"
+            >
+              <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+              </svg> LinkedIn (preferred)
+            </a>
+          </div>
+
+          <div class="flex flex-wrap gap-3 text-sm">
+            <a
+              href={LINKS.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 text-primary underline underline-offset-4 hover:opacity-90"
+            >
+              LinkedIn
+            </a>
+            <a
+              href={LINKS.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 text-primary underline underline-offset-4 hover:opacity-90"
+            >
+              GitHub
+            </a>
+            <a
+              href={LINKS.portfolio}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 text-primary underline underline-offset-4 hover:opacity-90"
+            >
+              Portfolio
+            </a>
+          </div>
+        </div>
+
+        <div class="bg-card border border-border rounded-xl p-6 print:shadow-none">
+          <h2 class="text-base font-bold mb-3">Key Highlights</h2>
+          <ul class="space-y-2 text-sm text-muted-foreground">
+            <li>• Team Lead (Carvana) — AI platform</li>
+            <li>• Scala (ZIO/Akka), Python, TypeScript, SQL</li>
+            <li>• Kafka / event-driven microservices</li>
+            <li>• Kubernetes + Terraform, AWS + GCP</li>
+            <li>• Observability: OpenTelemetry, Datadog</li>
+            <li>• Security: IAM, OIDC/SAML/SSO</li>
+          </ul>
+        </div>
+      </div>
+    </Section>
+
+    <Section spacing="lg">
+      <Container>
+        <div class="grid gap-6 lg:grid-cols-2">
+          <div class="bg-card border border-border rounded-xl p-6">
+            <h2 class="text-lg font-bold mb-4">Technical Expertise</h2>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div>
+                <p class="text-sm font-semibold">Cloud & Infra</p>
+                <p class="text-xs text-muted-foreground mt-0.5">
+                  AWS, GCP, Kubernetes, Terraform, CI/CD, serverless,
+                  containers, IaC
+                </p>
+              </div>
+              <div>
+                <p class="text-sm font-semibold">Distributed systems</p>
+                <p class="text-xs text-muted-foreground mt-0.5">
+                  Event-driven architecture, microservices, secure APIs,
+                  data pipelines, messaging
+                </p>
+              </div>
+              <div>
+                <p class="text-sm font-semibold">Languages</p>
+                <p class="text-xs text-muted-foreground mt-0.5">
+                  Scala, Python, Java, TypeScript/JavaScript, SQL, C#
+                </p>
+              </div>
+              <div>
+                <p class="text-sm font-semibold">AI / LLM systems</p>
+                <p class="text-xs text-muted-foreground mt-0.5">
+                  LLM chat + routing, summarization pipelines,
+                  human-in-the-loop workflows, AI engineering
+                </p>
+              </div>
+              <div>
+                <p class="text-sm font-semibold">
+                  Reliability & Observability
+                </p>
+                <p class="text-xs text-muted-foreground mt-0.5">
+                  Kafka, ZIO, Akka, OpenTelemetry, Datadog, Grafana
+                </p>
+              </div>
+              <div>
+                <p class="text-sm font-semibold">Leadership</p>
+                <p class="text-xs text-muted-foreground mt-0.5">
+                  Architecture reviews, RFCs, mentoring, cross-stack
+                  collaboration, execution ownership
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl p-6">
+            <h2 class="text-lg font-bold mb-4">Selected Impact</h2>
+            <ul class="space-y-3 text-sm text-muted-foreground">
+              <li>
+                <span class="font-semibold text-foreground">
+                  Carvana — AI Chat Platform:
+                </span>{" "}
+                Helped architect an LLM-based communications platform; led
+                platform team delivery of new features to production.
+              </li>
+              <li>
+                <span class="font-semibold text-foreground">
+                  Carvana — Performance:
+                </span>{" "}
+                Reduced a critical chat backend span by{" "}
+                <strong>~10×</strong> (from 1s+ to ~90ms) using caching and
+                pooled Twilio identities.
+              </li>
+              <li>
+                <span class="font-semibold text-foreground">
+                  Observability at scale:
+                </span>{" "}
+                Implemented end-to-end tracing across UI → gateways →
+                microservices → AI flows with OpenTelemetry.
+              </li>
+              <li>
+                <span class="font-semibold text-foreground">
+                  Workiva — Serverless + SSO:
+                </span>{" "}
+                Built SSO/SAML/OIDC gateways and serverless integrations on
+                AWS.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </Container>
+    </Section>
+
+    <Section
+      spacing="lg"
+      class="bg-gradient-to-b from-background to-accent/10"
+    >
+      <Container>
+        <div class="flex items-end justify-between gap-4 flex-wrap">
+          <h2 class="text-2xl font-semibold tracking-tight">
+            Experience
+          </h2>
+          <p class="text-sm text-muted-foreground">
+            Prefer a 1-page view? Use Print / Save PDF.
+          </p>
+        </div>
+        <Divider class="my-6" />
+
+        <div class="space-y-6">
+          <div class="bg-card border border-border rounded-xl p-6">
+            <div class="flex flex-col space-y-1.5 mb-4">
+              <h3 class="text-lg font-bold leading-none">
+                <a
+                  href={COMPANIES.carvana.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-primary underline hover:opacity-90"
+                >
+                  {COMPANIES.carvana.name}
+                </a>
+                <span class="text-muted-foreground font-normal">
+                  — Senior Engineer II → Team Lead (AI Communications Platform)
+                </span>
+              </h3>
+              <p class="text-sm text-muted-foreground">
+                Aug 2022 – Jun 2025 · Remote
+              </p>
+            </div>
+            <div class="space-y-3">
+              <ul class="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
+                <li>
+                  Led backend transformation of customer communications:
+                  AI-driven chat, routing, and orchestration between LLMs and
+                  human agents.
+                </li>
+                <li>
+                  Architected event-driven systems with{" "}
+                  <strong>Scala/ZIO/Akka</strong>; migrated Kafka workloads to
+                  <strong> Confluent Cloud</strong>.
+                </li>
+                <li>
+                  Designed LLM summarization pipelines and secure messaging
+                  infrastructure (privacy-aware data handling, safe API
+                  design).
+                </li>
+                <li>
+                  Implemented distributed tracing across UI → gateways →
+                  microservices → AI flows via
+                  <strong> OpenTelemetry</strong>.
+                </li>
+                <li>
+                  Achieved a ~10× latency reduction on a critical backend span
+                  through caching and pooled Twilio identities.
+                </li>
+                <li>
+                  Advanced AI-first engineering workflows (Copilot, agentic
+                  tools) to improve team throughput and feedback loops.
+                </li>
+              </ul>
+              <div class="mt-4 flex flex-wrap gap-2">
+                {[
+                  "Scala", "ZIO", "Akka", "Kafka", "Python", "GCP",
+                  "Kubernetes", "Terraform", "OpenTelemetry", "Datadog",
+                  "Grafana",
+                ].map((t) => (
+                  <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border border-border bg-transparent text-muted-foreground">
+                    {t}
+                  </span>
+                ))}
+              </div>
+
+              <details class="mt-4 rounded-lg border border-border/60 bg-background/40 p-4">
+                <summary class="cursor-pointer text-sm font-semibold select-none">
+                  Technical Deep Dive & Leadership
+                </summary>
+                <div class="mt-3 text-xs text-muted-foreground space-y-2 leading-relaxed">
+                  <p>
+                    Focus areas included event-driven orchestration, safe
+                    fallbacks for human escalation, and reliability guardrails
+                    (timeouts, backpressure, and tracing-based
+                    troubleshooting). Emphasis on security and observability
+                    to keep AI flows debuggable in production.
+                  </p>
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl p-6">
+            <div class="flex flex-col space-y-1.5 mb-4">
+              <h3 class="text-lg font-bold leading-none">
+                <a
+                  href={COMPANIES.smartthings.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-primary underline hover:opacity-90"
+                >
+                  {COMPANIES.smartthings.name}
+                </a>
+                <span class="text-muted-foreground font-normal">
+                  — Senior Software Engineer
+                </span>
+              </h3>
+              <p class="text-sm text-muted-foreground">
+                Jun 2021 – Aug 2022 · Minneapolis, MN
+              </p>
+            </div>
+            <div>
+              <ul class="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
+                <li>
+                  Designed identity and access services for a global IoT
+                  platform.
+                </li>
+                <li>
+                  Built high-throughput Scala/Groovy services with Akka and
+                  Spring Security.
+                </li>
+                <li>
+                  Managed AWS infrastructure with Terraform; improved
+                  operability with Datadog + Sumo Logic.
+                </li>
+                <li>
+                  Supported mission-critical 24/7 platform spanning US and
+                  Korea.
+                </li>
+              </ul>
+              <div class="mt-4 flex flex-wrap gap-2">
+                {[
+                  "Scala", "Akka", "Spring Security", "AWS", "Terraform", "Datadog",
+                ].map((t) => (
+                  <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border border-border bg-transparent text-muted-foreground">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl p-6">
+            <div class="flex flex-col space-y-1.5 mb-4">
+              <h3 class="text-lg font-bold leading-none">
+                <a
+                  href={COMPANIES.workiva.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-primary underline hover:opacity-90"
+                >
+                  {COMPANIES.workiva.name}
+                </a>
+                <span class="text-muted-foreground font-normal">
+                  — Senior Software Engineer
+                </span>
+              </h3>
+              <p class="text-sm text-muted-foreground">
+                Dec 2013 – Jun 2021 · Ames, IA
+              </p>
+            </div>
+            <div>
+              <ul class="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
+                <li>
+                  Drove platform and IAM initiatives across internal tools and
+                  customer-facing systems.
+                </li>
+                <li>
+                  Built SSO/SAML/OIDC gateways (Python/Flask on AWS Lambda)
+                  for SaaS integrations.
+                </li>
+                <li>
+                  Developed an internal video streaming platform that scaled
+                  to <strong>2,000 users</strong> within minutes.
+                </li>
+                <li>
+                  Delivered backend services with AWS Lambda, Kinesis,
+                  Redshift, and relational databases.
+                </li>
+                <li>
+                  Mentored engineers and reviewed designs across multiple
+                  backend teams.
+                </li>
+              </ul>
+              <div class="mt-4 flex flex-wrap gap-2">
+                {[
+                  "Python", "Flask", "AWS Lambda", "OIDC", "SAML", "Kinesis",
+                  "Redshift", "PostgreSQL", "MySQL",
+                ].map((t) => (
+                  <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border border-border bg-transparent text-muted-foreground">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl p-6">
+            <div class="flex flex-col space-y-1.5 mb-4">
+              <h3 class="text-lg font-bold leading-none">
+                <a
+                  href={COMPANIES.twoRivers.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-primary underline hover:opacity-90"
+                >
+                  {COMPANIES.twoRivers.name}
+                </a>
+                <span class="text-muted-foreground font-normal">
+                  — Senior Web Developer / Architect
+                </span>
+              </h3>
+              <p class="text-sm text-muted-foreground">
+                Nov 2007 – Nov 2013 · Des Moines, IA
+              </p>
+            </div>
+            <div>
+              <ul class="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
+                <li>
+                  Built enterprise web applications and CMS-backed platforms
+                  for Fortune 500 clients.
+                </li>
+                <li>
+                  Led migration from proprietary frameworks to open-source
+                  CMS, improving developer efficiency.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl p-6">
+            <div class="flex flex-col space-y-1.5 mb-2">
+              <h3 class="text-base font-bold leading-none">Earlier Roles</h3>
+            </div>
+            <ul class="space-y-2 text-sm text-muted-foreground">
+              <li>
+                • Vodaci Technologies — Software Engineer (C#, VB, SQL Server, infra support)
+              </li>
+              <li>
+                • Customer Ease — Director of Technical Service (startup generalist, full-stack & infra)
+              </li>
+            </ul>
+          </div>
+        </div>
+      </Container>
+    </Section>
+
+    <Section spacing="lg">
+      <Container>
+        <div class="grid gap-6 lg:grid-cols-2">
+          <div class="bg-card border border-border rounded-xl p-6">
+            <h2 class="text-base font-bold mb-3">Education</h2>
+            <p class="text-sm text-muted-foreground">
+              <a
+                href={COMPANIES.drake.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-primary underline hover:opacity-90 inline-flex items-center gap-0.5"
+              >
+                {COMPANIES.drake.name}
+                <svg class="h-3 w-3 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </a>{" "}
+              — B.A. Computer Science, Biology
+            </p>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl p-6">
+            <h2 class="text-base font-bold mb-3">Interests</h2>
+            <ul class="space-y-2 text-sm text-muted-foreground">
+              <li>• Guitar & music</li>
+              <li>• Tabletop gaming & miniature painting</li>
+              <li>• Running the battery out of my e-bike</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-8 rounded-2xl border border-border bg-card/60 p-6 shadow-sm">
+          <h2 class="text-lg font-semibold">Links</h2>
+          <p class="mt-2 text-sm text-muted-foreground">
+            Prefer a PDF? Click{" "}
+            <span class="font-semibold">Print / Save PDF</span>. For
+            recruiters: this page is intentionally structured for ATS parsing
+            and quick scanning.
+          </p>
+          <div class="mt-4 flex flex-wrap gap-3 text-sm">
+            <a href={LINKS.linkedin} target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">LinkedIn</a>
+            <a href={LINKS.github} target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">GitHub</a>
+            <a href={LINKS.portfolio} target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Portfolio</a>
+          </div>
+        </div>
+      </Container>
+    </Section>
+
+    <Section
+      spacing="lg"
+      class="bg-gradient-to-b from-background to-accent/10"
+    >
+      <Container>
+        <div id="resume-plain-text" class="bg-card border border-border rounded-xl p-6 scroll-mt-24">
+          <div class="flex flex-col space-y-1.5 mb-4">
+            <h3 class="text-lg font-bold leading-none">Plain Text (copy/paste for applications)</h3>
+            <p class="text-sm text-muted-foreground">
+              Some ATS systems still love plain text. This mirrors the
+              structured sections above.
+            </p>
+          </div>
+          <div class="p-6 pt-0">
+            <div class="prose prose-invert max-w-none text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+<h3>Ian Lintner — Lead Engineer</h3>
+Minneapolis, MN
+LinkedIn: {LINKS.linkedin}
+GitHub: {LINKS.github}
+Portfolio: {LINKS.portfolio}
+
+<h4>Summary</h4>
+Lead Engineer with 20+ years building secure, event-driven, cloud-native systems. Strengths in Scala (ZIO/Akka), Kafka, Kubernetes, Terraform, OpenTelemetry, and LLM-enabled products.
+
+<h4>Core Skills</h4>
+Distributed Systems; Event-driven Architecture; Microservices; Secure APIs; IAM; SSO/OIDC/SAML; Observability; OpenTelemetry; Datadog; Grafana; Kafka; Kubernetes; Terraform; AWS; GCP; Scala; ZIO; Akka; Python; TypeScript; SQL.
+
+<h4>Experience</h4>
+Carvana — Senior Engineer II → Team Lead (AI Communications Platform), Aug 2022 – Jun 2025
+Samsung SmartThings — Senior Software Engineer, Jun 2021 – Aug 2022
+Workiva — Senior Software Engineer, Dec 2013 – Jun 2021
+Two Rivers Marketing — Senior Web Developer / Architect, Nov 2007 – Nov 2013
+
+<h4>Education</h4>
+Drake University — B.A. Computer Science, Biology
+            </div>
+            <p class="mt-4 text-xs text-muted-foreground">
+              Looking for a shorter version? See the “Phone screen version”
+              section near the top. Want more detail? Expand the deep-dive
+              sections under roles.
+            </p>
+          </div>
+        </div>
+
+        <p class="mt-6 text-center text-xs text-muted-foreground">
+          <a
+            href="/"
+            class="hover:text-primary underline underline-offset-4"
+          >
+            Back to home
+          </a>
+        </p>
+      </Container>
+    </Section>
+  </div>
+</Layout>
+
+<script>
+  function initResume() {
+    const printBtn = document.getElementById('print-btn');
+    if (printBtn) {
+      printBtn.addEventListener('click', () => {
+        window.print();
+      });
+    }
+  }
+
+  initResume();
+  document.addEventListener('DOMContentLoaded', initResume);
+  document.addEventListener('astro:after-swap', initResume);
+  document.body?.addEventListener('htmx:load', initResume);
+</script>

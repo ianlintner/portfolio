@@ -1,0 +1,83 @@
+---
+import { cn } from '../utils/cn';
+import Container from './Container.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  eyebrow?: string;
+  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "full";
+  padded?: boolean;
+  background?: "none" | "card" | "glass";
+  spacing?: "sm" | "md" | "lg";
+  class?: string;
+  id?: string;
+  [key: string]: any;
+}
+
+const {
+  title,
+  description,
+  eyebrow,
+  maxWidth = "xl",
+  padded = true,
+  background = "none",
+  spacing = "md",
+  class: className,
+  id,
+  ...props
+} = Astro.props;
+
+const spacingMap = {
+  sm: "py-8",
+  md: "py-12",
+  lg: "py-16",
+};
+
+const backgroundMap = {
+  none: "",
+  card: "rounded-2xl border border-border/60 bg-card/60 shadow-glow-sm",
+  glass: "rounded-2xl glass shadow-glow",
+};
+
+const hasHeader = title || description || eyebrow || Astro.slots.has('title') || Astro.slots.has('description') || Astro.slots.has('eyebrow') || Astro.slots.has('actions');
+---
+
+<section class={cn(spacingMap[spacing], className)} id={id} {...props}>
+  <Container maxWidth={maxWidth} padded={padded} class="w-full">
+    <div class={cn("flex flex-col gap-6", backgroundMap[background])}>
+      {hasHeader && (
+        <div class={cn("flex flex-col gap-3", background !== "none" && "p-6")}>
+          {(eyebrow || Astro.slots.has('eyebrow')) && (
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+              {eyebrow || <slot name="eyebrow" />}
+            </p>
+          )}
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            <div class="space-y-2">
+              {(title || Astro.slots.has('title')) && (
+                <h2 class="text-2xl font-semibold leading-tight sm:text-3xl">
+                  {title || <slot name="title" />}
+                </h2>
+              )}
+              {(description || Astro.slots.has('description')) && (
+                <p class="text-base text-muted-foreground">
+                  {description || <slot name="description" />}
+                </p>
+              )}
+            </div>
+            {Astro.slots.has('actions') && (
+              <div class="flex shrink-0 items-center gap-3">
+                <slot name="actions" />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div class={cn(background !== "none" && "p-6 pb-8")}>
+        <slot />
+      </div>
+    </div>
+  </Container>
+</section>

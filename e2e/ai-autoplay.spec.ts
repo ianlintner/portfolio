@@ -65,12 +65,8 @@ test.describe("AI Autoplay", () => {
     await page
       .waitForFunction(
         () => {
-          // Re-check the console buffer by polling
-          return (window as Window & { __AI_LOG_COUNT__?: number })
-            .__AI_LOG_COUNT__ !== undefined
-            ? (window as Window & { __AI_LOG_COUNT__?: number })
-                .__AI_LOG_COUNT__! >= 3
-            : false;
+          const qa = (window as any).__PHASER_QA__;
+          return Boolean(qa?.logs?.length >= 3);
         },
         { timeout: 20_000 },
       )

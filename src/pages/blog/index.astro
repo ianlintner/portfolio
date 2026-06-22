@@ -1,0 +1,254 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+const posts = await getCollection('blog');
+
+// Sort by date descending
+const sortedPosts = posts.sort((a, b) => {
+  return new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
+});
+
+// Extract all unique tags
+const allTags = Array.from(
+  new Set(sortedPosts.flatMap((post) => post.data.tags || []))
+).map(tag => ({ id: tag.toLowerCase(), name: tag }));
+---
+
+<Layout
+  title="Blog | Ian Lintner - Full Stack Developer"
+  description="Technical articles about modern web development, Astro, HTMX, React, Next.js, TypeScript, and cloud technologies. Learn from real-world projects and best practices."
+>
+  <div class="min-h-screen bg-background text-foreground transition-colors">
+    {/* Hero Section */}
+    <section class="bg-gradient-to-r from-background to-accent/30 py-16 border-b transition-colors">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <h1 class="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
+            Engineering Notes & Musings
+          </h1>
+          <p class="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Just some notes from an engineering leader trying to keep up.
+          </p>
+
+          {/* Search Bar */}
+          <div class="max-w-md mx-auto relative">
+            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground stroke-current" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" fill="none">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input
+              id="search-input"
+              type="text"
+              placeholder="Search articles..."
+              class="w-full pl-10 pr-4 py-3 rounded-lg border border-input bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="container mx-auto px-4 py-12">
+      <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Main Content */}
+          <div class="lg:col-span-3">
+            {sortedPosts.length === 0 ? (
+              <div class="text-center py-16">
+                <h2 class="text-2xl font-semibold mb-4">
+                  No posts found
+                </h2>
+                <p class="text-muted-foreground">
+                  Check back soon for new content!
+                </p>
+              </div>
+            ) : (
+              <div class="space-y-8" id="posts-container">
+                {sortedPosts.map((post) => (
+                  <article
+                    class="post-article group bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:border-primary/20 transition-all duration-300"
+                    data-search-text={`${post.data.title.toLowerCase()} ${post.data.excerpt.toLowerCase()} ${post.data.tags?.join(' ').toLowerCase() || ''}`}
+                  >
+                    <div class="flex flex-col space-y-4">
+                      <div class="flex items-center space-x-4 text-sm text-muted-foreground">
+                        <div class="flex items-center space-x-1">
+                          <svg class="h-4 w-4 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                          </svg>
+                          <span>
+                            {new Date(post.data.date).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
+                          </span>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                          <svg class="h-4 w-4 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                          </svg>
+                          <span>5 min read</span>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h2 class="text-2xl font-bold mb-3 group-hover:text-primary transition-colors text-foreground">
+                          <a href={`/blog/${post.slug}`}>
+                            {post.data.title}
+                          </a>
+                        </h2>
+                        <p class="text-muted-foreground leading-relaxed line-clamp-3">
+                          {post.data.excerpt}
+                        </p>
+                      </div>
+
+                      {post.data.tags && post.data.tags.length > 0 && (
+                        <div class="flex flex-wrap gap-2 pt-2">
+                          {post.data.tags.map((tag) => (
+                            <span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-medium">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <div class="flex items-center justify-between pt-4 border-t border-border">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                            <span class="text-sm font-semibold text-primary">
+                              {post.data.author ? post.data.author.charAt(0) : "I"}
+                            </span>
+                          </div>
+                          <span class="text-sm text-muted-foreground">
+                            {post.data.author || "Ian Lintner"}
+                          </span>
+                        </div>
+
+                        <a
+                          href={`/blog/${post.slug}`}
+                          class="inline-flex items-center text-primary hover:text-primary/80 font-medium text-sm group/link"
+                        >
+                          Read More
+                          <svg class="ml-1 h-4 w-4 stroke-current fill-none group-hover/link:translate-x-1 transition-transform" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Sidebar */}
+          <div class="lg:col-span-1 space-y-8">
+            {/* Popular Tags */}
+            {allTags && allTags.length > 0 && (
+              <div class="bg-card border border-border rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4">Topics</h3>
+                <div class="flex flex-wrap gap-2">
+                  {allTags.map((tag) => (
+                    <button
+                      class="tag-button inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-accent/10 hover:bg-primary hover:text-primary-foreground text-accent hover:border-transparent text-sm font-medium transition-colors"
+                      data-tag={tag.name.toLowerCase()}
+                    >
+                      <svg class="h-3 w-3 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                        <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                      </svg>
+                      <span>{tag.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Recent Posts */}
+            <div class="bg-card border border-border rounded-xl p-6">
+              <h3 class="text-lg font-semibold mb-4">Recent Articles</h3>
+              <div class="space-y-4">
+                {sortedPosts.slice(0, 3).map((post) => (
+                  <a
+                    href={`/blog/${post.slug}`}
+                    class="block group"
+                  >
+                    <h4 class="text-sm font-medium group-hover:text-primary transition-colors line-clamp-2 mb-1">
+                      {post.data.title}
+                    </h4>
+                    <p class="text-xs text-muted-foreground">
+                      {new Date(post.data.date).toLocaleDateString()}
+                    </p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  function initBlog() {
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const articles = document.querySelectorAll('.post-article') as NodeListOf<HTMLElement>;
+    const tagButtons = document.querySelectorAll('.tag-button') as NodeListOf<HTMLButtonElement>;
+
+    let currentQuery = '';
+    let currentTag = '';
+
+    function filterPosts() {
+      articles.forEach((article) => {
+        const searchText = article.getAttribute('data-search-text') || '';
+        const matchesSearch = currentQuery === '' || searchText.includes(currentQuery);
+        const matchesTag = currentTag === '' || searchText.includes(currentTag);
+
+        if (matchesSearch && matchesTag) {
+          article.style.display = 'block';
+        } else {
+          article.style.display = 'none';
+        }
+      });
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        currentQuery = searchInput.value.toLowerCase().trim();
+        filterPosts();
+      });
+    }
+
+    tagButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tag = btn.getAttribute('data-tag') || '';
+        if (currentTag === tag) {
+          currentTag = '';
+          btn.classList.remove('bg-primary', 'text-primary-foreground');
+          btn.classList.add('bg-accent/10', 'text-accent');
+        } else {
+          tagButtons.forEach(b => {
+            b.classList.remove('bg-primary', 'text-primary-foreground');
+            b.classList.add('bg-accent/10', 'text-accent');
+          });
+          currentTag = tag;
+          btn.classList.remove('bg-accent/10', 'text-accent');
+          btn.classList.add('bg-primary', 'text-primary-foreground');
+        }
+        filterPosts();
+      });
+    });
+  }
+
+  // Bind on initialize and subsequent HTMX swaps
+  initBlog();
+  document.addEventListener('DOMContentLoaded', initBlog);
+  document.addEventListener('astro:after-swap', initBlog);
+  document.body?.addEventListener('htmx:load', initBlog);
+</script>

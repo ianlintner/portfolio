@@ -1,0 +1,339 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const mockDemos = [
+  {
+    id: "7",
+    title: "Rust OAuth2 Server",
+    slug: "rust-oauth2-server",
+    description: "A modern OAuth2/OIDC authorization server built in Rust with Actix-Web and the actor model. Includes discovery, JWKS, token introspection/revocation, best-effort auth eventing, OpenAPI/Swagger UI, Prometheus/OpenTelemetry, and Kubernetes-ready health/readiness endpoints.",
+    category: "FULL_STACK",
+    technologies: ["Rust", "OAuth2", "OIDC", "Actix", "PostgreSQL", "Kubernetes"],
+    githubUrl: "https://github.com/ianlintner/rust-oauth2-server",
+    liveUrl: "https://ianlintner.github.io/rust-oauth2-server/",
+    featured: true,
+  },
+  {
+    id: "6",
+    title: "OAuth2 Proxy Sidecar",
+    slug: "oauth2-sidecar",
+    description: "Production-ready OAuth2 authentication for Kubernetes using the sidecar pattern. Includes Helm charts, custom sign-in templates, and SSO support for GitHub, Google, Azure AD, and generic OIDC providers. Eliminates complex centralized auth services in favor of per-app authentication containers.",
+    category: "FULL_STACK",
+    technologies: ["Kubernetes", "OAuth2", "Istio", "Helm", "Security"],
+    githubUrl: "https://github.com/ianlintner/authproxy",
+    liveUrl: "https://ianlintner.github.io/authproxy/",
+    featured: true,
+  },
+  {
+    id: "5",
+    title: "Authentication Showcase",
+    slug: "authentication-showcase",
+    description: "A comprehensive demo of major authentication methods in modern web applications. Demonstrates email/password, OAuth 2.0, magic links, MFA, and session management with AI-enforced security best practices.",
+    category: "FULL_STACK",
+    technologies: ["Next.js", "NextAuth.js", "OAuth", "Security"],
+    githubUrl: "https://github.com/ianlintner/authentication-showc",
+    liveUrl: "https://auth-demo.cat-herding.net",
+    featured: true,
+  },
+  {
+    id: "1",
+    title: "Interview Data Structures & Algorithms Study App",
+    slug: "interview-data-structures-algorithms-study-app",
+    description: "A comprehensive study app for mastering data structures and algorithms through interactive coding challenges and real-time collaboration.",
+    category: "FULL_STACK",
+    technologies: ["Python", "Flask"],
+    githubUrl: "https://github.com/ianlintner/python_dsa",
+    liveUrl: "https://dsa.cat-herding.net",
+    featured: true,
+  },
+  {
+    id: "2",
+    title: "Real-time Chat Application",
+    slug: "realtime-chat-application",
+    description: "Full-stack chat application with real-time messaging, user authentication, and message history. Built with Next.js, Socket.io, and PostgreSQL.",
+    category: "FULL_STACK",
+    technologies: ["Next.js", "Socket.io", "PostgreSQL", "Drizzle ORM", "NextAuth.js"],
+    githubUrl: "https://github.com/ianlintner/Example-React-AI-Chat-App",
+    liveUrl: "https://chat.cat-herding.net",
+    featured: true,
+  },
+  {
+    id: "3",
+    title: "GCP Autopilot Kubernetes Cluster",
+    slug: "gcp-autopilot-kubernetes-cluster",
+    description: "The cluster is built on Google Cloud Platform (GCP) using Anthos GKE Autopilot, which provides a managed Kubernetes control plane with automated node provisioning, scaling, and security hardening. Infrastructure provisioning and lifecycle management are handled with Terraform, ensuring reproducibility and version-controlled infrastructure-as-code. This cluster hosts all these demos.",
+    category: "FULL_STACK",
+    technologies: ["GCP", "Kubernetes", "Docker"],
+    githubUrl: "https://github.com/ianlintner",
+    liveUrl: "https://github.com/ianlintner",
+    featured: true,
+  },
+  {
+    id: "4",
+    title: "Audio Analysis and AI Review Utility in Rust",
+    slug: "audio-ai-rust",
+    description: "A command-line utility written in Rust for analyzing audio and providing AI-powered feedback for guitar practice sessions.",
+    category: "FULL_STACK",
+    technologies: ["Rust", "FFmpeg", "AI"],
+    githubUrl: "https://github.com/ianlintner/audio-ai",
+    liveUrl: "https://github.com/ianlintner/audio-ai",
+    featured: true,
+  },
+];
+
+const categories = [
+  { value: "all", label: "All Projects" },
+  { value: "FULL_STACK", label: "Full Stack" },
+  { value: "DATA_VISUALIZATION", label: "Data Visualization" },
+];
+
+const featuredDemos = mockDemos.filter((demo) => demo.featured);
+---
+
+<Layout
+  title="Demos & Projects | Ian Lintner - Full Stack Developer"
+  description="Interactive demos and projects showcasing modern web development techniques, React components, and full-stack applications."
+>
+  <div class="min-h-screen bg-background">
+    {/* Hero Section */}
+    <section class="bg-gradient-to-r from-background to-accent/30 py-16 border-b">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <h1 class="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
+            Projects & Demos
+          </h1>
+          <p class="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Interactive demos and projects showcasing modern web development
+            techniques and full-stack cloud architectures.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="container mx-auto px-4 py-12">
+      <div class="max-w-7xl mx-auto">
+        {/* Featured Projects */}
+        {featuredDemos.length > 0 && (
+          <section class="mb-16">
+            <h2 class="text-3xl font-bold mb-8">Featured Projects</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {featuredDemos.map((demo) => (
+                <div
+                  class="featured-project-card group bg-card border border-border rounded-xl overflow-hidden hover:shadow-xl hover:border-primary/20 transition-all duration-300"
+                  data-category={demo.category}
+                >
+                  <div class="p-6">
+                    <div class="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 class="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                          {demo.title}
+                        </h3>
+                        <p class="text-muted-foreground text-sm leading-relaxed">
+                          {demo.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 mb-4">
+                      {demo.technologies.slice(0, 4).map((tech) => (
+                        <span
+                          class="px-2 py-1 text-xs font-medium bg-secondary text-secondary-foreground rounded-md"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                      {demo.technologies.length > 4 && (
+                        <span class="px-2 py-1 text-xs font-medium bg-secondary text-secondary-foreground rounded-md">
+                          +{demo.technologies.length - 4} more
+                        </span>
+                      )}
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-4 border-t border-border">
+                      <a
+                        href={demo.liveUrl}
+                        class="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <svg class="h-4 w-4 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                          <polyline points="15 3 21 3 21 9"></polyline>
+                          <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                        View Project
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Category Filter */}
+        <section class="mb-8">
+          <div class="flex items-center gap-2 mb-6">
+            <svg class="h-5 w-5 text-muted-foreground stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            <h3 class="text-lg font-semibold">Filter by Category</h3>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            {categories.map((category) => {
+              return (
+                <button
+                  class="filter-button inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+                  data-filter={category.value}
+                >
+                  <span>{category.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* All Projects Grid */}
+        <section>
+          <h2 class="text-3xl font-bold mb-8">All Projects</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {mockDemos.map((demo) => (
+              <div
+                class="project-card group bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg hover:border-primary/20 transition-all duration-300"
+                data-category={demo.category}
+              >
+                <div class="p-5">
+                  <h3 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                    {demo.title}
+                  </h3>
+                  <p class="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-3">
+                    {demo.description}
+                  </p>
+
+                  <div class="flex flex-wrap gap-1 mb-4">
+                    {demo.technologies.slice(0, 3).map((tech) => (
+                      <span
+                        class="px-2 py-1 text-xs font-medium bg-secondary text-secondary-foreground rounded"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                    {demo.technologies.length > 3 && (
+                      <span class="px-2 py-1 text-xs font-medium bg-secondary text-secondary-foreground rounded">
+                        +{demo.technologies.length - 3}
+                      </span>
+                    )}
+                  </div>
+
+                  <div class="flex items-center gap-2 pt-3 border-t border-border">
+                    <a
+                      href={demo.liveUrl}
+                      class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <svg class="h-3 w-3 stroke-current fill-none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                      </svg>
+                      View Project
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Call to Action */}
+        <section class="mt-20 text-center">
+          <div class="max-w-2xl mx-auto">
+            <h2 class="text-3xl font-bold mb-4">
+              Interested in Working Together?
+            </h2>
+            <p class="text-xl text-muted-foreground mb-8">
+              I'm always excited to work on new projects and collaborate
+              with talented teams. Let's build something amazing
+              together!
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="/blog"
+                class="inline-flex items-center justify-center px-6 py-3 text-base font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                View My Articles
+              </a>
+              <a
+                href="https://linkedin.com/in/ianlintner/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center justify-center px-6 py-3 text-base font-medium border border-input bg-background hover:bg-accent transition-colors rounded-lg"
+              >
+                Get In Touch on LinkedIn
+              </a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  function initFilters() {
+    const filterButtons = document.querySelectorAll('.filter-button') as NodeListOf<HTMLButtonElement>;
+    const projectCards = document.querySelectorAll('.project-card') as NodeListOf<HTMLElement>;
+    const featuredCards = document.querySelectorAll('.featured-project-card') as NodeListOf<HTMLElement>;
+
+    function applyFilter(category: string) {
+      // Toggle active states on buttons
+      filterButtons.forEach(btn => {
+        const filterVal = btn.getAttribute('data-filter') || '';
+        if (filterVal === category) {
+          btn.classList.add('bg-primary', 'text-primary-foreground', 'border-transparent');
+          btn.classList.remove('bg-background', 'text-foreground');
+        } else {
+          btn.classList.remove('bg-primary', 'text-primary-foreground', 'border-transparent');
+          btn.classList.add('bg-background', 'text-foreground');
+        }
+      });
+
+      // Show/hide project cards
+      projectCards.forEach(card => {
+        const cardCat = card.getAttribute('data-category') || '';
+        if (category === 'all' || cardCat === category) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Show/hide featured cards
+      featuredCards.forEach(card => {
+        const cardCat = card.getAttribute('data-category') || '';
+        if (category === 'all' || cardCat === category) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const category = btn.getAttribute('data-filter') || 'all';
+        applyFilter(category);
+      });
+    });
+
+    // Default: select 'all'
+    applyFilter('all');
+  }
+
+  // Bind on load and HTMX swaps
+  initFilters();
+  document.addEventListener('DOMContentLoaded', initFilters);
+  document.addEventListener('astro:after-swap', initFilters);
+  document.body?.addEventListener('htmx:load', initFilters);
+</script>

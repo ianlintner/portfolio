@@ -1,0 +1,50 @@
+---
+import '../styles/globals.css';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Portfolio - Full Stack Developer",
+  description = "Full stack software engineer portfolio featuring modern web development projects and technical blog posts.",
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  </head>
+  <body class="bg-background text-foreground" hx-boost="true">
+    <div class="min-h-screen font-sans antialiased flex flex-col">
+      <Navigation />
+      <main class="flex-1" id="main-content">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+
+    <!-- Script to bundle htmx.org and set up route hooks -->
+    <script>
+      import 'htmx.org';
+
+      // Reset scroll position to top on boosted page swaps
+      document.body?.addEventListener('htmx:afterSwap', () => {
+        window.scrollTo(0, 0);
+      });
+    </script>
+  </body>
+</html>

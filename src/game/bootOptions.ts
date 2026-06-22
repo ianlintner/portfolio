@@ -4,6 +4,7 @@ export type GameBootOptions = {
   autoplay?: boolean;
   headless?: boolean;
   debug?: boolean;
+  visualQA?: boolean;
   layoutOverride?: LayoutType;
 };
 

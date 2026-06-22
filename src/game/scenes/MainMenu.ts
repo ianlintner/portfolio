@@ -82,6 +82,11 @@ export class MainMenu extends Scene {
     const { width, height } = this.scale;
     const audio = AudioManager.instance;
     const bootOptions = getBootOptions();
+    const isQA = Boolean(bootOptions.visualQA);
+
+    if (isQA) {
+      this.runSpeed = 0;
+    }
 
     // Initialize layout selection from query string / boot options
     if (
@@ -163,11 +168,13 @@ export class MainMenu extends Scene {
       .sprite(150, this.rooftopY, "cat")
       .setOrigin(0.5, 1)
       .setDepth(-4)
-      .setAlpha(0);
+      .setAlpha(isQA ? 1 : 0);
     this.catRunY = this._getCatRoofY();
     this.cat.setY(this.catRunY);
     this.cat.play("walk-right");
-    this.tweens.add({ targets: this.cat, alpha: 1, duration: 500 });
+    if (!isQA) {
+      this.tweens.add({ targets: this.cat, alpha: 1, duration: 500 });
+    }
 
     // ── Enemies at street level ─────────────────────────────────────────────
     this._spawnEnemies(width);
@@ -363,6 +370,8 @@ export class MainMenu extends Scene {
       GENERATED_TEXTURES.collectibleGem,
     ];
 
+    const isQA = Boolean(getBootOptions().visualQA);
+
     texKeys.forEach((tex, i) => {
       const x =
         this._randomCollectibleX(width) + i * Phaser.Math.Between(6, 12);
@@ -373,16 +382,18 @@ export class MainMenu extends Scene {
         .setAlpha(0.9)
         .setScale(1.5);
 
-      // Bob up/down with staggered phase
-      this.tweens.add({
-        targets: item,
-        y: baseY - 14,
-        duration: Phaser.Math.Between(1100, 2000),
-        yoyo: true,
-        repeat: -1,
-        ease: "Sine.easeInOut",
-        delay: i * 180,
-      });
+      if (!isQA) {
+        // Bob up/down with staggered phase
+        this.tweens.add({
+          targets: item,
+          y: baseY - 14,
+          duration: Phaser.Math.Between(1100, 2000),
+          yoyo: true,
+          repeat: -1,
+          ease: "Sine.easeInOut",
+          delay: i * 180,
+        });
+      }
 
       this.collectibles.push(item);
     });
@@ -849,14 +860,17 @@ export class MainMenu extends Scene {
       .setDepth(90)
       .setAlpha(0.35);
 
-    // Slow-scroll for animated CRT feel
-    this.tweens.add({
-      targets: scanlines,
-      tilePositionY: height,
-      duration: 10000,
-      repeat: -1,
-      ease: "Linear",
-    });
+    const isQA = Boolean(getBootOptions().visualQA);
+    if (!isQA) {
+      // Slow-scroll for animated CRT feel
+      this.tweens.add({
+        targets: scanlines,
+        tilePositionY: height,
+        duration: 10000,
+        repeat: -1,
+        ease: "Linear",
+      });
+    }
   }
 
   // ── Title sequence ────────────────────────────────────────────────────────
@@ -866,6 +880,9 @@ export class MainMenu extends Scene {
     height: number,
     audio: AudioManager,
   ) {
+    const bootOptions = getBootOptions();
+    const isQA = Boolean(bootOptions.visualQA);
+
     // Main title — punches in from slightly larger scale
     const titleY = height * 0.28;
     const title = this.add
@@ -885,28 +902,33 @@ export class MainMenu extends Scene {
         },
       })
       .setOrigin(0.5)
-      .setAlpha(0)
-      .setScale(1.25)
+      .setAlpha(isQA ? 1 : 0)
+      .setScale(isQA ? 1 : 1.25)
       .setDepth(10);
 
     // Subtitle — slides up from below
     const subtitleTargetY = titleY + 62;
     const subtitle = this.add
-      .text(width / 2, subtitleTargetY + 26, "A  RETRO  ROGUELIKE", {
-        fontSize: "20px",
-        color: "#60a5fa",
-        fontFamily: "Arial",
-        letterSpacing: 6,
-        shadow: {
-          offsetX: 2,
-          offsetY: 2,
-          color: "#0f172a",
-          blur: 4,
-          fill: true,
+      .text(
+        width / 2,
+        isQA ? subtitleTargetY : subtitleTargetY + 26,
+        "A  RETRO  ROGUELIKE",
+        {
+          fontSize: "20px",
+          color: "#60a5fa",
+          fontFamily: "Arial",
+          letterSpacing: 6,
+          shadow: {
+            offsetX: 2,
+            offsetY: 2,
+            color: "#0f172a",
+            blur: 4,
+            fill: true,
+          },
         },
-      })
+      )
       .setOrigin(0.5)
-      .setAlpha(0)
+      .setAlpha(isQA ? 1 : 0)
       .setDepth(10);
 
     // Start button
@@ -922,7 +944,7 @@ export class MainMenu extends Scene {
         shadow: { offsetX: 2, offsetY: 3, color: "#000", blur: 6, fill: true },
       })
       .setOrigin(0.5)
-      .setAlpha(0)
+      .setAlpha(isQA ? 1 : 0)
       .setDepth(10)
       .setInteractive({ useHandCursor: true });
 
@@ -948,7 +970,7 @@ export class MainMenu extends Scene {
         shadow: { offsetX: 1, offsetY: 2, color: "#000", blur: 4, fill: true },
       })
       .setOrigin(0.5)
-      .setAlpha(0)
+      .setAlpha(isQA ? 1 : 0)
       .setDepth(10)
       .setInteractive({ useHandCursor: true });
 
@@ -973,7 +995,7 @@ export class MainMenu extends Scene {
         letterSpacing: 2,
       })
       .setOrigin(0.5)
-      .setAlpha(0)
+      .setAlpha(isQA ? 1 : 0)
       .setDepth(10);
 
     const selectorValue = this.add
@@ -986,7 +1008,7 @@ export class MainMenu extends Scene {
         padding: { x: 12, y: 4 },
       })
       .setOrigin(0.5)
-      .setAlpha(0)
+      .setAlpha(isQA ? 1 : 0)
       .setDepth(10)
       .setInteractive({ useHandCursor: true });
 
@@ -997,7 +1019,7 @@ export class MainMenu extends Scene {
         fontFamily: "Arial",
       })
       .setOrigin(0.5)
-      .setAlpha(0)
+      .setAlpha(isQA ? 1 : 0)
       .setDepth(10);
 
     const cycleLayout = (dir: number) => {
@@ -1027,7 +1049,7 @@ export class MainMenu extends Scene {
         letterSpacing: 4,
       })
       .setOrigin(0.5)
-      .setAlpha(0)
+      .setAlpha(isQA ? 1 : 0)
       .setDepth(10);
 
     // Description tagline
@@ -1043,105 +1065,107 @@ export class MainMenu extends Scene {
         },
       )
       .setOrigin(0.5)
-      .setAlpha(0)
+      .setAlpha(isQA ? 1 : 0)
       .setDepth(10);
 
     // ── Reveal sequence ────────────────────────────────────────────────────
 
-    // 1. Title punches in (200ms delay gives world a moment to render)
-    this.tweens.add({
-      targets: title,
-      alpha: 1,
-      scale: 1,
-      duration: 620,
-      ease: "Back.easeOut",
-      delay: 200,
-    });
-
-    // 2. Title idle animations kick in after punch-in
-    this.time.delayedCall(820, () => {
-      // Gentle shimmer
+    if (!isQA) {
+      // 1. Title punches in (200ms delay gives world a moment to render)
       this.tweens.add({
         targets: title,
-        alpha: { from: 1, to: 0.78 },
-        duration: 2000,
-        yoyo: true,
-        repeat: -1,
-        ease: "Sine.easeInOut",
+        alpha: 1,
+        scale: 1,
+        duration: 620,
+        ease: "Back.easeOut",
+        delay: 200,
       });
-      // Subtle rocking
-      this.tweens.add({
-        targets: title,
-        angle: { from: -0.6, to: 0.6 },
-        duration: 3400,
-        yoyo: true,
-        repeat: -1,
-        ease: "Sine.easeInOut",
-      });
-    });
 
-    // 3. Subtitle slides up
-    this.tweens.add({
-      targets: subtitle,
-      alpha: 1,
-      y: subtitleTargetY,
-      duration: 500,
-      ease: "Power2.easeOut",
-      delay: 700,
-    });
-
-    // 4. Start button fades in, then pulses
-    this.tweens.add({
-      targets: startButton,
-      alpha: 1,
-      duration: 400,
-      delay: 1100,
-      onComplete: () => {
+      // 2. Title idle animations kick in after punch-in
+      this.time.delayedCall(820, () => {
+        // Gentle shimmer
         this.tweens.add({
-          targets: startButton,
-          scaleX: 1.05,
-          scaleY: 1.05,
-          duration: 850,
+          targets: title,
+          alpha: { from: 1, to: 0.78 },
+          duration: 2000,
           yoyo: true,
           repeat: -1,
           ease: "Sine.easeInOut",
         });
-      },
-    });
-
-    // 4b. Watch AI button fades in
-    this.tweens.add({
-      targets: watchAIBtn,
-      alpha: 1,
-      duration: 400,
-      delay: 1350,
-    });
-
-    // 4c. Level selector fades in
-    this.tweens.add({
-      targets: [selectorLabel, selectorValue, arrows],
-      alpha: 1,
-      duration: 400,
-      delay: 1400,
-    });
-
-    // 5. Hint + desc fade in, then hint blinks
-    this.tweens.add({
-      targets: [anyKey, desc],
-      alpha: 1,
-      duration: 400,
-      delay: 1500,
-      onComplete: () => {
+        // Subtle rocking
         this.tweens.add({
-          targets: anyKey,
-          alpha: 0.15,
-          duration: 650,
+          targets: title,
+          angle: { from: -0.6, to: 0.6 },
+          duration: 3400,
           yoyo: true,
           repeat: -1,
           ease: "Sine.easeInOut",
         });
-      },
-    });
+      });
+
+      // 3. Subtitle slides up
+      this.tweens.add({
+        targets: subtitle,
+        alpha: 1,
+        y: subtitleTargetY,
+        duration: 500,
+        ease: "Power2.easeOut",
+        delay: 700,
+      });
+
+      // 4. Start button fades in, then pulses
+      this.tweens.add({
+        targets: startButton,
+        alpha: 1,
+        duration: 400,
+        delay: 1100,
+        onComplete: () => {
+          this.tweens.add({
+            targets: startButton,
+            scaleX: 1.05,
+            scaleY: 1.05,
+            duration: 850,
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.easeInOut",
+          });
+        },
+      });
+
+      // 4b. Watch AI button fades in
+      this.tweens.add({
+        targets: watchAIBtn,
+        alpha: 1,
+        duration: 400,
+        delay: 1350,
+      });
+
+      // 4c. Level selector fades in
+      this.tweens.add({
+        targets: [selectorLabel, selectorValue, arrows],
+        alpha: 1,
+        duration: 400,
+        delay: 1400,
+      });
+
+      // 5. Hint + desc fade in, then hint blinks
+      this.tweens.add({
+        targets: [anyKey, desc],
+        alpha: 1,
+        duration: 400,
+        delay: 1500,
+        onComplete: () => {
+          this.tweens.add({
+            targets: anyKey,
+            alpha: 0.15,
+            duration: 650,
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.easeInOut",
+          });
+        },
+      });
+    }
 
     // Any key → start (except left/right which cycle the layout selector)
     this.input.keyboard?.on(

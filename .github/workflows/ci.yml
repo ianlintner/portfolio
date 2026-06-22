@@ -4,14 +4,21 @@ on:
   push:
     branches: [main, develop, staging]
     paths-ignore:
-      - "**.md"
+      # Root-level docs only (README, CHANGELOG, THEME_*) — note "*.md" does NOT
+      # match nested paths, so src/content/blog/*.md still triggers CI + deploy.
+      - "*.md"
+      - ".github/**/*.md" # AI instructions / agent docs
       - "docs/**"
       - ".github/workflows/docker.yml"
   pull_request:
     branches: [main, develop, staging]
     paths-ignore:
-      - "**.md"
+      - "*.md"
+      - ".github/**/*.md"
       - "docs/**"
+  # Manual trigger: lets you run CI + deploy on demand (e.g. after a docs/blog-only
+  # change that paths-ignore skips, so new posts still get built and deployed).
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -45,11 +52,6 @@ jobs:
           node-version: 20
           cache: "pnpm"
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-
       - name: Get pnpm store directory
         shell: bash
         run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
@@ -68,11 +70,6 @@ jobs:
       - name: Build theme package
         run: pnpm --filter @ianlintner/theme run build
 
-      - name: Install mkdocs tooling
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
-
       - name: Lint
         run: pnpm lint
 
@@ -83,15 +80,13 @@ jobs:
         run: pnpm run test:ci
 
       - name: Build static site
-        env:
-          NEXT_PUBLIC_SITE_URL: https://cat-herding.net
-        run: pnpm docs:build && pnpm next build
+        run: pnpm run build
 
       - name: Upload static artifact
         uses: actions/upload-artifact@v4
         with:
           name: static-site
-          path: out
+          path: dist
 
   static-deploy:
     name: Deploy Static Web App
@@ -110,7 +105,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: static-site
-          path: out
+          path: dist
 
       - name: Azure Login (OIDC)
         uses: azure/login@v2
@@ -185,7 +180,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
           skip_app_build: true
-          app_location: out
+          app_location: dist
 
   analyze-failure:
     name: AI Failure Analysis
@@ -209,12 +204,12 @@ jobs:
           create-issue: "true"
           issue-label: "ci-failure"
           custom-system-prompt: |
-            You are a senior full-stack engineer specializing in Next.js, TypeScript, and CI/CD.
+            You are a senior full-stack engineer specializing in Astro, HTMX, TypeScript, and CI/CD.
             Focus on:
-            - Next.js 15 App Router issues
-            - TypeScript compilation errors
-            - tRPC API failures
-            - Database connection issues (PostgreSQL/Drizzle ORM)
+            - Astro static site compilation issues
+            - HTML/CSS/JS syntax and template errors in .astro components
+            - Vanilla JS event handling and lifecycles (e.g. Phaser/chat)
+            - HTMX navigation and booster issues
             - GitHub Actions workflow problems
             - Docker build failures
             - Kubernetes deployment issues

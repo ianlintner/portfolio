@@ -1,0 +1,59 @@
+---
+import { cn } from '../utils/cn';
+
+type GridSpan = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+
+type ResponsiveCols = {
+  base?: GridSpan;
+  sm?: GridSpan;
+  md?: GridSpan;
+  lg?: GridSpan;
+  xl?: GridSpan;
+};
+
+interface Props {
+  cols?: ResponsiveCols | GridSpan;
+  gap?: number | string;
+  equalHeight?: boolean;
+  class?: string;
+  id?: string;
+  [key: string]: any;
+}
+
+const {
+  cols = { base: 1, md: 2, lg: 3 },
+  gap = 4,
+  equalHeight = false,
+  class: className,
+  id,
+  ...props
+} = Astro.props;
+
+const config: ResponsiveCols =
+  typeof cols === "number" ? { base: cols } : cols;
+
+const spanClass = (prefix: string, value?: GridSpan) =>
+  value ? `${prefix}grid-cols-${value}` : "";
+
+const gapClass = typeof gap === "number" ? `gap-${gap}` : "";
+const inlineStyle = typeof gap === "string" ? { gap } : {};
+---
+
+<div
+  class={cn(
+    "grid",
+    spanClass("", config.base ?? 1),
+    spanClass("sm:", config.sm),
+    spanClass("md:", config.md),
+    spanClass("lg:", config.lg),
+    spanClass("xl:", config.xl),
+    gapClass,
+    equalHeight && "[&>*]:h-full",
+    className,
+  )}
+  style={inlineStyle}
+  id={id}
+  {...props}
+>
+  <slot />
+</div>
