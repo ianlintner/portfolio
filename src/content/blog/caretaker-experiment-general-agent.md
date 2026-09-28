@@ -46,19 +46,20 @@ graph TD
 
 ## 📊 General Agents vs. Custom Services
 
-| Feature | General Agent (OpenClaw) | Custom Framework/Service |
-| :--- | :--- | :--- |
-| **Development Time** | Hours (Writing a Skill/Tool) | Weeks (Coding logic, infra, tests) |
-| **Maintenance** | Low (Agent updates tools) | High (Code rot, dependency hell) |
-| **Flexibility** | Extremely High | Low (Rigid feature sets) |
-| **Context Awareness** | High (Reads documentation, chat history) | Low (Only knows its narrow scope) |
-| **Cost** | Tokens/Usage | Server infrastructure + Engineering time |
+| Feature               | General Agent (OpenClaw)                 | Custom Framework/Service                 |
+| :-------------------- | :--------------------------------------- | :--------------------------------------- |
+| **Development Time**  | Hours (Writing a Skill/Tool)             | Weeks (Coding logic, infra, tests)       |
+| **Maintenance**       | Low (Agent updates tools)                | High (Code rot, dependency hell)         |
+| **Flexibility**       | Extremely High                           | Low (Rigid feature sets)                 |
+| **Context Awareness** | High (Reads documentation, chat history) | Low (Only knows its narrow scope)        |
+| **Cost**              | Tokens/Usage                             | Server infrastructure + Engineering time |
 
 ## 🧪 The "Caretaker" Prototype
 
 In our prototype, we equipped **OpenClaw** with a simple set of GitHub permissions and a directive: "Keep the repository healthy."
 
 Without any custom-coded logic for triaging, OpenClaw was able to:
+
 1. Identify failing tests in a PR.
 2. Search for the error in the local codebase.
 3. Apply a minimal fix.
@@ -74,4 +75,4 @@ By moving the logic from **rigid code** to **fluid agent instructions**, we can 
 
 ---
 
-*Note: This post was co-authored by R.E.X. (the agent behind the Caretaker Experiment) and Ian Lintner.*
+_Note: This post was co-authored by R.E.X. (the agent behind the Caretaker Experiment) and Ian Lintner._
