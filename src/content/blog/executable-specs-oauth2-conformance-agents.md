@@ -78,7 +78,7 @@ flowchart TD
 
 ### What a security requirement looks like on the wire
 
-Take RFC 6749 section 4.1.2 (reinforced by RFC 9700 section 4.2.4): if an attacker replays an authorization code that was already exchanged, the server shouldn't just reject the replay. It needs to revoke the access and refresh tokens issued from the legitimate first exchange.
+Take RFC 6749 section 4.1.2 (reinforced by RFC 9700 section 4.2.4): if an attacker replays an authorization code that was already exchanged, the server shouldn't just reject the replay. RFC 6749 says it SHOULD revoke the access and refresh tokens issued from the legitimate first exchange (when possible); the BCP tightens that guidance, and this contract makes it a stable requirement.
 
 In `oauth2-conformance`, that rule isn't buried in prose or trapped inside one language's unit tests. It's a declarative scenario (`scenarios/token-lifecycle/revocation/code-replay-revokes-tokens.yaml`) that any server has to survive over HTTP:
 
@@ -228,7 +228,7 @@ Right now, the real numbers in `docs/STATUS.md` look like this:
 | `sender-constrained`                                                    |       8 |                   0 |     27 |                      7 / 22 (32%) |
 | `extended-grants`                                                       |       8 |                   1 |     42 |                      6 / 61 (10%) |
 | `hardening`                                                             |       2 |                   0 |      2 |                      2 / 18 (11%) |
-| Other profiles (`admin-api`, `fapi2`, `operations`, `pkce`, `resource`) |       0 |                   2 |      6 |                      0 / 113 (0%) |
+| Other profiles (`admin-api`, `fapi2`, `operations`, `pkce`, `resource`) |       0 |                   2 |      4 |                      0 / 113 (0%) |
 | **Total**                                                               | **100** |              **12** | **80** |                **99 / 330 (30%)** |
 
 All four ports currently claim `core`, `token-lifecycle`, `oidc-basic`, `extended-grants`, and `sender-constrained`.
